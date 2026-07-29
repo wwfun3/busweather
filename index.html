@@ -87,12 +87,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .temp-bar {
-      height: 4px;
-      border-radius: 2px;
-      background: linear-gradient(90deg, #3b82f6 0%, #f59e0b 50%, #ef4444 100%);
-    }
-
     .card-hover {
       transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
@@ -122,19 +116,12 @@
     .lang-btn:hover {
       background: rgba(255,255,255,0.18);
     }
-    .lang-btn.active {
-      background: rgba(99,102,241,0.5);
-      border-color: rgba(99,102,241,0.8);
-    }
 
     .psr-bar {
       height: 6px;
       border-radius: 3px;
       transition: width 0.6s ease;
     }
-
-    .forecast-scroll::-webkit-scrollbar { display: none; }
-    .forecast-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
     .stat-pill {
       background: rgba(255,255,255,0.07);
@@ -207,7 +194,9 @@
           </div>
           <div>
             <div id="app-title" class="text-sm font-semibold text-white/90 leading-tight">Hong Kong Weather</div>
-            <div id="app-subtitle" class="text-xs text-white/50">香港天文台</div>
+            <div id="app-subtitle" class="text-xs text-white/50">
+              <a href="https://wwfun3.github.io/busweather/bus" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-white/80 transition-colors">Hong Kong Observatory</a>
+            </div>
           </div>
         </div>
         <div class="flex items-center gap-2">
@@ -233,7 +222,7 @@
           <div class="h-3 w-40 mx-auto rounded shimmer"></div>
         </div>
 
-        <!-- Actual content (hidden until loaded) -->
+        <!-- Actual content -->
         <div id="mainContent" class="hidden text-center">
           <div class="flex justify-center mb-2">
             <img id="mainIcon" src="" alt="" class="hko-icon-lg" />
@@ -242,7 +231,7 @@
           <div id="mainDesc" class="text-base text-white/75 font-medium mb-1 px-4 leading-snug"></div>
           <div id="mainLocation" class="text-xs text-white/45 mb-4 flex items-center justify-center gap-1">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-            <span id="locationText">Hong Kong Observatory</span>
+            <span id="locationText"><a href="https://wwfun3.github.io/busweather/bus" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-white/70 transition-colors">Hong Kong Observatory</a></span>
           </div>
           <!-- Stats row -->
           <div class="grid grid-cols-3 gap-2 mb-4">
@@ -287,7 +276,7 @@
       <p id="situationText" class="text-white/75 text-sm leading-relaxed"></p>
     </div>
 
-    <!-- Today & Tomorrow Forecast -->
+    <!-- Today Forecast -->
     <div id="todayForecastCard" class="glass rounded-2xl p-4 mb-4 hidden fade-in">
       <div class="flex items-center gap-2 mb-3">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -299,12 +288,12 @@
       <p id="todayOutlook" class="text-white/55 text-xs leading-relaxed italic"></p>
     </div>
 
-    <!-- 2-Day Detailed Cards -->
-    <div id="lbl-2day" class="text-xs font-semibold text-white/40 uppercase tracking-widest mb-2 hidden">Today & Tomorrow</div>
+    <!-- 2-Day Cards -->
+    <div id="lbl-2day" class="text-xs font-semibold text-white/40 uppercase tracking-widest mb-2 hidden">2-Day Extended Forecast</div>
     <div id="twoDayCards" class="grid grid-cols-1 gap-3 mb-4 hidden fade-in"></div>
 
-    <!-- 9-Day Forecast scroll -->
-    <div id="lbl-9day" class="text-xs font-semibold text-white/40 uppercase tracking-widest mb-2 hidden">9-Day Forecast 九天天氣預報</div>
+    <!-- 9-Day Forecast -->
+    <div id="lbl-9day" class="text-xs font-semibold text-white/40 uppercase tracking-widest mb-2 hidden">9-Day Forecast</div>
     <div id="nineDayForecast" class="glass rounded-2xl overflow-hidden mb-4 hidden fade-in"></div>
 
     <!-- Rainfall Section -->
@@ -328,37 +317,64 @@
   </div>
 
   <script>
-    // ──────────────────────────────────────────────
-    // CONFIG & STATE
-    // ──────────────────────────────────────────────
     const PROXY = 'https://data.weather.gov.hk/weatherAPI/opendata/weather.php';
     let currentLang = 'en';
     let isLoading = false;
 
-    // HKO icon mapping
     const iconBaseUrl = 'https://www.hko.gov.hk/images/HKOWxIconOutline/pic';
 
-    // ──────────────────────────────────────────────
-    // TRANSLATIONS
-    // ──────────────────────────────────────────────
+    // Weather condition descriptions for main card fallback
+    const HKO_ICONS = {
+      50: { en: 'Sunny', tc: '天晴' },
+      51: { en: 'Sunny Intervals', tc: '陽光充沛' },
+      52: { en: 'Sunny Periods', tc: '短暫陽光' },
+      53: { en: 'Sunny Intervals with Showers', tc: '陽光驟雨' },
+      54: { en: 'Sunny Intervals with Showers', tc: '陽光驟雨' },
+      60: { en: 'Cloudy', tc: '多雲' },
+      61: { en: 'Overcast', tc: '密雲' },
+      62: { en: 'Light Rain', tc: '微雨' },
+      63: { en: 'Rain', tc: '有雨' },
+      64: { en: 'Heavy Rain', tc: '大雨' },
+      65: { en: 'Thunderstorms', tc: '雷暴' },
+      70: { en: 'Fine (Night)', tc: '天晴 (晚間)' },
+      71: { en: 'Fine (Night)', tc: '天晴 (晚間)' },
+      72: { en: 'Fine (Night)', tc: '天晴 (晚間)' },
+      73: { en: 'Fine (Night)', tc: '天晴 (晚間)' },
+      74: { en: 'Fine (Night)', tc: '天晴 (晚間)' },
+      75: { en: 'Fine (Night)', tc: '天晴 (晚間)' },
+      76: { en: 'Mainly Fine (Night)', tc: '大致天晴 (晚間)' },
+      77: { en: 'Mainly Fine (Night)', tc: '大致天晴 (晚間)' },
+      80: { en: 'Windy', tc: '風勢較大' },
+      81: { en: 'Dry', tc: '乾燥' },
+      82: { en: 'Humid', tc: '潮濕' },
+      83: { en: 'Fog', tc: '薄霧' },
+      84: { en: 'Mist', tc: '霧' },
+      85: { en: 'Haze', tc: '煙霞' },
+      90: { en: 'Hot', tc: '酷熱' },
+      91: { en: 'Cold', tc: '寒冷' },
+      92: { en: 'Very Cold', tc: '嚴寒' },
+      93: { en: 'Very Hot', tc: '酷熱' },
+    };
+
     const T = {
       en: {
         appTitle: 'Hong Kong Weather',
-        appSubtitle: '香港天文台',
+        appSubtitle: 'Hong Kong Observatory',
         refreshText: 'Refresh',
+        updatingText: 'Updating…',
         langBtnText: '繁中',
         lbl_humidity: 'Humidity',
         lbl_uv: 'UV Index',
         lbl_sea: 'Sea Temp',
         lbl_situation: 'General Situation',
         lbl_today_fc: "Today's Forecast",
-        lbl_2day: 'Tomorrow & The Day After Tomorrow',
+        lbl_2day: '2-Day Extended Forecast',
         lbl_9day: '9-Day Forecast',
         lbl_rainfall: 'Rainfall (Past Hour)',
         lbl_wind: 'Wind',
         lbl_temp: 'Temp',
         lbl_rh: 'Humidity',
-        lbl_psr: 'Rain Probability',
+        lbl_psr: 'Probability of Rain',
         lbl_maxtemp: 'High',
         lbl_mintemp: 'Low',
         lbl_maxrh: 'Max RH',
@@ -373,6 +389,7 @@
         warningIssued: 'Issued:',
         warningExpires: 'Expires / Extended until:',
         warningUpdated: 'Last updated:',
+        noRainfall: 'No significant rainfall recorded',
         loading: 'Fetching latest data…',
         errorTitle: 'Unable to load weather data',
         errorHint: 'Please check your connection and try again.',
@@ -382,14 +399,6 @@
         outlook: 'Outlook',
         seaTemp: 'North Point',
         tcInfo: 'Tropical Cyclone Info',
-        thunderWarning: 'Thunderstorm Warning',
-        rainWarning: 'Rainstorm Warning',
-        tcWarning: 'Typhoon Signal',
-        fireWarning: 'Fire Danger Warning',
-        frostWarning: 'Frost Warning',
-        coldWarning: 'Cold Warning',
-        heatWarning: 'Very Hot Weather Warning',
-        tsuWarning: 'Tsunami Warning',
         swtTitle: 'Special Weather Tips',
         updatedAt: 'Updated at',
       },
@@ -397,13 +406,14 @@
         appTitle: '香港天氣',
         appSubtitle: '香港天文台',
         refreshText: '更新',
+        updatingText: '更新中…',
         langBtnText: 'EN',
         lbl_humidity: '相對濕度',
         lbl_uv: '紫外線指數',
         lbl_sea: '海水溫度',
         lbl_situation: '天氣概況',
         lbl_today_fc: '今日天氣預報',
-        lbl_2day: '今後兩天',
+        lbl_2day: '未來兩天天氣',
         lbl_9day: '九天天氣預報',
         lbl_rainfall: '過去一小時雨量',
         lbl_wind: '風力',
@@ -424,6 +434,7 @@
         warningIssued: '發出時間：',
         warningExpires: '延伸至 / 到期：',
         warningUpdated: '最後更新：',
+        noRainfall: '沒有錄得顯著雨量',
         loading: '正在獲取最新數據…',
         errorTitle: '無法載入天氣資料',
         errorHint: '請檢查網絡連線後重試。',
@@ -433,14 +444,6 @@
         outlook: '展望',
         seaTemp: '北角',
         tcInfo: '熱帶氣旋資料',
-        thunderWarning: '雷暴警告',
-        rainWarning: '暴雨警告信號',
-        tcWarning: '熱帶氣旋警告信號',
-        fireWarning: '火災危險警告',
-        frostWarning: '霜凍警告',
-        coldWarning: '寒冷天氣警告',
-        heatWarning: '酷熱天氣警告',
-        tsuWarning: '海嘯警告',
         swtTitle: '特別天氣提示',
         updatedAt: '更新時間',
       }
@@ -450,9 +453,6 @@
       return T[currentLang][key] || T['en'][key] || key;
     }
 
-    // ──────────────────────────────────────────────
-    // WARNING HELPERS
-    // ──────────────────────────────────────────────
     const warningMeta = {
       WTS: { emoji: '⛈️', color: 'amber', nameEn: 'Thunderstorm Warning', nameTc: '雷暴警告' },
       WRAIN: { emoji: '🌧️', color: 'red', nameEn: 'Rainstorm Warning', nameTc: '暴雨警告' },
@@ -462,25 +462,30 @@
       WCOLD: { emoji: '🧊', color: 'blue', nameEn: 'Cold Weather Warning', nameTc: '寒冷天氣警告' },
       WHOT: { emoji: '🌡️', color: 'red', nameEn: 'Very Hot Weather Warning', nameTc: '酷熱天氣警告' },
       WTMW: { emoji: '🌊', color: 'blue', nameEn: 'Tsunami Warning', nameTc: '海嘯警告' },
-      WMSGNL: { emoji: '🌬️', color: 'amber', nameEn: 'Monsoon Signal', nameTc: '季候風信號' },
+      WMSGNL: { emoji: '🌬️', color: 'amber', nameEn: 'Monsoon Signal', nameTc: '強烈季候風信號' },
     };
 
+    function getWarningMeta(code) {
+      for (const [key, meta] of Object.entries(warningMeta)) {
+        if (code === key || code.startsWith(key)) return meta;
+      }
+      return null;
+    }
+
     function getWarningName(code, warningObj) {
-      const meta = warningMeta[code];
-      if (!meta) return warningObj.name || code;
-      return currentLang === 'tc' ? meta.nameTc : meta.nameEn;
+      const meta = getWarningMeta(code);
+      if (meta) return currentLang === 'tc' ? meta.nameTc : meta.nameEn;
+      return warningObj.name || code;
     }
 
     function getWarningColor(code) {
-      const meta = warningMeta[code];
-      if (!meta) return 'amber';
-      return meta.color;
+      const meta = getWarningMeta(code);
+      return meta ? meta.color : 'amber';
     }
 
     function getWarningEmoji(code) {
-      const meta = warningMeta[code];
-      if (!meta) return '⚠️';
-      return meta.emoji;
+      const meta = getWarningMeta(code);
+      return meta ? meta.emoji : '⚠️';
     }
 
     function formatDateTime(iso) {
@@ -496,9 +501,7 @@
       return d.toLocaleTimeString(currentLang === 'tc' ? 'zh-HK' : 'en-HK', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Hong_Kong' });
     }
 
-    // ──────────────────────────────────────────────
-    // PSR (Rain Probability) helpers
-    // ──────────────────────────────────────────────
+    // PSR Rain Probability helpers
     function normalizePsr(psr) {
       if (!psr) return 'Low';
       const str = String(psr).trim();
@@ -528,18 +531,11 @@
       return labels[norm] || psr;
     }
 
-    // ──────────────────────────────────────────────
-    // ICON URL builder
-    // ──────────────────────────────────────────────
     function iconUrl(code) {
       return `${iconBaseUrl}${code}.png`;
     }
 
-    // ──────────────────────────────────────────────
-    // WEEK DAY helper
-    // ──────────────────────────────────────────────
     function parseHKODate(dateStr) {
-      // dateStr like "20260729"
       const y = parseInt(dateStr.substr(0,4));
       const m = parseInt(dateStr.substr(4,2)) - 1;
       const d = parseInt(dateStr.substr(6,2));
@@ -551,12 +547,11 @@
       const today = new Date();
       today.setHours(0,0,0,0);
       const diff = Math.round((d - today) / 86400000);
-      if (diff === 0) return currentLang === 'tc' ? '今天' : 'Today';
-      if (diff === 1) return currentLang === 'tc' ? '明天' : 'Tomorrow';
-      const dayNames = currentLang === 'tc'
-        ? ['日','一','二','三','四','五','六']
-        : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      return dayNames[d.getDay()];
+      if (diff === 0) return t('lbl_today');
+      if (diff === 1) return t('lbl_tomorrow');
+      const dayNamesTc = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+      const dayNamesEn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      return currentLang === 'tc' ? dayNamesTc[d.getDay()] : dayNamesEn[d.getDay()];
     }
 
     function shortDate(dateStr) {
@@ -567,9 +562,6 @@
       return `${d.getDate()} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
     }
 
-    // ──────────────────────────────────────────────
-    // UV Description
-    // ──────────────────────────────────────────────
     function uvLabel(val) {
       if (val <= 2) return t('uvDesc').low;
       if (val <= 5) return t('uvDesc').moderate;
@@ -585,9 +577,6 @@
       return '#a855f7';
     }
 
-    // ──────────────────────────────────────────────
-    // FETCH
-    // ──────────────────────────────────────────────
     async function fetchData(dataType) {
       const lang = currentLang === 'tc' ? 'tc' : 'en';
       const url = `${PROXY}?dataType=${dataType}&lang=${lang}`;
@@ -596,16 +585,12 @@
       return res.json();
     }
 
-    // ──────────────────────────────────────────────
-    // MAIN RENDER
-    // ──────────────────────────────────────────────
     async function loadWeather() {
       if (isLoading) return;
       isLoading = true;
       setRefreshState(true);
 
       try {
-        // Fetch all APIs in parallel
         const [rhrread, fnd, flw, warnsum, warningInfo, swt] = await Promise.allSettled([
           fetchData('rhrread'),
           fetchData('fnd'),
@@ -642,12 +627,8 @@
       setRefreshState(false);
     }
 
-    // ──────────────────────────────────────────────
-    // RENDER: Main current weather
-    // ──────────────────────────────────────────────
     function renderMain(cur, forecast9) {
       if (!cur) return;
-      // Temperature from HK Observatory
       const hkoTemp = cur.temperature?.data?.find(d => d.place === 'Hong Kong Observatory');
       const temp = hkoTemp?.value ?? cur.temperature?.data?.[0]?.value ?? '--';
       const icon = cur.icon?.[0];
@@ -663,12 +644,12 @@
         document.getElementById('mainIcon').alt = `Weather icon ${icon}`;
       }
 
-      // Description from warningMessage or icon desc
       const warnMsgs = cur.warningMessage;
       const warnText = Array.isArray(warnMsgs) && warnMsgs.length > 0 ? warnMsgs[0] : '';
-      document.getElementById('mainDesc').textContent = warnText || '';
+      const iconFallback = HKO_ICONS[icon]?.[currentLang] || '';
+      document.getElementById('mainDesc').textContent = warnText || iconFallback;
 
-      document.getElementById('locationText').textContent = t('locationText');
+      document.getElementById('locationText').innerHTML = `<a href="https://wwfun3.github.io/busweather/bus" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-white/70 transition-colors">${t('locationText')}</a>`;
       document.getElementById('statHumidity').textContent = humidity != null ? `${humidity}%` : '--';
 
       const uvEl = document.getElementById('statUV');
@@ -690,9 +671,6 @@
       }
     }
 
-    // ──────────────────────────────────────────────
-    // RENDER: Warnings
-    // ──────────────────────────────────────────────
     function renderWarnings(warnings, warnDetails) {
       const section = document.getElementById('warningSection');
       if (!warnings || Object.keys(warnings).length === 0) {
@@ -701,7 +679,6 @@
         return;
       }
 
-      // Build detail map
       const detailMap = {};
       if (warnDetails?.details) {
         for (const d of warnDetails.details) {
@@ -717,7 +694,6 @@
         const detail = detailMap[code];
         const contents = detail?.contents || [];
 
-        // Build timing info
         let timingHTML = '';
         if (w.issueTime) {
           timingHTML += `<div class="flex items-start gap-1.5 text-xs text-white/60 mt-1">
@@ -730,23 +706,16 @@
             <span class="text-white/40 shrink-0">${t('warningExpires')}</span>
             <span class="text-amber-300 font-semibold">${formatDateTime(w.expireTime)}</span>
           </div>`;
-          timingHTML += `<div class="mt-2 flex items-center gap-1.5 text-xs bg-white/5 rounded-lg px-2 py-1.5">
-            <span class="text-white/50">${t('warningDowngrade')}</span>
-            <span class="font-bold text-amber-300">${formatDateTime(w.expireTime)}</span>
-          </div>`;
         }
         if (w.updateTime) {
           timingHTML += `<div class="text-xs text-white/35 mt-1">${t('warningUpdated')} ${formatDateTime(w.updateTime)}</div>`;
         }
 
-        // Signal level badge for TC or Rain
         let levelBadge = '';
         if (w.type) levelBadge = `<span class="badge ml-2" style="background:rgba(255,255,255,0.15);color:#fbbf24;">${w.type}</span>`;
 
-        // First content line as sub-description
         const subDesc = contents.length > 0 ? `<p class="text-white/65 text-xs leading-relaxed mt-2">${contents[0]}</p>` : '';
 
-        // Precautions
         let precautions = '';
         if (contents.length > 1) {
           const items = contents.slice(1).filter(c => c.trim());
@@ -778,9 +747,6 @@
       section.classList.remove('hidden');
     }
 
-    // ──────────────────────────────────────────────
-    // RENDER: Special Tips
-    // ──────────────────────────────────────────────
     function renderSpecialTips(swtData) {
       if (!swtData?.swt || swtData.swt.length === 0) return;
       const section = document.getElementById('warningSection');
@@ -798,9 +764,6 @@
       section.classList.remove('hidden');
     }
 
-    // ──────────────────────────────────────────────
-    // RENDER: General Situation / Local Forecast
-    // ──────────────────────────────────────────────
     function renderSituation(flw) {
       const card = document.getElementById('situationCard');
       if (!flw?.generalSituation) { card.classList.add('hidden'); return; }
@@ -822,9 +785,6 @@
       card.classList.remove('hidden');
     }
 
-    // ──────────────────────────────────────────────
-    // RENDER: 2-Day Cards (Today & Tomorrow)
-    // ──────────────────────────────────────────────
     function renderTwoDayCards(forecast9) {
       const container = document.getElementById('twoDayCards');
       const labelEl = document.getElementById('lbl-2day');
@@ -851,7 +811,6 @@
               <div class="flex items-baseline gap-2 mb-1">
                 <span class="text-lg font-bold text-white">${label}</span>
                 <span class="text-xs text-white/40">${dateStr}</span>
-                <span class="text-xs text-white/40">${day.week || ''}</span>
               </div>
               <p class="text-white/70 text-xs leading-relaxed mb-3">${day.forecastWeather}</p>
               <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
@@ -884,9 +843,6 @@
       labelEl.textContent = t('lbl_2day');
     }
 
-    // ──────────────────────────────────────────────
-    // RENDER: 9-Day Forecast
-    // ──────────────────────────────────────────────
     function renderNineDay(forecast9) {
       const container = document.getElementById('nineDayForecast');
       const labelEl = document.getElementById('lbl-9day');
@@ -905,7 +861,7 @@
         const isLast = i === days.length - 1;
 
         html += `<div class="flex items-center gap-3 px-4 py-3 ${!isLast ? 'border-b border-white/[0.06]' : ''}">
-          <div class="w-14 shrink-0">
+          <div class="w-16 shrink-0">
             <div class="text-sm font-semibold text-white">${label}</div>
             <div class="text-xs text-white/35">${dateStr}</div>
           </div>
@@ -919,7 +875,7 @@
               <div style="width:${psrW}%;background:${psrC};height:3px;border-radius:9px;"></div>
             </div>
           </div>
-          <div class="shrink-0 text-xs text-white/40 hidden sm:block w-20 text-right truncate">${day.forecastWind.split(',')[0]}</div>
+          <div class="shrink-0 text-xs text-white/40 hidden sm:block w-24 text-right truncate">${day.forecastWind.split(',')[0]}</div>
         </div>`;
       });
 
@@ -929,15 +885,11 @@
       labelEl.textContent = t('lbl_9day');
     }
 
-    // ──────────────────────────────────────────────
-    // RENDER: Rainfall
-    // ──────────────────────────────────────────────
     function renderRainfall(cur) {
       const card = document.getElementById('rainfallCard');
       if (!cur?.rainfall?.data) { card.classList.add('hidden'); return; }
       document.getElementById('lbl-rainfall').textContent = t('lbl_rainfall');
 
-      // Format time range
       const st = cur.rainfall.startTime;
       const et = cur.rainfall.endTime;
       if (st && et) {
@@ -946,14 +898,12 @@
 
       const data = cur.rainfall.data.filter(d => (d.max || 0) > 0 || (d.min || 0) > 0);
       const allData = cur.rainfall.data;
-
       const maxVal = Math.max(...allData.map(d => d.max || 0), 1);
 
       let html = '';
       if (data.length === 0) {
-        html = `<div class="col-span-2 text-center text-white/40 text-sm py-3">No significant rainfall recorded</div>`;
+        html = `<div class="col-span-2 text-center text-white/40 text-sm py-3">${t('noRainfall')}</div>`;
       } else {
-        // Sort by max descending
         const sorted = [...data].sort((a,b) => (b.max||0) - (a.max||0));
         sorted.forEach(d => {
           const val = d.max || 0;
@@ -978,9 +928,6 @@
       card.classList.remove('hidden');
     }
 
-    // ──────────────────────────────────────────────
-    // UI STATE HELPERS
-    // ──────────────────────────────────────────────
     function showMainContent() {
       document.getElementById('loadingSkeleton').classList.add('hidden');
       document.getElementById('mainContent').classList.remove('hidden');
@@ -994,7 +941,7 @@
         icon.classList.add('spin-slow');
         btn.disabled = true;
         btn.style.opacity = '0.7';
-        text.textContent = currentLang === 'tc' ? '更新中…' : 'Updating…';
+        text.textContent = t('updatingText');
       } else {
         icon.classList.remove('spin-slow');
         btn.disabled = false;
@@ -1014,7 +961,6 @@
         <p class="text-white/30 text-xs mt-1">${err?.message || ''}</p>
       </div>`;
       sec.classList.remove('hidden');
-      // Show skeleton hide
       document.getElementById('loadingSkeleton').classList.add('hidden');
       document.getElementById('mainContent').classList.remove('hidden');
     }
@@ -1024,40 +970,35 @@
       document.getElementById('errorSection').innerHTML = '';
     }
 
-    // ──────────────────────────────────────────────
-    // LANGUAGE TOGGLE
-    // ──────────────────────────────────────────────
     function updateStaticLabels() {
       document.getElementById('app-title').textContent = t('appTitle');
-      document.getElementById('app-subtitle').textContent = t('appSubtitle');
+      document.getElementById('app-subtitle').innerHTML = `<a href="https://wwfun3.github.io/busweather/bus" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-white/80 transition-colors">${t('appSubtitle')}</a>`;
       document.getElementById('langBtn').textContent = t('langBtnText');
       document.getElementById('refreshText').textContent = t('refreshText');
       document.getElementById('lbl-humidity').textContent = t('lbl_humidity');
       document.getElementById('lbl-uv').textContent = t('lbl_uv');
       document.getElementById('lbl-sea').textContent = t('lbl_sea');
+      document.getElementById('lbl-situation').textContent = t('lbl_situation');
+      document.getElementById('lbl-today-fc').textContent = t('lbl_today_fc');
+      document.getElementById('lbl-2day').textContent = t('lbl_2day');
+      document.getElementById('lbl-9day').textContent = t('lbl_9day');
+      document.getElementById('lbl-rainfall').textContent = t('lbl_rainfall');
       document.getElementById('footer-source').textContent = t('footer_source');
       document.getElementById('footer-note').textContent = t('footer_note');
-      document.getElementById('locationText').textContent = t('locationText');
+      document.getElementById('locationText').innerHTML = `<a href="https://wwfun3.github.io/busweather/bus" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-white/70 transition-colors">${t('locationText')}</a>`;
       document.documentElement.lang = currentLang === 'tc' ? 'zh-HK' : 'en';
     }
 
     function toggleLang() {
       currentLang = currentLang === 'en' ? 'tc' : 'en';
       updateStaticLabels();
-      // Re-fetch everything in new language
       refreshData();
     }
 
-    // ──────────────────────────────────────────────
-    // REFRESH BUTTON
-    // ──────────────────────────────────────────────
     function refreshData() {
       loadWeather();
     }
 
-    // ──────────────────────────────────────────────
-    // INIT
-    // ──────────────────────────────────────────────
     updateStaticLabels();
     loadWeather();
   </script>
