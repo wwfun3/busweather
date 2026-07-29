@@ -184,6 +184,7 @@ const TXT = {
 const MOCK_STOPS = [
   { stop: "TM001", name_tc: "屯門公路轉車站", name_en: "Tuen Mun Road Interchange" },
   { stop: "KB001", name_tc: "九龍灣站", name_en: "Kowloon Bay Station" },
+  { stop: "PU001", name_tc: "香港理工大學", name_en: "Hong Kong Polytechnic University" },
   { stop: "RG001", name_tc: "御海灣", name_en: "Regent" },
   { stop: "GV001", name_tc: "豐景園", name_en: "Goodview Garden" },
   { stop: "HH001", name_tc: "紅磡站總站", name_en: "Hung Hom Station Bus Terminus" },
@@ -193,6 +194,7 @@ const MOCK_STOPS = [
 const QUICK_PICKS = [
   { tc: "屯門公路轉車站", en: "Tuen Mun Road BBI" },
   { tc: "九龍灣站", en: "Kowloon Bay Station" },
+  { tc: "香港理工大學", en: "Hong Kong PolyU" },
   { tc: "御海灣", en: "Regent" },
   { tc: "豐景園", en: "Goodview Garden" },
   { tc: "紅磡站總站", en: "Hung Hom Station Bus Terminus" },
@@ -721,6 +723,7 @@ async function selectStation(key, displayTitle){
     for(const [k, v] of state.stationGroups.entries()){
       if(k === key || v.name_en === key || v.name_tc === key || 
          (key.includes("紅磡") && (k.includes("紅磡") || (v.name_tc && v.name_tc.includes("紅磡")))) ||
+         (key.includes("理工") && (k.includes("理工") || (v.name_tc && v.name_tc.includes("理工")))) ||
          (key.includes("寧波街") && (k.includes("寧波街") || (v.name_tc && v.name_tc.includes("寧波街"))))){
         group = v;
         break;
@@ -728,7 +731,7 @@ async function selectStation(key, displayTitle){
     }
   }
   if(!group){
-    group = { name_tc: key, name_en: key, stopIds: ["HH001"] };
+    group = { name_tc: key, name_en: key, stopIds: ["PU001"] };
   }
 
   const titleText = qp ? (state.lang === "tc" ? qp.tc : qp.en) : (displayTitle || (state.lang === "tc" ? group.name_tc : group.name_en));
