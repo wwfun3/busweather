@@ -46,7 +46,7 @@
         <div class="w-10 h-10 rounded-xl bg-[var(--primary)] flex items-center justify-center text-white font-black text-lg shadow-lg shrink-0">巴</div>
         <div>
           <h1 id="appTitle" class="text-lg sm:text-2xl font-extrabold leading-tight">九巴到站時間</h1>
-          <p id="appSubtitle" class="text-xs sm:text-sm text-[var(--muted)]">實時巴士到站資訊 · KMB Open API</p>
+          <p id="appSubtitle" class="text-xs sm:text-sm text-[var(--muted)]"><a href="https://hkbus.app/zh/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--accent)] font-semibold">實時巴士到站資訊</a> · KMB Open API</p>
         </div>
       </div>
       <div class="flex items-center gap-2 flex-wrap">
@@ -138,7 +138,7 @@ const TM_REGEX = /屯門|兆康/;
 
 const TXT = {
   tc:{
-    appTitle:"九巴到站時間", appSubtitle:"實時巴士到站資訊 · KMB Open API",
+    appTitle:"九巴到站時間", appSubtitle:`<a href="https://hkbus.app/zh/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--accent)] font-semibold">實時巴士到站資訊</a> · <a href="https://wwfun3.github.io/busweather/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--accent)] font-semibold">KMB Open API</a>`,
     langBtnLabel:"English", contrastBtnLabel:"高對比模式", refreshBtnLabel:"重新整理",
     tabRouteLabel:"🚌 按路線搜尋", tabStationLabel:"🚏 按車站搜尋", tabInterchangeLabel:"🔀 屯門公路轉車站",
     routeSearchPlaceholder:"輸入路線號碼，例如 6, 60X, 961",
@@ -159,7 +159,7 @@ const TXT = {
     boundLabel:"方向", serviceNote:"班次備註"
   },
   en:{
-    appTitle:"KMB Bus Arrival Times", appSubtitle:"Live Bus Arrival Info · KMB Open API",
+    appTitle:"KMB Bus Arrival Times", appSubtitle:`<a href="https://hkbus.app/zh/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--accent)] font-semibold">Live Bus Arrival Info</a> · <a href="https://wwfun3.github.io/busweather/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--accent)] font-semibold">KMB Open API</a>`,
     langBtnLabel:"中文", contrastBtnLabel:"High Contrast", refreshBtnLabel:"Refresh",
     tabRouteLabel:"🚌 Route Search", tabStationLabel:"🚏 Station Board", tabInterchangeLabel:"🔀 Tuen Mun Rd Interchange",
     routeSearchPlaceholder:"Enter route number, e.g. 6, 60X, 961",
@@ -450,7 +450,7 @@ function representativeByBound(routeNo){
 function renderStatic(){
   document.title = t("appTitle");
   document.getElementById("appTitle").textContent = t("appTitle");
-  document.getElementById("appSubtitle").textContent = t("appSubtitle");
+  document.getElementById("appSubtitle").innerHTML = t("appSubtitle");
   document.getElementById("langBtnLabel").textContent = t("langBtnLabel");
   document.getElementById("contrastBtnLabel").textContent = t("contrastBtnLabel");
   document.getElementById("refreshBtnLabel").textContent = t("refreshBtnLabel");
