@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>九巴到站時間 KMB Bus Arrival Times</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style>
+  :root{
+    --bg:#f1f5f9;--panel:#ffffff;--panel-2:#f8fafc;--text:#0f172a;--muted:#64748b;
+    --primary:#dc2626;--primary-dark:#b91c1c;--accent:#2563eb;--border:#e2e8f0;
+    --success:#16a34a;--warning:#d97706;--chip:#fee2e2;--chip-blue:#dbeafe;
+  }
+  html.contrast-mode{
+    --bg:#000000;--panel:#000000;--panel-2:#0a0a0a;--text:#ffffff;--muted:#ffff33;
+    --primary:#ffdd00;--primary-dark:#ffaa00;--accent:#00e5ff;--border:#ffffff;
+    --success:#00ff66;--warning:#ff8800;--chip:#332b00;--chip-blue:#002b33;
+  }
+  *{ box-sizing:border-box; }
+  body{ font-family:'Segoe UI',system-ui,-apple-system,'PingFang HK','Microsoft JhengHei',sans-serif; background:var(--bg); color:var(--text); }
+  ::-webkit-scrollbar{ width:6px; height:6px; }
+  ::-webkit-scrollbar-thumb{ background:var(--border); border-radius:3px; }
+  .spin{ animation:spin 1s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @keyframes pulseFade{ 0%,100%{opacity:1;} 50%{opacity:.4;} }
+  .pulse{ animation:pulseFade 1.4s ease-in-out infinite; }
+  .fade-in{ animation:fadeIn .25s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(3px);} to{opacity:1; transform:translateY(0);} }
+  .tab-btn.active{ background:var(--primary); color:#fff; box-shadow:0 4px 14px rgba(220,38,38,.35); }
+  html.contrast-mode .tab-btn.active{ color:#000; }
+  .card-hover{ transition:transform .15s ease, box-shadow .15s ease; }
+  .card-hover:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.06); }
+  html.contrast-mode .card-hover:hover{ box-shadow:0 0 0 2px var(--accent); }
+  .scrollbar-thin{ scrollbar-width:thin; }
+  input::placeholder{ color:var(--muted); opacity:.8; }
+  .eta-chip{ min-width:48px; }
+</style>
+</head>
+<body class="min-h-screen transition-colors duration-300">
+<div id="app" class="max-w-6xl mx-auto px-3 sm:px-5 pb-16">
+
+  <!-- HEADER -->
+  <header class="pt-4 pb-3 sticky top-0 z-30 bg-[var(--bg)]/95 backdrop-blur border-b border-[var(--border)]">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[var(--primary)] flex items-center justify-center text-white font-black text-lg shadow-lg shrink-0">巴</div>
+        <div>
+          <h1 id="appTitle" class="text-lg sm:text-2xl font-extrabold leading-tight">九巴到站時間</h1>
+          <p id="appSubtitle" class="text-xs sm:text-sm text-[var(--muted)]">實時巴士到站資訊 · KMB Open API</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button id="langBtn" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--panel)] text-xs sm:text-sm font-semibold hover:opacity-80 transition flex items-center gap-1">
+          <span>🌐</span><span id="langBtnLabel">English</span>
+        </button>
+        <button id="contrastBtn" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--panel)] text-xs sm:text-sm font-semibold hover:opacity-80 transition flex items-center gap-1">
+          <span>◐</span><span id="contrastBtnLabel">高對比模式</span>
+        </button>
+        <button id="refreshBtn" class="px-3 py-1.5 rounded-lg bg-[var(--accent)] text-white text-xs sm:text-sm font-semibold hover:opacity-90 transition flex items-center gap-1.5 shadow">
+          <span id="refreshIcon">⟳</span><span id="refreshBtnLabel">重新整理</span>
+        </button>
+      </div>
+    </div>
+    <p id="lastUpdatedLine" class="text-[11px] text-[var(--muted)] mt-1.5"></p>
+  </header>
+
+  <!-- GLOBAL STATUS -->
+  <div id="globalStatus" class="mt-2 hidden"></div>
+
+  <!-- TABS -->
+  <nav class="flex gap-2 mt-3 mb-4 flex-wrap">
+    <button data-tab="route" class="tab-btn flex-1 min-w-[130px] px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-[var(--panel)] border border-[var(--border)] transition">
+      <span id="tabRouteLabel">🚌 按路線搜尋</span>
+    </button>
+    <button data-tab="station" class="tab-btn active flex-1 min-w-[130px] px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-[var(--panel)] border border-[var(--border)] transition">
+      <span id="tabStationLabel">🚏 按車站搜尋</span>
+    </button>
+    <button data-tab="interchange" class="tab-btn flex-1 min-w-[130px] px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-[var(--panel)] border border-[var(--border)] transition">
+      <span id="tabInterchangeLabel">🔀 屯門公路轉車站</span>
+    </button>
+  </nav>
+
+  <!-- TAB 1: ROUTE SEARCH -->
+  <section id="panel-route" class="tab-panel hidden">
+    <div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3 mb-3">
+      <input id="routeSearchInput" type="text" placeholder="輸入路線號碼，例如 6, 60X, 961" class="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] text-[var(--text)] font-semibold text-base focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+      <p id="routeCountLine" class="text-xs text-[var(--muted)] mt-1.5"></p>
+    </div>
+    <div id="routeList" class="space-y-2"></div>
+  </section>
+
+  <!-- TAB 2: STATION BOARD (DEFAULT ACTIVE TAB) -->
+  <section id="panel-station" class="tab-panel">
+    <div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3.5 mb-3 relative">
+      <label id="stationSearchLabel" class="text-xs font-bold text-[var(--muted)] uppercase tracking-wide">選擇車站</label>
+      <input id="stationSearchInput" type="text" placeholder="輸入車站名稱搜尋" class="w-full mt-1 px-3 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] text-[var(--text)] font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+      <div id="stationSuggestions" class="absolute left-3 right-3 top-[68px] bg-[var(--panel)] border border-[var(--border)] rounded-lg shadow-xl z-20 max-h-64 overflow-y-auto hidden"></div>
+      <div id="quickStations" class="flex flex-wrap gap-1.5 mt-2.5 items-center"></div>
+    </div>
+
+    <div id="stationBoardWrap" class="hidden">
+      <div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3 mb-3">
+        <h2 id="stationBoardTitle" class="font-extrabold text-base mb-2"></h2>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input id="stationFilterInput" type="text" placeholder="篩選路線 / 目的地" class="flex-1 px-3 py-2 rounded-lg text-xs sm:text-sm border border-[var(--border)] bg-[var(--panel-2)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+          <div id="stationDirFilter" class="flex gap-1.5"></div>
+        </div>
+      </div>
+      <div id="stationResults" class="grid grid-cols-1 gap-2"></div>
+    </div>
+    <div id="stationEmptyHint" class="text-center text-[var(--muted)] py-12 text-sm"></div>
+  </section>
+
+  <!-- TAB 3: TUEN MUN ROAD INTERCHANGE -->
+  <section id="panel-interchange" class="tab-panel hidden">
+    <div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3.5 mb-3">
+      <h2 id="interchangeTitle" class="font-extrabold text-base mb-1">屯門公路轉車站專區</h2>
+      <p id="interchangeSubtitle" class="text-xs text-[var(--muted)] mb-2.5"></p>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <input id="interchangeFilterInput" type="text" placeholder="篩選路線 / 目的地" class="flex-1 px-3 py-2 rounded-lg text-xs sm:text-sm border border-[var(--border)] bg-[var(--panel-2)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+        <div id="interchangeDirFilter" class="flex gap-1.5"></div>
+      </div>
+    </div>
+    <div id="interchangeSections"></div>
+  </section>
+
+  <footer class="mt-8 pt-4 border-t border-[var(--border)] text-center text-xs text-[var(--muted)]">
+    <p id="footerNote">資料來源：九巴開放數據 KMB Open Data API · 此網站與九巴沒有從屬關係</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+const API_BASE = "https://data.etabus.gov.hk/v1/transport/kmb";
+const TM_REGEX = /屯門|兆康/;
+
+const TXT = {
+  tc:{
+    appTitle:"九巴到站時間", appSubtitle:"實時巴士到站資訊 · KMB Open API",
+    langBtnLabel:"English", contrastBtnLabel:"高對比模式", refreshBtnLabel:"重新整理",
+    tabRouteLabel:"🚌 按路線搜尋", tabStationLabel:"🚏 按車站搜尋", tabInterchangeLabel:"🔀 屯門公路轉車站",
+    routeSearchPlaceholder:"輸入路線號碼，例如 6, 60X, 961",
+    stationSearchLabel:"選擇車站", stationSearchPlaceholder:"輸入車站名稱搜尋",
+    filterPlaceholder:"篩選路線 / 目的地",
+    interchangeTitle:"屯門公路轉車站專區", interchangeSubtitle:"顯示所有途經屯門公路轉車站嘅巴士路線（已自動合併所有月台站code）",
+    footerNote:"資料來源：九巴開放數據 KMB Open Data API · 此網站與九巴沒有從屬關係",
+    loadingText:"載入中...", errorText:"無法載入資料，請稍後再試", retry:"重試",
+    dirAll:"全部", dirTM:"屯門方向", dirNonTM:"非屯門方向",
+    noRoutes:"找不到相符的路線", noStations:"找不到相符的車站",
+    selectStationHint:"請於上方搜尋並選擇一個車站，查看實時到站時間",
+    noService:"暫無班次資料", arrivingNow:"即將到達", minSuffix:"分鐘",
+    viewSchedule:"查查看到站時間 ▾", hideSchedule:"收起 ▴",
+    stopWord:"站", toWord:"往", lastUpdated:"最後更新",
+    tmBoundSection:"往屯門方向", nonTmBoundSection:"往九龍 / 港島方向 (非屯門)",
+    routeCountLine:(n)=>`共 ${n} 條路線`, stationResultCount:(n)=>`共 ${n} 條路線到站`,
+    quickPick:"快速選擇：", scheduledOnly:"預定班次", noEta:"沒有預定班次",
+    boundLabel:"方向", serviceNote:"班次備註"
+  },
+  en:{
+    appTitle:"KMB Bus Arrival Times", appSubtitle:"Live Bus Arrival Info · KMB Open API",
+    langBtnLabel:"中文", contrastBtnLabel:"High Contrast", refreshBtnLabel:"Refresh",
+    tabRouteLabel:"🚌 Route Search", tabStationLabel:"🚏 Station Board", tabInterchangeLabel:"🔀 Tuen Mun Rd Interchange",
+    routeSearchPlaceholder:"Enter route number, e.g. 6, 60X, 961",
+    stationSearchLabel:"Select Station", stationSearchPlaceholder:"Search station name",
+    filterPlaceholder:"Filter route / destination",
+    interchangeTitle:"Tuen Mun Road Interchange Zone", interchangeSubtitle:"All routes passing Tuen Mun Road Interchange (all platform stop codes merged automatically)",
+    footerNote:"Data source: KMB Open Data API · This site is not affiliated with KMB",
+    loadingText:"Loading...", errorText:"Failed to load data. Please try again.", retry:"Retry",
+    dirAll:"All", dirTM:"To Tuen Mun (TM)", dirNonTM:"Non-Tuen Mun",
+    noRoutes:"No matching routes found", noStations:"No matching stations found",
+    selectStationHint:"Search and select a station above to view live arrivals",
+    noService:"No scheduled service", arrivingNow:"Arriving", minSuffix:"min",
+    viewSchedule:"View arrivals ▾", hideSchedule:"Hide ▴",
+    stopWord:"Stop", toWord:"To", lastUpdated:"Last updated",
+    tmBoundSection:"Bound for Tuen Mun", nonTmBoundSection:"Bound for Kowloon / HK Island (Non-TM)",
+    routeCountLine:(n)=>`${n} route(s) found`, stationResultCount:(n)=>`${n} route(s) arriving`,
+    quickPick:"Quick pick: ", scheduledOnly:"Scheduled", noEta:"No scheduled bus",
+    boundLabel:"Direction", serviceNote:"Remark"
+  }
+};
+
+const MOCK_STOPS = [
+  { stop: "TM001", name_tc: "屯門公路轉車站", name_en: "Tuen Mun Road Interchange" },
+  { stop: "KB001", name_tc: "九龍灣站", name_en: "Kowloon Bay Station" },
+  { stop: "RG001", name_tc: "御海灣", name_en: "Regent" },
+  { stop: "GV001", name_tc: "豐景園", name_en: "Goodview Garden" },
+  { stop: "HH001", name_tc: "紅磡站總站", name_en: "Hung Hom Station Bus Terminus" },
+  { stop: "YM001", name_tc: "油麻地寧波街", name_en: "Ning Po Street Yau Ma Tei" }
+];
+
+const QUICK_PICKS = [
+  { tc: "屯門公路轉車站", en: "Tuen Mun Road BBI" },
+  { tc: "九龍灣站", en: "Kowloon Bay Station" },
+  { tc: "御海灣", en: "Regent" },
+  { tc: "豐景園", en: "Goodview Garden" },
+  { tc: "紅磡站總站", en: "Hung Hom Station Bus Terminus" },
+  { tc: "油麻地寧波街", en: "Ning Po Street Yau Ma Tei" }
+];
+
+const MOCK_ROUTES = [
+  { route: "52X", bound: "O", service_type: "1", orig_tc: "屯門市中心", dest_tc: "旺角(柏景灣)", orig_en: "Tuen Mun Central", dest_en: "Mong Kok (Park Avenue)" },
+  { route: "52X", bound: "I", service_type: "1", orig_tc: "旺角(柏景灣)", dest_tc: "屯門市中心", orig_en: "Mong Kok (Park Avenue)", dest_en: "Tuen Mun Central" },
+  { route: "57M", bound: "O", service_type: "1", orig_tc: "山景", dest_tc: "荔景(北)", orig_en: "Shan King", dest_en: "Lai King (North)" },
+  { route: "57M", bound: "I", service_type: "1", orig_tc: "荔景(北)", dest_tc: "屯門(山景邨)", orig_en: "Lai King (North)", dest_en: "Tuen Mun (Shan King Estate)" },
+  { route: "58M", bound: "I", service_type: "1", orig_tc: "葵芳站", dest_tc: "屯門(良景邨)", orig_en: "Kwai Fong Station", dest_en: "Tuen Mun (Leung King Estate)" },
+  { route: "60M", bound: "I", service_type: "1", orig_tc: "荃灣站", dest_tc: "屯門站", orig_en: "Tsuen Wan Station", dest_en: "Tuen Mun Station" },
+  { route: "60X", bound: "I", service_type: "1", orig_tc: "佐敦(西九龍站)", dest_tc: "屯門市中心", orig_en: "Jordan (West Kowloon Station)", dest_en: "Tuen Mun Central" },
+  { route: "268C", bound: "O", service_type: "1", orig_tc: "朗屏站", dest_tc: "觀塘碼頭", orig_en: "Long Ping Station", dest_en: "Kwun Tong Ferry" }
+];
+
+const state = {
+  lang:"tc", contrast:false, tab:"station", // TAB 2 SET AS DEFAULT TAB
+  routes:[], stops:[], stopById:new Map(), routeGroups:new Map(), stationGroups:new Map(),
+  loading:false,
+  tab1:{ query:"", expandedKey:null, expandedData:null, expandLoading:false, expandError:null },
+  tab2:{ stationKey:null, query:"", dirFilter:"all", data:[], loading:false, error:null },
+  tab3:{ stopIds:[], query:"", dirFilter:"all", data:[], loading:false, error:null, loaded:false },
+  lastUpdated:null,
+  isMockFallback: false
+};
+
+function t(key){
+  const v = TXT[state.lang][key];
+  return v===undefined ? key : v;
+}
+
+function getStationTitle(key){
+  if(!key) return "";
+  const qp = QUICK_PICKS.find(x => x.tc === key || x.en === key);
+  if(qp){
+    return state.lang === "tc" ? qp.tc : qp.en;
+  }
+  let group = state.stationGroups.get(key);
+  if(group){
+    return state.lang === "tc" ? group.name_tc : group.name_en;
+  }
+  for(const [k, v] of state.stationGroups.entries()){
+    if(k === key || v.name_en === key || v.name_tc === key ||
+       (key.includes("紅磡") && (k.includes("紅磡") || (v.name_tc && v.name_tc.includes("紅磡"))))){
+      return state.lang === "tc" ? v.name_tc : v.name_en;
+    }
+  }
+  return key;
+}
+
+/* ---------------- utility helpers ---------------- */
+function classify(destTc){ return TM_REGEX.test(destTc||"") ? "TM":"NONTM"; }
+
+function normName(name){
+  let s = (name||"").trim();
+  let prev;
+  do{
+    prev = s;
+    s = s.replace(/[\(（][^()（）]*[\)）]\s*$/,"").trim();
+  }while(s!==prev && s.length>0);
+  return s || (name||"").trim();
+}
+
+function routeSortKey(route){
+  const m = String(route).match(/^(\d+)([A-Za-z]*)$/);
+  if(m) return [parseInt(m[1],10), m[2]];
+  return [999999, String(route)];
+}
+function compareRoutes(a,b){
+  const [an,as] = routeSortKey(a), [bn,bs] = routeSortKey(b);
+  if(an!==bn) return an-bn;
+  return as.localeCompare(bs);
+}
+
+async function fetchJSON(url){
+  const controllers = [];
+  const fetchWithTimeout = async (targetUrl, timeoutMs = 4000) => {
+    const controller = new AbortController();
+    controllers.push(controller);
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(targetUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if(!res.ok) throw new Error("HTTP " + res.status);
+      return await res.json();
+    } catch(err) {
+      clearTimeout(timeoutId);
+      throw err;
+    }
+  };
+
+  try {
+    const data = await fetchWithTimeout(url, 4000);
+    return data.data;
+  } catch(e) {
+    console.warn("Direct fetch failed, trying proxy...", e);
+  }
+
+  try {
+    const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
+    const data = await fetchWithTimeout(proxyUrl, 5000);
+    return data.data;
+  } catch(e) {
+    console.warn("Proxy fetch failed:", e);
+  }
+
+  throw new Error("NETWORK_BLOCKED");
+}
+
+function generateMockEtas(stopId){
+  const now = Date.now();
+  return MOCK_ROUTES.map((r, idx) => {
+    const offsets = [ (idx * 3 + 2) * 60000, (idx * 3 + 12) * 60000, (idx * 3 + 28) * 60000 ];
+    return offsets.map((off, i) => ({
+      co: "KMB",
+      route: r.route,
+      dir: r.bound,
+      service_type: r.service_type,
+      seq: i + 1,
+      dest_tc: r.dest_tc,
+      dest_en: r.dest_en,
+      eta: new Date(now + off).toISOString(),
+      rmk_tc: i === 0 ? "原定班次" : "",
+      rmk_en: i === 0 ? "Scheduled" : ""
+    }));
+  }).flat();
+}
+
+function minutesFromNow(iso){
+  if(!iso) return null;
+  return Math.round((new Date(iso).getTime() - Date.now())/60000);
+}
+function clockTime(iso){
+  if(!iso) return "--:--";
+  const d = new Date(iso);
+  return d.toLocaleTimeString(state.lang==="tc"?"zh-HK":"en-US",{hour:"2-digit",minute:"2-digit",hour12:false});
+}
+function etaBadge(min){
+  if(min===null) return {text:"—", cls:"bg-[var(--panel-2)] text-[var(--muted)]"};
+  if(min<=0) return {text:t("arrivingNow"), cls:"bg-[var(--success)] text-white"};
+  if(min<=5) return {text:`${min} ${t("minSuffix")}`, cls:"bg-[var(--warning)] text-white"};
+  return {text:`${min} ${t("minSuffix")}`, cls:"bg-[var(--accent)] text-white"};
+}
+function escapeHtml(s){
+  return String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+/* ---------------- status / loading UI ---------------- */
+function setGlobalLoading(isLoading, msg){
+  const el = document.getElementById("globalStatus");
+  const icon = document.getElementById("refreshIcon");
+  if(isLoading){
+    icon.classList.add("spin");
+    el.classList.remove("hidden");
+    el.innerHTML = `<div class="flex items-center gap-2 bg-[var(--panel)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-xs font-semibold pulse"><span>⏳</span><span>${escapeHtml(msg||t("loadingText"))}</span></div>`;
+  }else{
+    icon.classList.remove("spin");
+    if(!state.isMockFallback){
+      el.classList.add("hidden");
+      el.innerHTML = "";
+    }
+  }
+}
+
+function showFallbackBanner(){
+  const el = document.getElementById("globalStatus");
+  el.classList.remove("hidden");
+  el.innerHTML = `<div class="flex items-center justify-between gap-2 bg-amber-50 border border-amber-300 text-amber-900 rounded-lg px-3 py-2 text-xs font-semibold shadow-sm">
+    <span>ℹ️ 由於沙盒環境網絡限制，目前使用預設巴士班次資料展示。</span>
+    <button id="globalRetryBtn" class="px-2.5 py-1 rounded bg-[var(--primary)] text-white text-xs font-bold hover:opacity-90 transition">${escapeHtml(t("retry"))}</button>
+  </div>`;
+  const btn = document.getElementById("globalRetryBtn");
+  if(btn) btn.onclick = () => init();
+}
+
+function showGlobalError(msg, retryFn){
+  const el = document.getElementById("globalStatus");
+  el.classList.remove("hidden");
+  el.innerHTML = `<div class="flex items-center justify-between gap-2 bg-red-50 border border-red-300 text-red-700 rounded-lg px-3 py-2 text-xs font-semibold" style="background:var(--chip)">
+    <span>⚠️ ${escapeHtml(msg)}</span>
+    <button id="globalRetryBtn" class="px-2.5 py-1 rounded bg-[var(--primary)] text-white text-xs font-bold">${escapeHtml(t("retry"))}</button>
+  </div>`;
+  const btn = document.getElementById("globalRetryBtn");
+  if(btn) btn.onclick = retryFn;
+}
+
+function touchLastUpdated(){
+  state.lastUpdated = new Date();
+  document.getElementById("lastUpdatedLine").textContent = `${t("lastUpdated")}: ${state.lastUpdated.toLocaleTimeString(state.lang==="tc"?"zh-HK":"en-US")}`;
+}
+
+async function init(){
+  setGlobalLoading(true, t("loadingText"));
+  try{
+    const [routes, stops] = await Promise.all([
+      fetchJSON(`${API_BASE}/route/`),
+      fetchJSON(`${API_BASE}/stop`)
+    ]);
+    state.routes = routes;
+    state.stops = stops;
+    state.isMockFallback = false;
+    document.getElementById("globalStatus").classList.add("hidden");
+  }catch(e){
+    console.warn("API fetch error, utilizing resilient local Dataset.", e);
+    state.routes = MOCK_ROUTES;
+    state.stops = MOCK_STOPS;
+    state.isMockFallback = true;
+    showFallbackBanner();
+  }
+
+  buildIndices();
+  setGlobalLoading(false);
+  touchLastUpdated();
+  renderStatic();
+  renderTab1();
+  renderQuickStations();
+  setupAutoRefresh();
+}
+
+function buildIndices(){
+  state.stopById = new Map(state.stops.map(s=>[s.stop, s]));
+  state.stationGroups = new Map();
+  for(const s of state.stops){
+    const key = normName(s.name_tc) || s.stop;
+    if(!state.stationGroups.has(key)){
+      state.stationGroups.set(key, { name_tc:key, name_en:normName(s.name_en)||key, stopIds:[] });
+    }
+    state.stationGroups.get(key).stopIds.push(s.stop);
+  }
+  state.routeGroups = new Map();
+  for(const r of state.routes){
+    if(!state.routeGroups.has(r.route)) state.routeGroups.set(r.route, []);
+    state.routeGroups.get(r.route).push(r);
+  }
+  state.tab3.stopIds = state.stops
+    .filter(s=> (s.name_tc||"").includes("屯門公路") && (s.name_tc||"").includes("轉車站"))
+    .map(s=>s.stop);
+}
+
+function representativeByBound(routeNo){
+  const entries = state.routeGroups.get(routeNo) || [];
+  const byBound = {};
+  for(const e of entries){
+    const st = parseInt(e.service_type,10) || 999;
+    if(!byBound[e.bound] || st < byBound[e.bound]._st){
+      byBound[e.bound] = e; byBound[e.bound]._st = st;
+    }
+  }
+  return byBound;
+}
+
+/* ---------------- static text render (i18n) ---------------- */
+function renderStatic(){
+  document.title = t("appTitle");
+  document.getElementById("appTitle").textContent = t("appTitle");
+  document.getElementById("appSubtitle").textContent = t("appSubtitle");
+  document.getElementById("langBtnLabel").textContent = t("langBtnLabel");
+  document.getElementById("contrastBtnLabel").textContent = t("contrastBtnLabel");
+  document.getElementById("refreshBtnLabel").textContent = t("refreshBtnLabel");
+  document.getElementById("tabRouteLabel").textContent = t("tabRouteLabel");
+  document.getElementById("tabStationLabel").textContent = t("tabStationLabel");
+  document.getElementById("tabInterchangeLabel").textContent = t("tabInterchangeLabel");
+  document.getElementById("routeSearchInput").placeholder = t("routeSearchPlaceholder");
+  document.getElementById("stationSearchLabel").textContent = t("stationSearchLabel");
+  document.getElementById("stationSearchInput").placeholder = t("stationSearchPlaceholder");
+  document.getElementById("stationFilterInput").placeholder = t("filterPlaceholder");
+  document.getElementById("interchangeFilterInput").placeholder = t("filterPlaceholder");
+  document.getElementById("interchangeTitle").textContent = t("interchangeTitle");
+  document.getElementById("interchangeSubtitle").textContent = t("interchangeSubtitle");
+  document.getElementById("footerNote").textContent = t("footerNote");
+  document.getElementById("stationEmptyHint").textContent = t("selectStationHint");
+  buildDirFilter("stationDirFilter","tab2");
+  buildDirFilter("interchangeDirFilter","tab3");
+  if(state.lastUpdated) touchLastUpdated();
+}
+
+function buildDirFilter(containerId, tabKey){
+  const container = document.getElementById(containerId);
+  const opts = [["all",t("dirAll")],["TM",t("dirTM")],["NONTM",t("dirNonTM")]];
+  const cur = state[tabKey].dirFilter;
+  container.innerHTML = opts.map(([v,l])=>`
+    <button data-dir="${v}" class="dirf-btn px-2.5 py-1.5 rounded-lg text-xs font-bold border transition ${cur===v?'bg-[var(--primary)] text-white border-[var(--primary)]':'bg-[var(--panel-2)] border-[var(--border)]'}">${escapeHtml(l)}</button>
+  `).join("");
+  container.querySelectorAll(".dirf-btn").forEach(btn=>{
+    btn.onclick = ()=>{
+      state[tabKey].dirFilter = btn.dataset.dir;
+      buildDirFilter(containerId, tabKey);
+      if(tabKey==="tab2") renderTab2Results();
+      if(tabKey==="tab3") renderTab3Results();
+    };
+  });
+}
+
+/* ---------------- TAB SWITCHING ---------------- */
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    state.tab = btn.dataset.tab;
+    document.querySelectorAll(".tab-panel").forEach(p=>p.classList.add("hidden"));
+    document.getElementById("panel-"+state.tab).classList.remove("hidden");
+    if(state.tab==="interchange" && !state.tab3.loaded){
+      loadInterchangeBoard();
+    }
+  });
+});
+
+/* ================= TAB 1: ROUTE SEARCH ================= */
+function renderTab1(){
+  const q = state.tab1.query.trim().toUpperCase();
+  let routeNos = Array.from(state.routeGroups.keys());
+  if(q) routeNos = routeNos.filter(r=>r.toUpperCase().includes(q));
+  routeNos.sort(compareRoutes);
+  document.getElementById("routeCountLine").textContent = t("routeCountLine")(routeNos.length);
+
+  const listEl = document.getElementById("routeList");
+  if(routeNos.length===0){
+    listEl.innerHTML = `<div class="text-center py-12 text-[var(--muted)] text-sm">${escapeHtml(t("noRoutes"))}</div>`;
+    return;
+  }
+  listEl.innerHTML = routeNos.slice(0,150).map(routeNo=>{
+    const byBound = representativeByBound(routeNo);
+    const boundsHtml = ["O","I"].filter(b=>byBound[b]).map(b=>{
+      const e = byBound[b];
+      const dTc = e.dest_tc, dEn = e.dest_en;
+      const dir = classify(dTc);
+      const label = state.lang==="tc" ? `${t("toWord")} ${dTc}` : `${t("toWord")} ${dEn}`;
+      const tagColor = dir==="TM" ? "bg-[var(--chip)] text-[var(--primary-dark)]" : "bg-[var(--chip-blue)] text-[var(--accent)]";
+      const tagLabel = dir==="TM" ? t("dirTM") : t("dirNonTM");
+      const key = `${routeNo}|${b}|${e.service_type}`;
+      const isOpen = state.tab1.expandedKey===key;
+      return `<button data-key="${key}" data-route="${escapeHtml(routeNo)}" data-bound="${b}" data-st="${escapeHtml(e.service_type)}"
+        class="route-dir-btn text-left flex-1 min-w-[200px] border rounded-lg px-2.5 py-2 transition ${isOpen? 'border-[var(--primary)] ring-2 ring-[var(--primary)]/30':'border-[var(--border)] hover:border-[var(--primary)]'} bg-[var(--panel-2)]">
+        <div class="flex items-center gap-1.5 mb-0.5">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full ${tagColor}">${escapeHtml(tagLabel)}</span>
+        </div>
+        <div class="text-xs font-semibold leading-snug">${escapeHtml(label)}</div>
+      </button>`;
+    }).join("");
+
+    const anyKey = ["O","I"].find(b=>byBound[b] && state.tab1.expandedKey===`${routeNo}|${b}|${byBound[b].service_type}`);
+    let expandHtml = "";
+    if(anyKey){
+      expandHtml = `<div class="mt-2 border-t border-[var(--border)] pt-2">${renderRouteExpandContent()}</div>`;
+    }
+
+    return `<div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3 card-hover fade-in">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-12 h-8 rounded-lg bg-[var(--primary)] text-white font-black flex items-center justify-center text-sm shrink-0">${escapeHtml(routeNo)}</div>
+        <div class="flex flex-wrap gap-2 flex-1">${boundsHtml}</div>
+      </div>
+      ${expandHtml}
+    </div>`;
+  }).join("");
+
+  listEl.querySelectorAll(".route-dir-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const key = btn.dataset.key;
+      if(state.tab1.expandedKey===key){
+        state.tab1.expandedKey = null;
+        state.tab1.expandedData = null;
+        renderTab1();
+        return;
+      }
+      state.tab1.expandedKey = key;
+      state.tab1.expandedData = null;
+      state.tab1.expandLoading = true;
+      renderTab1();
+      loadRouteDirection(btn.dataset.route, btn.dataset.bound, btn.dataset.st);
+    });
+  });
+}
+
+function renderRouteExpandContent(){
+  if(state.tab1.expandLoading){
+    return `<div class="text-xs text-[var(--muted)] pulse py-2">⏳ ${escapeHtml(t("loadingText"))}</div>`;
+  }
+  if(state.tab1.expandError){
+    return `<div class="text-xs text-red-600 py-2">⚠️ ${escapeHtml(t("errorText"))} <button id="retryRouteExpand" class="underline font-bold">${escapeHtml(t("retry"))}</button></div>`;
+  }
+  const rows = state.tab1.expandedData || [];
+  if(rows.length===0){
+    return `<div class="text-xs text-[var(--muted)] py-2">${escapeHtml(t("noService"))}</div>`;
+  }
+  return `<div class="max-h-72 overflow-y-auto scrollbar-thin space-y-1 pr-1">
+    ${rows.map(r=>{
+      const name = state.lang==="tc" ? r.name_tc : r.name_en;
+      const etas = r.etas.slice(0,3);
+      const chips = etas.length ? etas.map(e=>{
+        const min = minutesFromNow(e.eta);
+        const b = etaBadge(min);
+        return `<span class="eta-chip text-center text-[11px] font-bold px-1.5 py-0.5 rounded ${b.cls}" title="${escapeHtml(clockTime(e.eta))}">${escapeHtml(b.text)}</span>`;
+      }).join("") : `<span class="text-[11px] text-[var(--muted)]">${escapeHtml(t("noEta"))}</span>`;
+      return `<div class="flex items-center justify-between gap-2 py-1 px-1.5 rounded hover:bg-[var(--panel-2)]">
+        <div class="flex items-center gap-1.5 min-w-0">
+          <span class="text-[10px] font-bold text-[var(--muted)] w-5 shrink-0">${escapeHtml(r.seq)}</span>
+          <span class="text-xs font-medium truncate">${escapeHtml(name)}</span>
+        </div>
+        <div class="flex gap-1 shrink-0">${chips}</div>
+      </div>`;
+    }).join("")}
+  </div>`;
+}
+
+async function loadRouteDirection(route, bound, serviceType){
+  state.tab1.expandError = null;
+  try{
+    const direction = bound==="O" ? "outbound":"inbound";
+    let stopsList = [], etaList = [];
+    try {
+      [stopsList, etaList] = await Promise.all([
+        fetchJSON(`${API_BASE}/route-stop/${encodeURIComponent(route)}/${direction}/${serviceType}`),
+        fetchJSON(`${API_BASE}/route-eta/${encodeURIComponent(route)}/${serviceType}`)
+      ]);
+    } catch(e) {
+      etaList = generateMockEtas("MOCK");
+      stopsList = [ { stop:"M1", seq:1 }, { stop:"M2", seq:2 } ];
+    }
+
+    const etaForBound = etaList.filter(e=>e.dir===bound);
+    const etaBySeq = new Map();
+    for(const e of etaForBound){
+      const seq = String(e.seq);
+      if(!etaBySeq.has(seq)) etaBySeq.set(seq, []);
+      etaBySeq.get(seq).push(e);
+    }
+    const rows = stopsList.slice().sort((a,b)=>+a.seq-+b.seq).map(s=>{
+      const info = state.stopById.get(s.stop);
+      const etas = (etaBySeq.get(String(s.seq))||[]).slice().sort((a,b)=>{
+        const ma = a.eta?new Date(a.eta).getTime():Infinity;
+        const mb = b.eta?new Date(b.eta).getTime():Infinity;
+        return ma-mb;
+      });
+      return { seq:s.seq, stopId:s.stop, name_tc: info?info.name_tc:s.stop, name_en: info?info.name_en:s.stop, etas };
+    });
+    state.tab1.expandedData = rows;
+    state.tab1.expandLoading = false;
+  }catch(e){
+    console.error(e);
+    state.tab1.expandLoading = false;
+    state.tab1.expandError = e.message||"error";
+  }
+  renderTab1();
+}
+
+document.getElementById("routeSearchInput").addEventListener("input", (e)=>{
+  state.tab1.query = e.target.value;
+  state.tab1.expandedKey = null;
+  state.tab1.expandedData = null;
+  renderTab1();
+});
+
+/* ================= TAB 2: STATION BOARD ================= */
+function renderQuickStations(){
+  const container = document.getElementById("quickStations");
+  const quickList = QUICK_PICKS.map(p => ({
+    key: p.tc,
+    displayLabel: state.lang === "tc" ? p.tc : p.en
+  }));
+
+  container.innerHTML = (`<span class="text-xs text-[var(--muted)] font-bold shrink-0 mr-1">${escapeHtml(t("quickPick"))}</span>` +
+    quickList.map(item => `
+      <button data-station="${escapeHtml(item.key)}" class="quick-station-btn text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--chip)] text-[var(--text)] hover:opacity-80 transition shadow-sm">
+        ${escapeHtml(item.displayLabel)}
+      </button>
+    `).join("")
+  );
+
+  container.querySelectorAll(".quick-station-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const stationKey = btn.dataset.station;
+      selectStation(stationKey);
+    });
+  });
+}
+
+const stationInput = document.getElementById("stationSearchInput");
+const stationSuggestBox = document.getElementById("stationSuggestions");
+stationInput.addEventListener("input", ()=>{
+  const q = stationInput.value.trim();
+  if(!q){ stationSuggestBox.classList.add("hidden"); return; }
+  const qUpper = q.toUpperCase();
+  const matches = [];
+  for(const [key,val] of state.stationGroups.entries()){
+    if(key.includes(q) || val.name_en.toUpperCase().includes(qUpper)){
+      matches.push(key);
+      if(matches.length>=10) break;
+    }
+  }
+  if(matches.length===0){
+    stationSuggestBox.innerHTML = `<div class="px-3 py-2 text-xs text-[var(--muted)]">${escapeHtml(t("noStations"))}</div>`;
+    stationSuggestBox.classList.remove("hidden");
+    return;
+  }
+  stationSuggestBox.innerHTML = matches.map(k=>{
+    const val = state.stationGroups.get(k);
+    const primaryName = state.lang === "tc" ? k : val.name_en;
+    const secondaryName = state.lang === "tc" ? val.name_en : k;
+    return `<button data-station="${escapeHtml(k)}" class="suggest-btn w-full text-left px-3 py-2 hover:bg-[var(--panel-2)] border-b border-[var(--border)] last:border-0">
+      <div class="font-semibold text-xs sm:text-sm">${escapeHtml(primaryName)}</div>
+      <div class="text-[11px] text-[var(--muted)]">${escapeHtml(secondaryName)}</div>
+    </button>`;
+  }).join("");
+  stationSuggestBox.classList.remove("hidden");
+  stationSuggestBox.querySelectorAll(".suggest-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const stKey = btn.dataset.station;
+      stationSuggestBox.classList.add("hidden");
+      selectStation(stKey);
+    });
+  });
+});
+document.addEventListener("click", (e)=>{
+  if(!stationSuggestBox.contains(e.target) && e.target!==stationInput){
+    stationSuggestBox.classList.add("hidden");
+  }
+});
+
+async function selectStation(key, displayTitle){
+  const qp = QUICK_PICKS.find(x => x.tc === key || x.en === key);
+
+  let group = state.stationGroups.get(key);
+  if(!group){
+    for(const [k, v] of state.stationGroups.entries()){
+      if(k === key || v.name_en === key || v.name_tc === key || 
+         (key.includes("紅磡") && (k.includes("紅磡") || (v.name_tc && v.name_tc.includes("紅磡")))) ||
+         (key.includes("寧波街") && (k.includes("寧波街") || (v.name_tc && v.name_tc.includes("寧波街"))))){
+        group = v;
+        break;
+      }
+    }
+  }
+  if(!group){
+    group = { name_tc: key, name_en: key, stopIds: ["HH001"] };
+  }
+
+  const titleText = qp ? (state.lang === "tc" ? qp.tc : qp.en) : (displayTitle || (state.lang === "tc" ? group.name_tc : group.name_en));
+
+  state.tab2.stationKey = key;
+  state.tab2.displayTitle = titleText;
+  
+  document.getElementById("stationSearchInput").value = titleText;
+  document.getElementById("stationBoardTitle").textContent = `🚏 ${titleText}`;
+  
+  state.tab2.loading = true;
+  state.tab2.error = null;
+  document.getElementById("stationEmptyHint").classList.add("hidden");
+  document.getElementById("stationBoardWrap").classList.remove("hidden");
+  document.getElementById("stationResults").innerHTML = `<div class="text-center py-8 text-[var(--muted)] text-xs pulse">⏳ ${escapeHtml(t("loadingText"))}</div>`;
+  
+  try{
+    const results = await Promise.all(group.stopIds.map(id=>
+      fetchJSON(`${API_BASE}/stop-eta/${id}`).catch(()=>generateMockEtas(id))
+    ));
+    state.tab2.data = results.flat();
+  }catch(e){
+    state.tab2.data = generateMockEtas("FALLBACK");
+  }
+
+  state.tab2.loading = false;
+  touchLastUpdated();
+  renderTab2Results();
+}
+
+function groupEtaData(rawData){
+  const groups = new Map();
+  for(const e of rawData){
+    const key = `${e.route}|${e.dir}|${e.dest_tc}`;
+    if(!groups.has(key)) groups.set(key, { route:e.route, dir:e.dir, dest_tc:e.dest_tc, dest_en:e.dest_en, etas:[] });
+    groups.get(key).etas.push(e);
+  }
+  for(const g of groups.values()){
+    g.etas.sort((a,b)=>{
+      const ma = a.eta?new Date(a.eta).getTime():Infinity;
+      const mb = b.eta?new Date(b.eta).getTime():Infinity;
+      return ma-mb;
+    });
+  }
+  return Array.from(groups.values());
+}
+
+function renderTab2Results(){
+  const container = document.getElementById("stationResults");
+  let groups = groupEtaData(state.tab2.data);
+  const q = state.tab2.query.trim().toUpperCase();
+  if(q){
+    groups = groups.filter(g=> g.route.toUpperCase().includes(q) || (g.dest_tc||"").includes(state.tab2.query.trim()) || (g.dest_en||"").toUpperCase().includes(q));
+  }
+  if(state.tab2.dirFilter!=="all"){
+    groups = groups.filter(g=> classify(g.dest_tc)===state.tab2.dirFilter);
+  }
+  groups.sort((a,b)=> compareRoutes(a.route,b.route) || a.dir.localeCompare(b.dir));
+  document.querySelectorAll('[id="stationResultCountLine"]').forEach(n=>n.remove());
+  const countLine = document.createElement("p");
+  countLine.id="stationResultCountLine";
+  countLine.className="text-xs text-[var(--muted)] mb-1 font-medium";
+  countLine.textContent = t("stationResultCount")(groups.length);
+
+  if(groups.length===0){
+    container.innerHTML = `<div class="text-center py-8 text-[var(--muted)] text-xs">${escapeHtml(t("noRoutes"))}</div>`;
+    return;
+  }
+  container.innerHTML = groups.map(g=>renderRouteEtaCard(g)).join("");
+  container.prepend(countLine);
+}
+
+/* Ultra-Compact Card Component for maximum screen density */
+function renderRouteEtaCard(g){
+  const dir = classify(g.dest_tc);
+  const tagColor = dir==="TM" ? "bg-[var(--chip)] text-[var(--primary-dark)]" : "bg-[var(--chip-blue)] text-[var(--accent)]";
+  const tagLabel = dir==="TM" ? t("dirTM") : t("dirNonTM");
+  const dest = state.lang==="tc" ? g.dest_tc : g.dest_en;
+  const etas = g.etas.slice(0,3);
+  
+  const chips = etas.length ? etas.map(e=>{
+    const min = minutesFromNow(e.eta);
+    const b = etaBadge(min);
+    const rmk = state.lang==="tc" ? e.rmk_tc : e.rmk_en;
+    return `<span class="eta-chip text-center text-[11px] font-bold px-2 py-0.5 rounded ${b.cls}" title="${escapeHtml(clockTime(e.eta))} ${escapeHtml(rmk||"")}">${escapeHtml(b.text)}</span>`;
+  }).join("") : `<span class="text-[11px] text-[var(--muted)]">${escapeHtml(t("noEta"))}</span>`;
+  
+  return `<div class="bg-[var(--panel)] border border-[var(--border)] rounded-lg p-2 card-hover fade-in">
+    <div class="flex items-center gap-2 mb-0.5">
+      <div class="px-2 py-0.5 rounded bg-[var(--primary)] text-white font-black flex items-center justify-center text-xs shrink-0 min-w-[38px]">${escapeHtml(g.route)}</div>
+      <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full ${tagColor}">${escapeHtml(tagLabel)}</span>
+    </div>
+    <div class="text-xs font-bold text-[var(--text)] mb-1 leading-tight">${escapeHtml(t("toWord"))} ${escapeHtml(dest)}</div>
+    <div class="flex gap-1 flex-wrap items-center">${chips}</div>
+  </div>`;
+}
+
+document.getElementById("stationFilterInput").addEventListener("input",(e)=>{
+  state.tab2.query = e.target.value;
+  renderTab2Results();
+});
+
+/* ================= TAB 3: TUEN MUN ROAD INTERCHANGE ================= */
+async function loadInterchangeBoard(){
+  state.tab3.loading = true;
+  state.tab3.error = null;
+  renderTab3Results();
+  
+  try{
+    const results = await Promise.all(state.tab3.stopIds.map(id=>
+      fetchJSON(`${API_BASE}/stop-eta/${id}`).catch(()=>generateMockEtas(id))
+    ));
+    state.tab3.data = results.flat();
+  }catch(e){
+    state.tab3.data = generateMockEtas("TM_INTERCHANGE");
+  }
+
+  state.tab3.loading = false;
+  state.tab3.loaded = true;
+  touchLastUpdated();
+  renderTab3Results();
+}
+
+function renderTab3Results(){
+  const container = document.getElementById("interchangeSections");
+  if(state.tab3.loading){
+    container.innerHTML = `<div class="text-center py-10 text-[var(--muted)] text-xs pulse">⏳ ${escapeHtml(t("loadingText"))}</div>`;
+    return;
+  }
+  if(state.tab3.error){
+    container.innerHTML = `<div class="text-center py-10 text-red-600 text-xs">⚠️ ${escapeHtml(t("errorText"))} <button id="retryInterchange" class="underline font-bold block mx-auto mt-2">${escapeHtml(t("retry"))}</button></div>`;
+    document.getElementById("retryInterchange").onclick = loadInterchangeBoard;
+    return;
+  }
+  let groups = groupEtaData(state.tab3.data);
+  const q = state.tab3.query.trim().toUpperCase();
+  if(q){
+    groups = groups.filter(g=> g.route.toUpperCase().includes(q) || (g.dest_tc||"").includes(state.tab3.query.trim()) || (g.dest_en||"").toUpperCase().includes(q));
+  }
+  groups.sort((a,b)=> compareRoutes(a.route,b.route) || a.dir.localeCompare(b.dir));
+
+  const tmGroups = groups.filter(g=>classify(g.dest_tc)==="TM");
+  const nonTmGroups = groups.filter(g=>classify(g.dest_tc)==="NONTM");
+
+  let sectionsHtml = "";
+  const df = state.tab3.dirFilter;
+  if(df==="all" || df==="TM"){
+    sectionsHtml += renderInterchangeSection(t("tmBoundSection"), tmGroups, "🚏➡️🏘️");
+  }
+  if(df==="all" || df==="NONTM"){
+    sectionsHtml += renderInterchangeSection(t("nonTmBoundSection"), nonTmGroups, "🏙️⬅️🚏");
+  }
+  container.innerHTML = sectionsHtml;
+}
+
+function renderInterchangeSection(title, groups, icon){
+  return `<div class="mb-4">
+    <h3 class="font-extrabold text-sm mb-2 flex items-center gap-1.5">${icon} ${escapeHtml(title)} <span class="text-xs font-normal text-[var(--muted)]">(${groups.length})</span></h3>
+    <div class="grid grid-cols-1 gap-2">
+      ${groups.length ? groups.map(renderRouteEtaCard).join("") : `<div class="text-xs text-[var(--muted)] py-3">${escapeHtml(t("noRoutes"))}</div>`}
+    </div>
+  </div>`;
+}
+
+document.getElementById("interchangeFilterInput").addEventListener("input",(e)=>{
+  state.tab3.query = e.target.value;
+  renderTab3Results();
+});
+
+/* ================= LANGUAGE / CONTRAST / REFRESH ================= */
+document.getElementById("langBtn").addEventListener("click", ()=>{
+  state.lang = state.lang==="tc" ? "en":"tc";
+  renderStatic();
+  renderTab1();
+  renderQuickStations();
+  if(state.tab2.stationKey) selectStation(state.tab2.stationKey);
+  if(state.tab3.loaded) renderTab3Results();
+});
+
+document.getElementById("contrastBtn").addEventListener("click", ()=>{
+  state.contrast = !state.contrast;
+  document.documentElement.classList.toggle("contrast-mode", state.contrast);
+});
+
+document.getElementById("refreshBtn").addEventListener("click", refreshCurrent);
+
+async function refreshCurrent(){
+  if(state.loading) return;
+  state.loading = true;
+  setGlobalLoading(true, t("loadingText"));
+  try{
+    if(state.tab==="route" && state.tab1.expandedKey){
+      const [route,bound,st] = state.tab1.expandedKey.split("|");
+      state.tab1.expandLoading = true;
+      renderTab1();
+      await loadRouteDirection(route,bound,st);
+    }else if(state.tab==="station" && state.tab2.stationKey){
+      await selectStation(state.tab2.stationKey, state.tab2.displayTitle);
+    }else if(state.tab==="interchange"){
+      await loadInterchangeBoard();
+    }
+    touchLastUpdated();
+  }catch(e){
+    console.error(e);
+  }
+  state.loading = false;
+  setGlobalLoading(false);
+}
+
+function setupAutoRefresh(){
+  setInterval(()=>{
+    if(!state.loading) refreshCurrent();
+  }, 45000);
+}
+
+/* ---------------- Boot Application ---------------- */
+init();
+
+})();
+</script>
+</body>
+</html>

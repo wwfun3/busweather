@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HK Weather 香港天氣</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background: #0a0f1e;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .hero-bg {
+      background-image: linear-gradient(to bottom, rgba(10,15,30,0.55) 0%, rgba(10,15,30,0.80) 60%, rgba(10,15,30,1) 100%),
+        url('https://images.pexels.com/photos/18093482/pexels-photo-18093482.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200');
+      background-size: cover;
+      background-position: center top;
+    }
+
+    .glass {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .glass-strong {
+      background: rgba(255,255,255,0.09);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .warning-card {
+      background: linear-gradient(135deg, rgba(239,68,68,0.18) 0%, rgba(220,38,38,0.10) 100%);
+      border: 1px solid rgba(239,68,68,0.45);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .warning-card.amber {
+      background: linear-gradient(135deg, rgba(245,158,11,0.18) 0%, rgba(217,119,6,0.10) 100%);
+      border: 1px solid rgba(245,158,11,0.45);
+    }
+
+    .warning-card.blue {
+      background: linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(37,99,235,0.10) 100%);
+      border: 1px solid rgba(59,130,246,0.45);
+    }
+
+    .warning-card.purple {
+      background: linear-gradient(135deg, rgba(168,85,247,0.18) 0%, rgba(139,92,246,0.10) 100%);
+      border: 1px solid rgba(168,85,247,0.45);
+    }
+
+    .warning-pulse {
+      animation: warnPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes warnPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.55; }
+    }
+
+    .spin-slow {
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .temp-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #3b82f6 0%, #f59e0b 50%, #ef4444 100%);
+    }
+
+    .card-hover {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(99,102,241,0.55);
+    }
+    .btn-primary:active {
+      transform: translateY(0px);
+    }
+
+    .lang-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.2s ease;
+    }
+    .lang-btn:hover {
+      background: rgba(255,255,255,0.18);
+    }
+    .lang-btn.active {
+      background: rgba(99,102,241,0.5);
+      border-color: rgba(99,102,241,0.8);
+    }
+
+    .psr-bar {
+      height: 6px;
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    .forecast-scroll::-webkit-scrollbar { display: none; }
+    .forecast-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .stat-pill {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+    }
+
+    .hko-icon {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    }
+
+    .hko-icon-lg {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    }
+
+    .text-glow {
+      text-shadow: 0 0 30px rgba(147,197,253,0.5);
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 640px) {
+      .hko-icon-lg { width: 72px; height: 72px; }
+    }
+
+    .shimmer {
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .error-card {
+      background: linear-gradient(135deg, rgba(239,68,68,0.12) 0%, rgba(185,28,28,0.08) 100%);
+      border: 1px solid rgba(239,68,68,0.3);
+    }
+  </style>
+</head>
+<body class="text-white">
+
+  <!-- Header -->
+  <div class="hero-bg">
+    <div class="max-w-2xl mx-auto px-4 pt-10 pb-8">
+      <!-- Top bar -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#3b82f6,#6366f1);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/><circle cx="12" cy="12" r="5"/></svg>
+          </div>
+          <div>
+            <div id="app-title" class="text-sm font-semibold text-white/90 leading-tight">Hong Kong Weather</div>
+            <div id="app-subtitle" class="text-xs text-white/50">香港天文台</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="langBtn" onclick="toggleLang()" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-white cursor-pointer">
+            繁中
+          </button>
+          <button onclick="refreshData()" id="refreshBtn" class="btn-primary px-4 py-1.5 rounded-lg text-xs font-semibold text-white flex items-center gap-1.5 cursor-pointer">
+            <svg id="refreshIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span id="refreshText">Refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main current weather -->
+      <div id="mainWeatherCard" class="fade-in">
+        <!-- Loading skeleton -->
+        <div id="loadingSkeleton" class="text-center py-10">
+          <div class="flex justify-center mb-4">
+            <div class="w-24 h-24 rounded-full shimmer"></div>
+          </div>
+          <div class="h-14 w-40 mx-auto rounded-xl shimmer mb-3"></div>
+          <div class="h-4 w-56 mx-auto rounded shimmer mb-2"></div>
+          <div class="h-3 w-40 mx-auto rounded shimmer"></div>
+        </div>
+
+        <!-- Actual content (hidden until loaded) -->
+        <div id="mainContent" class="hidden text-center">
+          <div class="flex justify-center mb-2">
+            <img id="mainIcon" src="" alt="" class="hko-icon-lg" />
+          </div>
+          <div id="mainTemp" class="text-7xl font-black text-glow mb-1" style="letter-spacing:-3px;"></div>
+          <div id="mainDesc" class="text-base text-white/75 font-medium mb-1 px-4 leading-snug"></div>
+          <div id="mainLocation" class="text-xs text-white/45 mb-4 flex items-center justify-center gap-1">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            <span id="locationText">Hong Kong Observatory</span>
+          </div>
+          <!-- Stats row -->
+          <div class="grid grid-cols-3 gap-2 mb-4">
+            <div class="stat-pill p-3 text-center">
+              <div class="text-white/45 text-xs mb-1" id="lbl-humidity">Humidity</div>
+              <div id="statHumidity" class="text-white font-bold text-lg">--</div>
+            </div>
+            <div class="stat-pill p-3 text-center">
+              <div class="text-white/45 text-xs mb-1" id="lbl-uv">UV Index</div>
+              <div id="statUV" class="text-white font-bold text-lg">--</div>
+            </div>
+            <div class="stat-pill p-3 text-center">
+              <div class="text-white/45 text-xs mb-1" id="lbl-sea">Sea Temp</div>
+              <div id="statSea" class="text-white font-bold text-lg">--</div>
+            </div>
+          </div>
+          <!-- Update time -->
+          <div id="updateTimeRow" class="text-xs text-white/35 flex items-center justify-center gap-1">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="updateTimeText"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content area -->
+  <div class="max-w-2xl mx-auto px-4 pb-16 -mt-2" style="position:relative;z-index:10;">
+
+    <!-- Warning Banner -->
+    <div id="warningSection" class="mb-4 hidden fade-in"></div>
+
+    <!-- Error display -->
+    <div id="errorSection" class="hidden mb-4"></div>
+
+    <!-- General Situation -->
+    <div id="situationCard" class="glass rounded-2xl p-4 mb-4 card-hover hidden fade-in">
+      <div class="flex items-center gap-2 mb-3">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span id="lbl-situation" class="text-sm font-semibold text-blue-300">General Situation</span>
+      </div>
+      <p id="situationText" class="text-white/75 text-sm leading-relaxed"></p>
+    </div>
+
+    <!-- Today & Tomorrow Forecast -->
+    <div id="todayForecastCard" class="glass rounded-2xl p-4 mb-4 hidden fade-in">
+      <div class="flex items-center gap-2 mb-3">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span id="lbl-today-fc" class="text-sm font-semibold text-purple-300">Today's Forecast</span>
+      </div>
+      <div class="text-xs text-white/45 mb-2" id="todayForecastPeriod"></div>
+      <p id="todayForecastDesc" class="text-white/80 text-sm leading-relaxed mb-3"></p>
+      <div class="divider mb-3"></div>
+      <p id="todayOutlook" class="text-white/55 text-xs leading-relaxed italic"></p>
+    </div>
+
+    <!-- 2-Day Detailed Cards -->
+    <div id="lbl-2day" class="text-xs font-semibold text-white/40 uppercase tracking-widest mb-2 hidden">Today & Tomorrow</div>
+    <div id="twoDayCards" class="grid grid-cols-1 gap-3 mb-4 hidden fade-in"></div>
+
+    <!-- 9-Day Forecast scroll -->
+    <div id="lbl-9day" class="text-xs font-semibold text-white/40 uppercase tracking-widest mb-2 hidden">9-Day Forecast 九天天氣預報</div>
+    <div id="nineDayForecast" class="glass rounded-2xl overflow-hidden mb-4 hidden fade-in"></div>
+
+    <!-- Rainfall Section -->
+    <div id="rainfallCard" class="glass rounded-2xl p-4 mb-4 hidden fade-in">
+      <div class="flex items-center gap-2 mb-3">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="8" y1="20" x2="8.01" y2="20"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="12" y1="22" x2="12.01" y2="22"/><line x1="16" y1="16" x2="16.01" y2="16"/><line x1="16" y1="20" x2="16.01" y2="20"/></svg>
+        <span id="lbl-rainfall" class="text-sm font-semibold text-emerald-300">Rainfall (Past Hour)</span>
+        <span id="rainfallTimeRange" class="ml-auto text-xs text-white/35"></span>
+      </div>
+      <div id="rainfallGrid" class="grid grid-cols-2 gap-1.5"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-white/25 text-xs mt-8 pb-4">
+      <div class="flex items-center justify-center gap-1 mb-1">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+        <span id="footer-source">Data source: Hong Kong Observatory Open Data API</span>
+      </div>
+      <div id="footer-note" class="text-white/18">For reference only. Always follow official HKO announcements.</div>
+    </div>
+  </div>
+
+  <script>
+    // ──────────────────────────────────────────────
+    // CONFIG & STATE
+    // ──────────────────────────────────────────────
+    const PROXY = 'https://data.weather.gov.hk/weatherAPI/opendata/weather.php';
+    let currentLang = 'en';
+    let isLoading = false;
+
+    // HKO icon mapping
+    const iconBaseUrl = 'https://www.hko.gov.hk/images/HKOWxIconOutline/pic';
+
+    // ──────────────────────────────────────────────
+    // TRANSLATIONS
+    // ──────────────────────────────────────────────
+    const T = {
+      en: {
+        appTitle: 'Hong Kong Weather',
+        appSubtitle: '香港天文台',
+        refreshText: 'Refresh',
+        langBtnText: '繁中',
+        lbl_humidity: 'Humidity',
+        lbl_uv: 'UV Index',
+        lbl_sea: 'Sea Temp',
+        lbl_situation: 'General Situation',
+        lbl_today_fc: "Today's Forecast",
+        lbl_2day: 'Tomorrow & The Day After Tomorrow',
+        lbl_9day: '9-Day Forecast',
+        lbl_rainfall: 'Rainfall (Past Hour)',
+        lbl_wind: 'Wind',
+        lbl_temp: 'Temp',
+        lbl_rh: 'Humidity',
+        lbl_psr: 'Rain Probability',
+        lbl_maxtemp: 'High',
+        lbl_mintemp: 'Low',
+        lbl_maxrh: 'Max RH',
+        lbl_minrh: 'Min RH',
+        lbl_today: 'Today',
+        lbl_tomorrow: 'Tomorrow',
+        locationText: 'Hong Kong Observatory',
+        footer_source: 'Data source: Hong Kong Observatory Open Data API',
+        footer_note: 'For reference only. Always follow official HKO announcements.',
+        warningActive: '⚠️ WARNING IN EFFECT',
+        warningDowngrade: '🕐 Expected downgrade / lift by:',
+        warningIssued: 'Issued:',
+        warningExpires: 'Expires / Extended until:',
+        warningUpdated: 'Last updated:',
+        loading: 'Fetching latest data…',
+        errorTitle: 'Unable to load weather data',
+        errorHint: 'Please check your connection and try again.',
+        uvDesc: { low: 'Low', moderate: 'Moderate', high: 'High', vhigh: 'Very High', extreme: 'Extreme' },
+        psrLabels: { 'High': 'High', 'Medium High': 'Med-High', 'Medium': 'Medium', 'Medium Low': 'Med-Low', 'Low': 'Low' },
+        noWarning: 'No active warnings',
+        outlook: 'Outlook',
+        seaTemp: 'North Point',
+        tcInfo: 'Tropical Cyclone Info',
+        thunderWarning: 'Thunderstorm Warning',
+        rainWarning: 'Rainstorm Warning',
+        tcWarning: 'Typhoon Signal',
+        fireWarning: 'Fire Danger Warning',
+        frostWarning: 'Frost Warning',
+        coldWarning: 'Cold Warning',
+        heatWarning: 'Very Hot Weather Warning',
+        tsuWarning: 'Tsunami Warning',
+        swtTitle: 'Special Weather Tips',
+        updatedAt: 'Updated at',
+      },
+      tc: {
+        appTitle: '香港天氣',
+        appSubtitle: '香港天文台',
+        refreshText: '更新',
+        langBtnText: 'EN',
+        lbl_humidity: '相對濕度',
+        lbl_uv: '紫外線指數',
+        lbl_sea: '海水溫度',
+        lbl_situation: '天氣概況',
+        lbl_today_fc: '今日天氣預報',
+        lbl_2day: '今後兩天',
+        lbl_9day: '九天天氣預報',
+        lbl_rainfall: '過去一小時雨量',
+        lbl_wind: '風力',
+        lbl_temp: '氣溫',
+        lbl_rh: '濕度',
+        lbl_psr: '降雨概率',
+        lbl_maxtemp: '最高',
+        lbl_mintemp: '最低',
+        lbl_maxrh: '最高濕度',
+        lbl_minrh: '最低濕度',
+        lbl_today: '今天',
+        lbl_tomorrow: '明天',
+        locationText: '香港天文台',
+        footer_source: '數據來源：香港天文台開放數據 API',
+        footer_note: '僅供參考。請以香港天文台正式公告為準。',
+        warningActive: '⚠️ 現正生效警告',
+        warningDowngrade: '🕐 預計降級 / 解除時間：',
+        warningIssued: '發出時間：',
+        warningExpires: '延伸至 / 到期：',
+        warningUpdated: '最後更新：',
+        loading: '正在獲取最新數據…',
+        errorTitle: '無法載入天氣資料',
+        errorHint: '請檢查網絡連線後重試。',
+        uvDesc: { low: '低', moderate: '中等', high: '高', vhigh: '甚高', extreme: '極高' },
+        psrLabels: { 'High': '高', 'Medium High': '中高', 'Medium': '中等', 'Medium Low': '中低', 'Low': '低' },
+        noWarning: '目前沒有生效警告',
+        outlook: '展望',
+        seaTemp: '北角',
+        tcInfo: '熱帶氣旋資料',
+        thunderWarning: '雷暴警告',
+        rainWarning: '暴雨警告信號',
+        tcWarning: '熱帶氣旋警告信號',
+        fireWarning: '火災危險警告',
+        frostWarning: '霜凍警告',
+        coldWarning: '寒冷天氣警告',
+        heatWarning: '酷熱天氣警告',
+        tsuWarning: '海嘯警告',
+        swtTitle: '特別天氣提示',
+        updatedAt: '更新時間',
+      }
+    };
+
+    function t(key) {
+      return T[currentLang][key] || T['en'][key] || key;
+    }
+
+    // ──────────────────────────────────────────────
+    // WARNING HELPERS
+    // ──────────────────────────────────────────────
+    const warningMeta = {
+      WTS: { emoji: '⛈️', color: 'amber', nameEn: 'Thunderstorm Warning', nameTc: '雷暴警告' },
+      WRAIN: { emoji: '🌧️', color: 'red', nameEn: 'Rainstorm Warning', nameTc: '暴雨警告' },
+      WTCSGNL: { emoji: '🌀', color: 'purple', nameEn: 'Tropical Cyclone Warning', nameTc: '熱帶氣旋警告' },
+      WFIRE: { emoji: '🔥', color: 'red', nameEn: 'Fire Danger Warning', nameTc: '火災危險警告' },
+      WFROST: { emoji: '❄️', color: 'blue', nameEn: 'Frost Warning', nameTc: '霜凍警告' },
+      WCOLD: { emoji: '🧊', color: 'blue', nameEn: 'Cold Weather Warning', nameTc: '寒冷天氣警告' },
+      WHOT: { emoji: '🌡️', color: 'red', nameEn: 'Very Hot Weather Warning', nameTc: '酷熱天氣警告' },
+      WTMW: { emoji: '🌊', color: 'blue', nameEn: 'Tsunami Warning', nameTc: '海嘯警告' },
+      WMSGNL: { emoji: '🌬️', color: 'amber', nameEn: 'Monsoon Signal', nameTc: '季候風信號' },
+    };
+
+    function getWarningName(code, warningObj) {
+      const meta = warningMeta[code];
+      if (!meta) return warningObj.name || code;
+      return currentLang === 'tc' ? meta.nameTc : meta.nameEn;
+    }
+
+    function getWarningColor(code) {
+      const meta = warningMeta[code];
+      if (!meta) return 'amber';
+      return meta.color;
+    }
+
+    function getWarningEmoji(code) {
+      const meta = warningMeta[code];
+      if (!meta) return '⚠️';
+      return meta.emoji;
+    }
+
+    function formatDateTime(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      const opts = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Hong_Kong' };
+      return d.toLocaleString(currentLang === 'tc' ? 'zh-HK' : 'en-HK', opts);
+    }
+
+    function formatTime(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleTimeString(currentLang === 'tc' ? 'zh-HK' : 'en-HK', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Hong_Kong' });
+    }
+
+    // ──────────────────────────────────────────────
+    // PSR (Rain Probability) helpers
+    // ──────────────────────────────────────────────
+    function normalizePsr(psr) {
+      if (!psr) return 'Low';
+      const str = String(psr).trim();
+      if (str === 'High' || str === '高') return 'High';
+      if (str === 'Medium High' || str === '中高') return 'Medium High';
+      if (str === 'Medium' || str === '中' || str === '中等') return 'Medium';
+      if (str === 'Medium Low' || str === '中低') return 'Medium Low';
+      if (str === 'Low' || str === '低') return 'Low';
+      return str;
+    }
+
+    function psrWidth(psr) {
+      const norm = normalizePsr(psr);
+      const m = { 'High': 90, 'Medium High': 72, 'Medium': 55, 'Medium Low': 35, 'Low': 15 };
+      return m[norm] || 20;
+    }
+
+    function psrColor(psr) {
+      const norm = normalizePsr(psr);
+      const m = { 'High': '#ef4444', 'Medium High': '#f97316', 'Medium': '#f59e0b', 'Medium Low': '#3b82f6', 'Low': '#22d3ee' };
+      return m[norm] || '#60a5fa';
+    }
+
+    function getPsrLabel(psr) {
+      const norm = normalizePsr(psr);
+      const labels = t('psrLabels') || {};
+      return labels[norm] || psr;
+    }
+
+    // ──────────────────────────────────────────────
+    // ICON URL builder
+    // ──────────────────────────────────────────────
+    function iconUrl(code) {
+      return `${iconBaseUrl}${code}.png`;
+    }
+
+    // ──────────────────────────────────────────────
+    // WEEK DAY helper
+    // ──────────────────────────────────────────────
+    function parseHKODate(dateStr) {
+      // dateStr like "20260729"
+      const y = parseInt(dateStr.substr(0,4));
+      const m = parseInt(dateStr.substr(4,2)) - 1;
+      const d = parseInt(dateStr.substr(6,2));
+      return new Date(y, m, d);
+    }
+
+    function dayLabel(dateStr, index) {
+      const d = parseHKODate(dateStr);
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const diff = Math.round((d - today) / 86400000);
+      if (diff === 0) return currentLang === 'tc' ? '今天' : 'Today';
+      if (diff === 1) return currentLang === 'tc' ? '明天' : 'Tomorrow';
+      const dayNames = currentLang === 'tc'
+        ? ['日','一','二','三','四','五','六']
+        : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      return dayNames[d.getDay()];
+    }
+
+    function shortDate(dateStr) {
+      const d = parseHKODate(dateStr);
+      if (currentLang === 'tc') {
+        return `${d.getMonth()+1}月${d.getDate()}日`;
+      }
+      return `${d.getDate()} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
+    }
+
+    // ──────────────────────────────────────────────
+    // UV Description
+    // ──────────────────────────────────────────────
+    function uvLabel(val) {
+      if (val <= 2) return t('uvDesc').low;
+      if (val <= 5) return t('uvDesc').moderate;
+      if (val <= 7) return t('uvDesc').high;
+      if (val <= 10) return t('uvDesc').vhigh;
+      return t('uvDesc').extreme;
+    }
+    function uvColor(val) {
+      if (val <= 2) return '#34d399';
+      if (val <= 5) return '#fbbf24';
+      if (val <= 7) return '#f97316';
+      if (val <= 10) return '#ef4444';
+      return '#a855f7';
+    }
+
+    // ──────────────────────────────────────────────
+    // FETCH
+    // ──────────────────────────────────────────────
+    async function fetchData(dataType) {
+      const lang = currentLang === 'tc' ? 'tc' : 'en';
+      const url = `${PROXY}?dataType=${dataType}&lang=${lang}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    // ──────────────────────────────────────────────
+    // MAIN RENDER
+    // ──────────────────────────────────────────────
+    async function loadWeather() {
+      if (isLoading) return;
+      isLoading = true;
+      setRefreshState(true);
+
+      try {
+        // Fetch all APIs in parallel
+        const [rhrread, fnd, flw, warnsum, warningInfo, swt] = await Promise.allSettled([
+          fetchData('rhrread'),
+          fetchData('fnd'),
+          fetchData('flw'),
+          fetchData('warnsum'),
+          fetchData('warningInfo'),
+          fetchData('swt'),
+        ]);
+
+        const cur = rhrread.value;
+        const forecast9 = fnd.value;
+        const localForecast = flw.value;
+        const warnings = warnsum.value;
+        const warnDetails = warningInfo.value;
+        const swtData = swt.value;
+
+        renderMain(cur, forecast9);
+        renderWarnings(warnings, warnDetails);
+        renderSituation(localForecast);
+        renderTodayForecast(localForecast);
+        renderTwoDayCards(forecast9);
+        renderNineDay(forecast9);
+        renderRainfall(cur);
+        renderSpecialTips(swtData);
+
+        showMainContent();
+        hideError();
+
+      } catch (err) {
+        showError(err);
+      }
+
+      isLoading = false;
+      setRefreshState(false);
+    }
+
+    // ──────────────────────────────────────────────
+    // RENDER: Main current weather
+    // ──────────────────────────────────────────────
+    function renderMain(cur, forecast9) {
+      if (!cur) return;
+      // Temperature from HK Observatory
+      const hkoTemp = cur.temperature?.data?.find(d => d.place === 'Hong Kong Observatory');
+      const temp = hkoTemp?.value ?? cur.temperature?.data?.[0]?.value ?? '--';
+      const icon = cur.icon?.[0];
+      const humidity = cur.humidity?.data?.[0]?.value;
+      const uv = cur.uvindex?.data?.[0]?.value;
+      const uvDescStr = uv != null ? `${uv} (${uvLabel(uv)})` : '--';
+      const seaTemp = forecast9?.seaTemp?.value;
+      const updateTime = cur.updateTime;
+
+      document.getElementById('mainTemp').textContent = temp !== '--' ? `${temp}°` : '--';
+      if (icon) {
+        document.getElementById('mainIcon').src = iconUrl(icon);
+        document.getElementById('mainIcon').alt = `Weather icon ${icon}`;
+      }
+
+      // Description from warningMessage or icon desc
+      const warnMsgs = cur.warningMessage;
+      const warnText = Array.isArray(warnMsgs) && warnMsgs.length > 0 ? warnMsgs[0] : '';
+      document.getElementById('mainDesc').textContent = warnText || '';
+
+      document.getElementById('locationText').textContent = t('locationText');
+      document.getElementById('statHumidity').textContent = humidity != null ? `${humidity}%` : '--';
+
+      const uvEl = document.getElementById('statUV');
+      if (uv != null) {
+        uvEl.textContent = uvDescStr;
+        uvEl.style.color = uvColor(uv);
+        uvEl.style.fontSize = '0.8rem';
+      } else {
+        uvEl.textContent = '--';
+      }
+      document.getElementById('statSea').textContent = seaTemp != null ? `${seaTemp}°C` : '--';
+
+      if (updateTime) {
+        const d = new Date(updateTime);
+        const s = d.toLocaleString(currentLang === 'tc' ? 'zh-HK' : 'en-HK', {
+          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Hong_Kong'
+        });
+        document.getElementById('updateTimeText').textContent = `${t('updatedAt')}: ${s} HKT`;
+      }
+    }
+
+    // ──────────────────────────────────────────────
+    // RENDER: Warnings
+    // ──────────────────────────────────────────────
+    function renderWarnings(warnings, warnDetails) {
+      const section = document.getElementById('warningSection');
+      if (!warnings || Object.keys(warnings).length === 0) {
+        section.innerHTML = '';
+        section.classList.add('hidden');
+        return;
+      }
+
+      // Build detail map
+      const detailMap = {};
+      if (warnDetails?.details) {
+        for (const d of warnDetails.details) {
+          detailMap[d.warningStatementCode] = d;
+        }
+      }
+
+      let html = '';
+      for (const [code, w] of Object.entries(warnings)) {
+        const color = getWarningColor(code);
+        const emoji = getWarningEmoji(code);
+        const name = getWarningName(code, w);
+        const detail = detailMap[code];
+        const contents = detail?.contents || [];
+
+        // Build timing info
+        let timingHTML = '';
+        if (w.issueTime) {
+          timingHTML += `<div class="flex items-start gap-1.5 text-xs text-white/60 mt-1">
+            <span class="text-white/40 shrink-0">${t('warningIssued')}</span>
+            <span>${formatDateTime(w.issueTime)}</span>
+          </div>`;
+        }
+        if (w.expireTime) {
+          timingHTML += `<div class="flex items-start gap-1.5 text-xs mt-1">
+            <span class="text-white/40 shrink-0">${t('warningExpires')}</span>
+            <span class="text-amber-300 font-semibold">${formatDateTime(w.expireTime)}</span>
+          </div>`;
+          timingHTML += `<div class="mt-2 flex items-center gap-1.5 text-xs bg-white/5 rounded-lg px-2 py-1.5">
+            <span class="text-white/50">${t('warningDowngrade')}</span>
+            <span class="font-bold text-amber-300">${formatDateTime(w.expireTime)}</span>
+          </div>`;
+        }
+        if (w.updateTime) {
+          timingHTML += `<div class="text-xs text-white/35 mt-1">${t('warningUpdated')} ${formatDateTime(w.updateTime)}</div>`;
+        }
+
+        // Signal level badge for TC or Rain
+        let levelBadge = '';
+        if (w.type) levelBadge = `<span class="badge ml-2" style="background:rgba(255,255,255,0.15);color:#fbbf24;">${w.type}</span>`;
+
+        // First content line as sub-description
+        const subDesc = contents.length > 0 ? `<p class="text-white/65 text-xs leading-relaxed mt-2">${contents[0]}</p>` : '';
+
+        // Precautions
+        let precautions = '';
+        if (contents.length > 1) {
+          const items = contents.slice(1).filter(c => c.trim());
+          if (items.length > 0) {
+            precautions = `<div class="mt-2 space-y-1">
+              ${items.map(c => `<div class="text-xs text-white/50 flex items-start gap-1"><span class="text-white/25 shrink-0 mt-0.5">›</span><span>${c}</span></div>`).join('')}
+            </div>`;
+          }
+        }
+
+        html += `<div class="warning-card ${color} rounded-2xl p-4 mb-3 card-hover">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="warning-pulse text-xl">${emoji}</span>
+            <div>
+              <div class="text-xs font-bold text-white/45 uppercase tracking-widest">${t('warningActive')}</div>
+              <div class="text-base font-bold text-white flex items-center">${name}${levelBadge}</div>
+            </div>
+            <div class="ml-auto">
+              <span class="badge" style="background:rgba(239,68,68,0.3);color:#fca5a5;">${w.actionCode || 'ACTIVE'}</span>
+            </div>
+          </div>
+          ${subDesc}
+          ${timingHTML}
+          ${precautions}
+        </div>`;
+      }
+
+      section.innerHTML = html;
+      section.classList.remove('hidden');
+    }
+
+    // ──────────────────────────────────────────────
+    // RENDER: Special Tips
+    // ──────────────────────────────────────────────
+    function renderSpecialTips(swtData) {
+      if (!swtData?.swt || swtData.swt.length === 0) return;
+      const section = document.getElementById('warningSection');
+      let extra = '';
+      for (const tip of swtData.swt) {
+        extra += `<div class="warning-card blue rounded-2xl p-4 mb-3">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xl">💡</span>
+            <span class="text-sm font-bold text-blue-300">${t('swtTitle')}</span>
+          </div>
+          <p class="text-white/70 text-sm leading-relaxed">${tip.desc || tip}</p>
+        </div>`;
+      }
+      section.innerHTML += extra;
+      section.classList.remove('hidden');
+    }
+
+    // ──────────────────────────────────────────────
+    // RENDER: General Situation / Local Forecast
+    // ──────────────────────────────────────────────
+    function renderSituation(flw) {
+      const card = document.getElementById('situationCard');
+      if (!flw?.generalSituation) { card.classList.add('hidden'); return; }
+      document.getElementById('lbl-situation').textContent = t('lbl_situation');
+      document.getElementById('situationText').textContent = flw.generalSituation;
+      card.classList.remove('hidden');
+    }
+
+    function renderTodayForecast(flw) {
+      const card = document.getElementById('todayForecastCard');
+      if (!flw) { card.classList.add('hidden'); return; }
+      document.getElementById('lbl-today-fc').textContent = t('lbl_today_fc');
+      document.getElementById('todayForecastPeriod').textContent = flw.forecastPeriod || '';
+      document.getElementById('todayForecastDesc').textContent = flw.forecastDesc || '';
+      document.getElementById('todayOutlook').textContent = flw.outlook ? `${t('outlook')}: ${flw.outlook}` : '';
+      if (flw.tcInfo) {
+        document.getElementById('todayOutlook').textContent += flw.tcInfo ? `\n${t('tcInfo')}: ${flw.tcInfo}` : '';
+      }
+      card.classList.remove('hidden');
+    }
+
+    // ──────────────────────────────────────────────
+    // RENDER: 2-Day Cards (Today & Tomorrow)
+    // ──────────────────────────────────────────────
+    function renderTwoDayCards(forecast9) {
+      const container = document.getElementById('twoDayCards');
+      const labelEl = document.getElementById('lbl-2day');
+      if (!forecast9?.weatherForecast) { container.classList.add('hidden'); labelEl.classList.add('hidden'); return; }
+
+      const days = forecast9.weatherForecast.slice(0, 2);
+      let html = '';
+      days.forEach((day, i) => {
+        const label = dayLabel(day.forecastDate, i);
+        const dateStr = shortDate(day.forecastDate);
+        const icon = day.ForecastIcon;
+        const psr = day.PSR;
+        const psrLabel = getPsrLabel(psr);
+        const psrW = psrWidth(psr);
+        const psrC = psrColor(psr);
+
+        html += `<div class="glass-strong rounded-2xl p-4 card-hover">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 flex flex-col items-center">
+              <img src="${iconUrl(icon)}" alt="weather" class="hko-icon mb-1" onerror="this.style.display='none'"/>
+              <div class="text-lg font-black text-white text-glow">${day.forecastMaxtemp.value}°<span class="text-white/40 text-sm font-medium">/${day.forecastMintemp.value}°</span></div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-baseline gap-2 mb-1">
+                <span class="text-lg font-bold text-white">${label}</span>
+                <span class="text-xs text-white/40">${dateStr}</span>
+                <span class="text-xs text-white/40">${day.week || ''}</span>
+              </div>
+              <p class="text-white/70 text-xs leading-relaxed mb-3">${day.forecastWeather}</p>
+              <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-white/35">💨</span>
+                  <span class="text-white/65">${day.forecastWind}</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-white/35">💧</span>
+                  <span class="text-white/65">${day.forecastMinrh.value}–${day.forecastMaxrh.value}%</span>
+                </div>
+              </div>
+              <div class="mt-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-white/40 text-xs">${t('lbl_psr')}</span>
+                  <span class="text-xs font-semibold" style="color:${psrC};">${psrLabel}</span>
+                </div>
+                <div class="bg-white/10 rounded-full h-1.5 overflow-hidden">
+                  <div class="psr-bar h-full rounded-full" style="width:${psrW}%;background:${psrC};"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      });
+
+      container.innerHTML = html;
+      container.classList.remove('hidden');
+      labelEl.classList.remove('hidden');
+      labelEl.textContent = t('lbl_2day');
+    }
+
+    // ──────────────────────────────────────────────
+    // RENDER: 9-Day Forecast
+    // ──────────────────────────────────────────────
+    function renderNineDay(forecast9) {
+      const container = document.getElementById('nineDayForecast');
+      const labelEl = document.getElementById('lbl-9day');
+      if (!forecast9?.weatherForecast) { container.classList.add('hidden'); labelEl.classList.add('hidden'); return; }
+
+      const days = forecast9.weatherForecast;
+      let html = '';
+      days.forEach((day, i) => {
+        const label = dayLabel(day.forecastDate, i);
+        const dateStr = shortDate(day.forecastDate);
+        const icon = day.ForecastIcon;
+        const psr = day.PSR;
+        const psrLabel = getPsrLabel(psr);
+        const psrW = psrWidth(psr);
+        const psrC = psrColor(psr);
+        const isLast = i === days.length - 1;
+
+        html += `<div class="flex items-center gap-3 px-4 py-3 ${!isLast ? 'border-b border-white/[0.06]' : ''}">
+          <div class="w-14 shrink-0">
+            <div class="text-sm font-semibold text-white">${label}</div>
+            <div class="text-xs text-white/35">${dateStr}</div>
+          </div>
+          <img src="${iconUrl(icon)}" alt="" class="w-9 h-9 object-contain shrink-0" onerror="this.style.display='none'"/>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between mb-1">
+              <div class="text-sm font-bold text-white">${day.forecastMaxtemp.value}° <span class="text-white/35 font-normal text-xs">/ ${day.forecastMintemp.value}°</span></div>
+              <span class="text-xs font-medium" style="color:${psrC};">${psrLabel}</span>
+            </div>
+            <div class="bg-white/10 rounded-full overflow-hidden" style="height:3px;">
+              <div style="width:${psrW}%;background:${psrC};height:3px;border-radius:9px;"></div>
+            </div>
+          </div>
+          <div class="shrink-0 text-xs text-white/40 hidden sm:block w-20 text-right truncate">${day.forecastWind.split(',')[0]}</div>
+        </div>`;
+      });
+
+      container.innerHTML = html;
+      container.classList.remove('hidden');
+      labelEl.classList.remove('hidden');
+      labelEl.textContent = t('lbl_9day');
+    }
+
+    // ──────────────────────────────────────────────
+    // RENDER: Rainfall
+    // ──────────────────────────────────────────────
+    function renderRainfall(cur) {
+      const card = document.getElementById('rainfallCard');
+      if (!cur?.rainfall?.data) { card.classList.add('hidden'); return; }
+      document.getElementById('lbl-rainfall').textContent = t('lbl_rainfall');
+
+      // Format time range
+      const st = cur.rainfall.startTime;
+      const et = cur.rainfall.endTime;
+      if (st && et) {
+        document.getElementById('rainfallTimeRange').textContent = `${formatTime(st)} – ${formatTime(et)}`;
+      }
+
+      const data = cur.rainfall.data.filter(d => (d.max || 0) > 0 || (d.min || 0) > 0);
+      const allData = cur.rainfall.data;
+
+      const maxVal = Math.max(...allData.map(d => d.max || 0), 1);
+
+      let html = '';
+      if (data.length === 0) {
+        html = `<div class="col-span-2 text-center text-white/40 text-sm py-3">No significant rainfall recorded</div>`;
+      } else {
+        // Sort by max descending
+        const sorted = [...data].sort((a,b) => (b.max||0) - (a.max||0));
+        sorted.forEach(d => {
+          const val = d.max || 0;
+          const barW = Math.round((val / maxVal) * 100);
+          const barColor = val >= 30 ? '#ef4444' : val >= 15 ? '#f97316' : val >= 5 ? '#fbbf24' : '#60a5fa';
+          const valStr = d.min != null && d.min !== d.max && d.max !== 0
+            ? `${d.min}–${d.max} mm`
+            : `${d.max} mm`;
+          html += `<div class="flex flex-col gap-1 bg-white/[0.04] rounded-xl px-3 py-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-white/60 truncate pr-1">${d.place}</span>
+              <span class="text-xs font-bold shrink-0" style="color:${barColor};">${valStr}</span>
+            </div>
+            <div class="bg-white/10 rounded-full overflow-hidden" style="height:3px;">
+              <div style="width:${barW}%;background:${barColor};height:3px;border-radius:9px;transition:width 0.6s ease;"></div>
+            </div>
+          </div>`;
+        });
+      }
+
+      document.getElementById('rainfallGrid').innerHTML = html;
+      card.classList.remove('hidden');
+    }
+
+    // ──────────────────────────────────────────────
+    // UI STATE HELPERS
+    // ──────────────────────────────────────────────
+    function showMainContent() {
+      document.getElementById('loadingSkeleton').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+    }
+
+    function setRefreshState(loading) {
+      const btn = document.getElementById('refreshBtn');
+      const icon = document.getElementById('refreshIcon');
+      const text = document.getElementById('refreshText');
+      if (loading) {
+        icon.classList.add('spin-slow');
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+        text.textContent = currentLang === 'tc' ? '更新中…' : 'Updating…';
+      } else {
+        icon.classList.remove('spin-slow');
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        text.textContent = t('refreshText');
+      }
+    }
+
+    function showError(err) {
+      const sec = document.getElementById('errorSection');
+      sec.innerHTML = `<div class="error-card rounded-2xl p-4">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-xl">⚠️</span>
+          <span class="text-red-300 font-semibold text-sm">${t('errorTitle')}</span>
+        </div>
+        <p class="text-white/50 text-xs">${t('errorHint')}</p>
+        <p class="text-white/30 text-xs mt-1">${err?.message || ''}</p>
+      </div>`;
+      sec.classList.remove('hidden');
+      // Show skeleton hide
+      document.getElementById('loadingSkeleton').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+    }
+
+    function hideError() {
+      document.getElementById('errorSection').classList.add('hidden');
+      document.getElementById('errorSection').innerHTML = '';
+    }
+
+    // ──────────────────────────────────────────────
+    // LANGUAGE TOGGLE
+    // ──────────────────────────────────────────────
+    function updateStaticLabels() {
+      document.getElementById('app-title').textContent = t('appTitle');
+      document.getElementById('app-subtitle').textContent = t('appSubtitle');
+      document.getElementById('langBtn').textContent = t('langBtnText');
+      document.getElementById('refreshText').textContent = t('refreshText');
+      document.getElementById('lbl-humidity').textContent = t('lbl_humidity');
+      document.getElementById('lbl-uv').textContent = t('lbl_uv');
+      document.getElementById('lbl-sea').textContent = t('lbl_sea');
+      document.getElementById('footer-source').textContent = t('footer_source');
+      document.getElementById('footer-note').textContent = t('footer_note');
+      document.getElementById('locationText').textContent = t('locationText');
+      document.documentElement.lang = currentLang === 'tc' ? 'zh-HK' : 'en';
+    }
+
+    function toggleLang() {
+      currentLang = currentLang === 'en' ? 'tc' : 'en';
+      updateStaticLabels();
+      // Re-fetch everything in new language
+      refreshData();
+    }
+
+    // ──────────────────────────────────────────────
+    // REFRESH BUTTON
+    // ──────────────────────────────────────────────
+    function refreshData() {
+      loadWeather();
+    }
+
+    // ──────────────────────────────────────────────
+    // INIT
+    // ──────────────────────────────────────────────
+    updateStaticLabels();
+    loadWeather();
+  </script>
+</body>
+</html>
