@@ -83,9 +83,9 @@
   <!-- TAB 1: ROUTE SEARCH -->
   <section id="panel-route" class="tab-panel hidden">
     <div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3 mb-3">
-      <div class="flex gap-2">
-        <input id="routeSearchInput" type="text" placeholder="輸入路線號碼，例如 6, 60X, 961" class="flex-1 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] text-[var(--text)] font-semibold text-base focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
-        <button id="clearTab1" class="px-3 py-2 rounded-lg bg-[var(--border)] text-xs font-bold hover:opacity-80">清除</button>
+      <div class="relative w-full">
+        <input id="routeSearchInput" value="60m" type="text" placeholder="輸入路線號碼，例如 6, 60X, 961" class="w-full pl-3 pr-8 py-2 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] text-[var(--text)] font-semibold text-base focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+        <button id="clearRouteBtn" class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] rounded-full hover:bg-[var(--border)] transition">✕</button>
       </div>
       <div id="quickRoutes" class="flex flex-wrap gap-1.5 mt-2.5 items-center"></div>
       <p id="routeCountLine" class="text-xs text-[var(--muted)] mt-1.5"></p>
@@ -93,14 +93,11 @@
     <div id="routeList" class="space-y-2"></div>
   </section>
 
-  <!-- TAB 2: STATION BOARD -->
+  <!-- TAB 2: STATION BOARD (DEFAULT ACTIVE TAB) -->
   <section id="panel-station" class="tab-panel">
     <div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3.5 mb-3 relative">
       <label id="stationSearchLabel" class="text-xs font-bold text-[var(--muted)] uppercase tracking-wide">選擇車站</label>
-      <div class="flex gap-2 mt-1">
-        <input id="stationSearchInput" type="text" placeholder="輸入車站名稱搜尋" class="flex-1 px-3 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] text-[var(--text)] font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
-        <button id="clearTab2" class="px-3 py-2.5 rounded-lg bg-[var(--border)] text-xs font-bold hover:opacity-80">清除</button>
-      </div>
+      <input id="stationSearchInput" type="text" placeholder="輸入車站名稱搜尋" class="w-full mt-1 px-3 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] text-[var(--text)] font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
       <div id="stationSuggestions" class="absolute left-3 right-3 top-[68px] bg-[var(--panel)] border border-[var(--border)] rounded-lg shadow-xl z-20 max-h-64 overflow-y-auto hidden"></div>
       <div id="quickStations" class="flex flex-wrap gap-1.5 mt-2.5 items-center"></div>
     </div>
@@ -109,7 +106,10 @@
       <div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3 mb-3">
         <h2 id="stationBoardTitle" class="font-extrabold text-base mb-2"></h2>
         <div class="flex flex-col sm:flex-row gap-2">
-          <input id="stationFilterInput" type="text" placeholder="篩選路線 / 目的地" class="flex-1 px-3 py-2 rounded-lg text-xs sm:text-sm border border-[var(--border)] bg-[var(--panel-2)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+          <div class="flex-1 relative">
+            <input id="stationFilterInput" type="text" placeholder="篩選路線 / 目的地" class="w-full pl-3 pr-8 py-2 rounded-lg text-xs sm:text-sm border border-[var(--border)] bg-[var(--panel-2)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+            <button id="clearStationFilterBtn" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] rounded-full hover:bg-[var(--border)] transition">✕</button>
+          </div>
           <div id="stationDirFilter" class="flex gap-1.5"></div>
         </div>
       </div>
@@ -123,11 +123,13 @@
     <div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3.5 mb-3">
       <h2 id="interchangeTitle" class="font-extrabold text-base mb-1">屯門公路轉車站專區</h2>
       <p id="interchangeSubtitle" class="text-xs text-[var(--muted)] mb-2.5"></p>
-      <div class="flex gap-2">
-        <input id="interchangeFilterInput" type="text" placeholder="篩選路線 / 目的地" class="flex-1 px-3 py-2 rounded-lg text-xs sm:text-sm border border-[var(--border)] bg-[var(--panel-2)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
-        <button id="clearTab3" class="px-3 py-2 rounded-lg bg-[var(--border)] text-xs font-bold hover:opacity-80">清除</button>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <div class="flex-1 relative">
+          <input id="interchangeFilterInput" value="6" type="text" placeholder="篩選路線 / 目的地" class="w-full pl-3 pr-8 py-2 rounded-lg text-xs sm:text-sm border border-[var(--border)] bg-[var(--panel-2)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+          <button id="clearInterchangeFilterBtn" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] rounded-full hover:bg-[var(--border)] transition">✕</button>
+        </div>
+        <div id="interchangeDirFilter" class="flex gap-1.5"></div>
       </div>
-      <div id="interchangeDirFilter" class="flex gap-1.5 mt-3"></div>
     </div>
     <div id="interchangeSections"></div>
   </section>
@@ -226,9 +228,9 @@ const state = {
   lang:"tc", contrast:false, tab:"station", // TAB 2 SET AS DEFAULT TAB
   routes:[], stops:[], stopById:new Map(), routeGroups:new Map(), stationGroups:new Map(),
   loading:false,
-  tab1:{ query:"", expandedKey:null, expandedData:null, expandLoading:false, expandError:null },
+  tab1:{ query:"60m", expandedKey:null, expandedData:null, expandLoading:false, expandError:null },
   tab2:{ stationKey:null, query:"", dirFilter:"all", data:[], loading:false, error:null },
-  tab3:{ stopIds:[], query:"", dirFilter:"all", data:[], loading:false, error:null, loaded:false },
+  tab3:{ stopIds:[], query:"6", dirFilter:"all", data:[], loading:false, error:null, loaded:false },
   lastUpdated:null,
   isMockFallback: false
 };
@@ -681,6 +683,14 @@ document.getElementById("routeSearchInput").addEventListener("input", (e)=>{
   renderTab1();
 });
 
+document.getElementById("clearRouteBtn").addEventListener("click", ()=>{
+  document.getElementById("routeSearchInput").value = "";
+  state.tab1.query = "";
+  state.tab1.expandedKey = null;
+  state.tab1.expandedData = null;
+  renderTab1();
+});
+
 /* ================= TAB 2: STATION BOARD ================= */
 function renderQuickStations(){
   const container = document.getElementById("quickStations");
@@ -866,6 +876,12 @@ document.getElementById("stationFilterInput").addEventListener("input",(e)=>{
   renderTab2Results();
 });
 
+document.getElementById("clearStationFilterBtn").addEventListener("click", ()=>{
+  document.getElementById("stationFilterInput").value = "";
+  state.tab2.query = "";
+  renderTab2Results();
+});
+
 /* ================= TAB 3: TUEN MUN ROAD INTERCHANGE ================= */
 async function loadInterchangeBoard(){
   state.tab3.loading = true;
@@ -933,6 +949,12 @@ document.getElementById("interchangeFilterInput").addEventListener("input",(e)=>
   renderTab3Results();
 });
 
+document.getElementById("clearInterchangeFilterBtn").addEventListener("click", ()=>{
+  document.getElementById("interchangeFilterInput").value = "";
+  state.tab3.query = "";
+  renderTab3Results();
+});
+
 /* ================= LANGUAGE / CONTRAST / REFRESH ================= */
 document.getElementById("langBtn").addEventListener("click", ()=>{
   state.lang = state.lang==="tc" ? "en":"tc";
@@ -981,41 +1003,6 @@ function setupAutoRefresh(){
 
 /* ---------------- Boot Application ---------------- */
 init();
-
-// Clear Buttons
-document.getElementById("clearTab1").addEventListener("click", () => {
-    document.getElementById("routeSearchInput").value = "";
-    state.tab1.query = "";
-    state.tab1.expandedKey = null;
-    renderTab1();
-});
-document.getElementById("clearTab2").addEventListener("click", () => {
-    document.getElementById("stationSearchInput").value = "";
-    state.tab2.stationKey = null;
-    document.getElementById("stationBoardWrap").classList.add("hidden");
-    document.getElementById("stationEmptyHint").classList.remove("hidden");
-});
-document.getElementById("clearTab3").addEventListener("click", () => {
-    document.getElementById("interchangeFilterInput").value = "";
-    state.tab3.query = "";
-    renderTab3Results();
-});
-
-// Set Defaults
-window.addEventListener('load', () => {
-    // Default Tab 1: 60M
-    document.getElementById("routeSearchInput").value = "60M";
-    state.tab1.query = "60M";
-    renderTab1();
-
-    // Default Tab 2: 兆麟苑
-    selectStation("兆麟苑");
-
-    // Default Tab 3: 6
-    document.getElementById("interchangeFilterInput").value = "6";
-    state.tab3.query = "6";
-    if(state.tab3.loaded) renderTab3Results();
-});
 
 })();
 </script>
