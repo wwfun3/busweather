@@ -1,776 +1,1018 @@
-<!doctype html>
-<html lang="zh-Hant" data-sky-project-type="html_lite">
+<!DOCTYPE html>
+<html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="theme-color" content="#b3132b" />
-<meta name="description" content="九巴巴士到站時間：按路線、車站及屯門公路轉車站查閱即時預計到站時間。" />
-<title>九巴巴士到站時間｜KMB Bus Arrival Times</title>
-<meta property="og:title" content="九巴巴士到站時間｜KMB Bus Arrival Times" />
-<meta property="og:description" content="使用九巴開放數據查閱路線、車站及屯門公路轉車站即時到站時間。" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="九巴巴士到站時間｜KMB Bus Arrival Times" />
-<meta name="twitter:description" content="使用九巴開放數據查閱路線、車站及屯門公路轉車站即時到站時間。" />
-<script id="structured-data-jsonld" type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"九巴巴士到站時間","description":"使用九巴開放數據查閱路線、車站及屯門公路轉車站即時到站時間。","url":"https://pdfjeqey4t.skywork.website"}</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>九巴到站時間 + 香港天氣 | KMB ETA + HK Weather</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script>tailwind.config ={theme:{extend:{fontFamily:{sans:['Arial','"PingFang HK"','"Microsoft JhengHei"','system-ui','sans-serif'] },colors:{kmb:{50:'#fff1f2',100:'#ffe1e5',500:'#dc2945',600:'#c01834',700:'#a50f29',900:'#68101e' } }
-}
-}
-};</script>
-<style>:root{--bg:#f3f5f8;--surface:#ffffff;--surface-soft:#f8fafc;--text:#142033;--muted:#64748b;--border:#dce3eb;--primary:#b3132b;--primary-hover:#8f0f23;--accent:#ef6b40;--tm:#006b63;--non-tm:#174ea6;--success:#087a55;--warning:#9a5a00;--danger:#b42318;--shadow:0 14px 38px rgba(31,42,55,.09);}*{box-sizing:border-box;}html{scroll-behavior:smooth;}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,"PingFang HK","Microsoft JhengHei",system-ui,sans-serif;min-height:100vh;}body::before{content:"";position:fixed;inset:0 auto 0 0;width:6px;background:linear-gradient(180deg,var(--primary),var(--accent));z-index:70;}button,input,select{font:inherit;}button{-webkit-tap-highlight-color:transparent;}:focus-visible{outline:3px solid #f59e0b;outline-offset:3px;}.skip-link{position:fixed;left:1rem;top:-5rem;z-index:100;padding:.75rem 1rem;border-radius:.75rem;background:#111827;color:white;transition:top .2s;}.skip-link:focus{top:1rem;}.app-shell{width:min(1480px,calc(100% - 2rem));margin-inline:auto;}.topbar{position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(220,227,235,.9);background:rgba(255,255,255,.92);backdrop-filter:blur(16px);}.brand-mark{width:2.8rem;height:2.8rem;border-radius:.85rem .85rem .85rem .25rem;display:grid;place-items:center;color:#fff;background:var(--primary);box-shadow:0 8px 22px rgba(179,19,43,.24);font-weight:900;letter-spacing:-.04em;}.toolbar-btn{min-height:2.75rem;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border:1px solid var(--border);border-radius:.75rem;padding:.55rem .8rem;color:var(--text);background:var(--surface);font-weight:700;transition:transform .18s,border-color .18s,background .18s;}.toolbar-btn:hover{border-color:var(--primary);background:#fff7f8;transform:translateY(-1px);}.hero-strip{position:relative;overflow:hidden;border-radius:0 0 1.5rem 1.5rem;background:linear-gradient(112deg,#750e20 0%,#b3132b 48%,#dc4c3b 100%);color:white;box-shadow:var(--shadow);}.hero-strip::after{content:"";position:absolute;width:28rem;height:28rem;right:-8rem;top:-16rem;border:1px solid rgba(255,255,255,.18);border-radius:999px;box-shadow:0 0 0 4rem rgba(255,255,255,.035),0 0 0 8rem rgba(255,255,255,.025);}.live-dot{width:.55rem;height:.55rem;border-radius:999px;background:#70f0b8;box-shadow:0 0 0 .28rem rgba(112,240,184,.18);animation:pulse 2s infinite;}@keyframes pulse{50%{opacity:.48;transform:scale(.9);}}.tab-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;padding:.4rem;background:#e8edf3;border-radius:1rem;}.tab-button{min-height:3.4rem;border:0;border-radius:.75rem;padding:.7rem 1rem;color:#526173;background:transparent;font-weight:800;line-height:1.2;transition:background .18s,color .18s,box-shadow .18s,transform .18s;}.tab-button:hover{color:var(--text);background:rgba(255,255,255,.55);}.tab-button[aria-selected="true"]{background:var(--surface);color:var(--primary);box-shadow:0 3px 12px rgba(31,42,55,.1);}.workspace{display:grid;grid-template-columns:minmax(18rem,27rem) minmax(0,1fr);gap:1rem;align-items:start;}.control-panel{position:sticky;top:5.6rem;border:1px solid var(--border);border-radius:1.25rem;padding:1.1rem;background:var(--surface);box-shadow:0 8px 28px rgba(31,42,55,.06);}.result-panel{min-height:30rem;border:1px solid var(--border);border-radius:1.25rem;background:var(--surface);box-shadow:0 8px 28px rgba(31,42,55,.06);overflow:hidden;}.field-label{display:block;margin-bottom:.45rem;color:#344256;font-size:.82rem;font-weight:800;letter-spacing:.02em;}.input-wrap{position:relative;}.input-wrap svg{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);width:1.2rem;color:var(--muted);pointer-events:none;}.form-input,.form-select{width:100%;min-height:3.15rem;border:1px solid var(--border);border-radius:.85rem;color:var(--text);background:var(--surface-soft);transition:border-color .18s,box-shadow .18s,background .18s;}.form-input{padding:.72rem .9rem .72rem 2.75rem;}.form-select{padding:.72rem .9rem;}.form-input:hover,.form-select:hover{border-color:#aab7c6;}.form-input:focus,.form-select:focus{border-color:var(--primary);background:var(--surface);box-shadow:0 0 0 4px rgba(179,19,43,.1);outline:0;}.station-suggestions{position:absolute;inset:calc(100% + .45rem) 0 auto;z-index:45;max-height:20rem;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--border);border-radius:.9rem;background:var(--surface);box-shadow:0 18px 42px rgba(31,42,55,.18);}.station-suggestion{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.75rem;align-items:center;border:0;border-bottom:1px solid var(--border);padding:.72rem .85rem;background:var(--surface);color:var(--text);text-align:left;cursor:pointer;transition:background .14s,color .14s;}.station-suggestion:last-child{border-bottom:0;}.station-suggestion:hover,.station-suggestion[aria-selected="true"]{background:#fff2f4;color:var(--primary);}.station-suggestion-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.86rem;font-weight:850;}.station-suggestion-alt{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:.15rem;color:var(--muted);font-size:.68rem;font-weight:650;}.station-suggestion-count{border-radius:999px;padding:.3rem .5rem;background:#eef2f6;color:#526173;font-size:.67rem;font-weight:850;white-space:nowrap;}.station-suggestion-empty{padding:1rem;color:var(--muted);text-align:center;font-size:.82rem;font-weight:700;}.primary-btn{width:100%;min-height:3.15rem;display:flex;align-items:center;justify-content:center;gap:.55rem;border:0;border-radius:.85rem;padding:.75rem 1rem;background:var(--primary);color:white;font-weight:800;box-shadow:0 8px 18px rgba(179,19,43,.2);transition:background .18s,transform .18s,box-shadow .18s;}.primary-btn:hover{background:var(--primary-hover);transform:translateY(-1px);box-shadow:0 10px 24px rgba(179,19,43,.26);}.primary-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}.result-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.15rem 1.25rem;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#fff,#fbfcfd);}.count-pill{flex:0 0 auto;border-radius:999px;padding:.35rem .65rem;background:#eef2f6;color:#46566a;font-size:.78rem;font-weight:800;}.route-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;padding:1rem;}.route-card{border:1px solid var(--border);border-radius:1rem;overflow:hidden;background:var(--surface);transition:border-color .18s,transform .18s,box-shadow .18s;}.route-card:hover{border-color:#c3ccd7;transform:translateY(-2px);box-shadow:0 10px 24px rgba(31,42,55,.08);}.route-number{display:inline-grid;place-items:center;min-width:4.4rem;min-height:3rem;padding:.3rem .65rem;border-radius:.7rem;background:var(--primary);color:#fff;font-size:1.45rem;font-weight:900;letter-spacing:-.03em;}.direction-button{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.65rem;padding:.72rem .9rem;border:0;border-top:1px solid var(--border);background:var(--surface);text-align:left;color:var(--text);transition:background .18s;}.direction-button:hover{background:#fff7f8;}.direction-button svg{width:1rem;color:var(--muted);}.dir-badge{display:inline-flex;align-items:center;width:max-content;border-radius:999px;padding:.28rem .55rem;font-size:.7rem;line-height:1;font-weight:900;white-space:nowrap;}.dir-badge.tm{background:#e2f5f0;color:var(--tm);}.dir-badge.non{background:#e8f0ff;color:var(--non-tm);}.eta-list{padding:.35rem 1rem 1rem;}.eta-row{display:grid;grid-template-columns:minmax(3.7rem,5rem) minmax(0,1fr) auto;gap:.8rem;align-items:center;min-height:5rem;padding:.85rem .25rem;border-bottom:1px solid var(--border);}.eta-row:last-child{border-bottom:0;}.eta-route{font-size:1.5rem;font-weight:900;color:var(--primary);letter-spacing:-.03em;}.eta-times{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.35rem;}.eta-chip{min-width:3.6rem;border-radius:.65rem;padding:.48rem .55rem;background:#edf2f7;color:#223047;text-align:center;font-size:.8rem;font-weight:900;}.eta-chip.soon{background:#fff0e7;color:#a23f12;}.eta-chip .unit{margin-left:.16rem;font-size:.62rem;opacity:.72;}.stop-seq{display:grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:999px;background:#eef2f6;color:#526173;font-size:.8rem;font-weight:900;}.route-stop-row{display:grid;grid-template-columns:2.5rem minmax(0,1fr) auto;gap:.75rem;align-items:center;padding:.85rem .2rem;border-bottom:1px solid var(--border);}.route-stop-row:last-child{border-bottom:0;}.empty-state{display:grid;place-items:center;min-height:25rem;padding:2rem;text-align:center;color:var(--muted);}.empty-graphic{width:4.5rem;height:4.5rem;display:grid;place-items:center;margin:0 auto 1rem;border-radius:1.3rem;background:#eef2f6;color:#6b7b8e;}.empty-graphic svg{width:2.2rem;}.skeleton{position:relative;overflow:hidden;background:#e9eef3;border-radius:.7rem;}.skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);animation:shimmer 1.2s infinite;}@keyframes shimmer{to{transform:translateX(100%);}}.notice{margin:1rem;border:1px solid #f1c7c2;border-radius:1rem;padding:1rem;background:#fff5f4;color:var(--danger);}.source-note{border-top:1px solid var(--border);background:#f9fbfc;color:var(--muted);}.hidden-view{display:none !important;}.spin{animation:spin .8s linear infinite;}@keyframes spin{to{transform:rotate(360deg);}}body.high-contrast{--bg:#000;--surface:#000;--surface-soft:#111;--text:#fff;--muted:#f1f5f9;--border:#fff;--primary:#ffea00;--primary-hover:#fff36b;--accent:#00ffff;--tm:#00ffb7;--non-tm:#66b3ff;--success:#00ffb7;--warning:#ffea00;--danger:#ff7b7b;--shadow:none;}body.high-contrast::before{background:#ffea00;}body.high-contrast .topbar,body.high-contrast .control-panel,body.high-contrast .result-panel,body.high-contrast .route-card,body.high-contrast .direction-button,body.high-contrast .toolbar-btn{background:#000;color:#fff;}body.high-contrast .hero-strip{background:#000;border:2px solid #ffea00;}body.high-contrast .tab-bar,body.high-contrast .count-pill,body.high-contrast .eta-chip,body.high-contrast .stop-seq,body.high-contrast .empty-graphic{background:#171717;color:#fff;}body.high-contrast .tab-button{color:#fff;}body.high-contrast .tab-button[aria-selected="true"]{background:#ffea00;color:#000;}body.high-contrast .route-number,body.high-contrast .primary-btn{background:#ffea00;color:#000;}body.high-contrast .direction-button:hover,body.high-contrast .toolbar-btn:hover{background:#181818;}body.high-contrast .form-input,body.high-contrast .form-select{background:#000;color:#fff;border-color:#fff;}body.high-contrast .station-suggestions,body.high-contrast .station-suggestion{background:#000;color:#fff;border-color:#fff;}body.high-contrast .station-suggestion:hover,body.high-contrast .station-suggestion[aria-selected="true"]{background:#ffea00;color:#000;}body.high-contrast .station-suggestion-count{background:#222;color:#fff;border:1px solid #fff;}body.high-contrast .result-heading,body.high-contrast .source-note{background:#000;}body.high-contrast .dir-badge.tm,body.high-contrast .dir-badge.non{background:#151515;}body.high-contrast .notice{background:#220000;color:#fff;border-color:#ff7b7b;}@media (max-width:900px){.workspace{grid-template-columns:1fr;}.control-panel{position:static;}.route-grid{grid-template-columns:1fr;}}@media (max-width:640px){.app-shell{width:min(100% - 1rem,1480px);}body::before{width:4px;}.topbar .app-shell{padding-block:.55rem;}.brand-subtitle,.button-label-wide{display:none;}.toolbar-btn{min-width:2.8rem;padding:.55rem;}.hero-strip{border-radius:0 0 1rem 1rem;}.tab-bar{grid-template-columns:1fr;}.tab-button{min-height:2.85rem;}.result-heading{padding:1rem;}.route-grid{padding:.7rem;}.eta-row{grid-template-columns:3.8rem minmax(0,1fr);}.eta-row .eta-times{grid-column:1 / -1;justify-content:flex-start;}.route-stop-row{grid-template-columns:2.5rem minmax(0,1fr);}.route-stop-row .eta-times{grid-column:2;justify-content:flex-start;}}@media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto !important;animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}}</style>
-<script src="https://static-us-img.skywork.ai/prod/website_script/embed_website.js?v=1"></script><script src="https://static-us-img.skywork.ai/prod/website_script/websiteAuthTokenCleaner.js?t=2026072504"></script><script>(function(){try{if(window.self===window.top)return;}catch(e){}document.write('<script src="https://static-us-img.skywork.ai/prod/website_script/websiteRuntimeErrorBridge_v5.js"><\/script>');})();</script></head>
-<body data-component-file="index.html" data-component-name="body" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]" data-lov-id="index.html:23:0" data-lov-name="body" data-component-path="index.html" data-component-line="23">
-<a class="skip-link" href="#main-content" data-i18n="skip" data-lov-id="index.html:24:0" data-lov-name="a" data-component-path="index.html" data-component-line="24" data-component-file="index.html" data-component-name="a" data-component-content="%7B%22text%22%3A%22%E8%B7%B3%E5%88%B0%E4%B8%BB%E8%A6%81%E5%85%A7%E5%AE%B9%22%2C%22className%22%3A%22skip-link%22%7D" data-sky-node-path="html[1]/body[1]/a[1]">跳到主要內容</a>
-<header class="topbar" aria-label="Application toolbar" data-component-name="header" data-component-content="%7B%22className%22%3A%22topbar%22%7D" data-sky-node-path="html[1]/body[1]/header[1]" data-lov-id="index.html:25:0" data-lov-name="header" data-component-path="index.html" data-component-line="25" data-component-file="index.html">
-<div class="app-shell flex items-center justify-between gap-3 py-3" data-component-content="%7B%22className%22%3A%22app-shell%20flex%20items-center%20justify-between%20gap-3%20py-3%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]" data-lov-id="index.html:26:0" data-lov-name="div" data-component-path="index.html" data-component-line="26" data-component-file="index.html" data-component-name="div">
-<div class="flex min-w-0 items-center gap-3" data-component-line="27" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20min-w-0%20items-center%20gap-3%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[1]" data-lov-id="index.html:27:0" data-lov-name="div" data-component-path="index.html">
-<div class="brand-mark" aria-hidden="true" data-component-content="%7B%22text%22%3A%22KMB%22%2C%22className%22%3A%22brand-mark%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[1]/div[1]" data-lov-id="index.html:28:0" data-lov-name="div" data-component-path="index.html" data-component-line="28" data-component-file="index.html" data-component-name="div">KMB</div>
-<div class="min-w-0" data-component-content="%7B%22className%22%3A%22min-w-0%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[1]/div[2]" data-lov-id="index.html:29:0" data-lov-name="div" data-component-path="index.html" data-component-line="29" data-component-file="index.html" data-component-name="div">
-<p class="truncate text-[.98rem] font-black tracking-tight" data-i18n="brand" data-component-line="30" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E5%B7%B4%E5%A3%AB%E5%88%B0%E7%AB%99%E6%99%82%E9%96%93%22%2C%22className%22%3A%22truncate%20text-%5B.98rem%5D%20font-black%20tracking-tight%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[1]/div[2]/p[1]" data-lov-id="index.html:30:0" data-lov-name="p" data-component-path="index.html">巴士到站時間</p>
-<p class="brand-subtitle truncate text-xs font-semibold text-slate-500" data-i18n="brandSub" data-component-content="%7B%22text%22%3A%22KMB%20LIVE%20ARRIVAL%20BOARD%22%2C%22className%22%3A%22brand-subtitle%20truncate%20text-xs%20font-semibold%20text-slate-500%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[1]/div[2]/p[2]" data-lov-id="index.html:31:0" data-lov-name="p" data-component-path="index.html" data-component-line="31" data-component-file="index.html" data-component-name="p">KMB LIVE ARRIVAL BOARD</p>
-</div>
-</div>
-<div class="flex items-center gap-2" data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-2%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]" data-lov-id="index.html:34:0" data-lov-name="div" data-component-path="index.html" data-component-line="34" data-component-file="index.html" data-component-name="div">
-<button id="contrastBtn" class="toolbar-btn" type="button" aria-pressed="false" title="高對比模式" data-component-name="button" data-component-content="%7B%22className%22%3A%22toolbar-btn%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[1]" data-lov-id="index.html:35:0" data-lov-name="button" data-component-path="index.html" data-component-line="35" data-component-file="index.html">
-<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[1]/svg[1]" data-lov-id="index.html:36:0" data-lov-name="svg" data-component-path="index.html" data-component-line="36" data-component-file="index.html" data-component-name="svg"><circle cx="12" cy="12" r="9" data-component-path="index.html" data-component-line="36" data-component-file="index.html" data-component-name="circle" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[1]/svg[1]/circle[1]" data-lov-id="index.html:36:118" data-lov-name="circle"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" data-component-path="index.html" data-component-line="36" data-component-file="index.html" data-component-name="path" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[1]/svg[1]/path[1]" data-lov-id="index.html:36:149" data-lov-name="path"/></svg>
-<span class="button-label-wide" data-i18n="contrast" data-component-path="index.html" data-component-line="37" data-component-file="index.html" data-component-name="span" data-component-content="%7B%22text%22%3A%22%E9%AB%98%E5%B0%8D%E6%AF%94%22%2C%22className%22%3A%22button-label-wide%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[1]/span[1]" data-lov-id="index.html:37:0" data-lov-name="span">高對比</span>
-</button>
-<button id="langBtn" class="toolbar-btn" type="button" aria-label="Switch to English" data-lov-name="button" data-component-path="index.html" data-component-line="39" data-component-file="index.html" data-component-name="button" data-component-content="%7B%22className%22%3A%22toolbar-btn%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[2]" data-lov-id="index.html:39:0">
-<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-component-path="index.html" data-component-line="40" data-component-file="index.html" data-component-name="svg" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[2]/svg[1]" data-lov-id="index.html:40:0" data-lov-name="svg"><circle cx="12" cy="12" r="9" data-component-line="40" data-component-file="index.html" data-component-name="circle" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[2]/svg[1]/circle[1]" data-lov-id="index.html:40:118" data-lov-name="circle" data-component-path="index.html"/><path d="M3 12h18M12 3c2.2 2.5 3.3 5.5 3.3 9S14.2 18.5 12 21c-2.2-2.5-3.3-5.5-3.3-9S9.8 5.5 12 3z" data-lov-id="index.html:40:149" data-lov-name="path" data-component-path="index.html" data-component-line="40" data-component-file="index.html" data-component-name="path" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[2]/svg[1]/path[1]"/></svg>
-<span id="langLabel" data-component-path="index.html" data-component-line="41" data-component-file="index.html" data-component-name="span" data-component-content="%7B%22text%22%3A%22English%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[2]/span[1]" data-lov-id="index.html:41:0" data-lov-name="span">English</span>
-</button>
-<button id="refreshBtn" class="toolbar-btn" type="button" data-component-content="%7B%22className%22%3A%22toolbar-btn%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[3]" data-lov-id="index.html:43:0" data-lov-name="button" data-component-path="index.html" data-component-line="43" data-component-file="index.html" data-component-name="button">
-<svg id="refreshIcon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[3]/svg[1]" data-lov-id="index.html:44:0" data-lov-name="svg" data-component-path="index.html" data-component-line="44" data-component-file="index.html" data-component-name="svg" data-component-content="%7B%7D"><path d="M20 6v5h-5" data-component-path="index.html" data-component-line="44" data-component-file="index.html" data-component-name="path" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[3]/svg[1]/path[1]" data-lov-id="index.html:44:135" data-lov-name="path"/><path d="M4 18v-5h5" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[3]/svg[1]/path[2]" data-lov-id="index.html:44:157" data-lov-name="path" data-component-path="index.html" data-component-line="44" data-component-file="index.html" data-component-name="path"/><path d="M18.5 9A7 7 0 0 0 6.3 6.3L4 8M5.5 15A7 7 0 0 0 17.7 17.7L20 16" data-component-path="index.html" data-component-line="44" data-component-file="index.html" data-component-name="path" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[3]/svg[1]/path[3]" data-lov-id="index.html:44:179" data-lov-name="path"/></svg>
-<span class="button-label-wide" data-i18n="refresh" data-component-content="%7B%22text%22%3A%22%E9%87%8D%E6%96%B0%E6%95%B4%E7%90%86%22%2C%22className%22%3A%22button-label-wide%22%7D" data-sky-node-path="html[1]/body[1]/header[1]/div[1]/div[2]/button[3]/span[1]" data-lov-id="index.html:45:0" data-lov-name="span" data-component-path="index.html" data-component-line="45" data-component-file="index.html" data-component-name="span">重新整理</span>
-</button>
-</div>
-</div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eef2f7; --panel:#ffffff; --panel2:#f8fafc; --text:#0f172a; --muted:#64748b;
+    --border:#e2e8f0; --accent:#d31145; --accent2:#b80d3a; --tm:#0e7a3d; --urban:#1d4ed8;
+    --eta:#d31145; --chip:#f1f5f9; --good:#15803d;
+  }
+  body.hc{
+    --bg:#000000; --panel:#000000; --panel2:#0a0a0a; --text:#ffffff; --muted:#ffe600;
+    --border:#ffffff; --accent:#ffe600; --accent2:#ffe600; --tm:#00ff88; --urban:#4fc3ff;
+    --eta:#ffe600; --chip:#111111; --good:#00ff88;
+  }
+  *{ font-family:'Noto Sans TC','Noto Sans HK',system-ui,sans-serif; }
+  body{ background:var(--bg); color:var(--text); transition:background .2s,color .2s; }
+  body.hc a, body.hc button{ outline-offset:2px; }
+  .card{ background:var(--panel); border:1px solid var(--border); border-radius:1rem; box-shadow:0 1px 3px rgba(15,23,42,.06); }
+  body.hc .card{ box-shadow:none; border-width:2px; }
+  .txt-muted{ color:var(--muted); }
+  .tab-btn{ border:2px solid transparent; border-radius:.75rem; font-weight:700; transition:all .15s; color:var(--muted); }
+  .tab-btn:hover{ color:var(--text); }
+  .tab-btn.active{ background:var(--accent); color:#fff; box-shadow:0 4px 14px rgba(211,17,69,.35); }
+  body.hc .tab-btn.active{ color:#000; background:var(--accent); }
+  .subtab-btn{ border-bottom:3px solid transparent; color:var(--muted); font-weight:700; padding:.6rem .2rem; }
+  .subtab-btn.active{ color:var(--accent); border-color:var(--accent); }
+  body.hc .subtab-btn{ border-width:2px; }
+  .seg-btn{ border:1.5px solid var(--border); background:var(--panel2); color:var(--muted); font-weight:600; padding:.4rem .9rem; border-radius:.6rem; font-size:.85rem; transition:all .15s; }
+  .seg-btn.active{ background:var(--text); color:var(--panel); border-color:var(--text); }
+  body.hc .seg-btn.active{ background:#ffe600; color:#000; border-color:#ffe600; }
+  .route-badge{ background:var(--accent); color:#fff; font-weight:900; border-radius:.55rem; padding:.2rem .55rem; letter-spacing:.02em; font-size:1rem; min-width:3.2rem; text-align:center; display:inline-block; }
+  body.hc .route-badge{ color:#000; }
+  .dir-chip{ font-size:.7rem; font-weight:700; border-radius:.4rem; padding:.12rem .45rem; white-space:nowrap; }
+  .dir-chip.tm{ background:color-mix(in srgb,var(--tm) 14%,transparent); color:var(--tm); border:1px solid var(--tm); }
+  .dir-chip.urban{ background:color-mix(in srgb,var(--urban) 12%,transparent); color:var(--urban); border:1px solid var(--urban); }
+  .eta-time{ font-weight:900; font-variant-numeric:tabular-nums; }
+  .eta-now{ color:var(--good); animation:pulse 1.2s infinite; }
+  .eta-far{ color:var(--muted); }
+  @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.35} }
+  .row-item{ border:1px solid var(--border); border-radius:.8rem; background:var(--panel2); transition:border-color .15s, transform .1s; }
+  .row-item:hover{ border-color:var(--accent); }
+  body.hc .row-item{ border-width:2px; }
+  .input-box{ background:var(--panel); border:1.5px solid var(--border); color:var(--text); border-radius:.75rem; }
+  .input-box:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent); }
+  body.hc .input-box{ border-width:2px; }
+  .btn-primary{ background:var(--accent); color:#fff; font-weight:700; border-radius:.75rem; transition:filter .15s, transform .1s; }
+  .btn-primary:hover{ filter:brightness(1.1); }
+  .btn-primary:active{ transform:scale(.97); }
+  body.hc .btn-primary{ color:#000; border:2px solid #ffe600; }
+  .btn-ghost{ border:1.5px solid var(--border); border-radius:.75rem; font-weight:700; color:var(--text); background:var(--panel); transition:all .15s; }
+  .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
+  body.hc .btn-ghost{ border-width:2px; }
+  #loadbar{ position:fixed; top:0; left:0; height:3px; background:var(--accent); width:0; z-index:60; transition:width .3s, opacity .3s; opacity:0; }
+  #loadbar.on{ opacity:1; animation:loadslide 1s infinite linear; }
+  @keyframes loadslide{ 0%{width:10%;margin-left:0} 50%{width:45%;margin-left:30%} 100%{width:10%;margin-left:95%} }
+  .spinner{ width:2rem;height:2rem;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg);} }
+  .stop-row{ border-left:3px solid var(--border); }
+  .stop-row.has-eta{ border-left-color:var(--accent); }
+  .wx-hero{ background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#0ea5e9 100%); color:#fff; }
+  body.hc .wx-hero{ background:#000; border:3px solid #ffe600; color:#fff; }
+  .wx-card{ background:linear-gradient(160deg,var(--panel) 0%,var(--panel2) 100%); }
+  .warn-chip{ border:2px solid; border-radius:.6rem; padding:.25rem .6rem; font-weight:800; font-size:.85rem; }
+  .warn-ty{ border-color:#7c3aed; color:#7c3aed; }
+  .warn-rain-b{ border-color:#000; color:#fff; background:#000; }
+  .warn-rain-r{ border-color:#dc2626; color:#dc2626; }
+  .warn-rain-a{ border-color:#d97706; color:#d97706; }
+  body.hc .warn-rain-b{ background:#fff; color:#000; border-color:#fff; }
+  .toast{ background:#1e293b; color:#fff; border-radius:.75rem; padding:.7rem 1rem; box-shadow:0 8px 24px rgba(0,0,0,.3); animation:toastin .25s ease; }
+  body.hc .toast{ background:#fff; color:#000; border:2px solid #000; }
+  @keyframes toastin{ from{ transform:translateY(10px); opacity:0;} to{ transform:none; opacity:1;} }
+  .variant-chip{ border:1.5px solid var(--border); border-radius:.6rem; padding:.35rem .7rem; font-size:.85rem; font-weight:600; background:var(--panel2); color:var(--text); }
+  .variant-chip.active{ border-color:var(--accent); background:color-mix(in srgb,var(--accent) 10%,transparent); }
+  .fade-in{ animation:fadein .25s ease; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+  ::-webkit-scrollbar{ width:8px;height:8px; } ::-webkit-scrollbar-thumb{ background:var(--border); border-radius:4px; }
+</style>
+</head>
+<body class="min-h-screen">
+<div id="loadbar"></div>
+
+<!-- ===== Header ===== -->
+<header class="sticky top-0 z-50 border-b" style="background:var(--panel); border-color:var(--border);">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3 flex-wrap">
+    <div class="flex items-center gap-2 mr-auto">
+      <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black text-sm" style="background:var(--accent);">九巴</div>
+      <h1 class="text-lg md:text-xl font-black leading-tight">
+        <span data-i18n="appTitle">九巴到站時間 ＋ 香港天氣</span>
+      </h1>
+    </div>
+    <button id="btn-contrast" class="btn-ghost px-3 py-2 text-sm" aria-pressed="false" data-i18n-title="contrastTitle">
+      <i class="fa-solid fa-circle-half-stroke mr-1"></i><span data-i18n="contrast">高對比</span>
+    </button>
+    <button id="btn-lang" class="btn-ghost px-3 py-2 text-sm" data-i18n-title="langTitle">
+      <i class="fa-solid fa-language mr-1"></i><span id="lang-label">English</span>
+    </button>
+  </div>
+  <!-- Main app tabs -->
+  <nav class="max-w-6xl mx-auto px-4 pb-3 flex gap-2" aria-label="main tabs">
+    <button id="maintab-bus" class="tab-btn active px-4 py-2 text-sm md:text-base" data-app="bus">
+      <i class="fa-solid fa-bus mr-1"></i><span data-i18n="tabBus">巴士到站時間</span>
+    </button>
+    <button id="maintab-weather" class="tab-btn px-4 py-2 text-sm md:text-base" data-app="weather">
+      <i class="fa-solid fa-cloud-sun mr-1"></i><span data-i18n="tabWeather">香港天氣</span>
+    </button>
+  </nav>
 </header>
-<main id="main-content" class="app-shell pb-8" data-sky-node-path="html[1]/body[1]/main[1]" data-lov-id="index.html:50:0" data-lov-name="main" data-component-path="index.html" data-component-line="50" data-component-file="index.html" data-component-name="main" data-component-content="%7B%22className%22%3A%22app-shell%20pb-8%22%7D">
-<section class="hero-strip px-5 py-5 sm:px-8 sm:py-7" aria-labelledby="page-title" data-sky-node-path="html[1]/body[1]/main[1]/section[1]" data-lov-id="index.html:51:0" data-lov-name="section" data-component-path="index.html" data-component-line="51" data-component-file="index.html" data-component-name="section" data-component-content="%7B%22className%22%3A%22hero-strip%20px-5%20py-5%20sm%3Apx-8%20sm%3Apy-7%22%7D">
-<div class="relative z-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-end" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]" data-lov-id="index.html:52:0" data-lov-name="div" data-component-path="index.html" data-component-line="52" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22relative%20z-10%20flex%20flex-col%20justify-between%20gap-5%20sm%3Aflex-row%20sm%3Aitems-end%22%7D">
-<div data-component-file="index.html" data-component-name="div" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[1]" data-lov-id="index.html:53:0" data-lov-name="div" data-component-path="index.html" data-component-line="53">
-<div class="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[.16em] text-white/85" data-lov-id="index.html:54:0" data-lov-name="div" data-component-path="index.html" data-component-line="54" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22mb-3%20flex%20items-center%20gap-2%20text-xs%20font-bold%20uppercase%20tracking-%5B.16em%5D%20text-white%2F85%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[1]/div[1]">
-<span class="live-dot" aria-hidden="true" data-component-content="%7B%22className%22%3A%22live-dot%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[1]/div[1]/span[1]" data-lov-id="index.html:55:0" data-lov-name="span" data-component-path="index.html" data-component-line="55" data-component-file="index.html" data-component-name="span"></span>
-<span data-i18n="liveData" data-component-path="index.html" data-component-line="56" data-component-file="index.html" data-component-name="span" data-component-content="%7B%22text%22%3A%22%E4%B9%9D%E5%B7%B4%E9%96%8B%E6%94%BE%E6%95%B8%E6%93%9A%E3%83%BB%E5%8D%B3%E6%99%82%E6%9B%B4%E6%96%B0%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[1]/div[1]/span[2]" data-lov-id="index.html:56:0" data-lov-name="span">九巴開放數據・即時更新</span>
-</div>
-<h1 id="page-title" class="max-w-3xl text-2xl font-black tracking-tight sm:text-4xl" data-i18n="title" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[1]/h1[1]" data-lov-id="index.html:58:0" data-lov-name="h1" data-component-path="index.html" data-component-line="58" data-component-file="index.html" data-component-name="h1" data-component-content="%7B%22text%22%3A%22%E6%8E%8C%E6%8F%A1%E4%B8%8B%E4%B8%80%E7%8F%AD%E5%B7%B4%E5%A3%AB%22%2C%22className%22%3A%22max-w-3xl%20text-2xl%20font-black%20tracking-tight%20sm%3Atext-4xl%22%7D">掌握下一班巴士</h1>
-<p class="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-white/80 sm:text-base" data-i18n="subtitle" data-component-line="59" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E6%90%9C%E5%B0%8B%E8%B7%AF%E7%B7%9A%E3%80%81%E8%BB%8A%E7%AB%99%EF%BC%8C%E6%88%96%E4%B8%80%E6%AC%A1%E6%9F%A5%E7%9C%8B%E5%B1%AF%E9%96%80%E5%85%AC%E8%B7%AF%E8%BD%89%E8%BB%8A%E7%AB%99%E5%90%84%E6%9C%88%E5%8F%B0%E5%88%B0%E7%AB%99%E6%99%82%E9%96%93%E3%80%82%22%2C%22className%22%3A%22mt-2%20max-w-2xl%20text-sm%20font-medium%20leading-relaxed%20text-white%2F80%20sm%3Atext-base%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[1]/p[1]" data-lov-id="index.html:59:0" data-lov-name="p" data-component-path="index.html">搜尋路線、車站，或一次查看屯門公路轉車站各月台到站時間。</p>
-</div>
-<div class="flex items-center gap-3 rounded-xl border border-white/20 bg-black/10 px-4 py-3 backdrop-blur-sm" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[2]" data-lov-id="index.html:61:0" data-lov-name="div" data-component-path="index.html" data-component-line="61" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22flex%20items-center%20gap-3%20rounded-xl%20border%20border-white%2F20%20bg-black%2F10%20px-4%20py-3%20backdrop-blur-sm%22%7D">
-<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[2]/svg[1]" data-lov-id="index.html:62:0" data-lov-name="svg" data-component-path="index.html" data-component-line="62" data-component-file="index.html" data-component-name="svg" data-component-content="%7B%7D"><circle cx="12" cy="12" r="9" data-component-path="index.html" data-component-line="62" data-component-file="index.html" data-component-name="circle" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[2]/svg[1]/circle[1]" data-lov-id="index.html:62:118" data-lov-name="circle"/><path d="M12 7v5l3 2" data-lov-id="index.html:62:149" data-lov-name="path" data-component-path="index.html" data-component-line="62" data-component-file="index.html" data-component-name="path" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[2]/svg[1]/path[1]"/></svg>
-<div data-lov-id="index.html:63:0" data-lov-name="div" data-component-path="index.html" data-component-line="63" data-component-file="index.html" data-component-name="div" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[2]/div[1]">
-<p class="text-[.65rem] font-bold uppercase tracking-[.14em] text-white/60" data-i18n="lastUpdated" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E6%9C%80%E5%BE%8C%E6%9B%B4%E6%96%B0%22%2C%22className%22%3A%22text-%5B.65rem%5D%20font-bold%20uppercase%20tracking-%5B.14em%5D%20text-white%2F60%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[2]/div[1]/p[1]" data-lov-id="index.html:64:0" data-lov-name="p" data-component-path="index.html" data-component-line="64" data-component-file="index.html">最後更新</p>
-<p id="lastUpdatedText" class="text-sm font-black" data-lov-id="index.html:65:0" data-lov-name="p" data-component-path="index.html" data-component-line="65" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E2%80%94%22%2C%22className%22%3A%22text-sm%20font-black%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[1]/div[1]/div[2]/div[1]/p[2]">—</p>
-</div>
-</div>
-</div>
-</section>
-<nav class="my-4" aria-label="Search views" data-lov-name="nav" data-component-path="index.html" data-component-line="70" data-component-file="index.html" data-component-name="nav" data-component-content="%7B%22className%22%3A%22my-4%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/nav[1]" data-lov-id="index.html:70:0">
-<div class="tab-bar" role="tablist" aria-label="KMB arrival search options" data-component-path="index.html" data-component-line="71" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22tab-bar%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/nav[1]/div[1]" data-lov-id="index.html:71:0" data-lov-name="div">
-<button id="tab-route" class="tab-button" type="button" role="tab" aria-selected="true" aria-controls="view-route" data-tab="route" data-i18n="tabRoute" data-component-name="button" data-component-content="%7B%22text%22%3A%22%E6%8C%89%E8%B7%AF%E7%B7%9A%E6%90%9C%E5%B0%8B%22%2C%22className%22%3A%22tab-button%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/nav[1]/div[1]/button[1]" data-lov-id="index.html:72:0" data-lov-name="button" data-component-path="index.html" data-component-line="72" data-component-file="index.html">按路線搜尋</button>
-<button id="tab-station" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="view-station" data-tab="station" data-i18n="tabStation" data-component-line="73" data-component-file="index.html" data-component-name="button" data-component-content="%7B%22text%22%3A%22%E6%8C%89%E8%BB%8A%E7%AB%99%E6%90%9C%E5%B0%8B%22%2C%22className%22%3A%22tab-button%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/nav[1]/div[1]/button[2]" data-lov-id="index.html:73:0" data-lov-name="button" data-component-path="index.html">按車站搜尋</button>
-<button id="tab-interchange" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="view-interchange" data-tab="interchange" data-i18n="tabInterchange" data-component-line="74" data-component-file="index.html" data-component-name="button" data-component-content="%7B%22text%22%3A%22%E5%B1%AF%E9%96%80%E5%85%AC%E8%B7%AF%E8%BD%89%E8%BB%8A%E7%AB%99%E5%B0%88%E5%8D%80%22%2C%22className%22%3A%22tab-button%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/nav[1]/div[1]/button[3]" data-lov-id="index.html:74:0" data-lov-name="button" data-component-path="index.html">屯門公路轉車站專區</button>
-</div>
-</nav>
-<div id="globalStatus" class="sr-only" role="status" aria-live="polite" data-component-path="index.html" data-component-line="77" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22sr-only%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/div[1]" data-lov-id="index.html:77:0" data-lov-name="div"></div>
-<section id="view-route" role="tabpanel" aria-labelledby="tab-route" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]" data-lov-id="index.html:78:0" data-lov-name="section" data-component-path="index.html" data-component-line="78" data-component-file="index.html" data-component-name="section">
-<div class="workspace" data-lov-name="div" data-component-path="index.html" data-component-line="79" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22workspace%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]" data-lov-id="index.html:79:0">
-<aside class="control-panel" aria-label="Route filters" data-lov-name="aside" data-component-path="index.html" data-component-line="80" data-component-file="index.html" data-component-name="aside" data-component-content="%7B%22className%22%3A%22control-panel%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]" data-lov-id="index.html:80:0">
-<div class="mb-5" data-component-line="81" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22mb-5%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[1]" data-lov-id="index.html:81:0" data-lov-name="div" data-component-path="index.html">
-<p class="text-xs font-black uppercase tracking-[.13em] text-kmb-600" data-i18n="routeFinder" data-component-line="82" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E8%B7%AF%E7%B7%9A%E6%90%9C%E5%B0%8B%E5%99%A8%22%2C%22className%22%3A%22text-xs%20font-black%20uppercase%20tracking-%5B.13em%5D%20text-kmb-600%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[1]/p[1]" data-lov-id="index.html:82:0" data-lov-name="p" data-component-path="index.html">路線搜尋器</p>
-<h2 class="mt-1 text-xl font-black" data-i18n="findRoute" data-component-name="h2" data-component-content="%7B%22text%22%3A%22%E5%B0%8B%E6%89%BE%E5%B7%B4%E5%A3%AB%E8%B7%AF%E7%B7%9A%22%2C%22className%22%3A%22mt-1%20text-xl%20font-black%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[1]/h2[1]" data-lov-id="index.html:83:0" data-lov-name="h2" data-component-path="index.html" data-component-line="83" data-component-file="index.html">尋找巴士路線</h2>
-<p class="mt-1 text-sm leading-relaxed text-slate-500" data-i18n="routeHelp" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E8%BC%B8%E5%85%A5%E5%AE%8C%E6%95%B4%E6%88%96%E9%83%A8%E5%88%86%E8%B7%AF%E7%B7%9A%E7%B7%A8%E8%99%9F%EF%BC%8C%E5%8D%B3%E6%99%82%E7%AF%A9%E9%81%B8%E7%B5%90%E6%9E%9C%E3%80%82%22%2C%22className%22%3A%22mt-1%20text-sm%20leading-relaxed%20text-slate-500%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[1]/p[2]" data-lov-id="index.html:84:0" data-lov-name="p" data-component-path="index.html" data-component-line="84" data-component-file="index.html">輸入完整或部分路線編號，即時篩選結果。</p>
-</div>
-<label class="field-label" for="routeSearch" data-i18n="routeNumber" data-lov-id="index.html:86:0" data-lov-name="label" data-component-path="index.html" data-component-line="86" data-component-file="index.html" data-component-name="label" data-component-content="%7B%22text%22%3A%22%E8%B7%AF%E7%B7%9A%E7%B7%A8%E8%99%9F%22%2C%22className%22%3A%22field-label%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/label[1]">路線編號</label>
-<div class="input-wrap" data-component-path="index.html" data-component-line="87" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22input-wrap%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[2]" data-lov-id="index.html:87:0" data-lov-name="div">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-component-name="svg" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[2]/svg[1]" data-lov-id="index.html:88:0" data-lov-name="svg" data-component-path="index.html" data-component-line="88" data-component-file="index.html"><circle cx="11" cy="11" r="7" data-lov-name="circle" data-component-path="index.html" data-component-line="88" data-component-file="index.html" data-component-name="circle" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[2]/svg[1]/circle[1]" data-lov-id="index.html:88:95"/><path d="m20 20-3.5-3.5" data-component-file="index.html" data-component-name="path" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[2]/svg[1]/path[1]" data-lov-id="index.html:88:126" data-lov-name="path" data-component-path="index.html" data-component-line="88"/></svg>
-<input id="routeSearch" class="form-input" type="search" inputmode="text" autocomplete="off" placeholder="例如：6、60X、961" data-i18n-placeholder="routePlaceholder" data-component-line="89" data-component-file="index.html" data-component-name="input" data-component-content="%7B%22placeholder%22%3A%22%E4%BE%8B%E5%A6%82%EF%BC%9A6%E3%80%8160X%E3%80%81961%22%2C%22className%22%3A%22form-input%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[2]/input[1]" data-lov-id="index.html:89:0" data-lov-name="input" data-component-path="index.html" />
-</div>
-<label class="field-label mt-4" for="routeDirection" data-i18n="direction" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/label[2]" data-lov-id="index.html:91:0" data-lov-name="label" data-component-path="index.html" data-component-line="91" data-component-file="index.html" data-component-name="label" data-component-content="%7B%22text%22%3A%22%E6%96%B9%E5%90%91%22%2C%22className%22%3A%22field-label%20mt-4%22%7D">方向</label>
-<select id="routeDirection" class="form-select" data-component-name="select" data-component-content="%7B%22className%22%3A%22form-select%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/select[1]" data-lov-id="index.html:92:0" data-lov-name="select" data-component-path="index.html" data-component-line="92" data-component-file="index.html">
-<option value="all" data-i18n="allDirections" data-component-content="%7B%22text%22%3A%22%E5%85%A8%E9%83%A8%E6%96%B9%E5%90%91%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/select[1]/option[1]" data-lov-id="index.html:93:0" data-lov-name="option" data-component-path="index.html" data-component-line="93" data-component-file="index.html" data-component-name="option">全部方向</option>
-<option value="tm" data-i18n="tmDirection" data-component-path="index.html" data-component-line="94" data-component-file="index.html" data-component-name="option" data-component-content="%7B%22text%22%3A%22%E5%B1%AF%E9%96%80%E6%96%B9%E5%90%91%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/select[1]/option[2]" data-lov-id="index.html:94:0" data-lov-name="option">屯門方向</option>
-<option value="non" data-i18n="nonTmDirection" data-component-file="index.html" data-component-name="option" data-component-content="%7B%22text%22%3A%22%E9%9D%9E%E5%B1%AF%E9%96%80%EF%BC%8F%E5%B8%82%E5%8D%80%E6%96%B9%E5%90%91%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/select[1]/option[3]" data-lov-id="index.html:95:0" data-lov-name="option" data-component-path="index.html" data-component-line="95">非屯門／市區方向</option>
-</select>
-<div class="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs leading-relaxed text-slate-500" data-lov-id="index.html:97:0" data-lov-name="div" data-component-path="index.html" data-component-line="97" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22mt-5%20rounded-xl%20border%20border-slate-200%20bg-slate-50%20p-3%20text-xs%20leading-relaxed%20text-slate-500%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[3]">
-<strong class="block text-slate-700" data-i18n="directionNoteTitle" data-lov-id="index.html:98:0" data-lov-name="strong" data-component-path="index.html" data-component-line="98" data-component-file="index.html" data-component-name="strong" data-component-content="%7B%22text%22%3A%22%E6%96%B9%E5%90%91%E5%88%86%E9%A1%9E%22%2C%22className%22%3A%22block%20text-slate-700%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[3]/strong[1]">方向分類</strong>
-<span data-i18n="directionNote" data-lov-name="span" data-component-path="index.html" data-component-line="99" data-component-file="index.html" data-component-name="span" data-component-content="%7B%22text%22%3A%22%E4%BB%A5%E7%B5%82%E9%BB%9E%E7%AB%99%E5%88%A4%E6%96%B7%EF%BC%9B%E5%85%86%E5%BA%B7%E5%B7%B2%E6%AD%B8%E5%85%A5%E5%B1%AF%E9%96%80%E6%96%B9%E5%90%91%E3%80%82%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/aside[1]/div[3]/span[1]" data-lov-id="index.html:99:0">以終點站判斷；兆康已歸入屯門方向。</span>
-</div>
-</aside>
-<div class="result-panel" data-lov-name="div" data-component-path="index.html" data-component-line="102" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22result-panel%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/div[1]" data-lov-id="index.html:102:0">
-<div class="result-heading" data-component-line="103" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22result-heading%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/div[1]/div[1]" data-lov-id="index.html:103:0" data-lov-name="div" data-component-path="index.html">
-<div data-lov-id="index.html:104:0" data-lov-name="div" data-component-path="index.html" data-component-line="104" data-component-file="index.html" data-component-name="div" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/div[1]/div[1]/div[1]">
-<h2 id="routeResultTitle" class="font-black" data-i18n="allRoutes" data-component-line="105" data-component-file="index.html" data-component-name="h2" data-component-content="%7B%22text%22%3A%22%E5%85%A8%E9%83%A8%E8%B7%AF%E7%B7%9A%22%2C%22className%22%3A%22font-black%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/div[1]/div[1]/div[1]/h2[1]" data-lov-id="index.html:105:0" data-lov-name="h2" data-component-path="index.html">全部路線</h2>
-<p id="routeResultSubtitle" class="mt-1 text-xs font-medium text-slate-500" data-i18n="chooseDirection" data-component-content="%7B%22text%22%3A%22%E9%81%B8%E6%93%87%E6%96%B9%E5%90%91%E4%BB%A5%E6%9F%A5%E7%9C%8B%E6%B2%BF%E9%80%94%E5%90%84%E7%AB%99%E5%88%B0%E7%AB%99%E6%99%82%E9%96%93%22%2C%22className%22%3A%22mt-1%20text-xs%20font-medium%20text-slate-500%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/div[1]/div[1]/div[1]/p[1]" data-lov-id="index.html:106:0" data-lov-name="p" data-component-path="index.html" data-component-line="106" data-component-file="index.html" data-component-name="p">選擇方向以查看沿途各站到站時間</p>
-</div>
-<span id="routeCount" class="count-pill" data-component-file="index.html" data-component-name="span" data-component-content="%7B%22text%22%3A%220%22%2C%22className%22%3A%22count-pill%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/div[1]/div[1]/span[1]" data-lov-id="index.html:108:0" data-lov-name="span" data-component-path="index.html" data-component-line="108">0</span>
-</div>
-<div id="routeResults" aria-live="polite" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[2]/div[1]/div[1]/div[2]" data-lov-id="index.html:110:0" data-lov-name="div" data-component-path="index.html" data-component-line="110" data-component-file="index.html" data-component-name="div"></div>
-</div>
-</div>
-</section>
-<section id="view-station" class="hidden-view" role="tabpanel" aria-labelledby="tab-station" data-component-line="114" data-component-file="index.html" data-component-name="section" data-component-content="%7B%22className%22%3A%22hidden-view%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]" data-lov-id="index.html:114:0" data-lov-name="section" data-component-path="index.html">
-<div class="workspace" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]" data-lov-id="index.html:115:0" data-lov-name="div" data-component-path="index.html" data-component-line="115" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22workspace%22%7D">
-<aside class="control-panel" aria-label="Station filters" data-component-file="index.html" data-component-name="aside" data-component-content="%7B%22className%22%3A%22control-panel%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]" data-lov-id="index.html:116:0" data-lov-name="aside" data-component-path="index.html" data-component-line="116">
-<div class="mb-5" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[1]" data-lov-id="index.html:117:0" data-lov-name="div" data-component-path="index.html" data-component-line="117" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22mb-5%22%7D">
-<p class="text-xs font-black uppercase tracking-[.13em] text-kmb-600" data-i18n="stationBoard" data-component-path="index.html" data-component-line="118" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E8%BB%8A%E7%AB%99%E5%88%B0%E7%AB%99%E7%89%8C%22%2C%22className%22%3A%22text-xs%20font-black%20uppercase%20tracking-%5B.13em%5D%20text-kmb-600%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[1]/p[1]" data-lov-id="index.html:118:0" data-lov-name="p">車站到站牌</p>
-<h2 class="mt-1 text-xl font-black" data-i18n="chooseStation" data-component-line="119" data-component-file="index.html" data-component-name="h2" data-component-content="%7B%22text%22%3A%22%E9%81%B8%E6%93%87%E5%B7%B4%E5%A3%AB%E7%AB%99%22%2C%22className%22%3A%22mt-1%20text-xl%20font-black%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[1]/h2[1]" data-lov-id="index.html:119:0" data-lov-name="h2" data-component-path="index.html">選擇巴士站</h2>
-<p class="mt-1 text-sm leading-relaxed text-slate-500" data-i18n="stationHelp" data-lov-id="index.html:120:0" data-lov-name="p" data-component-path="index.html" data-component-line="120" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E8%BC%B8%E5%85%A5%E7%AB%99%E5%90%8D%E4%B8%A6%E5%BE%9E%E5%BB%BA%E8%AD%B0%E6%B8%85%E5%96%AE%E9%81%B8%E6%93%87%EF%BC%9B%E7%9B%B8%E5%90%8C%E7%AB%99%E5%90%8D%E7%9A%84%E5%A4%9A%E5%80%8B%E7%AB%99%E7%A2%BC%E6%9C%83%E8%87%AA%E5%8B%95%E5%90%88%E4%BD%B5%E3%80%82%22%2C%22className%22%3A%22mt-1%20text-sm%20leading-relaxed%20text-slate-500%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[1]/p[2]">輸入站名並從建議清單選擇；相同站名的多個站碼會自動合併。</p>
-</div>
-<label class="field-label" for="stationPicker" data-i18n="stationName" data-component-path="index.html" data-component-line="122" data-component-file="index.html" data-component-name="label" data-component-content="%7B%22text%22%3A%22%E8%BB%8A%E7%AB%99%E5%90%8D%E7%A8%B1%22%2C%22className%22%3A%22field-label%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/label[1]" data-lov-id="index.html:122:0" data-lov-name="label">車站名稱</label>
-<div class="input-wrap" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22input-wrap%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[2]" data-lov-id="index.html:123:0" data-lov-name="div" data-component-path="index.html" data-component-line="123">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-component-path="index.html" data-component-line="124" data-component-file="index.html" data-component-name="svg" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[2]/svg[1]" data-lov-id="index.html:124:0" data-lov-name="svg"><path d="M12 21s6-5 6-11a6 6 0 1 0-12 0c0 6 6 11 6 11z" data-component-name="path" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[2]/svg[1]/path[1]" data-lov-id="index.html:124:95" data-lov-name="path" data-component-path="index.html" data-component-line="124" data-component-file="index.html"/><circle cx="12" cy="10" r="2" data-lov-id="index.html:124:152" data-lov-name="circle" data-component-path="index.html" data-component-line="124" data-component-file="index.html" data-component-name="circle" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[2]/svg[1]/circle[1]"/></svg>
-<input id="stationPicker" class="form-input" type="search" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="stationSuggestions" aria-activedescendant="" data-i18n-placeholder="stationPlaceholder" placeholder="輸入車站名稱" data-component-line="125" data-component-file="index.html" data-component-name="input" data-component-content="%7B%22placeholder%22%3A%22%E8%BC%B8%E5%85%A5%E8%BB%8A%E7%AB%99%E5%90%8D%E7%A8%B1%22%2C%22className%22%3A%22form-input%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[2]/input[1]" data-lov-id="index.html:125:0" data-lov-name="input" data-component-path="index.html" />
-<div id="stationSuggestions" class="station-suggestions hidden-view" role="listbox" aria-label="車站建議" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22station-suggestions%20hidden-view%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[2]/div[1]" data-lov-id="index.html:126:0" data-lov-name="div" data-component-path="index.html" data-component-line="126"></div>
-</div>
-<button id="loadStationBtn" class="primary-btn mt-3" type="button" data-lov-name="button" data-component-path="index.html" data-component-line="128" data-component-file="index.html" data-component-name="button" data-component-content="%7B%22className%22%3A%22primary-btn%20mt-3%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/button[1]" data-lov-id="index.html:128:0">
-<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-lov-name="svg" data-component-path="index.html" data-component-line="129" data-component-file="index.html" data-component-name="svg" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/button[1]/svg[1]" data-lov-id="index.html:129:0"><path d="M5 12h14M13 6l6 6-6 6" data-component-name="path" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/button[1]/svg[1]/path[1]" data-lov-id="index.html:129:118" data-lov-name="path" data-component-path="index.html" data-component-line="129" data-component-file="index.html"/></svg>
-<span data-i18n="showArrivals" data-component-file="index.html" data-component-name="span" data-component-content="%7B%22text%22%3A%22%E9%A1%AF%E7%A4%BA%E5%88%B0%E7%AB%99%E6%99%82%E9%96%93%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/button[1]/span[1]" data-lov-id="index.html:130:0" data-lov-name="span" data-component-path="index.html" data-component-line="130">顯示到站時間</span>
-</button>
-<label class="field-label mt-4" for="stationFilter" data-i18n="filterArrivals" data-lov-id="index.html:132:0" data-lov-name="label" data-component-path="index.html" data-component-line="132" data-component-file="index.html" data-component-name="label" data-component-content="%7B%22text%22%3A%22%E7%AF%A9%E9%81%B8%E5%88%B0%E7%AB%99%E8%B7%AF%E7%B7%9A%22%2C%22className%22%3A%22field-label%20mt-4%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/label[2]">篩選到站路線</label>
-<div class="input-wrap" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[3]" data-lov-id="index.html:133:0" data-lov-name="div" data-component-path="index.html" data-component-line="133" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22input-wrap%22%7D">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-component-path="index.html" data-component-line="134" data-component-file="index.html" data-component-name="svg" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[3]/svg[1]" data-lov-id="index.html:134:0" data-lov-name="svg"><circle cx="11" cy="11" r="7" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[3]/svg[1]/circle[1]" data-lov-id="index.html:134:95" data-lov-name="circle" data-component-path="index.html" data-component-line="134" data-component-file="index.html" data-component-name="circle" data-component-content="%7B%7D"/><path d="m20 20-3.5-3.5" data-component-path="index.html" data-component-line="134" data-component-file="index.html" data-component-name="path" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[3]/svg[1]/path[1]" data-lov-id="index.html:134:126" data-lov-name="path"/></svg>
-<input id="stationFilter" class="form-input" type="search" autocomplete="off" data-i18n-placeholder="filterPlaceholder" placeholder="路線或目的地" data-component-content="%7B%22placeholder%22%3A%22%E8%B7%AF%E7%B7%9A%E6%88%96%E7%9B%AE%E7%9A%84%E5%9C%B0%22%2C%22className%22%3A%22form-input%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/div[3]/input[1]" data-lov-id="index.html:135:0" data-lov-name="input" data-component-path="index.html" data-component-line="135" data-component-file="index.html" data-component-name="input" />
-</div>
-<label class="field-label mt-4" for="stationDirection" data-i18n="direction" data-lov-id="index.html:137:0" data-lov-name="label" data-component-path="index.html" data-component-line="137" data-component-file="index.html" data-component-name="label" data-component-content="%7B%22text%22%3A%22%E6%96%B9%E5%90%91%22%2C%22className%22%3A%22field-label%20mt-4%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/label[3]">方向</label>
-<select id="stationDirection" class="form-select" data-lov-id="index.html:138:0" data-lov-name="select" data-component-path="index.html" data-component-line="138" data-component-file="index.html" data-component-name="select" data-component-content="%7B%22className%22%3A%22form-select%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/select[1]">
-<option value="all" data-i18n="allDirections" data-component-file="index.html" data-component-name="option" data-component-content="%7B%22text%22%3A%22%E5%85%A8%E9%83%A8%E6%96%B9%E5%90%91%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/select[1]/option[1]" data-lov-id="index.html:139:0" data-lov-name="option" data-component-path="index.html" data-component-line="139">全部方向</option>
-<option value="tm" data-i18n="tmDirection" data-lov-id="index.html:140:0" data-lov-name="option" data-component-path="index.html" data-component-line="140" data-component-file="index.html" data-component-name="option" data-component-content="%7B%22text%22%3A%22%E5%B1%AF%E9%96%80%E6%96%B9%E5%90%91%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/select[1]/option[2]">屯門方向</option>
-<option value="non" data-i18n="nonTmDirection" data-component-name="option" data-component-content="%7B%22text%22%3A%22%E9%9D%9E%E5%B1%AF%E9%96%80%EF%BC%8F%E5%B8%82%E5%8D%80%E6%96%B9%E5%90%91%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/aside[1]/select[1]/option[3]" data-lov-id="index.html:141:0" data-lov-name="option" data-component-path="index.html" data-component-line="141" data-component-file="index.html">非屯門／市區方向</option>
-</select>
-</aside>
-<div class="result-panel" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/div[1]" data-lov-id="index.html:144:0" data-lov-name="div" data-component-path="index.html" data-component-line="144" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22result-panel%22%7D">
-<div class="result-heading" data-component-name="div" data-component-content="%7B%22className%22%3A%22result-heading%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/div[1]/div[1]" data-lov-id="index.html:145:0" data-lov-name="div" data-component-path="index.html" data-component-line="145" data-component-file="index.html">
-<div data-component-name="div" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/div[1]/div[1]/div[1]" data-lov-id="index.html:146:0" data-lov-name="div" data-component-path="index.html" data-component-line="146" data-component-file="index.html">
-<h2 id="stationResultTitle" class="font-black" data-i18n="stationArrivals" data-lov-name="h2" data-component-path="index.html" data-component-line="147" data-component-file="index.html" data-component-name="h2" data-component-content="%7B%22text%22%3A%22%E8%BB%8A%E7%AB%99%E5%88%B0%E7%AB%99%E6%99%82%E9%96%93%22%2C%22className%22%3A%22font-black%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/div[1]/div[1]/div[1]/h2[1]" data-lov-id="index.html:147:0">車站到站時間</h2>
-<p id="stationMeta" class="mt-1 text-xs font-medium text-slate-500" data-i18n="loadingStationList" data-component-path="index.html" data-component-line="148" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E6%AD%A3%E5%9C%A8%E8%BC%89%E5%85%A5%E8%BB%8A%E7%AB%99%E6%B8%85%E5%96%AE%E2%80%A6%22%2C%22className%22%3A%22mt-1%20text-xs%20font-medium%20text-slate-500%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/div[1]/div[1]/div[1]/p[1]" data-lov-id="index.html:148:0" data-lov-name="p">正在載入車站清單…</p>
-</div>
-<span id="stationCount" class="count-pill" data-component-path="index.html" data-component-line="150" data-component-file="index.html" data-component-name="span" data-component-content="%7B%22text%22%3A%220%22%2C%22className%22%3A%22count-pill%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/div[1]/div[1]/span[1]" data-lov-id="index.html:150:0" data-lov-name="span">0</span>
-</div>
-<div id="stationResults" aria-live="polite" data-component-name="div" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[3]/div[1]/div[1]/div[2]" data-lov-id="index.html:152:0" data-lov-name="div" data-component-path="index.html" data-component-line="152" data-component-file="index.html"></div>
-</div>
-</div>
-</section>
-<section id="view-interchange" class="hidden-view" role="tabpanel" aria-labelledby="tab-interchange" data-lov-id="index.html:156:0" data-lov-name="section" data-component-path="index.html" data-component-line="156" data-component-file="index.html" data-component-name="section" data-component-content="%7B%22className%22%3A%22hidden-view%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]">
-<div class="workspace" data-lov-name="div" data-component-path="index.html" data-component-line="157" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22workspace%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]" data-lov-id="index.html:157:0">
-<aside class="control-panel" aria-label="Interchange filters" data-component-content="%7B%22className%22%3A%22control-panel%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]" data-lov-id="index.html:158:0" data-lov-name="aside" data-component-path="index.html" data-component-line="158" data-component-file="index.html" data-component-name="aside">
-<div class="mb-5" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[1]" data-lov-id="index.html:159:0" data-lov-name="div" data-component-path="index.html" data-component-line="159" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22mb-5%22%7D">
-<p class="text-xs font-black uppercase tracking-[.13em] text-kmb-600" data-i18n="interchangeZone" data-component-line="160" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E8%BD%89%E8%BB%8A%E7%AB%99%E5%B0%88%E5%8D%80%22%2C%22className%22%3A%22text-xs%20font-black%20uppercase%20tracking-%5B.13em%5D%20text-kmb-600%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[1]/p[1]" data-lov-id="index.html:160:0" data-lov-name="p" data-component-path="index.html">轉車站專區</p>
-<h2 class="mt-1 text-xl font-black" data-i18n="interchangeName" data-component-line="161" data-component-file="index.html" data-component-name="h2" data-component-content="%7B%22text%22%3A%22%E5%B1%AF%E9%96%80%E5%85%AC%E8%B7%AF%E8%BD%89%E8%BB%8A%E7%AB%99%22%2C%22className%22%3A%22mt-1%20text-xl%20font-black%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[1]/h2[1]" data-lov-id="index.html:161:0" data-lov-name="h2" data-component-path="index.html">屯門公路轉車站</h2>
-<p class="mt-1 text-sm leading-relaxed text-slate-500" data-i18n="interchangeHelp" data-lov-id="index.html:162:0" data-lov-name="p" data-component-path="index.html" data-component-line="162" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E8%87%AA%E5%8B%95%E5%90%88%E4%BD%B5%20A%E3%80%81B%E3%80%81C%20%E6%9C%88%E5%8F%B0%E7%9A%84%E5%8D%B3%E6%99%82%E5%88%B0%E7%AB%99%E8%B3%87%E6%96%99%E3%80%82%22%2C%22className%22%3A%22mt-1%20text-sm%20leading-relaxed%20text-slate-500%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[1]/p[2]">自動合併 A、B、C 月台的即時到站資料。</p>
-</div>
-<label class="field-label" for="interchangeFilter" data-i18n="filterArrivals" data-component-file="index.html" data-component-name="label" data-component-content="%7B%22text%22%3A%22%E7%AF%A9%E9%81%B8%E5%88%B0%E7%AB%99%E8%B7%AF%E7%B7%9A%22%2C%22className%22%3A%22field-label%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/label[1]" data-lov-id="index.html:164:0" data-lov-name="label" data-component-path="index.html" data-component-line="164">篩選到站路線</label>
-<div class="input-wrap" data-component-name="div" data-component-content="%7B%22className%22%3A%22input-wrap%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[2]" data-lov-id="index.html:165:0" data-lov-name="div" data-component-path="index.html" data-component-line="165" data-component-file="index.html">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-lov-id="index.html:166:0" data-lov-name="svg" data-component-path="index.html" data-component-line="166" data-component-file="index.html" data-component-name="svg" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[2]/svg[1]"><circle cx="11" cy="11" r="7" data-component-name="circle" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[2]/svg[1]/circle[1]" data-lov-id="index.html:166:95" data-lov-name="circle" data-component-path="index.html" data-component-line="166" data-component-file="index.html"/><path d="m20 20-3.5-3.5" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[2]/svg[1]/path[1]" data-lov-id="index.html:166:126" data-lov-name="path" data-component-path="index.html" data-component-line="166" data-component-file="index.html" data-component-name="path" data-component-content="%7B%7D"/></svg>
-<input id="interchangeFilter" class="form-input" type="search" autocomplete="off" data-i18n-placeholder="filterPlaceholder" placeholder="路線或目的地" data-component-line="167" data-component-file="index.html" data-component-name="input" data-component-content="%7B%22placeholder%22%3A%22%E8%B7%AF%E7%B7%9A%E6%88%96%E7%9B%AE%E7%9A%84%E5%9C%B0%22%2C%22className%22%3A%22form-input%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[2]/input[1]" data-lov-id="index.html:167:0" data-lov-name="input" data-component-path="index.html" />
-</div>
-<label class="field-label mt-4" for="interchangeDirection" data-i18n="direction" data-lov-name="label" data-component-path="index.html" data-component-line="169" data-component-file="index.html" data-component-name="label" data-component-content="%7B%22text%22%3A%22%E6%96%B9%E5%90%91%22%2C%22className%22%3A%22field-label%20mt-4%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/label[2]" data-lov-id="index.html:169:0">方向</label>
-<select id="interchangeDirection" class="form-select" data-component-name="select" data-component-content="%7B%22className%22%3A%22form-select%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/select[1]" data-lov-id="index.html:170:0" data-lov-name="select" data-component-path="index.html" data-component-line="170" data-component-file="index.html">
-<option value="all" data-i18n="allDirections" data-lov-name="option" data-component-path="index.html" data-component-line="171" data-component-file="index.html" data-component-name="option" data-component-content="%7B%22text%22%3A%22%E5%85%A8%E9%83%A8%E6%96%B9%E5%90%91%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/select[1]/option[1]" data-lov-id="index.html:171:0">全部方向</option>
-<option value="tm" data-i18n="tmDirection" data-lov-id="index.html:172:0" data-lov-name="option" data-component-path="index.html" data-component-line="172" data-component-file="index.html" data-component-name="option" data-component-content="%7B%22text%22%3A%22%E5%B1%AF%E9%96%80%E6%96%B9%E5%90%91%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/select[1]/option[2]">屯門方向</option>
-<option value="non" data-i18n="nonTmDirection" data-lov-id="index.html:173:0" data-lov-name="option" data-component-path="index.html" data-component-line="173" data-component-file="index.html" data-component-name="option" data-component-content="%7B%22text%22%3A%22%E9%9D%9E%E5%B1%AF%E9%96%80%EF%BC%8F%E5%B8%82%E5%8D%80%E6%96%B9%E5%90%91%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/select[1]/option[3]">非屯門／市區方向</option>
-</select>
-<div class="mt-5 grid grid-cols-2 gap-2" data-lov-id="index.html:175:0" data-lov-name="div" data-component-path="index.html" data-component-line="175" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22mt-5%20grid%20grid-cols-2%20gap-2%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[3]">
-<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3" data-lov-name="div" data-component-path="index.html" data-component-line="176" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22rounded-xl%20border%20border-emerald-200%20bg-emerald-50%20p-3%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[3]/div[1]" data-lov-id="index.html:176:0">
-<p class="text-xs font-black text-emerald-800" data-i18n="tmBound" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[3]/div[1]/p[1]" data-lov-id="index.html:177:0" data-lov-name="p" data-component-path="index.html" data-component-line="177" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E5%BE%80%E5%B1%AF%E9%96%80%EF%BC%8F%E6%96%B0%E7%95%8C%E8%A5%BF%E5%8C%97%22%2C%22className%22%3A%22text-xs%20font-black%20text-emerald-800%22%7D">往屯門／新界西北</p>
-<p class="mt-1 text-[.68rem] font-semibold text-emerald-700" data-lov-name="p" data-component-path="index.html" data-component-line="178" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22B1%E2%80%93B9%20%C2%B7%20C1%E2%80%93C5%22%2C%22className%22%3A%22mt-1%20text-%5B.68rem%5D%20font-semibold%20text-emerald-700%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[3]/div[1]/p[2]" data-lov-id="index.html:178:0">B1–B9 · C1–C5</p>
-</div>
-<div class="rounded-xl border border-blue-200 bg-blue-50 p-3" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[3]/div[2]" data-lov-id="index.html:180:0" data-lov-name="div" data-component-path="index.html" data-component-line="180" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22rounded-xl%20border%20border-blue-200%20bg-blue-50%20p-3%22%7D">
-<p class="text-xs font-black text-blue-800" data-i18n="cityBound" data-component-content="%7B%22text%22%3A%22%E5%BE%80%E4%B9%9D%E9%BE%8D%EF%BC%8F%E6%B8%AF%E5%B3%B6%22%2C%22className%22%3A%22text-xs%20font-black%20text-blue-800%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[3]/div[2]/p[1]" data-lov-id="index.html:181:0" data-lov-name="p" data-component-path="index.html" data-component-line="181" data-component-file="index.html" data-component-name="p">往九龍／港島</p>
-<p class="mt-1 text-[.68rem] font-semibold text-blue-700" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/aside[1]/div[3]/div[2]/p[2]" data-lov-id="index.html:182:0" data-lov-name="p" data-component-path="index.html" data-component-line="182" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22A1%E2%80%93A14%22%2C%22className%22%3A%22mt-1%20text-%5B.68rem%5D%20font-semibold%20text-blue-700%22%7D">A1–A14</p>
-</div>
-</div>
-</aside>
-<div class="result-panel" data-component-name="div" data-component-content="%7B%22className%22%3A%22result-panel%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/div[1]" data-lov-id="index.html:186:0" data-lov-name="div" data-component-path="index.html" data-component-line="186" data-component-file="index.html">
-<div class="result-heading" data-lov-id="index.html:187:0" data-lov-name="div" data-component-path="index.html" data-component-line="187" data-component-file="index.html" data-component-name="div" data-component-content="%7B%22className%22%3A%22result-heading%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/div[1]/div[1]">
-<div data-component-file="index.html" data-component-name="div" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/div[1]/div[1]/div[1]" data-lov-id="index.html:188:0" data-lov-name="div" data-component-path="index.html" data-component-line="188">
-<h2 class="font-black" data-i18n="interchangeArrivals" data-component-content="%7B%22text%22%3A%22%E8%BD%89%E8%BB%8A%E7%AB%99%E5%88%B0%E7%AB%99%E6%99%82%E9%96%93%22%2C%22className%22%3A%22font-black%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/div[1]/div[1]/div[1]/h2[1]" data-lov-id="index.html:189:0" data-lov-name="h2" data-component-path="index.html" data-component-line="189" data-component-file="index.html" data-component-name="h2">轉車站到站時間</h2>
-<p id="interchangeMeta" class="mt-1 text-xs font-medium text-slate-500" data-i18n="allPlatforms" data-component-path="index.html" data-component-line="190" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E5%85%A8%E9%83%A8%E6%96%B9%E5%90%91%E3%83%BB%E5%85%B1%2025%20%E5%80%8B%E7%AB%99%E7%A2%BC%22%2C%22className%22%3A%22mt-1%20text-xs%20font-medium%20text-slate-500%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/div[1]/div[1]/div[1]/p[1]" data-lov-id="index.html:190:0" data-lov-name="p">全部方向・共 25 個站碼</p>
-</div>
-<span id="interchangeCount" class="count-pill" data-component-name="span" data-component-content="%7B%22text%22%3A%220%22%2C%22className%22%3A%22count-pill%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/div[1]/div[1]/span[1]" data-lov-id="index.html:192:0" data-lov-name="span" data-component-path="index.html" data-component-line="192" data-component-file="index.html">0</span>
-</div>
-<div id="interchangeResults" aria-live="polite" data-sky-node-path="html[1]/body[1]/main[1]/section[4]/div[1]/div[1]/div[2]" data-lov-id="index.html:194:0" data-lov-name="div" data-component-path="index.html" data-component-line="194" data-component-file="index.html" data-component-name="div" data-component-content="%7B%7D"></div>
-</div>
-</div>
-</section>
-<footer class="source-note mt-5 rounded-xl px-4 py-4 text-xs leading-relaxed sm:flex sm:items-center sm:justify-between sm:gap-4" data-component-content="%7B%22className%22%3A%22source-note%20mt-5%20rounded-xl%20px-4%20py-4%20text-xs%20leading-relaxed%20sm%3Aflex%20sm%3Aitems-center%20sm%3Ajustify-between%20sm%3Agap-4%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/footer[1]" data-lov-id="index.html:198:0" data-lov-name="footer" data-component-path="index.html" data-component-line="198" data-component-file="index.html" data-component-name="footer">
-<p data-component-file="index.html" data-component-name="p" data-component-content="%7B%7D" data-sky-node-path="html[1]/body[1]/main[1]/footer[1]/p[1]" data-lov-id="index.html:199:0" data-lov-name="p" data-component-path="index.html" data-component-line="199"><strong data-i18n="dataSource" data-sky-node-path="html[1]/body[1]/main[1]/footer[1]/p[1]/strong[1]" data-lov-id="index.html:199:3" data-lov-name="strong" data-component-path="index.html" data-component-line="199" data-component-file="index.html" data-component-name="strong" data-component-content="%7B%22text%22%3A%22%E8%B3%87%E6%96%99%E4%BE%86%E6%BA%90%EF%BC%9A%22%7D">資料來源：</strong> <a class="font-bold text-kmb-600 underline decoration-dotted underline-offset-4" href="https://data.etabus.gov.hk/" target="_blank" rel="noopener noreferrer" data-lov-name="a" data-component-path="index.html" data-component-line="199" data-component-file="index.html" data-component-name="a" data-component-content="%7B%22text%22%3A%22KMB%20Open%20Data%22%2C%22className%22%3A%22font-bold%20text-kmb-600%20underline%20decoration-dotted%20underline-offset-4%22%7D" data-sky-node-path="html[1]/body[1]/main[1]/footer[1]/p[1]/a[1]" data-lov-id="index.html:199:49">KMB Open Data</a> <span data-i18n="etaDisclaimer" data-sky-node-path="html[1]/body[1]/main[1]/footer[1]/p[1]/span[1]" data-lov-id="index.html:199:225" data-lov-name="span" data-component-path="index.html" data-component-line="199" data-component-file="index.html" data-component-name="span" data-component-content="%7B%22text%22%3A%22%E3%83%BB%E5%88%B0%E7%AB%99%E6%99%82%E9%96%93%E5%83%85%E4%BE%9B%E5%8F%83%E8%80%83%EF%BC%8C%E8%AB%8B%E7%95%99%E6%84%8F%E7%8F%BE%E5%A0%B4%E8%B3%87%E8%A8%8A%E3%80%82%22%7D">・到站時間僅供參考，請留意現場資訊。</span></p>
-<p class="mt-2 whitespace-nowrap sm:mt-0" data-i18n="privacyNote" data-sky-node-path="html[1]/body[1]/main[1]/footer[1]/p[2]" data-lov-id="index.html:200:0" data-lov-name="p" data-component-path="index.html" data-component-line="200" data-component-file="index.html" data-component-name="p" data-component-content="%7B%22text%22%3A%22%E8%B3%87%E6%96%99%E7%9B%B4%E6%8E%A5%E7%94%B1%E7%80%8F%E8%A6%BD%E5%99%A8%E6%93%B7%E5%8F%96%EF%BC%8C%E4%B8%8D%E6%9C%83%E5%84%B2%E5%AD%98%E5%80%8B%E4%BA%BA%E8%B3%87%E6%96%99%E3%80%82%22%2C%22className%22%3A%22mt-2%20whitespace-nowrap%20sm%3Amt-0%22%7D">資料直接由瀏覽器擷取，不會儲存個人資料。</p>
-</footer>
+
+<main class="max-w-6xl mx-auto px-4 py-5">
+
+  <!-- ================= BUS APP ================= -->
+  <section id="app-bus" aria-label="KMB ETA">
+    <!-- Sub tabs -->
+    <nav class="card px-4 mb-4 flex gap-5 overflow-x-auto" aria-label="bus sub tabs">
+      <button class="subtab-btn active whitespace-nowrap" data-btab="route"><i class="fa-solid fa-route mr-1"></i><span data-i18n="subRoute">按路線搜尋</span></button>
+      <button class="subtab-btn whitespace-nowrap" data-btab="stop"><i class="fa-solid fa-signs-post mr-1"></i><span data-i18n="subStop">按車站搜尋</span></button>
+      <button class="subtab-btn whitespace-nowrap" data-btab="tmri"><i class="fa-solid fa-arrows-turn-to-dots mr-1"></i><span data-i18n="subTmri">屯門公路轉車站</span></button>
+    </nav>
+
+    <!-- ---- Sub tab 1: Route search ---- -->
+    <section id="btab-route" class="fade-in">
+      <div class="card p-4 mb-4">
+        <label for="route-filter" class="block text-sm font-bold mb-2" data-i18n="routeFilterLabel">輸入路線編號搜尋（例如：6、60X、961）</label>
+        <div class="flex gap-2">
+          <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 txt-muted"></i>
+            <input id="route-filter" type="text" autocomplete="off" class="input-box w-full pl-9 pr-3 py-2.5" data-i18n-ph="routeFilterPh" placeholder="搜尋路線…">
+          </div>
+          <button id="route-refresh" class="btn-primary px-4 py-2 text-sm whitespace-nowrap">
+            <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="refresh">重新整理</span>
+          </button>
+        </div>
+        <p class="text-xs txt-muted mt-2" data-i18n="routeHint">所有路線按編號由小至大排列。點擊路線可選擇方向（屯門方向 / 非屯門方向）並查看各站到站時間。</p>
+      </div>
+      <p id="route-count" class="text-xs txt-muted mb-2 px-1"></p>
+      <div id="route-list" class="space-y-2"></div>
+    </section>
+
+    <!-- ---- Sub tab 2: Station board ---- -->
+    <section id="btab-stop" class="fade-in hidden">
+      <div class="card p-4 mb-4">
+        <label for="stop-select" class="block text-sm font-bold mb-2" data-i18n="stopSelectLabel">選擇車站</label>
+        <div class="flex gap-2 flex-wrap md:flex-nowrap">
+          <select id="stop-select" class="input-box flex-1 px-3 py-2.5 min-w-[220px]"></select>
+          <button id="stop-refresh" class="btn-primary px-4 py-2 text-sm whitespace-nowrap">
+            <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="refresh">重新整理</span>
+          </button>
+        </div>
+        <p class="text-xs txt-muted mt-2" data-i18n="stopHint">如同一車站／轉車站於九巴系統內有多個車站代碼，所有代碼的班次會自動合併顯示。</p>
+        <!-- Custom stop search -->
+        <div class="mt-3 pt-3 border-t" style="border-color:var(--border);">
+          <label for="stop-custom-input" class="block text-sm font-bold mb-2" data-i18n="stopCustomLabel">或搜尋其他車站</label>
+          <input id="stop-custom-input" type="text" autocomplete="off" class="input-box w-full px-3 py-2.5" data-i18n-ph="stopCustomPh" placeholder="輸入車站名稱…">
+          <div id="stop-custom-results" class="mt-2 space-y-1"></div>
+        </div>
+        <div id="stop-codes" class="flex flex-wrap gap-2 mt-3"></div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <div class="relative flex-1 min-w-[180px]">
+          <i class="fa-solid fa-filter absolute left-3 top-1/2 -translate-y-1/2 txt-muted text-sm"></i>
+          <input id="stop-filter" type="text" autocomplete="off" class="input-box w-full pl-9 pr-3 py-2 text-sm" data-i18n-ph="arrivalFilterPh" placeholder="篩選路線或目的地…">
+        </div>
+        <div class="flex gap-1.5" role="group" aria-label="direction">
+          <button class="seg-btn active" data-dir="all" data-scope="stop" data-i18n="dirAll">全部</button>
+          <button class="seg-btn" data-dir="tm" data-scope="stop" data-i18n="dirTm">屯門方向</button>
+          <button class="seg-btn" data-dir="urban" data-scope="stop" data-i18n="dirUrban">非屯門方向</button>
+        </div>
+      </div>
+      <div id="stop-list" class="space-y-2"></div>
+    </section>
+
+    <!-- ---- Sub tab 3: TMRI ---- -->
+    <section id="btab-tmri" class="fade-in hidden">
+      <div class="card p-4 mb-4 flex items-start gap-3">
+        <i class="fa-solid fa-circle-info mt-1" style="color:var(--accent);"></i>
+        <div class="flex-1">
+          <p class="font-bold" data-i18n="tmriTitle">屯門公路轉車站專區</p>
+          <p class="text-sm txt-muted" data-i18n="tmriDesc">顯示所有途經屯門公路轉車站（兩個方向、所有月台代碼已合併）的巴士班次。</p>
+        </div>
+        <button id="tmri-refresh" class="btn-primary px-4 py-2 text-sm whitespace-nowrap">
+          <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="refresh">重新整理</span>
+        </button>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <div class="relative flex-1 min-w-[180px]">
+          <i class="fa-solid fa-filter absolute left-3 top-1/2 -translate-y-1/2 txt-muted text-sm"></i>
+          <input id="tmri-filter" type="text" autocomplete="off" class="input-box w-full pl-9 pr-3 py-2 text-sm" data-i18n-ph="arrivalFilterPh" placeholder="篩選路線或目的地…">
+        </div>
+        <div class="flex gap-1.5" role="group" aria-label="direction">
+          <button class="seg-btn active" data-dir="all" data-scope="tmri" data-i18n="dirAll">全部</button>
+          <button class="seg-btn" data-dir="tm" data-scope="tmri" data-i18n="dirTm">屯門方向</button>
+          <button class="seg-btn" data-dir="urban" data-scope="tmri" data-i18n="dirUrban">非屯門方向</button>
+        </div>
+      </div>
+      <div id="tmri-list" class="space-y-4"></div>
+    </section>
+  </section>
+
+  <!-- ================= WEATHER APP ================= -->
+  <section id="app-weather" class="hidden" aria-label="HK Weather">
+    <!-- Current conditions hero -->
+    <div class="wx-hero rounded-2xl p-5 md:p-7 mb-5 shadow-lg">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="text-sm opacity-80 font-semibold" data-i18n="wxNow">現時天氣 · 香港天文台</p>
+          <div class="flex items-end gap-3 mt-1">
+            <span id="wx-temp" class="text-5xl md:text-6xl font-black">--°</span>
+            <div class="pb-2">
+              <p id="wx-desc" class="font-bold text-lg">--</p>
+              <p id="wx-hum" class="text-sm opacity-85">--</p>
+            </div>
+          </div>
+        </div>
+        <div class="text-right">
+          <span id="wx-icon" class="text-6xl">🌤️</span>
+          <p id="wx-updated" class="text-xs opacity-75 mt-1">--</p>
+        </div>
+      </div>
+      <p id="wx-general" class="mt-4 text-sm opacity-90 leading-relaxed"></p>
+    </div>
+
+    <!-- Active warnings -->
+    <div id="wx-warnings" class="mb-5"></div>
+    <!-- Rainstorm / Typhoon detail statements -->
+    <div id="wx-severe" class="mb-5"></div>
+
+    <!-- Today / Tomorrow -->
+    <h2 class="font-black text-lg mb-3"><i class="fa-solid fa-calendar-day mr-2" style="color:var(--accent);"></i><span data-i18n="wx2day">今日及明日預測</span></h2>
+    <div id="wx-2day" class="grid md:grid-cols-2 gap-4 mb-6"></div>
+
+    <!-- 9-day forecast -->
+    <h2 class="font-black text-lg mb-3"><i class="fa-solid fa-calendar-week mr-2" style="color:var(--accent);"></i><span data-i18n="wx9day">九天天氣預報</span></h2>
+    <div id="wx-9day" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6"></div>
+
+    <div class="flex items-center gap-3 flex-wrap">
+      <button id="wx-refresh" class="btn-primary px-5 py-2.5">
+        <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="wxRefresh">即時更新天氣資料</span>
+      </button>
+      <p class="text-xs txt-muted" data-i18n="wxSource">資料來源：香港天文台開放數據 API（data.weather.gov.hk）</p>
+    </div>
+  </section>
 </main>
-<script>'use strict';const API_BASE ='https://data.etabus.gov.hk/v1/transport/kmb';const CACHE_TTL =12 *60 *60 *1000;const INTERCHANGE_STOPS =[{id:'376C4835851621D4',platform:'TM750',direction:'non' },{id:'1D5D89F395EA4948',platform:'A1',direction:'non' },{id:'6437BDE588337654',platform:'A2',direction:'non' },{id:'21FC719DAF5F9D28',platform:'A3',direction:'non' },{id:'ACB5FEA2BF9FC5AD',platform:'A4',direction:'non' },{id:'CA6AB8446B694566',platform:'A5',direction:'non' },{id:'2560149CE75EABA0',platform:'A6',direction:'non' },{id:'18C9D0216996D75A',platform:'A8',direction:'non' },{id:'212BFF5737D0116C',platform:'A9',direction:'non' },{id:'846872B8B3E76E7D',platform:'A10',direction:'non' },{id:'0CF05B00D82FECB2',platform:'A11',direction:'non' },{id:'620557B9486BE4BF',platform:'A12',direction:'non' },{id:'64FC3B939BC09903',platform:'A14',direction:'non' },{id:'DB516EC0B8DAF046',platform:'B9',direction:'tm' },{id:'0269A1F9D98C737E',platform:'B7',direction:'tm' },{id:'DFE346B2C7332BC0',platform:'B6',direction:'tm' },{id:'47FF0EDCD6926932',platform:'B5',direction:'tm' },{id:'A8B22902BD665766',platform:'B4',direction:'tm' },{id:'2B3A6C000BB085CD',platform:'B3',direction:'tm' },{id:'88229183EDC0B6E9',platform:'B2',direction:'tm' },{id:'872110C8ADA14DA1',platform:'B1',direction:'tm' },{id:'C1590716F6FABC50',platform:'C5',direction:'tm' },{id:'70E8546DD7753FEF',platform:'C3',direction:'tm' },{id:'F80DF64ABE690251',platform:'C2',direction:'tm' },{id:'BF8EAED2AF086669',platform:'C1',direction:'tm' }
-];const I18N ={tc:{skip:'跳到主要內容',brand:'巴士到站時間',brandSub:'KMB LIVE ARRIVAL BOARD',contrast:'高對比',refresh:'重新整理',liveData:'九巴開放數據・即時更新',title:'掌握下一班巴士',subtitle:'搜尋路線、車站，或一次查看屯門公路轉車站各月台到站時間。',lastUpdated:'最後更新',tabRoute:'按路線搜尋',tabStation:'按車站搜尋',tabInterchange:'屯門公路轉車站專區',routeFinder:'路線搜尋器',findRoute:'尋找巴士路線',routeHelp:'輸入完整或部分路線編號，即時篩選結果。',routeNumber:'路線編號',routePlaceholder:'例如：6、60X、961',direction:'方向',allDirections:'全部方向',tmDirection:'屯門方向',nonTmDirection:'非屯門／市區方向',directionNoteTitle:'方向分類',directionNote:'以終點站判斷；兆康已歸入屯門方向。',allRoutes:'全部路線',chooseDirection:'選擇方向以查看沿途各站到站時間',stationBoard:'車站到站牌',chooseStation:'選擇巴士站',stationHelp:'輸入站名即可取得即時建議；同一車站的所有站碼及月台會預設自動合併。',stationName:'車站名稱',stationPlaceholder:'輸入車站名稱',showArrivals:'顯示到站時間',filterArrivals:'篩選到站路線',filterPlaceholder:'路線或目的地',stationArrivals:'車站到站時間',loadingStationList:'正在載入車站清單…',suggestions:'車站建議',noSuggestions:'找不到相符車站',suggestionCount:'個站碼',interchangeZone:'轉車站專區',interchangeName:'屯門公路轉車站',interchangeHelp:'自動合併 A、B、C 月台的即時到站資料。',tmBound:'往屯門／新界西北',cityBound:'往九龍／港島',interchangeArrivals:'轉車站到站時間',allPlatforms:'全部方向・共 25 個站碼',dataSource:'資料來源：',etaDisclaimer:'・到站時間僅供參考，請留意現場資訊。',privacyNote:'資料直接由瀏覽器擷取，不會儲存個人資料。',routes:'條路線',arrivals:'條路線',directions:'個方向',destination:'往',via:'由',loading:'正在擷取最新資料…',loadingRoutes:'正在載入路線清單…',loadingArrivals:'正在擷取到站時間…',noRoutes:'找不到相符路線',noRoutesHint:'請嘗試其他路線編號或方向。',noArrivals:'暫時沒有到站資料',noArrivalsHint:'路線可能已收車，或未有即時預報。',chooseFromList:'請從建議清單選擇有效車站。',networkError:'未能連接九巴開放數據',retryHint:'請檢查網絡後按「重新整理」再試。',partialError:'部分站碼暫時未能更新；以下為可用資料。',cachedData:'即時清單連線失敗，現正使用最近儲存的路線及車站資料。',mins:'分鐘',due:'即將到站',scheduled:'預定',noEta:'未有預報',stopCodes:'個站碼',platform:'月台',stops:'個車站',routeDetails:'路線到站時間',backToRoutes:'返回路線清單',serviceType:'服務類別',updated:'已更新',refreshing:'更新中',loadFailed:'載入失敗',all:'全部',contrastOn:'已開啟高對比模式',contrastOff:'已關閉高對比模式',switchedEnglish:'Language switched to English',switchedChinese:'已切換至繁體中文',testPassed:'介面自我測試通過'
-},en:{skip:'Skip to main content',brand:'Bus Arrival Times',brandSub:'KMB LIVE ARRIVAL BOARD',contrast:'High contrast',refresh:'Refresh',liveData:'KMB Open Data · Live updates',title:'Know when your next bus arrives',subtitle:'Search a route or stop, or view every platform at Tuen Mun Road Interchange in one place.',lastUpdated:'Last updated',tabRoute:'Route Search',tabStation:'Station Arrival Board',tabInterchange:'Tuen Mun Road Interchange',routeFinder:'Route finder',findRoute:'Find a bus route',routeHelp:'Enter a full or partial route number to filter instantly.',routeNumber:'Route number',routePlaceholder:'e.g. 6, 60X, 961',direction:'Direction',allDirections:'All directions',tmDirection:'TM bound',nonTmDirection:'Non-TM / City bound',directionNoteTitle:'Direction grouping',directionNote:'Classified by destination; Siu Hong is included as TM bound.',allRoutes:'All routes',chooseDirection:'Choose a direction to view arrivals along the route',stationBoard:'Station arrival board',chooseStation:'Choose a bus stop',stationHelp:'Start typing for instant suggestions. All stop codes and platforms belonging to the same station are merged by default.',stationName:'Stop name',stationPlaceholder:'Enter a stop name',showArrivals:'Show arrivals',filterArrivals:'Filter arrivals',filterPlaceholder:'Route or destination',stationArrivals:'Station arrivals',loadingStationList:'Loading stop list…',suggestions:'Station suggestions',noSuggestions:'No matching stations',suggestionCount:'stop codes',interchangeZone:'Interchange zone',interchangeName:'Tuen Mun Road Interchange',interchangeHelp:'Live arrivals from platforms A, B and C are aggregated automatically.',tmBound:'Tuen Mun / NWNT bound',cityBound:'Kowloon / Hong Kong Island bound',interchangeArrivals:'Interchange arrivals',allPlatforms:'All directions · 25 stop codes',dataSource:'Data source:',etaDisclaimer:'· ETAs are for reference only. Follow information shown at the stop.',privacyNote:'Data is fetched directly in your browser; no personal data is stored.',routes:'routes',arrivals:'routes',directions:'directions',destination:'To',via:'From',loading:'Fetching the latest data…',loadingRoutes:'Loading route list…',loadingArrivals:'Fetching arrival times…',noRoutes:'No matching routes',noRoutesHint:'Try another route number or direction.',noArrivals:'No arrival information right now',noArrivalsHint:'Service may have ended or live predictions may be unavailable.',chooseFromList:'Please choose a valid stop from the suggestion list.',networkError:'Could not connect to KMB Open Data',retryHint:'Check your connection and press Refresh to try again.',partialError:'Some stop codes could not be updated. Available results are shown below.',cachedData:'Live lists could not be reached. Using the most recently saved route and stop data.',mins:'min',due:'Due',scheduled:'Scheduled',noEta:'No prediction',stopCodes:'stop codes',platform:'Platform',stops:'stops',routeDetails:'Route arrivals',backToRoutes:'Back to route list',serviceType:'Service type',updated:'Updated',refreshing:'Refreshing',loadFailed:'Load failed',all:'All',contrastOn:'High contrast mode on',contrastOff:'High contrast mode off',switchedEnglish:'Language switched to English',switchedChinese:'已切換至繁體中文',testPassed:'Interface self-test passed'
+
+<footer class="max-w-6xl mx-auto px-4 pb-8 text-xs txt-muted">
+  <p data-i18n="footer">資料由九龍巴士（一九三三）有限公司開放數據及香港天文台提供。班次時間僅供參考。</p>
+</footer>
+
+<div id="toast-box" class="fixed bottom-4 right-4 z-[70] space-y-2 max-w-xs"></div>
+
+<script>
+/* =========================================================
+   Global state
+========================================================= */
+const KMB = 'https://data.etabus.gov.hk/v1/transport/kmb/';
+const HKO = 'https://data.weather.gov.hk/weatherAPI/opendata/weather.php';
+let lang = localStorage.getItem('app-lang') || 'tc';
+let activeApp = 'bus';
+let activeBtab = 'route';
+const dirSel = { stop:'all', tmri:'all' };
+
+/* =========================================================
+   i18n dictionary
+========================================================= */
+const I18N = {
+  appTitle:{tc:'九巴到站時間 ＋ 香港天氣', en:'KMB Bus ETA + HK Weather'},
+  contrast:{tc:'高對比', en:'High Contrast'},
+  contrastTitle:{tc:'切換高對比模式', en:'Toggle high contrast mode'},
+  langTitle:{tc:'切換語言', en:'Switch language'},
+  tabBus:{tc:'巴士到站時間', en:'Bus Arrival Times'},
+  tabWeather:{tc:'香港天氣', en:'Hong Kong Weather'},
+  subRoute:{tc:'按路線搜尋', en:'Search by Route'},
+  subStop:{tc:'按車站搜尋', en:'Station Arrival Board'},
+  subTmri:{tc:'屯門公路轉車站', en:'TM Road Interchange'},
+  routeFilterLabel:{tc:'輸入路線編號搜尋（例如：6、60X、961）', en:'Type a route number (e.g. 6, 60X, 961)'},
+  routeFilterPh:{tc:'搜尋路線…', en:'Search routes…'},
+  refresh:{tc:'重新整理', en:'Refresh'},
+  routeHint:{tc:'所有路線按編號由小至大排列。點擊路線可選擇方向（屯門方向 / 非屯門方向）並查看各站到站時間。', en:'All routes sorted ascending by number. Tap a route to pick a direction (Tuen Mun-bound / Non-Tuen Mun-bound) and view stop ETAs.'},
+  stopSelectLabel:{tc:'選擇車站', en:'Select a station'},
+  stopHint:{tc:'如同一車站／轉車站於九巴系統內有多個車站代碼，所有代碼的班次會自動合併顯示。', en:'If one station/interchange maps to multiple stop codes in the KMB system, arrivals from all codes are merged automatically.'},
+  stopCustomLabel:{tc:'或搜尋其他車站', en:'Or search any other stop'},
+  stopCustomPh:{tc:'輸入車站名稱…', en:'Type a stop name…'},
+  arrivalFilterPh:{tc:'篩選路線或目的地…', en:'Filter by route or destination…'},
+  dirAll:{tc:'全部', en:'All'},
+  dirTm:{tc:'屯門方向', en:'Tuen Mun-bound'},
+  dirUrban:{tc:'非屯門方向', en:'Non-Tuen Mun-bound'},
+  tmriTitle:{tc:'屯門公路轉車站專區', en:'Tuen Mun Road Interchange Zone'},
+  tmriDesc:{tc:'顯示所有途經屯門公路轉車站（兩個方向、所有月台代碼已合併）的巴士班次。', en:'All buses serving Tuen Mun Road Interchange in both directions (all platform codes merged).'},
+  wxNow:{tc:'現時天氣 · 香港天文台', en:'Current Weather · HK Observatory'},
+  wx2day:{tc:'今日及明日預測', en:'Today & Tomorrow'},
+  wx9day:{tc:'九天天氣預報', en:'9-Day Forecast'},
+  wxRefresh:{tc:'即時更新天氣資料', en:'Update Weather Now'},
+  wxSource:{tc:'資料來源：香港天文台開放數據 API（data.weather.gov.hk）', en:'Source: HKO Open Data API (data.weather.gov.hk)'},
+  footer:{tc:'資料由九龍巴士（一九三三）有限公司開放數據及香港天文台提供。班次時間僅供參考。', en:'Data: KMB Open Data & Hong Kong Observatory. ETAs are for reference only.'},
+  loading:{tc:'載入中…', en:'Loading…'},
+  loadingEta:{tc:'正在取得到站時間…', en:'Fetching arrival times…'},
+  errorApi:{tc:'無法連接伺服器，請稍後再試。', en:'Unable to reach the server. Please try again later.'},
+  noEta:{tc:'暫時沒有班次資料', en:'No arrival data at the moment'},
+  noService:{tc:'沒有服務', en:'No service'},
+  noMatch:{tc:'沒有符合條件的結果', en:'No matching results'},
+  arriving:{tc:'即將到站', en:'Arriving'},
+  min:{tc:'分鐘', en:'min'},
+  scheduled:{tc:'預定', en:'Sch.'},
+  showingOf:{tc:'顯示 {a} / {b} 條路線 — 輸入以收窄結果', en:'Showing {a} of {b} routes — type to narrow down'},
+  routeTotal:{tc:'共 {b} 條路線', en:'{b} routes in total'},
+  toTm:{tc:'往屯門', en:'To Tuen Mun'},
+  toUrban:{tc:'往市區／其他', en:'To Urban / Others'},
+  tmBound:{tc:'往屯門', en:'Tuen Mun-bound'},
+  urbanBound:{tc:'往九龍／香港', en:'Kowloon / HK-bound'},
+  stopSeq:{tc:'站', en:'Stop'},
+  updatedAt:{tc:'更新時間', en:'Updated'},
+  humidity:{tc:'相對濕度', en:'Humidity'},
+  uv:{tc:'紫外線指數', en:'UV Index'},
+  rainfallNow:{tc:'過去一小時最高雨量', en:'Max rainfall (past hour)'},
+  today:{tc:'今日', en:'Today'},
+  tomorrow:{tc:'明日', en:'Tomorrow'},
+  maxT:{tc:'最高', en:'Max'},
+  minT:{tc:'最低', en:'Min'},
+  psrHigh:{tc:'顯著降雨概率：高', en:'Significant rain probability: High'},
+  psrMed:{tc:'顯著降雨概率：中', en:'Significant rain probability: Medium'},
+  psrLow:{tc:'顯著降雨概率：低', en:'Significant rain probability: Low'},
+  warnActive:{tc:'生效中的警告', en:'Warnings in force'},
+  warnNone:{tc:'現時沒有生效中的警告', en:'No warnings in force'},
+  severeTitle:{tc:'暴雨／熱帶氣旋警告詳情', en:'Rainstorm / Tropical Cyclone Warning Details'},
+  severeNone:{tc:'現時沒有生效中的暴雨或熱帶氣旋警告信號。', en:'No rainstorm or tropical cyclone warning signals are currently in force.'},
+  severeNoDetail:{tc:'未能載入警告詳情（香港天文台伺服器限制此數據的跨域存取）。請留意天文台最新公佈有關改發或取消信號的時間。', en:'Warning details could not be loaded (the HKO server restricts cross-origin access to this feed). Please follow HKO announcements for downgrade/cancellation timing.'},
+  issuedAt:{tc:'發出時間', en:'Issued'},
+  outlook:{tc:'展望', en:'Outlook'},
+  retry:{tc:'重試', en:'Retry'},
+  pickVariant:{tc:'選擇方向：', en:'Choose direction:'},
+  generalSit:{tc:'概況', en:'General Situation'},
+  customStop:{tc:'自選車站', en:'Custom Stop'},
+  addStop:{tc:'加入', en:'Add'},
+  remove:{tc:'移除', en:'Remove'},
+  stopCount:{tc:'共 {n} 個車站代碼', en:'{n} stop code(s)'},
+  selectStopFirst:{tc:'請先選擇或加入車站', en:'Please select or add a stop first'},
+};
+const t = k => (I18N[k] && I18N[k][lang]) || k;
+const pick = (tc, en) => lang === 'tc' ? (tc || en || '') : (en || tc || '');
+
+function applyStaticI18n(){
+  document.documentElement.lang = lang === 'tc' ? 'zh-Hant' : 'en';
+  document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = t(el.dataset.i18nPh));
+  document.querySelectorAll('[data-i18n-title]').forEach(el => el.title = t(el.dataset.i18nTitle));
+  document.getElementById('lang-label').textContent = lang === 'tc' ? 'English' : '繁體中文';
+  document.title = t('appTitle');
 }
-};const state ={lang:'tc',activeTab:'route',busyCount:0,routes:[],routeGroups:[],stops:[],stopGroups:[],stopById:new Map(),selectedRoute:null,selectedStationKey:'',stationEtas:[],interchangeEtas:[],stationSuggestions:[],stationSuggestionIndex:-1,stationPartialFailure:false,interchangePartialFailure:false,masterDataFromCache:false
-};const $ =(id) =>document.getElementById(id);const t =(key) =>I18N[state.lang][key] ??key;const text =(item,field) =>item?.[`${field}_${state.lang}`] ||item?.[`${field}_tc`] ||item?.[`${field}_en`] ||'';const escapeHTML =(value='') =>String(value).replace(/[&<>'"]/g,ch =>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));const naturalCompare =(a,b) =>String(a).localeCompare(String(b),'en',{numeric:true,sensitivity:'base' });function classifyDirection(destTc='') {const tmKeywords =['屯門','兆康','天水圍','元朗','洪水橋','掃管笏','龍門居','良景','寶田','大興','山景','友愛','置樂','三聖','新墟','富泰','景峰','菁田','和田','欣田','蝴蝶','青山灣','龍鼓灘'];return tmKeywords.some(keyword =>destTc.includes(keyword)) ?'tm' :'non';}
-function setBusy(isBusy,messageKey='loading') {state.busyCount =Math.max(0,state.busyCount + (isBusy ?1 :-1));const busy =state.busyCount >0;$('refreshBtn').disabled =busy;$('refreshIcon').classList.toggle('spin',busy);$('globalStatus').textContent =busy ?t(messageKey) :t('updated');$('refreshBtn').setAttribute('aria-busy',String(busy));}
-function updateTimestamp(date =new Date()) {$('lastUpdatedText').textContent =new Intl.DateTimeFormat(state.lang ==='tc' ?'zh-HK' :'en-HK',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false }).format(date);}
-async function fetchJson(url,timeoutMs=15000) {const controller =new AbortController();const timer =setTimeout(() =>controller.abort(),timeoutMs);try {const response =await fetch(url,{signal:controller.signal,headers:{Accept:'application/json' } });if (!response.ok) throw new Error(`HTTP ${response.status}`);const payload =await response.json();if (!payload ||!Array.isArray(payload.data)) throw new Error('Unexpected API response');return payload.data;} finally {clearTimeout(timer);}
+
+/* =========================================================
+   UI helpers
+========================================================= */
+function toast(msg, ms=3500){
+  const box = document.getElementById('toast-box');
+  const el = document.createElement('div');
+  el.className = 'toast text-sm';
+  el.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2"></i>' + escapeHtml(msg);
+  box.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),320); }, ms);
 }
-function readCache(key) {try {const item =JSON.parse(localStorage.getItem(`kmb-${key}`));return item &&Date.now() - item.time < CACHE_TTL &&Array.isArray(item.data) ?item.data :null;} catch {return null;}
+function escapeHtml(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+let loadCount = 0;
+function loadStart(){ loadCount++; document.getElementById('loadbar').classList.add('on'); }
+function loadEnd(){ loadCount = Math.max(0, loadCount-1); if(!loadCount) document.getElementById('loadbar').classList.remove('on'); }
+function spinnerHtml(msg){ return `<div class="flex flex-col items-center gap-3 py-10"><div class="spinner"></div><p class="txt-muted text-sm">${escapeHtml(msg||t('loading'))}</p></div>`; }
+function errorHtml(){ return `<div class="card p-5 text-center"><i class="fa-solid fa-circle-exclamation text-2xl mb-2" style="color:var(--accent);"></i><p class="font-bold">${escapeHtml(t('errorApi'))}</p></div>`; }
+function emptyHtml(msg){ return `<div class="card p-6 text-center txt-muted"><i class="fa-regular fa-circle-pause text-2xl mb-2 block"></i>${escapeHtml(msg||t('noMatch'))}</div>`; }
+
+/* =========================================================
+   Fetch helpers + caches
+========================================================= */
+async function j(url){
+  const r = await fetch(url);
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
 }
-function writeCache(key,data) {try {localStorage.setItem(`kmb-${key}`,JSON.stringify({time:Date.now(),data }));} catch {}
+let routeListP = null, stopListP = null;
+const routeStopsCache = new Map();
+function getRouteList(){ if(!routeListP) routeListP = j(KMB + 'route/').then(d => d.data); return routeListP; }
+function getStopList(){ if(!stopListP) stopListP = j(KMB + 'stop/').then(d => d.data); return stopListP; }
+// KMB API: route list uses bound 'I'/'O', but route-stop requires 'inbound'/'outbound'
+const boundWord = b => b === 'I' ? 'inbound' : b === 'O' ? 'outbound' : b;
+function getRouteStops(route, bound, st){
+  const key = `${route}/${bound}/${st}`;
+  if(!routeStopsCache.has(key)) routeStopsCache.set(key, j(KMB + `route-stop/${route}/${boundWord(bound)}/${st}`).then(d => d.data));
+  return routeStopsCache.get(key);
 }
-function buildRouteGroups(routes) {const routeMap =new Map();routes.forEach(route =>{if (!route.route) return;if (!routeMap.has(route.route)) routeMap.set(route.route,new Map());const variantKey =[route.bound,route.orig_tc,route.dest_tc,route.orig_en,route.dest_en].join('|');const variants =routeMap.get(route.route);if (!variants.has(variantKey)) variants.set(variantKey,{route:route.route,bound:route.bound,orig_tc:route.orig_tc,orig_en:route.orig_en,dest_tc:route.dest_tc,dest_en:route.dest_en,serviceTypes:[] });const variant =variants.get(variantKey);const serviceType =String(route.service_type ||'1');if (!variant.serviceTypes.includes(serviceType)) variant.serviceTypes.push(serviceType);});return [...routeMap.entries()].map(([route,variants]) =>({route,variants:[...variants.values()].map(v =>({...v,direction:classifyDirection(v.dest_tc ||'') }))
-})).sort((a,b) =>naturalCompare(a.route,b.route));}
-function canonicalStationName(name='') {let value =String(name).trim();const codeSuffix =/\s*\((?:[ABC]\d+|TM\d+[A-Za-z]?|[A-Z]{1,3}\d+[A-Za-z]?)\)\s*$/i;let previous;do {previous =value;value =value.replace(codeSuffix,'').trim();} while (value !==previous);return value;}
-function buildStopGroups(stops) {const groups =new Map();stops.forEach(stop =>{if (!stop.stop) return;state.stopById.set(stop.stop,stop);const canonicalTc =canonicalStationName(stop.name_tc ||'');const canonicalEn =canonicalStationName(stop.name_en ||'');const key =(canonicalTc ||canonicalEn ||stop.stop).toLocaleLowerCase();if (!groups.has(key)) groups.set(key,{key,name_tc:canonicalTc ||stop.name_tc,name_en:canonicalEn ||stop.name_en,stops:[] });const group =groups.get(key);if (!group.stops.some(existing =>existing.stop ===stop.stop)) group.stops.push(stop);});return [...groups.values()].sort((a,b) =>naturalCompare(a.name_tc ||a.name_en,b.name_tc ||b.name_en));}
-async function loadMasterData(force=false) {setBusy(true,'loading');state.masterDataFromCache =false;try {let routes,stops;if (!force) {routes =readCache('routes');stops =readCache('stops');}
-if (!routes ||!stops ||force) {try {[routes,stops] =await Promise.all([fetchJson(`${API_BASE}/route/`),fetchJson(`${API_BASE}/stop`)
-]);writeCache('routes',routes);writeCache('stops',stops);} catch (error) {routes =routes ||readCache('routes');stops =stops ||readCache('stops');if (!routes ||!stops) throw error;state.masterDataFromCache =true;}
+// Resolve ALL stop codes for a station name (multi-code aggregation)
+async function findStopCodes(nameTc, nameEn){
+  const stops = await getStopList();
+  const rx = new RegExp(nameTc + '|' + nameEn, 'i');
+  return stops.filter(s => rx.test(s.name_tc || '') || rx.test(s.name_en || '')).map(s => s.stop);
 }
-state.routes =routes;state.routeGroups =buildRouteGroups(routes);state.stops =stops;state.stopById.clear();state.stopGroups =buildStopGroups(stops);populateStationOptions();renderRouteList();if (!state.selectedStationKey) selectDefaultStation();if (state.selectedStationKey) await loadStationArrivals();if (state.masterDataFromCache) announce(t('cachedData'));updateTimestamp();} catch (error) {console.error('Master data error:',error);renderMasterError();} finally {setBusy(false);}
+const getStopEta = code => j(KMB + `stop-eta/${code}`).then(d => d.data);
+
+
+/* =========================================================
+   Route utilities: normalization + ascending sort + TM classify
+========================================================= */
+function routeTokens(r){
+  const m = String(r).toUpperCase().match(/^(\d+)([A-Z]*)$/);
+  if(!m) return [String(r)];
+  const out = [String(parseInt(m[1], 10))];
+  if(m[2]) out.push(...m[2].split(''));
+  return out;
 }
-function normalizeStationQuery(value='') {return String(value).trim().toLocaleLowerCase().replace(/[\s()（）·.\-_/]+/g, '');
-    }
+function cmpRoute(a, b){
+  const A = routeTokens(a), B = routeTokens(b);
+  for(let i = 0; i < Math.max(A.length, B.length); i++){
+    if(A[i] === undefined) return -1;
+    if(B[i] === undefined) return 1;
+    const an = /^\d+$/.test(A[i]), bn = /^\d+$/.test(B[i]);
+    if(an && bn){ const d = +A[i] - +B[i]; if(d) return d; }
+    else { const d = A[i].localeCompare(B[i]); if(d) return d; }
+  }
+  return 0;
+}
+// Tuen Mun direction keywords — Siu Hong (兆康) explicitly classified as TM
+const TM_RE = /(屯門|兆康|富泰|良景|山景|龍門居|三聖|掃管笏|小欖|大欖|青龍頭|深井|蝴蝶灣|湖景|友愛|安定|建生|寶田|和田|菁田|洪水橋|藍地|新墟|置樂|Tuen\s*Mun|Siu\s*Hong|Fu\s*Tai|Leung\s*King|Shan\s*King|Lung\s*Mun|Sam\s*Shing|Butterfly|Yau\s*Oi|On\s*Ting|Kin\s*Sang|Po\s*Tin|Wo\s*Tin|Ching\s*Tin|Hung\s*Shui|Lam\s*Tei|So\s*Kwun\s*Wat|Siu\s*Lam|Tai\s*Lam|Tsing\s*Lung|Sham\s*Tseng)/i;
+const isTmDest = (tc, en) => TM_RE.test(tc || '') || TM_RE.test(en || '');
+const dirClass = (tc, en) => isTmDest(tc, en) ? 'tm' : 'urban';
+function dirChipHtml(cls){
+  return cls === 'tm'
+    ? `<span class="dir-chip tm">${escapeHtml(t('toTm'))}</span>`
+    : `<span class="dir-chip urban">${escapeHtml(t('toUrban'))}</span>`;
+}
 
-    function findStationSuggestions(query, limit=10) {
-      const needle = normalizeStationQuery(query);
-      return state.stopGroups
-        .map(group => {
-          const primary = normalizeStationQuery(text(group,'name'));
-          const alternate = normalizeStationQuery(state.lang === 'tc' ? group.name_en : group.name_tc);
-          let score = 4;
-          if (!needle) score = 3;
-          else if (primary.startsWith(needle)) score = 0;
-          else if (alternate.startsWith(needle)) score = 1;
-          else if (primary.includes(needle)) score = 2;
-          else if (alternate.includes(needle)) score = 3;
-          return { group, score };
-        })
-        .filter(item => !needle || item.score < 4)
-        .sort((a,b) => a.score - b.score || naturalCompare(text(a.group,'name'), text(b.group,'name')))
-        .slice(0, limit)
-        .map(item => item.group);
-    }
+/* =========================================================
+   ETA formatting
+========================================================= */
+function etaInfo(iso, remarkTc, remarkEn){
+  if(!iso) return { text: t('noService'), cls:'eta-far', sub:'' };
+  const d = new Date(iso);
+  const hh = String(d.getHours()).padStart(2,'0'), mm = String(d.getMinutes()).padStart(2,'0');
+  const diff = Math.round((d - Date.now()) / 60000);
+  const remark = pick(remarkTc, remarkEn);
+  const sub = (remark ? remark + ' · ' : '') + hh + ':' + mm;
+  if(diff <= 0) return { text: t('arriving'), cls:'eta-now', sub };
+  if(diff < 60) return { text: diff + ' ' + t('min'), cls:'', sub };
+  return { text: hh + ':' + mm, cls:'eta-far', sub: remark };
+}
+function etaChips(etas){
+  if(!etas.length) return `<span class="txt-muted text-sm">${escapeHtml(t('noService'))}</span>`;
+  return etas.slice(0,3).map(e => {
+    const i = etaInfo(e.eta, e.rmk_tc, e.rmk_en);
+    return `<div class="text-right leading-tight"><div class="eta-time ${i.cls}" title="${escapeHtml(i.sub)}">${escapeHtml(i.text)}</div><div class="text-[10px] txt-muted">${escapeHtml(i.sub)}</div></div>`;
+  }).join('<div class="w-px self-stretch mx-1" style="background:var(--border);"></div>');
+}
 
-    function closeStationSuggestions() {
-      state.stationSuggestionIndex = -1;
-      $('stationSuggestions').classList.add('hidden-view');
-      $('stationPicker').setAttribute('aria-expanded', 'false');
-      $('stationPicker').setAttribute('aria-activedescendant', '');
-    }
+/* =========================================================
+   BUS — Tab 1: Route search
+========================================================= */
+let routeGroups = [];      // [{route, variants:[{bound,service_type,orig_tc,orig_en,dest_tc,dest_en}]}]
+let expandedKey = null;
 
-    function updateStationSuggestionSelection(index) {
-      const options = $('stationSuggestions').querySelectorAll('[role="option"]');
-      if (!options.length) return;
-      state.stationSuggestionIndex = (index + options.length) % options.length;
-      options.forEach((option, optionIndex) => option.setAttribute('aria-selected', String(optionIndex === state.stationSuggestionIndex)));
-      const active = options[state.stationSuggestionIndex];
-      $('stationPicker').setAttribute('aria-activedescendant', active.id);
-      active.scrollIntoView({ block:'nearest' });
+async function loadRoutes(force){
+  const list = document.getElementById('route-list');
+  if(force){ routeListP = null; routeStopsCache.clear(); }
+  list.innerHTML = spinnerHtml();
+  loadStart();
+  try{
+    const data = await getRouteList();
+    const map = new Map();
+    for(const r of data){
+      if(!map.has(r.route)) map.set(r.route, []);
+      map.get(r.route).push(r);
     }
+    routeGroups = [...map.entries()].map(([route, variants]) => ({
+      route,
+      variants: variants.sort((a,b) => (a.bound + a.service_type).localeCompare(b.bound + b.service_type))
+    }));
+    routeGroups.sort((a,b) => cmpRoute(a.route, b.route));
+    renderRouteList();
+  }catch(e){ console.error(e); list.innerHTML = errorHtml(); toast(t('errorApi')); }
+  loadEnd();
+}
+function renderRouteList(){
+  const q = document.getElementById('route-filter').value.trim().toUpperCase();
+  const list = document.getElementById('route-list');
+  const matches = q ? routeGroups.filter(g => g.route.toUpperCase().includes(q)) : routeGroups;
+  const CAP = 250;
+  const shown = matches.slice(0, CAP);
+  document.getElementById('route-count').textContent = matches.length > CAP
+    ? t('showingOf').replace('{a}', CAP).replace('{b}', matches.length)
+    : t('routeTotal').replace('{b}', matches.length);
+  if(!shown.length){ list.innerHTML = emptyHtml(); return; }
+  list.innerHTML = shown.map(g => {
+    const v = g.variants[0];
+    const key = g.route;
+    const open = expandedKey === key;
+    return `<article class="row-item" data-route="${escapeHtml(g.route)}">
+      <button class="w-full text-left px-4 py-3 flex items-center gap-3 flex-wrap route-row-btn" data-route="${escapeHtml(g.route)}" aria-expanded="${open}">
+        <span class="route-badge">${escapeHtml(g.route)}</span>
+        <span class="flex-1 min-w-[150px]">
+          <span class="font-semibold">${escapeHtml(pick(v.orig_tc, v.orig_en))}</span>
+          <i class="fa-solid fa-arrow-right-long mx-1 txt-muted text-xs"></i>
+          <span class="font-semibold">${escapeHtml(pick(v.dest_tc, v.dest_en))}</span>
+          ${g.variants.length > 1 ? `<span class="txt-muted text-xs ml-1">(${g.variants.length})</span>` : ''}
+        </span>
+        <i class="fa-solid ${open ? 'fa-chevron-up' : 'fa-chevron-down'} txt-muted text-sm"></i>
+      </button>
+      <div class="route-detail ${open ? '' : 'hidden'}" id="detail-${cssSafe(g.route)}"></div>
+    </article>`;
+  }).join('');
+  if(expandedKey){
+    const g = routeGroups.find(x => x.route === expandedKey);
+    if(g && matches.includes(g)) renderRouteDetail(g);
+  }
+}
+const cssSafe = s => String(s).replace(/[^A-Za-z0-9_-]/g, '_');
 
-    function renderStationSuggestions(query=$('stationPicker').value) {
-      const panel = $('stationSuggestions');
-      const picker = $('stationPicker');
-      state.stationSuggestions = findStationSuggestions(query);
-      state.stationSuggestionIndex = -1;
-      panel.setAttribute('aria-label', t('suggestions'));
-      if (!state.stopGroups.length) {
-        panel.innerHTML = `<div class="station-suggestion-empty">${escapeHTML(t('loadingStationList'))}</div>`;
-      } else if (!state.stationSuggestions.length) {
-        panel.innerHTML = `<div class="station-suggestion-empty">${escapeHTML(t('noSuggestions'))}</div>`;
-      } else {
-        panel.innerHTML = state.stationSuggestions.map((group, index) => {
-          const alternate = state.lang === 'tc' ? group.name_en : group.name_tc;
-          return `<button id="station-option-${index}" class="station-suggestion" type="button" role="option" aria-selected="false" data-suggestion-index="${index}"><span class="min-w-0"><span class="station-suggestion-name">${escapeHTML(text(group,'name'))}</span><span class="station-suggestion-alt">${escapeHTML(alternate ||'')}</span></span><span class="station-suggestion-count">${group.stops.length} ${escapeHTML(t('suggestionCount'))}</span></button>`;
-        }).join('');
-      }
-      panel.classList.remove('hidden-view');
-      picker.setAttribute('aria-expanded', 'true');
-      picker.setAttribute('aria-activedescendant', '');
+async function renderRouteDetail(g){
+  const box = document.getElementById('detail-' + cssSafe(g.route));
+  if(!box) return;
+  // direction / variant chips
+  box.innerHTML = `<div class="px-4 pb-3 pt-1 border-t fade-in" style="border-color:var(--border);">
+    <p class="text-xs txt-muted mb-2">${escapeHtml(t('pickVariant'))}</p>
+    <div class="flex flex-wrap gap-2 mb-3">${g.variants.map((v,i) => {
+      const cls = dirClass(v.dest_tc, v.dest_en);
+      return `<button class="variant-chip ${i===0?'active':''}" data-ri="${escapeHtml(g.route)}" data-vi="${i}">
+        ${dirChipHtml(cls)} <span class="ml-1">${escapeHtml(pick(v.orig_tc, v.orig_en))} → ${escapeHtml(pick(v.dest_tc, v.dest_en))}</span>
+      </button>`;
+    }).join('')}</div>
+    <div class="variant-stops">${spinnerHtml(t('loadingEta'))}</div>
+  </div>`;
+  loadVariantStops(g, 0);
+}
+async function loadVariantStops(g, vi){
+  const v = g.variants[vi];
+  const holder = document.querySelector(`#detail-${cssSafe(g.route)} .variant-stops`);
+  if(!holder) return;
+  holder.innerHTML = spinnerHtml(t('loadingEta'));
+  loadStart();
+  try{
+    const stops = await getRouteStops(v.route, v.bound, v.service_type);
+    // Per-stop ETA is more reliable than the route-level ETA endpoint (which
+    // returns HTTP 422 for many route/bound combos). Fetch stops in parallel.
+    const perStop = await Promise.all(stops.map(s =>
+      getStopEta(s.stop)
+        .then(data => ({ seq: s.seq, etas: data.filter(e =>
+          e.route === v.route && e.dir === v.bound && String(e.service_type) === String(v.service_type))
+          .sort((a,b) => (a.eta_seq||0)-(b.eta_seq||0)) }))
+        .catch(() => ({ seq: s.seq, etas: [] }))
+    ));
+    const bySeq = new Map(perStop.map(x => [x.seq, x.etas]));
+    if(!stops.length){ holder.innerHTML = emptyHtml(t('noEta')); loadEnd(); return; }
+    holder.innerHTML = `<ol class="space-y-1.5">${stops.map(s => {
+      const es = bySeq.get(s.seq) || [];
+      return `<li class="stop-row ${es.length && es[0].eta ? 'has-eta':''} pl-3 py-2 pr-2 flex items-center gap-3 flex-wrap">
+        <span class="text-xs txt-muted w-8 shrink-0">${s.seq}</span>
+        <span class="flex-1 min-w-[140px] font-semibold text-sm">${escapeHtml(pick(s.name_tc, s.name_en))}</span>
+        <span class="flex items-center gap-1">${etaChips(es)}</span>
+      </li>`;
+    }).join('')}</ol>`;
+  }catch(e){ console.error(e); holder.innerHTML = errorHtml(); }
+  loadEnd();
+}
+
+/* =========================================================
+   BUS — Tabs 2 & 3 shared arrival aggregation
+========================================================= */
+// Merge stop-ETA results across multiple stop codes, keyed by route+dest
+function aggregateEtas(datasets){
+  const map = new Map();
+  for(const data of datasets){
+    for(const e of data){
+      const cls = dirClass(e.dest_tc, e.dest_en);
+      const key = e.route + '|' + cls + '|' + (e.dest_tc || '') + '|' + (e.dest_en || '');
+      if(!map.has(key)) map.set(key, { route: e.route, dest_tc: e.dest_tc, dest_en: e.dest_en, cls, etas: [] });
+      map.get(key).etas.push(e);
     }
+  }
+  const rows = [...map.values()];
+  for(const r of rows){
+    const seen = new Set();
+    r.etas = r.etas
+      .filter(e => e.eta)
+      .sort((a,b) => new Date(a.eta) - new Date(b.eta))
+      .filter(e => { const k = e.eta + '|' + (e.rmk_tc||''); if(seen.has(k)) return false; seen.add(k); return true; })
+      .slice(0,3);
+  }
+  rows.sort((a,b) => cmpRoute(a.route, b.route) || String(a.dest_en||'').localeCompare(String(b.dest_en||'')));
+  return rows;
+}
+function arrivalRowHtml(r){
+  return `<article class="row-item px-4 py-3 flex items-center gap-3 flex-wrap fade-in">
+    <span class="route-badge">${escapeHtml(r.route)}</span>
+    <span class="flex-1 min-w-[150px]">
+      <span class="mr-1">${dirChipHtml(r.cls)}</span>
+      <span class="font-semibold">${escapeHtml(pick(r.dest_tc, r.dest_en))}</span>
+    </span>
+    <span class="flex items-center gap-1">${etaChips(r.etas)}</span>
+  </article>`;
+}
+function filterArrivalRows(rows, q, dir){
+  q = (q||'').trim().toUpperCase();
+  return rows.filter(r => {
+    if(dir !== 'all' && r.cls !== dir) return false;
+    if(q && !(r.route.toUpperCase().includes(q) || (r.dest_tc||'').includes(q) || (r.dest_en||'').toUpperCase().includes(q))) return false;
+    return true;
+  });
+}
+async function fetchStopEtasMulti(codes){
+  const results = await Promise.all(codes.map(c =>
+    getStopEta(c).catch(err => { console.warn('stop-eta failed for', c, err); return []; })
+  ));
+  return aggregateEtas(results);
+}
 
-    function selectStationSuggestion(index, load=true) {
-      const group = state.stationSuggestions[index];
-      if (!group) return;
-      state.selectedStationKey = group.key;
-      $('stationPicker').value = text(group,'name');
-      closeStationSuggestions();
-      announce(`${text(group,'name')} · ${group.stops.length} ${t('stopCodes')}`);
-      if (load) loadStationArrivals();
-    }
+/* =========================================================
+   BUS — Tab 2: Station arrival board
+========================================================= */
+// Station codes are resolved live from the KMB stop list (all matching codes
+// are aggregated — e.g. every platform of an interchange).
+const PRESET_STATIONS = [
+  { id:'tmri', tc:'屯門公路轉車站', en:'Tuen Mun Road Interchange', tcRe:'屯門公路轉車站', enRe:'TUEN MUN ROAD BBI' },
+  { id:'siuhong', tc:'兆康站', en:'Siu Hong Station', tcRe:'兆康站', enRe:'SIU HONG STATION' },
+  { id:'smt', tc:'城門隧道轉車站', en:'Shing Mun Tunnels BBI', tcRe:'城門隧道轉車站', enRe:'SHING MUN TUNNELS BBI' },
+  { id:'tlt', tc:'大欖隧道轉車站', en:'Tai Lam Tunnel BBI', tcRe:'大欖隧道轉車站', enRe:'TAI LAM TUNNEL BBI' },
+  { id:'tststar', tc:'尖沙咀碼頭', en:'Star Ferry Tsim Sha Tsui', tcRe:'尖沙咀碼頭', enRe:'STAR FERRY' },
+  { id:'custom', tc:'— 自選車站 —', en:'— Custom stop —', tcRe:null, enRe:null },
+];
+let stopState = { station: PRESET_STATIONS[0], customCodes: [], rows: [], codes: [] };
 
-    function populateStationOptions() {
-      $('stationSuggestions').setAttribute('aria-label', t('suggestions'));
-      if (document.activeElement === $('stationPicker')) renderStationSuggestions();
-    }
+function renderStopSelect(){
+  const sel = document.getElementById('stop-select');
+  sel.innerHTML = PRESET_STATIONS.map(s => `<option value="${s.id}">${escapeHtml(pick(s.tc, s.en))}</option>`).join('');
+  sel.value = stopState.station.id;
+}
+function renderStopCodes(){
+  const box = document.getElementById('stop-codes');
+  const s = stopState.station;
+  const codes = s.id === 'custom' ? stopState.customCodes : stopState.codes;
+  if(!codes.length){ box.innerHTML = `<span class="text-xs txt-muted">${escapeHtml(t('selectStopFirst'))}</span>`; return; }
+  box.innerHTML = `<span class="text-xs txt-muted self-center">${escapeHtml(t('stopCount').replace('{n}', codes.length))}</span>` +
+    codes.map(c => `<span class="text-xs font-mono px-2 py-1 rounded-lg border" style="border-color:var(--border); background:var(--chip);">${escapeHtml(c)}
+      ${s.id==='custom' ? `<button class="ml-1 txt-muted hover:opacity-60 stopcode-del" data-code="${escapeHtml(c)}" title="${escapeHtml(t('remove'))}"><i class="fa-solid fa-xmark"></i></button>` : ''}
+    </span>`).join('');
+}
+async function loadStopBoard(force){
+  const list = document.getElementById('stop-list');
+  const s = stopState.station;
+  let codes = s.id === 'custom' ? stopState.customCodes : stopState.codes;
+  if(s.id !== 'custom' && (force || !codes.length)){
+    // Resolve all stop codes for this station from the live KMB stop list
+    list.innerHTML = spinnerHtml(t('loadingEta'));
+    loadStart();
+    try{
+      codes = await findStopCodes(s.tcRe, s.enRe);
+      stopState.codes = codes;
+      renderStopCodes();
+    }catch(e){ console.error(e); list.innerHTML = errorHtml(); toast(t('errorApi')); loadEnd(); return; }
+    loadEnd();
+  }
+  if(!codes.length){ stopState.rows = []; renderStopCodes(); renderStopBoard(); return; }
+  list.innerHTML = spinnerHtml(t('loadingEta'));
+  loadStart();
+  try{
+    stopState.rows = await fetchStopEtasMulti(codes);
+    renderStopCodes();
+    renderStopBoard();
+  }catch(e){ console.error(e); list.innerHTML = errorHtml(); toast(t('errorApi')); }
+  loadEnd();
+}
+function renderStopBoard(){
+  const list = document.getElementById('stop-list');
+  const q = document.getElementById('stop-filter').value;
+  const rows = filterArrivalRows(stopState.rows, q, dirSel.stop);
+  list.innerHTML = rows.length
+    ? rows.map(arrivalRowHtml).join('')
+    : emptyHtml(stopState.rows.length ? t('noMatch') : t('noEta'));
+}
+// custom stop search
+let stopSearchTimer = null;
+async function searchStops(q){
+  const box = document.getElementById('stop-custom-results');
+  if(!q || q.length < 2){ box.innerHTML = ''; return; }
+  try{
+    const stops = await getStopList();
+    const ql = q.toLowerCase();
+    const hits = stops.filter(s => (s.name_tc||'').includes(q) || (s.name_en||'').toLowerCase().includes(ql)).slice(0, 8);
+    box.innerHTML = hits.map(s => `<button class="w-full text-left px-3 py-2 rounded-lg border text-sm flex items-center gap-2 hover:opacity-80" style="border-color:var(--border); background:var(--panel2);" data-addcode="${escapeHtml(s.stop)}">
+      <i class="fa-solid fa-location-dot txt-muted"></i><span class="flex-1">${escapeHtml(pick(s.name_tc, s.name_en))}</span><span class="text-xs font-mono txt-muted">${escapeHtml(s.stop)}</span>
+      <span class="text-xs font-bold" style="color:var(--accent);">${escapeHtml(t('addStop'))}</span>
+    </button>`).join('') || `<p class="text-xs txt-muted px-1">${escapeHtml(t('noMatch'))}</p>`;
+  }catch(e){ console.error(e); }
+}
 
-    function selectDefaultStation() {
-      const preferred = state.stopGroups.find(g => (g.name_tc || '').includes('屯門市中心'))
-        || state.stopGroups.find(g => (g.name_en || '').toLowerCase().includes('tuen mun central'))
-        || state.stopGroups[0];
-      if (preferred) {
-        state.selectedStationKey = preferred.key;
-        $('stationPicker').value = text(preferred,'name');
-      }
-    }
+/* =========================================================
+   BUS — Tab 3: TMRI zone
+========================================================= */
+// All platform codes of Tuen Mun Road Interchange are resolved live, then merged
+let tmriRows = { tm:[], urban:[] };
+let tmriLoaded = false;
 
-    function routeMatchesDirection(group, direction) {
-      return direction === 'all' || group.variants.some(v => v.direction === direction);
-    }
+async function loadTmri(force){
+  const box = document.getElementById('tmri-list');
+  box.innerHTML = spinnerHtml(t('loadingEta'));
+  loadStart();
+  try{
+    const codes = await findStopCodes('屯門公路轉車站', 'TUEN MUN ROAD BBI');
+    const datasets = await Promise.all(codes.map(c => getStopEta(c).catch(()=>[])));
+    const all = aggregateEtas(datasets);
+    tmriRows.tm = all.filter(r => r.cls === 'tm');
+    tmriRows.urban = all.filter(r => r.cls === 'urban');
+    tmriLoaded = true;
+    renderTmri();
+  }catch(e){ console.error(e); box.innerHTML = errorHtml(); toast(t('errorApi')); }
+  loadEnd();
+}
+function renderTmri(){
+  const box = document.getElementById('tmri-list');
+  const q = document.getElementById('tmri-filter').value;
+  const dir = dirSel.tmri;
+  const tm = filterArrivalRows(tmriRows.tm, q, 'tm');
+  const ur = filterArrivalRows(tmriRows.urban, q, 'urban');
+  const sec = (title, icon, rows, color) => `<section class="card p-4 fade-in">
+    <h3 class="font-black mb-3 flex items-center gap-2" style="color:${color};"><i class="fa-solid ${icon}"></i>${escapeHtml(title)} <span class="text-xs txt-muted font-normal">(${rows.length})</span></h3>
+    <div class="space-y-2">${rows.length ? rows.map(arrivalRowHtml).join('') : emptyHtml(t('noEta'))}</div>
+  </section>`;
+  let html = '';
+  if(dir === 'all' || dir === 'tm') html += sec(t('tmBound'), 'fa-arrow-right', tm, 'var(--tm)');
+  if(dir === 'all' || dir === 'urban') html += sec(t('urbanBound'), 'fa-arrow-left', ur, 'var(--urban)');
+  box.innerHTML = html || emptyHtml(t('noMatch'));
+}
 
-    function renderRouteList() {
-      if (state.selectedRoute) { renderRouteDetail(); return; }
-      const query = $('routeSearch').value.trim().toUpperCase();
-      const direction = $('routeDirection').value;
-      const groups = state.routeGroups.filter(group => group.route.toUpperCase().includes(query) && routeMatchesDirection(group, direction));
-      $('routeResultTitle').textContent = query ? `${t('allRoutes')} · “${query}”` : t('allRoutes');
-      $('routeResultSubtitle').textContent = t('chooseDirection');
-      $('routeCount').textContent = `${groups.length} ${t('routes')}`;
-      if (!groups.length) {
-        $('routeResults').innerHTML = emptyState('search', t('noRoutes'), t('noRoutesHint'));
-        return;
-      }
-      $('routeResults').innerHTML = `<div class="route-grid">${groups.map((group,index) =>routeCardHTML(group,direction,index)).join('')}</div>`;
-      $('routeResults').querySelectorAll('[data-route-index]').forEach(button => button.addEventListener('click', () => {
-        const group = groups[Number(button.dataset.routeIndex)];
-        const variants = group.variants.filter(v => direction === 'all' || v.direction === direction);
-        const variant = variants[Number(button.dataset.variantIndex)];
-        loadRouteDetail(variant);
-      }));
-    }
+/* =========================================================
+   WEATHER
+========================================================= */
+let wxData = null; // {rhr, fnd, warnsum, warninfo}
+const HKO_ICON = {50:'☀️',51:'☀️',52:'🌤️',53:'🌤️',54:'🌥️',60:'☁️',61:'☁️',62:'🌦️',63:'🌧️',64:'🌧️',65:'⛈️',70:'🌙',71:'🌙',72:'🌙',73:'🌙',74:'🌙',75:'🌙',76:'☁️',77:'☁️',80:'🌫️',81:'🌫️',83:'🌫️',84:'🌫️',85:'🌫️',90:'🌡️',91:'💨',92:'💨',93:'💨'};
+const hkoIcon = n => HKO_ICON[+n] || '🌡️';
+function hkoDate(s){ // 'YYYY-MM-DDTHH:mm:ss+08:00' or YYYYMMDD
+  if(!s) return '';
+  if(/^\d{8}$/.test(s)) return `${s.slice(6,8)}/${s.slice(4,6)}/${s.slice(0,4)}`;
+  const d = new Date(s);
+  if(isNaN(d)) return s;
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+async function loadWeather(){
+  loadStart();
+  const refreshBtn = document.getElementById('wx-refresh');
+  refreshBtn.disabled = true; refreshBtn.style.opacity = '.6';
+  try{
+    const l = lang === 'tc' ? 'tc' : 'en';
+    // Forecast (fnd) is essential; warninfo is served by HKO without CORS
+    // headers (unlike fnd/rhrread/warnsum) so it fails in browsers — try it
+    // directly first, then fall back to a public CORS proxy (hko.gov.hk's own
+    // warning texts are blocked by bot-protection, so the API is preferred).
+    const opt = dt => j(`${HKO}?dataType=${dt}&lang=${l}`).catch(err => { console.warn('HKO', dt, 'failed:', err); return null; });
+    const [fnd, rhr, warnsum, warninfo] = await Promise.all([
+      j(`${HKO}?dataType=fnd&lang=${l}`), opt('rhrread'), opt('warnsum'), fetchWarninfo(l)
+    ]);
+    wxData = { rhr, fnd, warnsum, warninfo };
+    renderWeather();
+  }catch(e){ console.error(e); toast(t('errorApi')); }
+  refreshBtn.disabled = false; refreshBtn.style.opacity = '1';
+  loadEnd();
+}
+// warninfo: HKO does not send CORS headers for this endpoint; try direct
+// then a public proxy so rainstorm/typhoon statements still load.
+async function fetchWarninfo(l){
+  const url = `${HKO}?dataType=warninfo&lang=${l}`;
+  try{
+    const d = await j(url);
+    if(Array.isArray(d) ? d.length : Object.keys(d).length) return d;
+  }catch(e){ console.warn('warninfo direct failed:', e); }
+  try{
+    const r = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url));
+    if(r.ok){ const d = await r.json(); return d; }
+  }catch(e){ console.warn('warninfo proxy failed:', e); }
+  return null;
+}
+function psrLabel(psr){
+  const v = String(psr||'').toLowerCase();
+  if(v.includes('high') || v.includes('高')) return t('psrHigh');
+  if(v.includes('medium') || v.includes('中')) return t('psrMed');
+  if(v.includes('low') || v.includes('低')) return t('psrLow');
+  return psr || '';
+}
+function renderWeather(){
+  if(!wxData) return;
+  const { rhr, fnd, warnsum, warninfo } = wxData;
 
-    function routeCardHTML(group, directionFilter, groupIndex) {
-      const variants = group.variants.filter(v => directionFilter === 'all' || v.direction === directionFilter);
-      return `<article class="route-card"><div class="flex items-center justify-between gap-3 p-3"><span class="route-number">${escapeHTML(group.route)}</span><span class="text-xs font-bold text-slate-500">${variants.length} ${t('directions')}</span></div><div>${variants.map((v,index) =>`<button class="direction-button" type="button" data-route-index="${groupIndex}" data-variant-index="${index}" aria-label="${escapeHTML(group.route)} ${escapeHTML(text(v,'dest'))}">
-          <span class="dir-badge ${v.direction === 'tm' ? 'tm' : 'non'}">${v.direction === 'tm' ? t('tmDirection') : t('nonTmDirection')}</span>
-          <span class="min-w-0"><strong class="block truncate text-sm">${t('destination')} ${escapeHTML(text(v,'dest'))}</strong><span class="block truncate text-[.7rem] font-semibold text-slate-500">${t('via')} ${escapeHTML(text(v,'orig'))}</span></span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-        </button>`).join('')}</div></article>`;
-    }
+  /* ---- current conditions ---- */
+  const tempArr = rhr?.temperature?.data || [];
+  const hkoT = tempArr.find(x => /Observatory|天文台/.test(x.place)) || tempArr[0];
+  document.getElementById('wx-temp').textContent = hkoT ? hkoT.value + '°' : '--°';
+  const hum = rhr?.humidity?.data?.[0];
+  document.getElementById('wx-hum').textContent = hum ? `${t('humidity')}: ${hum.value}%` : '';
+  const iconArr = rhr?.icon || [];
+  document.getElementById('wx-icon').textContent = iconArr.length ? hkoIcon(iconArr[0]) : '🌤️';
+  let heroBits = [];
+  if(rhr?.uvindex?.data?.[0]?.value !== undefined) heroBits.push(`${t('uv')}: ${rhr.uvindex.data[0].value}`);
+  const rains = (rhr?.rainfall?.data || []).map(x => x.max ?? x.value ?? 0);
+  if(rains.length) heroBits.push(`${t('rainfallNow')}: ${Math.max(...rains)} mm`);
+  document.getElementById('wx-desc').textContent = heroBits.join(' · ') || '';
+  document.getElementById('wx-updated').textContent = rhr?.updateTime ? `${t('updatedAt')}: ${hkoDate(rhr.updateTime)}` : '';
+  document.getElementById('wx-general').textContent = fnd?.generalSituation ? `${t('generalSit')}：${fnd.generalSituation}` : '';
 
-    /* @section: route-stop-station-names */
-    function routeBoundPath(bound='') {
-      return String(bound).toUpperCase() === 'I' ? 'inbound' : 'outbound';
-    }
-
-    function buildRouteStopRows(datasets, bound) {
-      const stopMap = new Map();
-      datasets.forEach(({ serviceType, routeStops, etas }) => {
-        const etasBySeq = new Map();
-        etas
-          .filter(record => (!record.dir || record.dir === bound) && String(record.service_type || serviceType) === String(serviceType))
-          .forEach(record => {
-            const seq = Number(record.seq) || 0;
-            if (!etasBySeq.has(seq)) etasBySeq.set(seq, []);
-            etasBySeq.get(seq).push(record);
-          });
-        routeStops.forEach(routeStop => {
-          const seq = Number(routeStop.seq) || 0;
-          const key = `${seq}|${routeStop.stop}`;
-          if (!stopMap.has(key)) stopMap.set(key, { seq, stopId:routeStop.stop, etas:[] });
-          stopMap.get(key).etas.push(...(etasBySeq.get(seq) || []));
-        });
-      });
-      return [...stopMap.values()].sort((a,b) => a.seq - b.seq || naturalCompare(a.stopId,b.stopId));
-    }
-
-    async function loadRouteDetail(variant, force=false) {
-      if (!variant) return;
-      state.selectedRoute = { variant, stops:[], loading:true, error:null };
-      renderRouteDetail();
-      setBusy(true, 'loadingArrivals');
-      try {
-        const direction = routeBoundPath(variant.bound);
-        const datasets = await Promise.all(variant.serviceTypes.map(async serviceType => {
-          const [routeStops, etas] = await Promise.all([
-            fetchJson(`${API_BASE}/route-stop/${encodeURIComponent(variant.route)}/${direction}/${encodeURIComponent(serviceType)}`),
-            fetchJson(`${API_BASE}/route-eta/${encodeURIComponent(variant.route)}/${encodeURIComponent(serviceType)}`)
-          ]);
-          return { serviceType, routeStops, etas };
-        }));
-        state.selectedRoute.stops = buildRouteStopRows(datasets, variant.bound);
-        state.selectedRoute.loading = false;
-        updateTimestamp();
-      } catch (error) {
-        console.error('Route detail error:', error);
-        state.selectedRoute.loading = false;
-        state.selectedRoute.error = error;
-      } finally {
-        setBusy(false);
-        renderRouteDetail();
-      }
-    }
-
-    function renderRouteDetail() {
-      const detail = state.selectedRoute;
-      if (!detail) { renderRouteList(); return; }
-      const v = detail.variant;
-      $('routeResultTitle').innerHTML = `<span class="mr-2 inline-flex rounded-lg bg-kmb-600 px-2.5 py-1 text-white">${escapeHTML(v.route)}</span>${t('destination')} ${escapeHTML(text(v,'dest'))}`;
-      $('routeResultSubtitle').textContent = `${t('via')} ${text(v,'orig')} · ${v.direction ==='tm' ?t('tmDirection') :t('nonTmDirection')}`;
-      $('routeCount').textContent = detail.loading ? t('loading') : `${detail.stops.length} ${t('stops')}`;
-      if (detail.loading) {
-        $('routeResults').innerHTML = loadingRows();
-        return;
-      }
-      if (detail.error) {
-        $('routeResults').innerHTML = errorState();
-        return;
-      }
-      const content = detail.stops.length ? `<div class="eta-list">${detail.stops.map(routeStopHTML).join('')}</div>` : emptyState('bus', t('noArrivals'), t('noArrivalsHint'));
-      $('routeResults').innerHTML = `<div class="border-b border-slate-200 p-3"><button id="backToRoutes" class="toolbar-btn" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>${t('backToRoutes')}</button></div>${content}`;
-      $('backToRoutes')?.addEventListener('click', () => { state.selectedRoute = null; renderRouteList(); });
-    }
-
-    function routeStopHTML(stop) {
-      const stopInfo = state.stopById.get(stop.stopId) || {};
-      const etas = usableEtas(stop.etas);
-      return `<div class="route-stop-row"><span class="stop-seq">${stop.seq}</span><div class="min-w-0"><p class="truncate text-sm font-extrabold">${escapeHTML(text(stopInfo,'name') ||stop.stopId)}</p><p class="mt-1 text-[.68rem] font-semibold text-slate-500">${escapeHTML(remarkText(etas[0]))}</p></div><div class="eta-times">${etaChipsHTML(etas)}</div></div>`;
-    }
-
-    function resolveStationGroup(input) {
-      const value = input.trim().toLowerCase();
-      return state.stopGroups.find(group => [group.name_tc, group.name_en].some(name => (name || '').toLowerCase() === value));
-    }
-
-    async function loadStationArrivals(force=false) {
-      const picker = $('stationPicker');
-      const group = state.selectedStationKey ? state.stopGroups.find(g => g.key === state.selectedStationKey) : resolveStationGroup(picker.value);
-      if (!group) {
-        $('stationResults').innerHTML = emptyState('pin', t('chooseFromList'), t('stationHelp'));
-        $('stationCount').textContent = '0';
-        return;
-      }
-      state.selectedStationKey = group.key;
-      picker.value = text(group,'name');
-      $('stationResultTitle').textContent = text(group,'name');
-      $('stationMeta').textContent = `${group.stops.length} ${t('stopCodes')} · ${t('loadingArrivals')}`;
-      $('stationResults').innerHTML = loadingRows();
-      setBusy(true, 'loadingArrivals');
-      try {
-        const settled = await Promise.allSettled(group.stops.map(stop => fetchJson(`${API_BASE}/stop-eta/${encodeURIComponent(stop.stop)}`).then(data => data.map(item => ({...item, sourceStop:stop.stop})) )));
-        state.stationEtas = settled.filter(r => r.status === 'fulfilled').flatMap(r => r.value);
-        state.stationPartialFailure = settled.some(r => r.status === 'rejected');
-        if (!state.stationEtas.length && state.stationPartialFailure) throw new Error('All station ETA calls failed');
-        updateTimestamp();
-        renderStationArrivals();
-      } catch (error) {
-        console.error('Station ETA error:', error);
-        $('stationResults').innerHTML = errorState();
-        $('stationCount').textContent = '0';
-      } finally { setBusy(false); }
-    }
-
-    function renderStationArrivals() {
-      const group = state.stopGroups.find(g => g.key === state.selectedStationKey);
-      if (group) {
-        $('stationResultTitle').textContent = text(group,'name');
-        $('stationMeta').textContent = `${group.stops.length} ${t('stopCodes')}${state.stationPartialFailure ?` · ${t('partialError')}` :''}`;
-      }
-      renderArrivalCollection(state.stationEtas, $('stationResults'), $('stationCount'), $('stationFilter').value, $('stationDirection').value, state.stationPartialFailure);
-    }
-
-    async function loadInterchangeArrivals() {
-      $('interchangeResults').innerHTML = loadingRows(7);
-      $('interchangeMeta').textContent = t('loadingArrivals');
-      setBusy(true, 'loadingArrivals');
-      try {
-        const settled = await Promise.allSettled(INTERCHANGE_STOPS.map(stop => fetchJson(`${API_BASE}/stop-eta/${stop.id}`).then(data => data.map(item => ({...item, sourceStop:stop.id, platform:stop.platform, interchangeDirection:stop.direction})))));
-        state.interchangeEtas = settled.filter(r => r.status === 'fulfilled').flatMap(r => r.value);
-        state.interchangePartialFailure = settled.some(r => r.status === 'rejected');
-        if (!state.interchangeEtas.length && state.interchangePartialFailure) throw new Error('All interchange ETA calls failed');
-        updateTimestamp();
-        renderInterchangeArrivals();
-      } catch (error) {
-        console.error('Interchange ETA error:', error);
-        $('interchangeResults').innerHTML = errorState();
-        $('interchangeMeta').textContent = t('loadFailed');
-        $('interchangeCount').textContent = '0';
-      } finally { setBusy(false); }
-    }
-
-    function renderInterchangeArrivals() {
-      $('interchangeMeta').textContent = `${t('allPlatforms')}${state.interchangePartialFailure ?` · ${t('partialError')}` :''}`;
-      renderArrivalCollection(state.interchangeEtas, $('interchangeResults'), $('interchangeCount'), $('interchangeFilter').value, $('interchangeDirection').value, state.interchangePartialFailure, true);
-    }
-
-    function normalizeArrival(record, interchange=false) {
-      return {
-        ...record,
-        direction: interchange ? (record.interchangeDirection || classifyDirection(record.dest_tc || '')) : classifyDirection(record.dest_tc || ''),
-        route: record.route || '—',
-        dest_tc: record.dest_tc || '', dest_en: record.dest_en || '',
-        remark_tc: record.rmk_tc || '', remark_en: record.rmk_en || ''
-      };
-    }
-
-    function isScheduledService(record) {
-      const remark = `${record?.rmk_tc ||record?.remark_tc ||''} ${record?.rmk_en ||record?.remark_en ||''}`.toLocaleLowerCase();
-      return remark.includes('原定班次') || remark.includes('scheduled bus');
-    }
-
-    function renderArrivalCollection(records, container, countEl, queryValue, direction, partial=false, interchange=false) {
-      const query = queryValue.trim().toLowerCase();
-      const normalized = records.map(r => normalizeArrival(r, interchange)).filter(r => {
-        const haystack = `${r.route} ${r.dest_tc} ${r.dest_en}`.toLowerCase();
-        return !isScheduledService(r) && (!query || haystack.includes(query)) && (direction === 'all' || r.direction === direction);
-      });
-      const groups = groupArrivals(normalized, interchange);
-      countEl.textContent = `${groups.length} ${t('arrivals')}`;
-      if (!groups.length) {
-        container.innerHTML = emptyState('clock', t('noArrivals'), t('noArrivalsHint'));
-        return;
-      }
-      container.innerHTML = `${partial ?`<div class="notice" role="alert">${escapeHTML(t('partialError'))}</div>` :''}<div class="eta-list">${groups.map(group =>arrivalRowHTML(group,interchange)).join('')}</div>`;
-    }
-
-    /* @section: interchange-route-merge */
-    function groupArrivals(records, interchange=false) {
-      const groups = new Map();
-      records.forEach(record => {
-        const key = [record.route, record.dir || record.direction, record.dest_tc].join('|');
-        if (!groups.has(key)) groups.set(key, { route:record.route, direction:record.direction, dest_tc:record.dest_tc, dest_en:record.dest_en, records:[], sourceStops:new Set(), platforms:new Set() });
-        const group = groups.get(key);
-        if (record.sourceStop) group.sourceStops.add(record.sourceStop);
-        if (interchange && record.platform) group.platforms.add(record.platform);
-        const duplicateIndex = group.records.findIndex(existing => interchange
-          ? String(existing.eta_seq || '') === String(record.eta_seq || '') &&
-            String(existing.service_type || '') === String(record.service_type || '')
-          : existing.eta === record.eta &&
-            String(existing.eta_seq || '') === String(record.eta_seq || '') &&
-            String(existing.service_type || '') === String(record.service_type || '')
-        );
-        if (duplicateIndex < 0) group.records.push(record);
-        else if (interchange) {
-          const currentTime = Date.parse(group.records[duplicateIndex].eta);
-          const candidateTime = Date.parse(record.eta);
-          if (Number.isFinite(candidateTime) && (!Number.isFinite(currentTime) || candidateTime < currentTime)) group.records[duplicateIndex] = record;
+  /* ---- active warnings ---- */
+  const wBox = document.getElementById('wx-warnings');
+  const entries = Object.entries(warnsum || {});
+  if(entries.length){
+    wBox.innerHTML = `<div class="card p-4">
+      <h3 class="font-black mb-3"><i class="fa-solid fa-triangle-exclamation mr-2" style="color:#d97706;"></i>${escapeHtml(t('warnActive'))}</h3>
+      <div class="flex flex-wrap gap-2">${entries.map(([k, w]) => {
+        let cls = 'warn-chip warn-ty';
+        if(k === 'WRAIN'){
+          const st = w.subtype || (w.code||'');
+          cls = st === 'WRAINB' ? 'warn-chip warn-rain-b' : st === 'WRAINR' ? 'warn-chip warn-rain-r' : 'warn-chip warn-rain-a';
         }
-      });
-      return [...groups.values()].sort((a,b) => naturalCompare(a.route,b.route) || naturalCompare(text(a,'dest'),text(b,'dest')));
-    }
+        return `<span class="${cls}">${escapeHtml(w.name || k)}${w.type ? ' · ' + escapeHtml(w.type) : ''}</span>`;
+      }).join('')}</div></div>`;
+  } else {
+    wBox.innerHTML = `<div class="card p-4 text-sm font-semibold" style="color:var(--good);"><i class="fa-solid fa-circle-check mr-2"></i>${escapeHtml(t('warnNone'))}</div>`;
+  }
 
-    function arrivalRowHTML(group, interchange=false) {
-      const etas = usableEtas(group.records, Infinity);
-      const platformNames = interchange ? [...group.platforms].sort(naturalCompare) : [];
-      const platform = platformNames.length ? `<span class="ml-2 rounded-md border border-slate-200 px-1.5 py-1 text-[.65rem] font-black text-slate-500">${t('platform')} ${escapeHTML(platformNames.join('/'))}</span>` : '';
-      return `<article class="eta-row"><div><div class="eta-route">${escapeHTML(group.route)}</div><span class="dir-badge ${group.direction === 'tm' ? 'tm' : 'non'}">${group.direction ==='tm' ?t('tmDirection') :t('nonTmDirection')}</span></div><div class="min-w-0"><p class="truncate text-sm font-extrabold">${t('destination')} ${escapeHTML(text(group,'dest'))}</p><p class="mt-1 truncate text-[.7rem] font-semibold text-slate-500">${escapeHTML(remarkText(etas[0]))}${platform}</p></div><div class="eta-times">${etaChipsHTML(etas)}</div></article>`;
-    }
+  /* ---- severe (rainstorm / typhoon) statements: projected downgrade/lift timing ---- */
+  const sBox = document.getElementById('wx-severe');
+  const hasTy = !!warnsum?.WTCSGNL;
+  const hasRain = !!warnsum?.WRAIN;
+  if(hasTy || hasRain){
+    const infos = (Array.isArray(warninfo) ? warninfo : []).filter(e => {
+      const c = e.warningCode || e.code || e.subtype || '';
+      return c === 'WTCSGNL' || String(c).startsWith('WRAIN');
+    });
+    sBox.innerHTML = `<div class="card p-4" style="border-left:5px solid var(--accent);">
+      <h3 class="font-black mb-2"><i class="fa-solid fa-bell mr-2" style="color:var(--accent);"></i>${escapeHtml(t('severeTitle'))}</h3>
+      ${infos.length ? infos.map(e => `
+        ${e.updateTime ? `<p class="text-xs txt-muted mb-1">${escapeHtml(t('issuedAt'))}: ${escapeHtml(hkoDate(e.updateTime))}</p>` : ''}
+        <ul class="list-disc pl-5 space-y-1.5 text-sm leading-relaxed">${(e.contents||[]).map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>
+      `).join('<hr class="my-3" style="border-color:var(--border);">') : `<p class="text-sm txt-muted">${escapeHtml(t('severeNoDetail'))}</p>`}
+    </div>`;
+  } else {
+    sBox.innerHTML = `<div class="card p-4 text-sm txt-muted"><i class="fa-solid fa-circle-info mr-2"></i>${escapeHtml(t('severeNone'))}</div>`;
+  }
 
-    function usableEtas(records, limit=3) {
-      const now = Date.now();
-      const active = [...records]
-        .filter(r => !isScheduledService(r) && r.eta && !Number.isNaN(Date.parse(r.eta)) && Date.parse(r.eta) >= now - 120000)
-        .sort((a,b) => Date.parse(a.eta)-Date.parse(b.eta));
-      const distinct = distinctEtaMinutes(active, now).map(({ record }) => record);
-      return Number.isFinite(limit) ? distinct.slice(0, limit) : distinct;
-    }
+  /* ---- today / tomorrow ---- */
+  const days = fnd?.weatherForecast || [];
+  const twoBox = document.getElementById('wx-2day');
+  const dayCard = (d, label, big) => `
+    <div class="wx-card card p-5 ${big ? 'ring-2' : ''}" style="${big ? '--tw-ring-color:var(--accent);' : ''}">
+      <div class="flex items-center justify-between mb-2">
+        <p class="font-black text-lg">${escapeHtml(label)} <span class="text-sm font-normal txt-muted">${escapeHtml(hkoDate(d.forecastDate))} · ${escapeHtml(d.week||'')}</span></p>
+        <span class="text-4xl">${hkoIcon(d.ForecastIcon)}</span>
+      </div>
+      <p class="font-semibold mb-2">${escapeHtml(d.forecastWeather || '')}</p>
+      <div class="flex flex-wrap gap-x-5 gap-y-1 text-sm">
+        <span><i class="fa-solid fa-temperature-high mr-1" style="color:#dc2626;"></i>${escapeHtml(t('maxT'))}: ${d.forecastMaxtemp?.value ?? '--'}°C</span>
+        <span><i class="fa-solid fa-temperature-low mr-1" style="color:#2563eb;"></i>${escapeHtml(t('minT'))}: ${d.forecastMintemp?.value ?? '--'}°C</span>
+        <span><i class="fa-solid fa-droplet mr-1 txt-muted"></i>${d.forecastMinrh?.value ?? '--'}–${d.forecastMaxrh?.value ?? '--'}%</span>
+        <span><i class="fa-solid fa-wind mr-1 txt-muted"></i>${escapeHtml(d.forecastWind || '')}</span>
+      </div>
+      ${d.PSR ? `<p class="mt-2 text-xs font-bold" style="color:var(--accent);"><i class="fa-solid fa-cloud-rain mr-1"></i>${escapeHtml(psrLabel(d.PSR))}</p>` : ''}
+    </div>`;
+  twoBox.innerHTML = days.length >= 2
+    ? dayCard(days[0], t('today'), true) + dayCard(days[1], t('tomorrow'), false)
+    : emptyHtml(t('noMatch'));
 
-    /* @section: eta-minute-deduplication */
-    function distinctEtaMinutes(records, now=Date.now()) {
-      const seen = new Set();
-      return records.reduce((items, record) => {
-        const minutes = Math.max(0, Math.round((Date.parse(record.eta) - now) / 60000));
-        const visibleValue = minutes <= 1 ? 'due' : String(minutes);
-        if (seen.has(visibleValue)) return items;
-        seen.add(visibleValue);
-        items.push({ record, minutes, visibleValue });
-        return items;
-      }, []);
-    }
+  /* ---- 9-day ---- */
+  const nineBox = document.getElementById('wx-9day');
+  nineBox.innerHTML = days.map((d, i) => `
+    <div class="wx-card card p-4 ${i===0 ? 'ring-2' : ''}" style="${i===0 ? '--tw-ring-color:var(--accent);' : ''}">
+      <div class="flex items-center justify-between mb-1.5">
+        <p class="font-bold text-sm">${i===0 ? escapeHtml(t('today')) + ' · ' : i===1 ? escapeHtml(t('tomorrow')) + ' · ' : ''}${escapeHtml(hkoDate(d.forecastDate))}</p>
+        <span class="text-2xl">${hkoIcon(d.ForecastIcon)}</span>
+      </div>
+      <p class="text-xs font-semibold mb-1">${escapeHtml(d.week || '')}</p>
+      <p class="text-xs txt-muted mb-2 leading-snug">${escapeHtml(d.forecastWeather || '')}</p>
+      <p class="text-sm font-black">${d.forecastMintemp?.value ?? '--'}° <span class="txt-muted font-normal">/</span> ${d.forecastMaxtemp?.value ?? '--'}°C</p>
+      ${d.PSR ? `<p class="text-[11px] mt-1" style="color:var(--accent);">${escapeHtml(psrLabel(d.PSR))}</p>` : ''}
+    </div>`).join('') || emptyHtml(t('noMatch'));
+}
 
-    function etaChipsHTML(records) {
-      if (!records.length) return `<span class="eta-chip">${t('noEta')}</span>`;
-      return distinctEtaMinutes(records).map(({ minutes }) => minutes <= 1
-        ? `<span class="eta-chip soon">${t('due')}</span>`
-        : `<span class="eta-chip">${minutes}<span class="unit">${t('mins')}</span></span>`
-      ).join('');
-    }
+/* =========================================================
+   Navigation & events
+========================================================= */
+function switchApp(app){
+  activeApp = app;
+  document.getElementById('app-bus').classList.toggle('hidden', app !== 'bus');
+  document.getElementById('app-weather').classList.toggle('hidden', app !== 'weather');
+  document.getElementById('maintab-bus').classList.toggle('active', app === 'bus');
+  document.getElementById('maintab-weather').classList.toggle('active', app === 'weather');
+  if(app === 'weather' && !wxData) loadWeather();
+}
+function switchBtab(b){
+  activeBtab = b;
+  ['route','stop','tmri'].forEach(x => {
+    document.getElementById('btab-' + x).classList.toggle('hidden', x !== b);
+    document.querySelector(`.subtab-btn[data-btab="${x}"]`).classList.toggle('active', x === b);
+  });
+  if(b === 'route' && !routeGroups.length) loadRoutes();
+  if(b === 'stop' && !stopState.rows.length && !stopState.loading) loadStopBoard();
+  if(b === 'tmri' && !tmriLoaded) loadTmri();
+}
 
-    function remarkText(record) {
-      if (!record) return '';
-      return state.lang === 'tc' ? (record.rmk_tc || record.remark_tc || '') : (record.rmk_en || record.remark_en || '');
-    }
+document.getElementById('maintab-bus').addEventListener('click', () => switchApp('bus'));
+document.getElementById('maintab-weather').addEventListener('click', () => switchApp('weather'));
+document.querySelectorAll('.subtab-btn').forEach(b => b.addEventListener('click', () => switchBtab(b.dataset.btab)));
 
-    function emptyState(icon, title, hint) {
-      const icons = {
-        search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
-        bus:'<rect x="5" y="3" width="14" height="16" rx="3"/><path d="M5 12h14M8 19v2M16 19v2M8 7h8"/>',
-        pin:'<path d="M12 21s6-5 6-11a6 6 0 1 0-12 0c0 6 6 11 6 11z"/><circle cx="12" cy="10" r="2"/>',
-        clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'
-      };
-      return `<div class="empty-state"><div><div class="empty-graphic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">${icons[icon] ||icons.clock}</svg></div><h3 class="text-base font-black text-slate-700">${escapeHTML(title)}</h3><p class="mx-auto mt-2 max-w-sm text-sm leading-relaxed">${escapeHTML(hint)}</p></div></div>`;
-    }
+document.getElementById('btn-lang').addEventListener('click', () => {
+  lang = lang === 'tc' ? 'en' : 'tc';
+  localStorage.setItem('app-lang', lang);
+  applyStaticI18n();
+  renderStopSelect();
+  renderStopCodes();
+  if(routeGroups.length) renderRouteList();
+  if(stopState.rows.length) renderStopBoard();
+  if(tmriLoaded) renderTmri();
+  if(wxData) loadWeather(); // refetch localized weather text from HKO
+});
+document.getElementById('btn-contrast').addEventListener('click', function(){
+  document.body.classList.toggle('hc');
+  this.setAttribute('aria-pressed', document.body.classList.contains('hc'));
+});
 
-    function loadingRows(count=6) {
-      return `<div class="eta-list" aria-label="${escapeHTML(t('loading'))}">${Array.from({length:count},() =>`<div class="eta-row"><div class="skeleton h-12 w-16"></div><div><div class="skeleton h-4 w-2/3"></div><div class="skeleton mt-2 h-3 w-1/3"></div></div><div class="skeleton h-9 w-20"></div></div>`).join('')}</div>`;
-    }
+/* route tab events */
+document.getElementById('route-filter').addEventListener('input', () => renderRouteList());
+document.getElementById('route-refresh').addEventListener('click', () => loadRoutes(true));
+document.getElementById('route-list').addEventListener('click', e => {
+  const vChip = e.target.closest('.variant-chip');
+  if(vChip){
+    const g = routeGroups.find(x => x.route === vChip.dataset.ri);
+    if(!g) return;
+    vChip.parentElement.querySelectorAll('.variant-chip').forEach(c => c.classList.remove('active'));
+    vChip.classList.add('active');
+    loadVariantStops(g, parseInt(vChip.dataset.vi, 10));
+    return;
+  }
+  const btn = e.target.closest('.route-row-btn');
+  if(btn){
+    expandedKey = expandedKey === btn.dataset.route ? null : btn.dataset.route;
+    renderRouteList();
+  }
+});
 
-    function errorState() {
-      return `<div class="empty-state" role="alert"><div><div class="empty-graphic !bg-red-50 !text-red-700"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 2.8 20h18.4L12 3z"/><path d="M12 9v5M12 17.5v.1"/></svg></div><h3 class="text-base font-black text-red-700">${escapeHTML(t('networkError'))}</h3><p class="mx-auto mt-2 max-w-sm text-sm leading-relaxed">${escapeHTML(t('retryHint'))}</p></div></div>`;
-    }
+/* stop tab events */
+document.getElementById('stop-select').addEventListener('change', e => {
+  stopState.station = PRESET_STATIONS.find(s => s.id === e.target.value) || PRESET_STATIONS[0];
+  stopState.codes = []; // force re-resolution for the newly selected station
+  stopState.rows = [];
+  renderStopCodes();
+  loadStopBoard(true);
+});
+document.getElementById('stop-refresh').addEventListener('click', () => loadStopBoard(true));
+document.getElementById('stop-filter').addEventListener('input', renderStopBoard);
+document.getElementById('stop-custom-input').addEventListener('input', e => {
+  clearTimeout(stopSearchTimer);
+  const q = e.target.value.trim();
+  stopSearchTimer = setTimeout(() => searchStops(q), 350);
+});
+document.getElementById('stop-custom-results').addEventListener('click', e => {
+  const b = e.target.closest('[data-addcode]');
+  if(!b) return;
+  const code = b.dataset.addcode;
+  if(!stopState.customCodes.includes(code)) stopState.customCodes.push(code);
+  const sel = document.getElementById('stop-select');
+  sel.value = 'custom';
+  stopState.station = PRESET_STATIONS.find(s => s.id === 'custom');
+  renderStopCodes();
+  loadStopBoard();
+});
+document.getElementById('stop-codes').addEventListener('click', e => {
+  const b = e.target.closest('.stopcode-del');
+  if(!b) return;
+  stopState.customCodes = stopState.customCodes.filter(c => c !== b.dataset.code);
+  renderStopCodes();
+  loadStopBoard();
+});
 
-    function renderMasterError() {
-      $('routeResults').innerHTML = errorState();
-      $('stationResults').innerHTML = errorState();
-      $('routeCount').textContent = '0'; $('stationCount').textContent = '0';
-    }
+/* tmri events */
+document.getElementById('tmri-refresh').addEventListener('click', () => loadTmri(true));
+document.getElementById('tmri-filter').addEventListener('input', renderTmri);
 
-    function switchTab(tab) {
-      if (!['route','station','interchange'].includes(tab)) return;
-      state.activeTab = tab;
-      document.querySelectorAll('[role="tab"]').forEach(button => {
-        const selected = button.dataset.tab === tab;
-        button.setAttribute('aria-selected', String(selected));
-        button.tabIndex = selected ? 0 : -1;
-      });
-      ['route','station','interchange'].forEach(name => $(`view-${name}`).classList.toggle('hidden-view', name !== tab));
-      if (tab === 'interchange' && !state.interchangeEtas.length) loadInterchangeArrivals();
-      const active = $(`tab-${tab}`);
-      active.focus({ preventScroll:true });
-    }
+/* direction segmented controls */
+document.querySelectorAll('.seg-btn').forEach(b => b.addEventListener('click', () => {
+  const scope = b.dataset.scope;
+  dirSel[scope] = b.dataset.dir;
+  document.querySelectorAll(`.seg-btn[data-scope="${scope}"]`).forEach(x => x.classList.toggle('active', x === b));
+  if(scope === 'stop') renderStopBoard();
+  else renderTmri();
+}));
 
-    function applyLanguage() {
-      document.documentElement.lang = state.lang === 'tc' ? 'zh-Hant' : 'en';
-      document.querySelectorAll('[data-i18n]').forEach(el => { const value = t(el.dataset.i18n); if (value) el.textContent = value; });
-      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
-      $('langLabel').textContent = state.lang === 'tc' ? 'English' : '繁體中文';
-      $('langBtn').setAttribute('aria-label', state.lang === 'tc' ? 'Switch to English' : '切換至繁體中文');
-      $('contrastBtn').title = t('contrast');
-      populateStationOptions();
-      const selectedGroup = state.stopGroups.find(g => g.key === state.selectedStationKey);
-      if (selectedGroup) $('stationPicker').value = text(selectedGroup,'name');
-      renderRouteList();
-      if (state.stationEtas.length) renderStationArrivals();
-      if (state.interchangeEtas.length) renderInterchangeArrivals();
-      updateTimestamp();
-    }
+/* weather refresh */
+document.getElementById('wx-refresh').addEventListener('click', loadWeather);
 
-    function announce(message) {
-      $('globalStatus').textContent = message;
-    }
+/* auto-refresh ETAs every 60s for the visible bus view */
+setInterval(() => {
+  if(activeApp !== 'bus' || document.hidden) return;
+  if(activeBtab === 'stop') loadStopBoard(true);
+  else if(activeBtab === 'tmri') loadTmri(true);
+  else if(activeBtab === 'route' && expandedKey){
+    const g = routeGroups.find(x => x.route === expandedKey);
+    if(g) loadVariantStops(g, 0);
+  }
+}, 60000);
 
-    async function refreshActiveView() {
-      if (state.activeTab === 'route') {
-        if (state.selectedRoute) await loadRouteDetail(state.selectedRoute.variant, true);
-        else await loadMasterData(true);
-      } else if (state.activeTab === 'station') await loadStationArrivals(true);
-      else await loadInterchangeArrivals();
-    }
-
-    function bindEvents() {
-      document.querySelectorAll('[role="tab"]').forEach(button => {
-        button.addEventListener('click', () => switchTab(button.dataset.tab));
-        button.addEventListener('keydown', event => {
-          const tabs = ['route','station','interchange'];
-          const current = tabs.indexOf(button.dataset.tab);
-          if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
-            event.preventDefault();
-            const delta = event.key === 'ArrowRight' ? 1 : -1;
-            switchTab(tabs[(current + delta + tabs.length) % tabs.length]);
-          }
-        });
-      });
-      $('routeSearch').addEventListener('input', () => { state.selectedRoute = null; renderRouteList(); });
-      $('routeDirection').addEventListener('change', () => { state.selectedRoute = null; renderRouteList(); });
-      $('stationFilter').addEventListener('input', renderStationArrivals);
-      $('stationDirection').addEventListener('change', renderStationArrivals);
-      $('interchangeFilter').addEventListener('input', renderInterchangeArrivals);
-      $('interchangeDirection').addEventListener('change', renderInterchangeArrivals);
-      $('loadStationBtn').addEventListener('click', () => {
-        const group = resolveStationGroup($('stationPicker').value);
-        if (group) state.selectedStationKey = group.key;
-        else state.selectedStationKey = '';
-        closeStationSuggestions();
-        loadStationArrivals();
-      });
-      $('stationPicker').addEventListener('focus', () => renderStationSuggestions());
-      $('stationPicker').addEventListener('input', () => {
-        state.selectedStationKey = '';
-        renderStationSuggestions();
-      });
-      $('stationPicker').addEventListener('keydown', event => {
-        const panelOpen = !$('stationSuggestions').classList.contains('hidden-view');
-        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-          event.preventDefault();
-          if (!panelOpen) renderStationSuggestions();
-          const delta = event.key === 'ArrowDown' ? 1 : -1;
-          updateStationSuggestionSelection(state.stationSuggestionIndex + delta);
-        } else if (event.key === 'Enter') {
-          event.preventDefault();
-          if (panelOpen && state.stationSuggestionIndex >= 0) selectStationSuggestion(state.stationSuggestionIndex);
-          else if (panelOpen && state.stationSuggestions.length === 1) selectStationSuggestion(0);
-          else $('loadStationBtn').click();
-        } else if (event.key === 'Escape') {
-          event.preventDefault();
-          closeStationSuggestions();
-        } else if (event.key === 'Tab') {
-          closeStationSuggestions();
-        }
-      });
-      $('stationSuggestions').addEventListener('pointerdown', event => {
-        const option = event.target.closest('[data-suggestion-index]');
-        if (!option) return;
-        event.preventDefault();
-        selectStationSuggestion(Number(option.dataset.suggestionIndex));
-      });
-      document.addEventListener('pointerdown', event => {
-        if (!event.target.closest('#stationPicker') && !event.target.closest('#stationSuggestions')) closeStationSuggestions();
-      });
-      $('refreshBtn').addEventListener('click', refreshActiveView);
-      $('langBtn').addEventListener('click', () => { state.lang = state.lang === 'tc' ? 'en' : 'tc'; applyLanguage(); announce(state.lang === 'en' ? t('switchedEnglish') : t('switchedChinese')); });
-      $('contrastBtn').addEventListener('click', () => {
-        const enabled = !document.body.classList.contains('high-contrast');
-        document.body.classList.toggle('high-contrast', enabled);
-        $('contrastBtn').setAttribute('aria-pressed', String(enabled));
-        announce(enabled ? t('contrastOn') : t('contrastOff'));
-      });
-    }
-
-    function runSelfTest() {
-      const interchangeMergeSample = groupArrivals([
-        { route:'60M', dir:'I', direction:'tm', dest_tc:'屯門站', dest_en:'TUEN MUN STATION', platform:'B5', eta:'2026-07-29T16:36:27+08:00', eta_seq:1, service_type:1 },
-        { route:'60M', dir:'I', direction:'tm', dest_tc:'屯門站', dest_en:'TUEN MUN STATION', platform:'B7', eta:'2026-07-29T16:35:42+08:00', eta_seq:1, service_type:1 }
-      ], true)[0];
-      const minuteDedupNow = Date.parse('2026-07-29T16:00:00+08:00');
-      const minuteDedupSample = distinctEtaMinutes([
-        { eta:'2026-07-29T16:00:20+08:00' }, { eta:'2026-07-29T16:01:10+08:00' },
-        { eta:'2026-07-29T16:02:05+08:00' }, { eta:'2026-07-29T16:02:20+08:00' },
-        { eta:'2026-07-29T16:15:05+08:00' }, { eta:'2026-07-29T16:15:20+08:00' },
-        { eta:'2026-07-29T16:29:05+08:00' }, { eta:'2026-07-29T16:29:20+08:00' }
-      ], minuteDedupNow);
-      const routeStopJoinSample = buildRouteStopRows([{
-        serviceType:'1',
-        routeStops:[{ seq:'1', stop:'STOP-A' }, { seq:'2', stop:'STOP-B' }],
-        etas:[{ dir:'O', service_type:'1', seq:'2', eta:'2026-07-29T16:15:00+08:00' }]
-      }], 'O');
-      const checks = [
-        ['tabs', document.querySelectorAll('[role="tab"]').length === 3],
-        ['api-base', API_BASE.startsWith('https://data.etabus.gov.hk/')],
-        ['interchange-codes', INTERCHANGE_STOPS.length === 25],
-        ['interchange-route-merge', interchangeMergeSample?.platforms?.size === 2 && interchangeMergeSample.records.length === 1],
-        ['route-stop-station-names', routeBoundPath('O') === 'outbound' && routeBoundPath('I') === 'inbound' && routeStopJoinSample.length === 2 && routeStopJoinSample[0].stopId === 'STOP-A' && routeStopJoinSample[1].stopId === 'STOP-B' && routeStopJoinSample[1].etas.length === 1],
-        ['eta-minute-deduplication', minuteDedupSample.map(item => item.visibleValue).join(',') === 'due,2,15,29'],
-        ['scheduled-service-filter', isScheduledService({ rmk_tc:'原定班次' }) && isScheduledService({ rmk_en:'Scheduled Bus' })],
-        ['station-platform-merge', canonicalStationName('屯門公路轉車站 (A12) (TM744)') === '屯門公路轉車站'],
-        ['station-query-normalization', normalizeStationQuery('Tuen Mun Road BBI') === 'tuenmunroadbbi'],
-        ['station-autocomplete-controls', Boolean($('stationPicker') && $('stationSuggestions'))],
-        ['siu-hong-tm', classifyDirection('兆康站') === 'tm'],
-        ['natural-sort', ['60X','6','961'].sort(naturalCompare).join(',') === '6,60X,961'],
-        ['escape', escapeHTML('<script>') === '&lt;script&gt;'],
-        ['controls', Boolean($('refreshBtn') && $('langBtn') && $('contrastBtn'))]
-      ];
-      const failed = checks.filter(([,passed]) => !passed);
-      if (failed.length) console.error('KMB app self-test failed:', failed.map(([name]) => name));
-      else console.info(t('testPassed'), checks.map(([name]) => name).join(', '));
-      return failed.length === 0;
-    }
-
-    async function init() {
-      bindEvents();
-      applyLanguage();
-      $('routeResults').innerHTML = loadingRows();
-      $('stationResults').innerHTML = loadingRows();
-      runSelfTest();
-      await loadMasterData();
-    }
-
-    init();
-  </script>
-
+/* =========================================================
+   Init
+========================================================= */
+if(localStorage.getItem('app-hc') === '1'){ document.body.classList.add('hc'); }
+document.getElementById('btn-contrast').addEventListener('click', () => {
+  localStorage.setItem('app-hc', document.body.classList.contains('hc') ? '1' : '0');
+});
+applyStaticI18n();
+renderStopSelect();
+renderStopCodes();
+loadRoutes();
+</script>
+</body>
 </html>
