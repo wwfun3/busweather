@@ -78,6 +78,10 @@
   @keyframes toastin{ from{ transform:translateY(10px); opacity:0;} to{ transform:none; opacity:1;} }
   .variant-chip{ border:1.5px solid var(--border); border-radius:.6rem; padding:.35rem .7rem; font-size:.85rem; font-weight:600; background:var(--panel2); color:var(--text); }
   .variant-chip.active{ border-color:var(--accent); background:color-mix(in srgb,var(--accent) 10%,transparent); }
+  .quick-chip{ background:color-mix(in srgb, var(--accent) 12%, #ffffff); color:var(--accent2); border:1px solid color-mix(in srgb, var(--accent) 30%, transparent); border-radius:9999px; padding:.35rem .85rem; font-size:.825rem; font-weight:700; transition:all .15s ease; cursor:pointer; }
+  .quick-chip:hover, .quick-chip.active{ background:var(--accent); color:#ffffff; border-color:var(--accent); box-shadow:0 2px 8px rgba(211,17,69,.25); }
+  body.hc .quick-chip{ background:#000; color:#ffe600; border:2px solid #ffe600; }
+  body.hc .quick-chip.active{ background:#ffe600; color:#000; }
   .fade-in{ animation:fadein .25s ease; }
   @keyframes fadein{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
   ::-webkit-scrollbar{ width:8px;height:8px; } ::-webkit-scrollbar-thumb{ background:var(--border); border-radius:4px; }
@@ -127,15 +131,24 @@
     <!-- ---- Sub tab 1: Route search ---- -->
     <section id="btab-route" class="fade-in">
       <div class="card p-4 mb-4">
-        <label for="route-filter" class="block text-sm font-bold mb-2" data-i18n="routeFilterLabel">輸入路線編號搜尋（例如：6、60X、961）</label>
-        <div class="flex gap-2">
+        <label for="route-select" class="block text-sm font-bold mb-2" data-i18n="routeSelectLabel">選擇路線</label>
+        <div class="flex gap-2 flex-wrap md:flex-nowrap mb-3">
+          <select id="route-select" class="input-box flex-1 px-3 py-2.5 min-w-[220px]"></select>
+          <button id="route-refresh" class="btn-primary px-4 py-2 text-sm whitespace-nowrap">
+            <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="refresh">重新整理</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap mb-3">
+          <span class="text-xs font-bold txt-muted shrink-0" data-i18n="quickSelect">快速選擇：</span>
+          <div id="route-quick-chips" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <div class="pt-3 border-t" style="border-color:var(--border);">
+          <label for="route-filter" class="block text-sm font-bold mb-2" data-i18n="routeFilterLabel">或輸入路線編號搜尋（例如：6、60X、961）</label>
           <div class="relative flex-1">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 txt-muted"></i>
             <input id="route-filter" type="text" autocomplete="off" class="input-box w-full pl-9 pr-3 py-2.5" data-i18n-ph="routeFilterPh" placeholder="搜尋路線…">
           </div>
-          <button id="route-refresh" class="btn-primary px-4 py-2 text-sm whitespace-nowrap">
-            <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="refresh">重新整理</span>
-          </button>
         </div>
         <p class="text-xs txt-muted mt-2" data-i18n="routeHint">所有路線按編號由小至大排列。點擊路線可選擇方向（屯門方向 / 非屯門方向）並查看各站到站時間。</p>
       </div>
@@ -147,11 +160,15 @@
     <section id="btab-stop" class="fade-in hidden">
       <div class="card p-4 mb-4">
         <label for="stop-select" class="block text-sm font-bold mb-2" data-i18n="stopSelectLabel">選擇車站</label>
-        <div class="flex gap-2 flex-wrap md:flex-nowrap">
+        <div class="flex gap-2 flex-wrap md:flex-nowrap mb-3">
           <select id="stop-select" class="input-box flex-1 px-3 py-2.5 min-w-[220px]"></select>
           <button id="stop-refresh" class="btn-primary px-4 py-2 text-sm whitespace-nowrap">
             <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="refresh">重新整理</span>
           </button>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap mb-2">
+          <span class="text-xs font-bold txt-muted shrink-0" data-i18n="quickSelect">快速選擇：</span>
+          <div id="quick-select-chips" class="flex flex-wrap gap-2"></div>
         </div>
         <p class="text-xs txt-muted mt-2" data-i18n="stopHint">如同一車站／轉車站於九巴系統內有多個車站代碼，所有代碼的班次會自動合併顯示。</p>
         <!-- Custom stop search -->
@@ -278,11 +295,14 @@ const I18N = {
   subRoute:{tc:'按路線搜尋', en:'Search by Route'},
   subStop:{tc:'按車站搜尋', en:'Station Arrival Board'},
   subTmri:{tc:'屯門公路轉車站', en:'TM Road Interchange'},
-  routeFilterLabel:{tc:'輸入路線編號搜尋（例如：6、60X、961）', en:'Type a route number (e.g. 6, 60X, 961)'},
+  routeSelectLabel:{tc:'選擇路線', en:'Select Route'},
+  allRoutes:{tc:'所有路線', en:'All Routes'},
+  routeFilterLabel:{tc:'或輸入路線編號搜尋（例如：6、60X、961）', en:'Or type a route number (e.g. 6, 60X, 961)'},
   routeFilterPh:{tc:'搜尋路線…', en:'Search routes…'},
   refresh:{tc:'重新整理', en:'Refresh'},
   routeHint:{tc:'所有路線按編號由小至大排列。點擊路線可選擇方向（屯門方向 / 非屯門方向）並查看各站到站時間。', en:'All routes sorted ascending by number. Tap a route to pick a direction (Tuen Mun-bound / Non-Tuen Mun-bound) and view stop ETAs.'},
   stopSelectLabel:{tc:'選擇車站', en:'Select a station'},
+  quickSelect:{tc:'快速選擇：', en:'Quick Select:'},
   stopHint:{tc:'如同一車站／轉車站於九巴系統內有多個車站代碼，所有代碼的班次會自動合併顯示。', en:'If one station/interchange maps to multiple stop codes in the KMB system, arrivals from all codes are merged automatically.'},
   stopCustomLabel:{tc:'或搜尋其他車站', en:'Or search any other stop'},
   stopCustomPh:{tc:'輸入車站名稱…', en:'Type a stop name…'},
@@ -380,10 +400,24 @@ async function j(url){
   if(!r.ok) throw new Error('HTTP ' + r.status);
   return r.json();
 }
-let routeListP = null, stopListP = null;
+let routeListP = null, stopListP = null, stopMapP = null;
 const routeStopsCache = new Map();
 function getRouteList(){ if(!routeListP) routeListP = j(KMB + 'route/').then(d => d.data); return routeListP; }
 function getStopList(){ if(!stopListP) stopListP = j(KMB + 'stop/').then(d => d.data); return stopListP; }
+
+function getStopMap(){
+  if(!stopMapP){
+    stopMapP = getStopList().then(list => {
+      const map = new Map();
+      if(Array.isArray(list)){
+        for(const s of list) map.set(s.stop, s);
+      }
+      return map;
+    });
+  }
+  return stopMapP;
+}
+
 // KMB API: route list uses bound 'I'/'O', but route-stop requires 'inbound'/'outbound'
 const boundWord = b => b === 'I' ? 'inbound' : b === 'O' ? 'outbound' : b;
 function getRouteStops(route, bound, st){
@@ -456,8 +490,26 @@ function etaChips(etas){
 /* =========================================================
    BUS — Tab 1: Route search
 ========================================================= */
+const PRESET_ROUTES = ['60M', '60X', '61X', '263', '260', '62X', '259D', '28'];
 let routeGroups = [];      // [{route, variants:[{bound,service_type,orig_tc,orig_en,dest_tc,dest_en}]}]
 let expandedKey = null;
+
+function renderRouteSelect(){
+  const sel = document.getElementById('route-select');
+  if(!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = `<option value="">-- ${escapeHtml(t('allRoutes'))} --</option>` +
+    PRESET_ROUTES.map(r => `<option value="${r}">${r}</option>`).join('');
+  sel.value = cur;
+
+  const chipsBox = document.getElementById('route-quick-chips');
+  if(chipsBox){
+    chipsBox.innerHTML = PRESET_ROUTES.map(r => {
+      const active = cur === r;
+      return `<button class="quick-chip ${active ? 'active' : ''}" data-route-id="${r}">${r}</button>`;
+    }).join('');
+  }
+}
 
 async function loadRoutes(force){
   const list = document.getElementById('route-list');
@@ -476,12 +528,15 @@ async function loadRoutes(force){
       variants: variants.sort((a,b) => (a.bound + a.service_type).localeCompare(b.bound + b.service_type))
     }));
     routeGroups.sort((a,b) => cmpRoute(a.route, b.route));
+    renderRouteSelect();
     renderRouteList();
   }catch(e){ console.error(e); list.innerHTML = errorHtml(); toast(t('errorApi')); }
   loadEnd();
 }
 function renderRouteList(){
-  const q = document.getElementById('route-filter').value.trim().toUpperCase();
+  const selectVal = document.getElementById('route-select')?.value || '';
+  const inputVal = document.getElementById('route-filter')?.value.trim().toUpperCase() || '';
+  const q = inputVal || selectVal;
   const list = document.getElementById('route-list');
   const matches = q ? routeGroups.filter(g => g.route.toUpperCase().includes(q)) : routeGroups;
   const CAP = 250;
@@ -538,10 +593,23 @@ async function loadVariantStops(g, vi){
   holder.innerHTML = spinnerHtml(t('loadingEta'));
   loadStart();
   try{
-    const stops = await getRouteStops(v.route, v.bound, v.service_type);
-    // Per-stop ETA is more reliable than the route-level ETA endpoint (which
-    // returns HTTP 422 for many route/bound combos). Fetch stops in parallel.
-    const perStop = await Promise.all(stops.map(s =>
+    const [stops, stopMap] = await Promise.all([
+      getRouteStops(v.route, v.bound, v.service_type),
+      getStopMap()
+    ]);
+
+    // Enrich sequence stops with station names from stop master dictionary
+    const enrichedStops = (stops || []).map(s => {
+      const info = stopMap.get(s.stop);
+      return {
+        ...s,
+        name_tc: info?.name_tc || s.stop,
+        name_en: info?.name_en || s.stop
+      };
+    });
+
+    // Per-stop ETA is more reliable than the route-level ETA endpoint
+    const perStop = await Promise.all(enrichedStops.map(s =>
       getStopEta(s.stop)
         .then(data => ({ seq: s.seq, etas: data.filter(e =>
           e.route === v.route && e.dir === v.bound && String(e.service_type) === String(v.service_type))
@@ -549,8 +617,8 @@ async function loadVariantStops(g, vi){
         .catch(() => ({ seq: s.seq, etas: [] }))
     ));
     const bySeq = new Map(perStop.map(x => [x.seq, x.etas]));
-    if(!stops.length){ holder.innerHTML = emptyHtml(t('noEta')); loadEnd(); return; }
-    holder.innerHTML = `<ol class="space-y-1.5">${stops.map(s => {
+    if(!enrichedStops.length){ holder.innerHTML = emptyHtml(t('noEta')); loadEnd(); return; }
+    holder.innerHTML = `<ol class="space-y-1.5">${enrichedStops.map(s => {
       const es = bySeq.get(s.seq) || [];
       return `<li class="stop-row ${es.length && es[0].eta ? 'has-eta':''} pl-3 py-2 pr-2 flex items-center gap-3 flex-wrap">
         <span class="text-xs txt-muted w-8 shrink-0">${s.seq}</span>
@@ -620,10 +688,12 @@ async function fetchStopEtasMulti(codes){
 // are aggregated — e.g. every platform of an interchange).
 const PRESET_STATIONS = [
   { id:'tmri', tc:'屯門公路轉車站', en:'Tuen Mun Road Interchange', tcRe:'屯門公路轉車站', enRe:'TUEN MUN ROAD BBI' },
-  { id:'siuhong', tc:'兆康站', en:'Siu Hong Station', tcRe:'兆康站', enRe:'SIU HONG STATION' },
-  { id:'smt', tc:'城門隧道轉車站', en:'Shing Mun Tunnels BBI', tcRe:'城門隧道轉車站', enRe:'SHING MUN TUNNELS BBI' },
-  { id:'tlt', tc:'大欖隧道轉車站', en:'Tai Lam Tunnel BBI', tcRe:'大欖隧道轉車站', enRe:'TAI LAM TUNNEL BBI' },
-  { id:'tststar', tc:'尖沙咀碼頭', en:'Star Ferry Tsim Sha Tsui', tcRe:'尖沙咀碼頭', enRe:'STAR FERRY' },
+  { id:'klnbay', tc:'九龍灣站', en:'Kowloon Bay Station', tcRe:'九龍灣站', enRe:'KOWLOON BAY STATION' },
+  { id:'polyu', tc:'香港理工大學', en:'Hong Kong Polytechnic University', tcRe:'香港理工大學', enRe:'HONG KONG POLYTECHNIC UNIVERSITY' },
+  { id:'regencybay', tc:'御海灣', en:'Regency Bay', tcRe:'御海灣', enRe:'REGENCY BAY' },
+  { id:'goodview', tc:'豐景園', en:'Goodview Garden', tcRe:'豐景園', enRe:'GOODVIEW GARDEN' },
+  { id:'hunghom', tc:'紅磡站總站', en:'Hung Hom Station Bus Terminus', tcRe:'紅磡站總站|紅磡站', enRe:'HUNG HOM STATION' },
+  { id:'ningpo', tc:'油麻地寧波街', en:'Ning Po Street Yau Ma Tei', tcRe:'寧波街|油麻地寧波街', enRe:'NING PO STREET' },
   { id:'custom', tc:'— 自選車站 —', en:'— Custom stop —', tcRe:null, enRe:null },
 ];
 let stopState = { station: PRESET_STATIONS[0], customCodes: [], rows: [], codes: [] };
@@ -632,6 +702,16 @@ function renderStopSelect(){
   const sel = document.getElementById('stop-select');
   sel.innerHTML = PRESET_STATIONS.map(s => `<option value="${s.id}">${escapeHtml(pick(s.tc, s.en))}</option>`).join('');
   sel.value = stopState.station.id;
+
+  const chipsBox = document.getElementById('quick-select-chips');
+  if(chipsBox){
+    chipsBox.innerHTML = PRESET_STATIONS.filter(s => s.id !== 'custom').map(s => {
+      const active = stopState.station.id === s.id;
+      return `<button class="quick-chip ${active ? 'active' : ''}" data-station-id="${s.id}">
+        ${escapeHtml(pick(s.tc, s.en))}
+      </button>`;
+    }).join('');
+  }
 }
 function renderStopCodes(){
   const box = document.getElementById('stop-codes');
@@ -909,6 +989,7 @@ document.getElementById('btn-lang').addEventListener('click', () => {
   lang = lang === 'tc' ? 'en' : 'tc';
   localStorage.setItem('app-lang', lang);
   applyStaticI18n();
+  renderRouteSelect();
   renderStopSelect();
   renderStopCodes();
   if(routeGroups.length) renderRouteList();
@@ -922,7 +1003,38 @@ document.getElementById('btn-contrast').addEventListener('click', function(){
 });
 
 /* route tab events */
-document.getElementById('route-filter').addEventListener('input', () => renderRouteList());
+document.getElementById('route-select')?.addEventListener('change', e => {
+  const val = e.target.value;
+  const filterInput = document.getElementById('route-filter');
+  if(filterInput) filterInput.value = val;
+  expandedKey = val || null;
+  renderRouteSelect();
+  renderRouteList();
+});
+
+document.getElementById('route-quick-chips')?.addEventListener('click', e => {
+  const b = e.target.closest('[data-route-id]');
+  if(!b) return;
+  const rid = b.dataset.routeId;
+  const sel = document.getElementById('route-select');
+  const newVal = (sel.value === rid) ? '' : rid;
+  sel.value = newVal;
+  const filterInput = document.getElementById('route-filter');
+  if(filterInput) filterInput.value = newVal;
+  expandedKey = newVal || null;
+  renderRouteSelect();
+  renderRouteList();
+});
+
+document.getElementById('route-filter').addEventListener('input', e => {
+  const q = e.target.value.trim().toUpperCase();
+  const sel = document.getElementById('route-select');
+  if(sel){
+    sel.value = PRESET_ROUTES.includes(q) ? q : '';
+    renderRouteSelect();
+  }
+  renderRouteList();
+});
 document.getElementById('route-refresh').addEventListener('click', () => loadRoutes(true));
 document.getElementById('route-list').addEventListener('click', e => {
   const vChip = e.target.closest('.variant-chip');
@@ -946,6 +1058,18 @@ document.getElementById('stop-select').addEventListener('change', e => {
   stopState.station = PRESET_STATIONS.find(s => s.id === e.target.value) || PRESET_STATIONS[0];
   stopState.codes = []; // force re-resolution for the newly selected station
   stopState.rows = [];
+  renderStopSelect();
+  renderStopCodes();
+  loadStopBoard(true);
+});
+document.getElementById('quick-select-chips')?.addEventListener('click', e => {
+  const b = e.target.closest('[data-station-id]');
+  if(!b) return;
+  const sid = b.dataset.stationId;
+  stopState.station = PRESET_STATIONS.find(s => s.id === sid) || PRESET_STATIONS[0];
+  stopState.codes = [];
+  stopState.rows = [];
+  renderStopSelect();
   renderStopCodes();
   loadStopBoard(true);
 });
@@ -1010,6 +1134,7 @@ document.getElementById('btn-contrast').addEventListener('click', () => {
   localStorage.setItem('app-hc', document.body.classList.contains('hc') ? '1' : '0');
 });
 applyStaticI18n();
+renderRouteSelect();
 renderStopSelect();
 renderStopCodes();
 loadRoutes();
