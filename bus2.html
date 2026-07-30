@@ -105,6 +105,9 @@
     <button id="btn-lang" class="btn-ghost px-3 py-2 text-sm" data-i18n-title="langTitle">
       <i class="fa-solid fa-language mr-1"></i><span id="lang-label">English</span>
     </button>
+    <button id="btn-global-refresh" class="btn-primary px-3.5 py-2 text-sm whitespace-nowrap">
+      <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="refresh">重新整理</span>
+    </button>
   </div>
   <!-- Main app tabs -->
   <nav class="max-w-6xl mx-auto px-4 pb-3 flex gap-2" aria-label="main tabs">
@@ -134,9 +137,6 @@
         <label for="route-select" class="block text-sm font-bold mb-2" data-i18n="routeSelectLabel">選擇路線</label>
         <div class="flex gap-2 flex-wrap md:flex-nowrap mb-3">
           <select id="route-select" class="input-box flex-1 px-3 py-2.5 min-w-[220px]"></select>
-          <button id="route-refresh" class="btn-primary px-4 py-2 text-sm whitespace-nowrap">
-            <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="refresh">重新整理</span>
-          </button>
         </div>
         <div class="flex items-center gap-2 flex-wrap mb-3">
           <span class="text-xs font-bold txt-muted shrink-0" data-i18n="quickSelect">快速選擇：</span>
@@ -147,7 +147,8 @@
           <label for="route-filter" class="block text-sm font-bold mb-2" data-i18n="routeFilterLabel">或輸入路線編號搜尋（例如：6、60X、961）</label>
           <div class="relative flex-1">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 txt-muted"></i>
-            <input id="route-filter" type="text" autocomplete="off" class="input-box w-full pl-9 pr-3 py-2.5" data-i18n-ph="routeFilterPh" placeholder="搜尋路線…">
+            <input id="route-filter" type="text" autocomplete="off" class="input-box w-full pl-9 pr-8 py-2.5" data-i18n-ph="routeFilterPh" placeholder="搜尋路線…">
+            <button id="btn-clear-route-filter" type="button" class="clear-btn hidden absolute right-2.5 top-1/2 -translate-y-1/2 txt-muted hover:opacity-80 text-sm p-1" aria-label="Clear"><i class="fa-solid fa-xmark"></i></button>
           </div>
         </div>
         <p class="text-xs txt-muted mt-2" data-i18n="routeHint">所有路線按編號由小至大排列。點擊路線可選擇方向（屯門方向 / 非屯門方向）並查看各站到站時間。</p>
@@ -162,9 +163,6 @@
         <label for="stop-select" class="block text-sm font-bold mb-2" data-i18n="stopSelectLabel">選擇車站</label>
         <div class="flex gap-2 flex-wrap md:flex-nowrap mb-3">
           <select id="stop-select" class="input-box flex-1 px-3 py-2.5 min-w-[220px]"></select>
-          <button id="stop-refresh" class="btn-primary px-4 py-2 text-sm whitespace-nowrap">
-            <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="refresh">重新整理</span>
-          </button>
         </div>
         <div class="flex items-center gap-2 flex-wrap mb-2">
           <span class="text-xs font-bold txt-muted shrink-0" data-i18n="quickSelect">快速選擇：</span>
@@ -174,7 +172,10 @@
         <!-- Custom stop search -->
         <div class="mt-3 pt-3 border-t" style="border-color:var(--border);">
           <label for="stop-custom-input" class="block text-sm font-bold mb-2" data-i18n="stopCustomLabel">或搜尋其他車站</label>
-          <input id="stop-custom-input" type="text" autocomplete="off" class="input-box w-full px-3 py-2.5" data-i18n-ph="stopCustomPh" placeholder="輸入車站名稱…">
+          <div class="relative flex-1">
+            <input id="stop-custom-input" type="text" autocomplete="off" class="input-box w-full px-3 pr-8 py-2.5" data-i18n-ph="stopCustomPh" placeholder="輸入車站名稱…">
+            <button id="btn-clear-stop-custom" type="button" class="clear-btn hidden absolute right-2.5 top-1/2 -translate-y-1/2 txt-muted hover:opacity-80 text-sm p-1" aria-label="Clear"><i class="fa-solid fa-xmark"></i></button>
+          </div>
           <div id="stop-custom-results" class="mt-2 space-y-1"></div>
         </div>
         <div id="stop-codes" class="flex flex-wrap gap-2 mt-3"></div>
@@ -182,7 +183,8 @@
       <div class="flex flex-wrap items-center gap-2 mb-3">
         <div class="relative flex-1 min-w-[180px]">
           <i class="fa-solid fa-filter absolute left-3 top-1/2 -translate-y-1/2 txt-muted text-sm"></i>
-          <input id="stop-filter" type="text" autocomplete="off" class="input-box w-full pl-9 pr-3 py-2 text-sm" data-i18n-ph="arrivalFilterPh" placeholder="篩選路線或目的地…">
+          <input id="stop-filter" type="text" autocomplete="off" class="input-box w-full pl-9 pr-8 py-2 text-sm" data-i18n-ph="arrivalFilterPh" placeholder="篩選路線或目的地…">
+          <button id="btn-clear-stop-filter" type="button" class="clear-btn hidden absolute right-2.5 top-1/2 -translate-y-1/2 txt-muted hover:opacity-80 text-sm p-1" aria-label="Clear"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="flex gap-1.5" role="group" aria-label="direction">
           <button class="seg-btn active" data-dir="all" data-scope="stop" data-i18n="dirAll">全部</button>
@@ -201,14 +203,12 @@
           <p class="font-bold" data-i18n="tmriTitle">屯門公路轉車站專區</p>
           <p class="text-sm txt-muted" data-i18n="tmriDesc">顯示所有途經屯門公路轉車站（兩個方向、所有月台代碼已合併）的巴士班次。</p>
         </div>
-        <button id="tmri-refresh" class="btn-primary px-4 py-2 text-sm whitespace-nowrap">
-          <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="refresh">重新整理</span>
-        </button>
       </div>
       <div class="flex flex-wrap items-center gap-2 mb-3">
         <div class="relative flex-1 min-w-[180px]">
           <i class="fa-solid fa-filter absolute left-3 top-1/2 -translate-y-1/2 txt-muted text-sm"></i>
-          <input id="tmri-filter" type="text" autocomplete="off" class="input-box w-full pl-9 pr-3 py-2 text-sm" data-i18n-ph="arrivalFilterPh" placeholder="篩選路線或目的地…">
+          <input id="tmri-filter" type="text" autocomplete="off" class="input-box w-full pl-9 pr-8 py-2 text-sm" data-i18n-ph="arrivalFilterPh" placeholder="篩選路線或目的地…">
+          <button id="btn-clear-tmri-filter" type="button" class="clear-btn hidden absolute right-2.5 top-1/2 -translate-y-1/2 txt-muted hover:opacity-80 text-sm p-1" aria-label="Clear"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="flex gap-1.5" role="group" aria-label="direction">
           <button class="seg-btn active" data-dir="all" data-scope="tmri" data-i18n="dirAll">全部</button>
@@ -257,9 +257,6 @@
     <div id="wx-9day" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6"></div>
 
     <div class="flex items-center gap-3 flex-wrap">
-      <button id="wx-refresh" class="btn-primary px-5 py-2.5">
-        <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="wxRefresh">即時更新天氣資料</span>
-      </button>
       <p class="text-xs txt-muted" data-i18n="wxSource">資料來源：香港天文台開放數據 API（data.weather.gov.hk）</p>
     </div>
   </section>
@@ -360,6 +357,7 @@ const I18N = {
   remove:{tc:'移除', en:'Remove'},
   stopCount:{tc:'共 {n} 個車站代碼', en:'{n} stop code(s)'},
   selectStopFirst:{tc:'請先選擇或加入車站', en:'Please select or add a stop first'},
+  mergedNote:{tc:'已自動合併所有月台代碼結果', en:'All platform codes automatically merged'},
 };
 const t = k => (I18N[k] && I18N[k][lang]) || k;
 const pick = (tc, en) => lang === 'tc' ? (tc || en || '') : (en || tc || '');
@@ -427,9 +425,19 @@ function getRouteStops(route, bound, st){
 }
 // Resolve ALL stop codes for a station name (multi-code aggregation)
 async function findStopCodes(nameTc, nameEn){
+  if(!nameTc && !nameEn) return [];
   const stops = await getStopList();
-  const rx = new RegExp(nameTc + '|' + nameEn, 'i');
-  return stops.filter(s => rx.test(s.name_tc || '') || rx.test(s.name_en || '')).map(s => s.stop);
+  const escapeRegExp = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const patternTc = nameTc && nameTc.includes('|') ? nameTc : (nameTc ? escapeRegExp(nameTc) : '');
+  const patternEn = nameEn && nameEn.includes('|') ? nameEn : (nameEn ? escapeRegExp(nameEn) : '');
+  const pattern = [patternTc, patternEn].filter(Boolean).join('|');
+  if(!pattern) return [];
+  const rx = new RegExp(pattern, 'i');
+  return stops.filter(s => {
+    const cleanTc = (s.name_tc || '').replace(/[\(（\[【].*?[\)）\]】]/g, '').trim();
+    const cleanEn = (s.name_en || '').replace(/[\(（\[【].*?[\)）\]】]/g, '').trim();
+    return rx.test(s.name_tc || '') || rx.test(s.name_en || '') || rx.test(cleanTc) || rx.test(cleanEn);
+  }).map(s => s.stop);
 }
 const getStopEta = code => j(KMB + `stop-eta/${code}`).then(d => d.data);
 
@@ -689,9 +697,11 @@ async function fetchStopEtasMulti(codes){
 const PRESET_STATIONS = [
   { id:'tmri', tc:'屯門公路轉車站', en:'Tuen Mun Road Interchange', tcRe:'屯門公路轉車站', enRe:'TUEN MUN ROAD BBI' },
   { id:'klnbay', tc:'九龍灣站', en:'Kowloon Bay Station', tcRe:'九龍灣站', enRe:'KOWLOON BAY STATION' },
+  { id:'amoy', tc:'淘大花園', en:'Amoy Gardens', tcRe:'淘大花園', enRe:'AMOY GARDENS' },
+  { id:'choifook', tc:'彩福', en:'Choi Fook', tcRe:'彩福', enRe:'CHOI FOOK' },
   { id:'polyu', tc:'香港理工大學', en:'Hong Kong Polytechnic University', tcRe:'香港理工大學', enRe:'HONG KONG POLYTECHNIC UNIVERSITY' },
   { id:'regencybay', tc:'御海灣', en:'Regency Bay', tcRe:'御海灣', enRe:'REGENCY BAY' },
-  { id:'goodview', tc:'豐景園', en:'Goodview Garden', tcRe:'豐景園', enRe:'GOODVIEW GARDEN' },
+  { id:'goodview', tc:'豐景園', en:'Goodview Garden', tcRe:'GOODVIEW GARDEN' },
   { id:'hunghom', tc:'紅磡站總站', en:'Hung Hom Station Bus Terminus', tcRe:'紅磡站總站|紅磡站', enRe:'HUNG HOM STATION' },
   { id:'ningpo', tc:'油麻地寧波街', en:'Ning Po Street Yau Ma Tei', tcRe:'寧波街|油麻地寧波街', enRe:'NING PO STREET' },
   { id:'custom', tc:'— 自選車站 —', en:'— Custom stop —', tcRe:null, enRe:null },
@@ -718,8 +728,8 @@ function renderStopCodes(){
   const s = stopState.station;
   const codes = s.id === 'custom' ? stopState.customCodes : stopState.codes;
   if(!codes.length){ box.innerHTML = `<span class="text-xs txt-muted">${escapeHtml(t('selectStopFirst'))}</span>`; return; }
-  box.innerHTML = `<span class="text-xs txt-muted self-center">${escapeHtml(t('stopCount').replace('{n}', codes.length))}</span>` +
-    codes.map(c => `<span class="text-xs font-mono px-2 py-1 rounded-lg border" style="border-color:var(--border); background:var(--chip);">${escapeHtml(c)}
+  box.innerHTML = `<span class="text-xs txt-muted self-center font-medium">${escapeHtml(t('stopCount').replace('{n}', codes.length))} (${escapeHtml(t('mergedNote'))})</span>` +
+    codes.map(c => `<span class="text-xs font-mono px-2 py-1 rounded-lg border flex items-center gap-1" style="border-color:var(--border); background:var(--chip);">${escapeHtml(c)}
       ${s.id==='custom' ? `<button class="ml-1 txt-muted hover:opacity-60 stopcode-del" data-code="${escapeHtml(c)}" title="${escapeHtml(t('remove'))}"><i class="fa-solid fa-xmark"></i></button>` : ''}
     </span>`).join('');
 }
@@ -760,16 +770,71 @@ function renderStopBoard(){
 let stopSearchTimer = null;
 async function searchStops(q){
   const box = document.getElementById('stop-custom-results');
-  if(!q || q.length < 2){ box.innerHTML = ''; return; }
+  if(!q || q.length < 1){ box.innerHTML = ''; return; }
   try{
     const stops = await getStopList();
     const ql = q.toLowerCase();
-    const hits = stops.filter(s => (s.name_tc||'').includes(q) || (s.name_en||'').toLowerCase().includes(ql)).slice(0, 8);
-    box.innerHTML = hits.map(s => `<button class="w-full text-left px-3 py-2 rounded-lg border text-sm flex items-center gap-2 hover:opacity-80" style="border-color:var(--border); background:var(--panel2);" data-addcode="${escapeHtml(s.stop)}">
-      <i class="fa-solid fa-location-dot txt-muted"></i><span class="flex-1">${escapeHtml(pick(s.name_tc, s.name_en))}</span><span class="text-xs font-mono txt-muted">${escapeHtml(s.stop)}</span>
-      <span class="text-xs font-bold" style="color:var(--accent);">${escapeHtml(t('addStop'))}</span>
-    </button>`).join('') || `<p class="text-xs txt-muted px-1">${escapeHtml(t('noMatch'))}</p>`;
+    const hits = stops.filter(s => {
+      const tc = s.name_tc || '';
+      const en = s.name_en || '';
+      const cleanTc = tc.replace(/[\(（\[【].*?[\)）\]】]/g, '').trim();
+      const cleanEn = en.replace(/[\(（\[【].*?[\)）\]】]/g, '').trim();
+      return tc.toLowerCase().includes(ql) || en.toLowerCase().includes(ql) || cleanTc.toLowerCase().includes(ql) || cleanEn.toLowerCase().includes(ql);
+    });
+    
+    if(!hits.length){
+      box.innerHTML = `<p class="text-xs txt-muted px-1 py-2">${escapeHtml(t('noMatch'))}</p>`;
+      return;
+    }
+
+    // Group matching stops by cleaned base station name so all platform/pole codes for a station are merged into a single entry
+    const groupsMap = new Map();
+    for(const s of hits){
+      const cleanTc = (s.name_tc || '').replace(/[\(（\[【].*?[\)）\]】]/g, '').trim() || s.name_tc;
+      const cleanEn = (s.name_en || '').replace(/[\(（\[【].*?[\)）\]】]/g, '').trim() || s.name_en;
+      const key = (cleanTc || cleanEn).toLowerCase();
+      if(!groupsMap.has(key)){
+        groupsMap.set(key, {
+          name_tc: cleanTc,
+          name_en: cleanEn,
+          codes: []
+        });
+      }
+      if(!groupsMap.get(key).codes.includes(s.stop)){
+        groupsMap.get(key).codes.push(s.stop);
+      }
+    }
+
+    const uniqueGroups = [...groupsMap.values()].slice(0, 10);
+    box.innerHTML = uniqueGroups.map(g => {
+      const displayName = pick(g.name_tc, g.name_en);
+      const codeList = g.codes.join(',');
+      return `<button class="w-full text-left px-3 py-2 rounded-lg border text-sm flex items-center gap-2 hover:opacity-80" style="border-color:var(--border); background:var(--panel2);" data-addcodes="${escapeHtml(codeList)}">
+        <i class="fa-solid fa-location-dot txt-muted"></i>
+        <span class="flex-1 font-semibold">${escapeHtml(displayName)} <span class="text-xs font-mono txt-muted">(${escapeHtml(g.codes[0])}${g.codes.length > 1 ? ' +' + (g.codes.length - 1) : ''})</span></span>
+        <span class="text-xs font-mono txt-muted">${escapeHtml(t('stopCount').replace('{n}', g.codes.length))}</span>
+        <span class="text-xs font-bold" style="color:var(--accent);">${escapeHtml(t('addStop'))}</span>
+      </button>`;
+    }).join('');
   }catch(e){ console.error(e); }
+}
+
+/* Helper to setup 'x' clear buttons on input fields */
+function setupClearableInput(inputId, clearBtnId, onClear){
+  const input = document.getElementById(inputId);
+  const btn = document.getElementById(clearBtnId);
+  if(!input || !btn) return;
+  const updateVis = () => {
+    if(input.value.length > 0) btn.classList.remove('hidden');
+    else btn.classList.add('hidden');
+  };
+  input.addEventListener('input', updateVis);
+  btn.addEventListener('click', () => {
+    input.value = '';
+    btn.classList.add('hidden');
+    input.focus();
+    if(onClear) onClear();
+  });
 }
 
 /* =========================================================
@@ -825,14 +890,11 @@ function hkoDate(s){ // 'YYYY-MM-DDTHH:mm:ss+08:00' or YYYYMMDD
 }
 async function loadWeather(){
   loadStart();
-  const refreshBtn = document.getElementById('wx-refresh');
-  refreshBtn.disabled = true; refreshBtn.style.opacity = '.6';
   try{
     const l = lang === 'tc' ? 'tc' : 'en';
     // Forecast (fnd) is essential; warninfo is served by HKO without CORS
     // headers (unlike fnd/rhrread/warnsum) so it fails in browsers — try it
-    // directly first, then fall back to a public CORS proxy (hko.gov.hk's own
-    // warning texts are blocked by bot-protection, so the API is preferred).
+    // directly first, then fall back to a public CORS proxy.
     const opt = dt => j(`${HKO}?dataType=${dt}&lang=${l}`).catch(err => { console.warn('HKO', dt, 'failed:', err); return null; });
     const [fnd, rhr, warnsum, warninfo] = await Promise.all([
       j(`${HKO}?dataType=fnd&lang=${l}`), opt('rhrread'), opt('warnsum'), fetchWarninfo(l)
@@ -840,7 +902,6 @@ async function loadWeather(){
     wxData = { rhr, fnd, warnsum, warninfo };
     renderWeather();
   }catch(e){ console.error(e); toast(t('errorApi')); }
-  refreshBtn.disabled = false; refreshBtn.style.opacity = '1';
   loadEnd();
 }
 // warninfo: HKO does not send CORS headers for this endpoint; try direct
@@ -1035,7 +1096,6 @@ document.getElementById('route-filter').addEventListener('input', e => {
   }
   renderRouteList();
 });
-document.getElementById('route-refresh').addEventListener('click', () => loadRoutes(true));
 document.getElementById('route-list').addEventListener('click', e => {
   const vChip = e.target.closest('.variant-chip');
   if(vChip){
@@ -1073,18 +1133,36 @@ document.getElementById('quick-select-chips')?.addEventListener('click', e => {
   renderStopCodes();
   loadStopBoard(true);
 });
-document.getElementById('stop-refresh').addEventListener('click', () => loadStopBoard(true));
 document.getElementById('stop-filter').addEventListener('input', renderStopBoard);
 document.getElementById('stop-custom-input').addEventListener('input', e => {
   clearTimeout(stopSearchTimer);
   const q = e.target.value.trim();
   stopSearchTimer = setTimeout(() => searchStops(q), 350);
 });
+
+/* Bind clear buttons for all text inputs */
+setupClearableInput('route-filter', 'btn-clear-route-filter', () => {
+  const sel = document.getElementById('route-select');
+  if(sel){ sel.value = ''; renderRouteSelect(); }
+  renderRouteList();
+});
+setupClearableInput('stop-custom-input', 'btn-clear-stop-custom', () => {
+  document.getElementById('stop-custom-results').innerHTML = '';
+});
+setupClearableInput('stop-filter', 'btn-clear-stop-filter', () => {
+  renderStopBoard();
+});
+setupClearableInput('tmri-filter', 'btn-clear-tmri-filter', () => {
+  renderTmri();
+});
+
 document.getElementById('stop-custom-results').addEventListener('click', e => {
-  const b = e.target.closest('[data-addcode]');
+  const b = e.target.closest('[data-addcodes]');
   if(!b) return;
-  const code = b.dataset.addcode;
-  if(!stopState.customCodes.includes(code)) stopState.customCodes.push(code);
+  const codes = (b.dataset.addcodes || '').split(',').filter(Boolean);
+  for(const code of codes){
+    if(!stopState.customCodes.includes(code)) stopState.customCodes.push(code);
+  }
   const sel = document.getElementById('stop-select');
   sel.value = 'custom';
   stopState.station = PRESET_STATIONS.find(s => s.id === 'custom');
@@ -1100,8 +1178,19 @@ document.getElementById('stop-codes').addEventListener('click', e => {
 });
 
 /* tmri events */
-document.getElementById('tmri-refresh').addEventListener('click', () => loadTmri(true));
 document.getElementById('tmri-filter').addEventListener('input', renderTmri);
+
+/* global refresh button listener */
+function handleGlobalRefresh(){
+  if(activeApp === 'weather'){
+    loadWeather();
+  } else {
+    if(activeBtab === 'route') loadRoutes(true);
+    else if(activeBtab === 'stop') loadStopBoard(true);
+    else if(activeBtab === 'tmri') loadTmri(true);
+  }
+}
+document.getElementById('btn-global-refresh').addEventListener('click', handleGlobalRefresh);
 
 /* direction segmented controls */
 document.querySelectorAll('.seg-btn').forEach(b => b.addEventListener('click', () => {
@@ -1111,9 +1200,6 @@ document.querySelectorAll('.seg-btn').forEach(b => b.addEventListener('click', (
   if(scope === 'stop') renderStopBoard();
   else renderTmri();
 }));
-
-/* weather refresh */
-document.getElementById('wx-refresh').addEventListener('click', loadWeather);
 
 /* auto-refresh ETAs every 60s for the visible bus view */
 setInterval(() => {
