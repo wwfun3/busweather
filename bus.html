@@ -83,18 +83,24 @@
   <!-- TAB 1: ROUTE SEARCH -->
   <section id="panel-route" class="tab-panel hidden">
     <div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3 mb-3">
-      <input id="routeSearchInput" type="text" placeholder="輸入路線號碼，例如 6, 60X, 961" class="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] text-[var(--text)] font-semibold text-base focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+      <div class="flex gap-2">
+        <input id="routeSearchInput" type="text" placeholder="輸入路線號碼，例如 6, 60X, 961" class="flex-1 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] text-[var(--text)] font-semibold text-base focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+        <button id="clearTab1" class="px-3 py-2 rounded-lg bg-[var(--border)] text-xs font-bold hover:opacity-80">清除</button>
+      </div>
       <div id="quickRoutes" class="flex flex-wrap gap-1.5 mt-2.5 items-center"></div>
       <p id="routeCountLine" class="text-xs text-[var(--muted)] mt-1.5"></p>
     </div>
     <div id="routeList" class="space-y-2"></div>
   </section>
 
-  <!-- TAB 2: STATION BOARD (DEFAULT ACTIVE TAB) -->
+  <!-- TAB 2: STATION BOARD -->
   <section id="panel-station" class="tab-panel">
     <div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3.5 mb-3 relative">
       <label id="stationSearchLabel" class="text-xs font-bold text-[var(--muted)] uppercase tracking-wide">選擇車站</label>
-      <input id="stationSearchInput" type="text" placeholder="輸入車站名稱搜尋" class="w-full mt-1 px-3 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] text-[var(--text)] font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+      <div class="flex gap-2 mt-1">
+        <input id="stationSearchInput" type="text" placeholder="輸入車站名稱搜尋" class="flex-1 px-3 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] text-[var(--text)] font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+        <button id="clearTab2" class="px-3 py-2.5 rounded-lg bg-[var(--border)] text-xs font-bold hover:opacity-80">清除</button>
+      </div>
       <div id="stationSuggestions" class="absolute left-3 right-3 top-[68px] bg-[var(--panel)] border border-[var(--border)] rounded-lg shadow-xl z-20 max-h-64 overflow-y-auto hidden"></div>
       <div id="quickStations" class="flex flex-wrap gap-1.5 mt-2.5 items-center"></div>
     </div>
@@ -117,10 +123,11 @@
     <div class="bg-[var(--panel)] border border-[var(--border)] rounded-xl p-3.5 mb-3">
       <h2 id="interchangeTitle" class="font-extrabold text-base mb-1">屯門公路轉車站專區</h2>
       <p id="interchangeSubtitle" class="text-xs text-[var(--muted)] mb-2.5"></p>
-      <div class="flex flex-col sm:flex-row gap-2">
+      <div class="flex gap-2">
         <input id="interchangeFilterInput" type="text" placeholder="篩選路線 / 目的地" class="flex-1 px-3 py-2 rounded-lg text-xs sm:text-sm border border-[var(--border)] bg-[var(--panel-2)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
-        <div id="interchangeDirFilter" class="flex gap-1.5"></div>
+        <button id="clearTab3" class="px-3 py-2 rounded-lg bg-[var(--border)] text-xs font-bold hover:opacity-80">清除</button>
       </div>
+      <div id="interchangeDirFilter" class="flex gap-1.5 mt-3"></div>
     </div>
     <div id="interchangeSections"></div>
   </section>
@@ -974,6 +981,41 @@ function setupAutoRefresh(){
 
 /* ---------------- Boot Application ---------------- */
 init();
+
+// Clear Buttons
+document.getElementById("clearTab1").addEventListener("click", () => {
+    document.getElementById("routeSearchInput").value = "";
+    state.tab1.query = "";
+    state.tab1.expandedKey = null;
+    renderTab1();
+});
+document.getElementById("clearTab2").addEventListener("click", () => {
+    document.getElementById("stationSearchInput").value = "";
+    state.tab2.stationKey = null;
+    document.getElementById("stationBoardWrap").classList.add("hidden");
+    document.getElementById("stationEmptyHint").classList.remove("hidden");
+});
+document.getElementById("clearTab3").addEventListener("click", () => {
+    document.getElementById("interchangeFilterInput").value = "";
+    state.tab3.query = "";
+    renderTab3Results();
+});
+
+// Set Defaults
+window.addEventListener('load', () => {
+    // Default Tab 1: 60M
+    document.getElementById("routeSearchInput").value = "60M";
+    state.tab1.query = "60M";
+    renderTab1();
+
+    // Default Tab 2: 兆麟苑
+    selectStation("兆麟苑");
+
+    // Default Tab 3: 6
+    document.getElementById("interchangeFilterInput").value = "6";
+    state.tab3.query = "6";
+    if(state.tab3.loaded) renderTab3Results();
+});
 
 })();
 </script>
