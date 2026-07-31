@@ -831,11 +831,10 @@ async function searchStops(q){
     box.innerHTML = uniqueGroups.map(g => {
       const displayName = pick(g.name_tc, g.name_en);
       const codeList = g.codes.join(',');
-      return `<button class="w-full text-left px-3 py-2 rounded-lg border text-sm flex items-center gap-2 hover:opacity-80" style="border-color:var(--border); background:var(--panel2);" data-addcodes="${escapeHtml(codeList)}">
+      return `<button class="w-full text-left px-3 py-2 rounded-lg border text-sm flex items-center gap-2 hover:opacity-80" style="border-color:var(--border); background:var(--panel2);" data-addcodes="${escapeHtml(codeList)}" data-stopname="${escapeHtml(displayName)}">
         <i class="fa-solid fa-location-dot txt-muted"></i>
         <span class="flex-1 font-semibold">${escapeHtml(displayName)} <span class="text-xs font-mono txt-muted">(${escapeHtml(g.codes[0])}${g.codes.length > 1 ? ' +' + (g.codes.length - 1) : ''})</span></span>
         <span class="text-xs font-mono txt-muted">${escapeHtml(t('stopCount').replace('{n}', g.codes.length))}</span>
-        <span class="text-xs font-bold" style="color:var(--accent);">${escapeHtml(t('addStop'))}</span>
       </button>`;
     }).join('');
   }catch(e){ console.error(e); }
@@ -1188,10 +1187,15 @@ setupClearableInput('tmri-filter', 'btn-clear-tmri-filter', () => {
 document.getElementById('stop-custom-results').addEventListener('click', e => {
   const b = e.target.closest('[data-addcodes]');
   if(!b) return;
-  const codes = (b.dataset.addcodes || '').split(',').filter(Boolean);
-  for(const code of codes){
-    if(!stopState.customCodes.includes(code)) stopState.customCodes.push(code);
+  stopState.customCodes = (b.dataset.addcodes || '').split(',').filter(Boolean);
+  const stopName = b.dataset.stopname || '';
+  const input = document.getElementById('stop-custom-input');
+  if(input && stopName){
+    input.value = stopName;
+    const clearBtn = document.getElementById('btn-clear-stop-custom');
+    if(clearBtn) clearBtn.classList.remove('hidden');
   }
+  document.getElementById('stop-custom-results').innerHTML = '';
   const sel = document.getElementById('stop-select');
   sel.value = 'custom';
   stopState.station = PRESET_STATIONS.find(s => s.id === 'custom');
