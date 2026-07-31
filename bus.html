@@ -56,6 +56,9 @@
         <button id="contrastBtn" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--panel)] text-xs sm:text-sm font-semibold hover:opacity-80 transition flex items-center gap-1">
           <span>◐</span><span id="contrastBtnLabel">高對比模式</span>
         </button>
+        <button id="autoRefreshBtn" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--panel)] text-xs sm:text-sm font-semibold hover:opacity-80 transition flex items-center gap-1">
+          <span>⏱️</span><span id="autoRefreshBtnLabel">自動更新: 開</span>
+        </button>
         <button id="refreshBtn" class="px-3 py-1.5 rounded-lg bg-[var(--accent)] text-white text-xs sm:text-sm font-semibold hover:opacity-90 transition flex items-center gap-1.5 shadow">
           <span id="refreshIcon">⟳</span><span id="refreshBtnLabel">重新整理</span>
         </button>
@@ -149,7 +152,7 @@ const TM_REGEX = /屯門|兆康/;
 const TXT = {
   tc:{
     appTitle:"九巴到站時間", appSubtitle:`<a href="https://hkbus.app/zh/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--accent)] font-semibold">實時巴士到站資訊</a> · <a href="https://wwfun3.github.io/busweather/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--accent)] font-semibold">天氣</a>`,
-    langBtnLabel:"English", contrastBtnLabel:"高對比模式", refreshBtnLabel:"重新整理",
+    langBtnLabel:"English", contrastBtnLabel:"高對比模式", autoRefreshOn:"自動更新: 開", autoRefreshOff:"自動更新: 關", refreshBtnLabel:"重新整理",
     tabRouteLabel:"🚌 按路線搜尋", tabStationLabel:"🚏 按車站搜尋", tabInterchangeLabel:"🔀 屯門公路轉車站",
     routeSearchPlaceholder:"輸入路線號碼，例如 6, 60X, 961",
     stationSearchLabel:"選擇車站", stationSearchPlaceholder:"輸入車站名稱搜尋",
@@ -170,7 +173,7 @@ const TXT = {
   },
   en:{
     appTitle:"KMB Bus Arrival Times", appSubtitle:`<a href="https://hkbus.app/zh/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--accent)] font-semibold">Live Bus Arrival Info</a> · <a href="https://wwfun3.github.io/busweather/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--accent)] font-semibold">Weather</a>`,
-    langBtnLabel:"中文", contrastBtnLabel:"High Contrast", refreshBtnLabel:"Refresh",
+    langBtnLabel:"中文", contrastBtnLabel:"High Contrast", autoRefreshOn:"Auto Refresh: ON", autoRefreshOff:"Auto Refresh: OFF", refreshBtnLabel:"Refresh",
     tabRouteLabel:"🚌 Route Search", tabStationLabel:"🚏 Station Board", tabInterchangeLabel:"🔀 Tuen Mun Rd Interchange",
     routeSearchPlaceholder:"Enter route number, e.g. 6, 60X, 961",
     stationSearchLabel:"Select Station", stationSearchPlaceholder:"Search station name",
@@ -198,7 +201,9 @@ const MOCK_STOPS = [
   { stop: "RG001", name_tc: "御海灣", name_en: "Regent" },
   { stop: "GV001", name_tc: "豐景園", name_en: "Goodview Garden" },
   { stop: "HH001", name_tc: "紅磡站總站", name_en: "Hung Hom Station Bus Terminus" },
-  { stop: "YM001", name_tc: "油麻地寧波街", name_en: "Ning Po Street Yau Ma Tei" }
+  { stop: "YM001", name_tc: "油麻地寧波街", name_en: "Ning Po Street Yau Ma Tei" },
+  { stop: "AG001", name_tc: "淘大花園", name_en: "Amoy Gardens" },
+  { stop: "CF001", name_tc: "彩福", name_en: "Choi Fook" }
 ];
 
 const QUICK_PICKS = [
@@ -208,10 +213,12 @@ const QUICK_PICKS = [
   { tc: "御海灣", en: "Regent" },
   { tc: "豐景園", en: "Goodview Garden" },
   { tc: "紅磡站總站", en: "Hung Hom Station Bus Terminus" },
-  { tc: "油麻地寧波街", en: "Ning Po Street Yau Ma Tei" }
+  { tc: "油麻地寧波街", en: "Ning Po Street Yau Ma Tei" },
+  { tc: "淘大花園", en: "Amoy Gardens" },
+  { tc: "彩福", en: "Choi Fook" }
 ];
 
-const QUICK_ROUTES = ["60M", "60X", "61X", "263", "260", "62X", "259D", "28"];
+const QUICK_ROUTES = ["60M", "60X", "61X", "263", "260X", "62X", "259D", "28"];
 
 const MOCK_ROUTES = [
   { route: "52X", bound: "O", service_type: "1", orig_tc: "屯門市中心", dest_tc: "旺角(柏景灣)", orig_en: "Tuen Mun Central", dest_en: "Mong Kok (Park Avenue)" },
@@ -225,7 +232,7 @@ const MOCK_ROUTES = [
 ];
 
 const state = {
-  lang:"tc", contrast:false, tab:"station", // TAB 2 SET AS DEFAULT TAB
+  lang:"tc", contrast:false, autoRefresh:true, tab:"station", // TAB 2 SET AS DEFAULT TAB
   routes:[], stops:[], stopById:new Map(), routeGroups:new Map(), stationGroups:new Map(),
   loading:false,
   tab1:{ query:"60m", expandedKey:null, expandedData:null, expandLoading:false, expandError:null },
@@ -468,6 +475,7 @@ function renderStatic(){
   document.getElementById("appSubtitle").innerHTML = t("appSubtitle");
   document.getElementById("langBtnLabel").textContent = t("langBtnLabel");
   document.getElementById("contrastBtnLabel").textContent = t("contrastBtnLabel");
+  renderAutoRefreshBtn();
   document.getElementById("refreshBtnLabel").textContent = t("refreshBtnLabel");
   document.getElementById("tabRouteLabel").textContent = t("tabRouteLabel");
   document.getElementById("tabStationLabel").textContent = t("tabStationLabel");
@@ -484,6 +492,19 @@ function renderStatic(){
   buildDirFilter("stationDirFilter","tab2");
   buildDirFilter("interchangeDirFilter","tab3");
   if(state.lastUpdated) touchLastUpdated();
+}
+
+function renderAutoRefreshBtn(){
+  const labelEl = document.getElementById("autoRefreshBtnLabel");
+  const btn = document.getElementById("autoRefreshBtn");
+  if(!labelEl || !btn) return;
+  if(state.autoRefresh){
+    labelEl.textContent = t("autoRefreshOn");
+    btn.classList.remove("opacity-50");
+  }else{
+    labelEl.textContent = t("autoRefreshOff");
+    btn.classList.add("opacity-50");
+  }
 }
 
 function buildDirFilter(containerId, tabKey){
@@ -970,6 +991,11 @@ document.getElementById("contrastBtn").addEventListener("click", ()=>{
   document.documentElement.classList.toggle("contrast-mode", state.contrast);
 });
 
+document.getElementById("autoRefreshBtn").addEventListener("click", ()=>{
+  state.autoRefresh = !state.autoRefresh;
+  renderAutoRefreshBtn();
+});
+
 document.getElementById("refreshBtn").addEventListener("click", refreshCurrent);
 
 async function refreshCurrent(){
@@ -997,7 +1023,7 @@ async function refreshCurrent(){
 
 function setupAutoRefresh(){
   setInterval(()=>{
-    if(!state.loading) refreshCurrent();
+    if(state.autoRefresh && !state.loading) refreshCurrent();
   }, 45000);
 }
 
