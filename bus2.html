@@ -251,8 +251,8 @@
     <!-- Rainstorm / Typhoon detail statements -->
     <div id="wx-severe" class="mb-5"></div>
 
-    <!-- Today / Tomorrow -->
-    <h2 class="font-black text-lg mb-3"><i class="fa-solid fa-calendar-day mr-2" style="color:var(--accent);"></i><span data-i18n="wx2day">今日及明日預測</span></h2>
+    <!-- Today / Tomorrow / Dynamic 2-day forecast -->
+    <h2 class="font-black text-lg mb-3"><i class="fa-solid fa-calendar-day mr-2" style="color:var(--accent);"></i><span id="wx-2day-title" data-i18n="wx2day">今日及明日預測</span></h2>
     <div id="wx-2day" class="grid md:grid-cols-2 gap-4 mb-6"></div>
 
     <!-- 9-day forecast -->
@@ -318,6 +318,8 @@ const I18N = {
   tmriDesc:{tc:'顯示所有途經屯門公路轉車站（兩個方向、所有月台代碼已合併）的巴士班次。', en:'All buses serving Tuen Mun Road Interchange in both directions (all platform codes merged).'},
   wxNow:{tc:'現時天氣 · 香港天文台', en:'Current Weather · HK Observatory'},
   wx2day:{tc:'今日及明日預測', en:'Today & Tomorrow'},
+  wxTom2day:{tc:'明日及後日預測', en:'Tomorrow & Day After'},
+  wxNext2day:{tc:'未來兩日預測', en:'Next 2 Days'},
   wx9day:{tc:'九天天氣預報', en:'9-Day Forecast'},
   wxRefresh:{tc:'即時更新天氣資料', en:'Update Weather Now'},
   wxSource:{tc:'資料來源：香港天文台開放數據 API（data.weather.gov.hk）', en:'Source: HKO Open Data API (data.weather.gov.hk)'},
@@ -344,6 +346,9 @@ const I18N = {
   rainfallNow:{tc:'過去一小時最高雨量', en:'Max rainfall (past hour)'},
   today:{tc:'今日', en:'Today'},
   tomorrow:{tc:'明日', en:'Tomorrow'},
+  afterTomorrow:{tc:'後日', en:'Day After Tomorrow'},
+  statusInForce:{tc:'生效中', en:'In Force'},
+  statusCancelled:{tc:'已取消', en:'Cancelled'},
   maxT:{tc:'最高', en:'Max'},
   minT:{tc:'最低', en:'Min'},
   psrHigh:{tc:'顯著降雨概率：高', en:'Significant rain probability: High'},
@@ -353,7 +358,7 @@ const I18N = {
   warnNone:{tc:'現時沒有生效中的警告', en:'No warnings in force'},
   severeTitle:{tc:'暴雨／熱帶氣旋警告詳情', en:'Rainstorm / Tropical Cyclone Warning Details'},
   severeNone:{tc:'現時沒有生效中的暴雨或熱帶氣旋警告信號。', en:'No rainstorm or tropical cyclone warning signals are currently in force.'},
-  severeNoDetail:{tc:'未能載入警告詳情（香港天文台伺服器限制此數據的跨域存取）。請留意天文台最新公佈有關改發或取消信號的時間。', en:'Warning details could not be loaded (the HKO server restricts cross-origin access to this feed). Please follow HKO announcements for downgrade/cancellation timing.'},
+  severeNoDetail:{tc:'未能載入警告詳情，請留意天文台最新公佈有關改發或取消信號的時間。', en:'Warning details could not be loaded. Please follow HKO announcements for downgrade/cancellation timing.'},
   issuedAt:{tc:'發出時間', en:'Issued'},
   outlook:{tc:'展望', en:'Outlook'},
   retry:{tc:'重試', en:'Retry'},
@@ -603,7 +608,6 @@ const cssSafe = s => String(s).replace(/[^A-Za-z0-9_-]/g, '_');
 async function renderRouteDetail(g){
   const box = document.getElementById('detail-' + cssSafe(g.route));
   if(!box) return;
-  // direction / variant chips
   box.innerHTML = `<div class="px-4 pb-3 pt-1 border-t fade-in" style="border-color:var(--border);">
     <p class="text-xs txt-muted mb-2">${escapeHtml(t('pickVariant'))}</p>
     <div class="flex flex-wrap gap-2 mb-3">${g.variants.map((v,i) => {
@@ -628,7 +632,6 @@ async function loadVariantStops(g, vi){
       getStopMap()
     ]);
 
-    // Enrich sequence stops with station names from stop master dictionary
     const enrichedStops = (stops || []).map(s => {
       const info = stopMap.get(s.stop);
       return {
@@ -638,7 +641,6 @@ async function loadVariantStops(g, vi){
       };
     });
 
-    // Per-stop ETA is more reliable than the route-level ETA endpoint
     const perStop = await Promise.all(enrichedStops.map(s =>
       getStopEta(s.stop)
         .then(data => ({ seq: s.seq, etas: data.filter(e =>
@@ -663,7 +665,6 @@ async function loadVariantStops(g, vi){
 /* =========================================================
    BUS — Tabs 2 & 3 shared arrival aggregation
 ========================================================= */
-// Merge stop-ETA results across multiple stop codes, keyed by route+dest
 function aggregateEtas(datasets){
   const map = new Map();
   for(const data of datasets){
@@ -714,8 +715,6 @@ async function fetchStopEtasMulti(codes){
 /* =========================================================
    BUS — Tab 2: Station arrival board
 ========================================================= */
-// Station codes are resolved live from the KMB stop list (all matching codes
-// are aggregated — e.g. every platform of an interchange).
 const PRESET_STATIONS = [
   { id:'tmri', tc:'屯門公路轉車站', en:'Tuen Mun Road Interchange', tcRe:'屯門公路轉車站', enRe:'TUEN MUN ROAD BBI' },
   { id:'klnbay', tc:'九龍灣站', en:'Kowloon Bay Station', tcRe:'九龍灣站', enRe:'KOWLOON BAY STATION' },
@@ -764,7 +763,6 @@ async function loadStopBoard(force){
   const s = stopState.station;
   let codes = s.id === 'custom' ? stopState.customCodes : stopState.codes;
   if(s.id !== 'custom' && (force || !codes.length)){
-    // Resolve all stop codes for this station from the live KMB stop list
     list.innerHTML = spinnerHtml(t('loadingEta'));
     loadStart();
     try{
@@ -792,7 +790,6 @@ function renderStopBoard(){
     ? rows.map(arrivalRowHtml).join('')
     : emptyHtml(stopState.rows.length ? t('noMatch') : t('noEta'));
 }
-// custom stop search
 let stopSearchTimer = null;
 async function searchStops(q){
   const box = document.getElementById('stop-custom-results');
@@ -813,7 +810,6 @@ async function searchStops(q){
       return;
     }
 
-    // Group matching stops by cleaned base station name so all platform/pole codes for a station are merged into a single entry
     const groupsMap = new Map();
     for(const s of hits){
       const cleanTc = (s.name_tc || '').replace(/[\(（\[【].*?[\)）\]】]/g, '').trim() || s.name_tc;
@@ -844,7 +840,6 @@ async function searchStops(q){
   }catch(e){ console.error(e); }
 }
 
-/* Helper to setup 'x' clear buttons on input fields */
 function setupClearableInput(inputId, clearBtnId, onClear){
   const input = document.getElementById(inputId);
   const btn = document.getElementById(clearBtnId);
@@ -865,7 +860,6 @@ function setupClearableInput(inputId, clearBtnId, onClear){
 /* =========================================================
    BUS — Tab 3: TMRI zone
 ========================================================= */
-// All platform codes of Tuen Mun Road Interchange are resolved live, then merged
 let tmriRows = { tm:[], urban:[] };
 let tmriLoaded = false;
 
@@ -906,7 +900,7 @@ function renderTmri(){
 let wxData = null; // {rhr, fnd, warnsum, warninfo}
 const HKO_ICON = {50:'☀️',51:'☀️',52:'🌤️',53:'🌤️',54:'🌥️',60:'☁️',61:'☁️',62:'🌦️',63:'🌧️',64:'🌧️',65:'⛈️',70:'🌙',71:'🌙',72:'🌙',73:'🌙',74:'🌙',75:'🌙',76:'☁️',77:'☁️',80:'🌫️',81:'🌫️',83:'🌫️',84:'🌫️',85:'🌫️',90:'🌡️',91:'💨',92:'💨',93:'💨'};
 const hkoIcon = n => HKO_ICON[+n] || '🌡️';
-function hkoDate(s){ // 'YYYY-MM-DDTHH:mm:ss+08:00' or YYYYMMDD
+function hkoDate(s){
   if(!s) return '';
   if(/^\d{8}$/.test(s)) return `${s.slice(6,8)}/${s.slice(4,6)}/${s.slice(0,4)}`;
   const d = new Date(s);
@@ -917,32 +911,19 @@ async function loadWeather(){
   loadStart();
   try{
     const l = lang === 'tc' ? 'tc' : 'en';
-    // Forecast (fnd) is essential; warninfo is served by HKO without CORS
-    // headers (unlike fnd/rhrread/warnsum) so it fails in browsers — try it
-    // directly first, then fall back to a public CORS proxy.
     const opt = dt => j(`${HKO}?dataType=${dt}&lang=${l}`).catch(err => { console.warn('HKO', dt, 'failed:', err); return null; });
     const [fnd, rhr, warnsum, warninfo] = await Promise.all([
-      j(`${HKO}?dataType=fnd&lang=${l}`), opt('rhrread'), opt('warnsum'), fetchWarninfo(l)
+      j(`${HKO}?dataType=fnd&lang=${l}`),
+      opt('rhrread'),
+      opt('warnsum'),
+      opt('warningInfo')
     ]);
     wxData = { rhr, fnd, warnsum, warninfo };
     renderWeather();
   }catch(e){ console.error(e); toast(t('errorApi')); }
   loadEnd();
 }
-// warninfo: HKO does not send CORS headers for this endpoint; try direct
-// then a public proxy so rainstorm/typhoon statements still load.
-async function fetchWarninfo(l){
-  const url = `${HKO}?dataType=warninfo&lang=${l}`;
-  try{
-    const d = await j(url);
-    if(Array.isArray(d) ? d.length : Object.keys(d).length) return d;
-  }catch(e){ console.warn('warninfo direct failed:', e); }
-  try{
-    const r = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url));
-    if(r.ok){ const d = await r.json(); return d; }
-  }catch(e){ console.warn('warninfo proxy failed:', e); }
-  return null;
-}
+
 function psrLabel(psr){
   const v = String(psr||'').toLowerCase();
   if(v.includes('high') || v.includes('高')) return t('psrHigh');
@@ -972,11 +953,30 @@ function renderWeather(){
 
   /* ---- active warnings ---- */
   const wBox = document.getElementById('wx-warnings');
-  const entries = Object.entries(warnsum || {});
-  if(entries.length){
+  const details = warninfo?.details || (Array.isArray(warninfo) ? warninfo : []);
+
+  // Filter out any signals that have actionCode CANCEL or whose statement announces cancellation
+  const activeEntries = Object.entries(warnsum || {}).filter(([k, w]) => {
+    if (w.actionCode && (w.actionCode.toUpperCase() === 'CANCEL' || w.actionCode.toUpperCase() === 'CANCELLED')) {
+      return false;
+    }
+    const match = details.find(e => {
+      const c = e.warningStatementCode || e.warningCode || e.code || e.subtype || '';
+      return c === k || String(c).startsWith(k);
+    });
+    if (match && match.contents) {
+      const text = match.contents.join(' ');
+      if (text.includes('取消') || text.toLowerCase().includes('cancel')) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  if(activeEntries.length){
     wBox.innerHTML = `<div class="card p-4">
       <h3 class="font-black mb-3"><i class="fa-solid fa-triangle-exclamation mr-2" style="color:#d97706;"></i>${escapeHtml(t('warnActive'))}</h3>
-      <div class="flex flex-wrap gap-2">${entries.map(([k, w]) => {
+      <div class="flex flex-wrap gap-2">${activeEntries.map(([k, w]) => {
         let cls = 'warn-chip warn-ty';
         if(k === 'WRAIN'){
           const st = w.subtype || (w.code||'');
@@ -988,29 +988,39 @@ function renderWeather(){
     wBox.innerHTML = `<div class="card p-4 text-sm font-semibold" style="color:var(--good);"><i class="fa-solid fa-circle-check mr-2"></i>${escapeHtml(t('warnNone'))}</div>`;
   }
 
-  /* ---- severe (rainstorm / typhoon) statements: projected downgrade/lift timing ---- */
+  /* ---- severe (rainstorm / typhoon) statements ---- */
   const sBox = document.getElementById('wx-severe');
-  const hasTy = !!warnsum?.WTCSGNL;
-  const hasRain = !!warnsum?.WRAIN;
-  if(hasTy || hasRain){
-    const infos = (Array.isArray(warninfo) ? warninfo : []).filter(e => {
-      const c = e.warningCode || e.code || e.subtype || '';
-      return c === 'WTCSGNL' || String(c).startsWith('WRAIN');
-    });
+  if(details.length){
     sBox.innerHTML = `<div class="card p-4" style="border-left:5px solid var(--accent);">
       <h3 class="font-black mb-2"><i class="fa-solid fa-bell mr-2" style="color:var(--accent);"></i>${escapeHtml(t('severeTitle'))}</h3>
-      ${infos.length ? infos.map(e => `
-        ${e.updateTime ? `<p class="text-xs txt-muted mb-1">${escapeHtml(t('issuedAt'))}: ${escapeHtml(hkoDate(e.updateTime))}</p>` : ''}
-        <ul class="list-disc pl-5 space-y-1.5 text-sm leading-relaxed">${(e.contents||[]).map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>
-      `).join('<hr class="my-3" style="border-color:var(--border);">') : `<p class="text-sm txt-muted">${escapeHtml(t('severeNoDetail'))}</p>`}
+      ${details.map(e => {
+        const text = (e.contents || []).join(' ');
+        const isCancelled = text.includes('取消') || text.toLowerCase().includes('cancel');
+        const badge = isCancelled 
+          ? `<span class="text-xs px-2 py-0.5 rounded font-bold bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200 ml-2">${escapeHtml(t('statusCancelled'))}</span>`
+          : `<span class="text-xs px-2 py-0.5 rounded font-bold bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200 ml-2">${escapeHtml(t('statusInForce'))}</span>`;
+        return `
+          <div class="mb-2">
+            ${e.updateTime ? `<div class="flex items-center justify-between text-xs txt-muted mb-1"><span>${escapeHtml(t('issuedAt'))}: ${escapeHtml(hkoDate(e.updateTime))}</span>${badge}</div>` : badge}
+            <ul class="list-disc pl-5 space-y-1.5 text-sm leading-relaxed">${(e.contents||[]).map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>
+          </div>`;
+      }).join('<hr class="my-3" style="border-color:var(--border);">')}
     </div>`;
   } else {
     sBox.innerHTML = `<div class="card p-4 text-sm txt-muted"><i class="fa-solid fa-circle-info mr-2"></i>${escapeHtml(t('severeNone'))}</div>`;
   }
 
-  /* ---- today / tomorrow ---- */
+  /* ---- today / tomorrow / dynamic forecast days ---- */
   const days = fnd?.weatherForecast || [];
   const twoBox = document.getElementById('wx-2day');
+  const twoTitle = document.getElementById('wx-2day-title');
+
+  const now = new Date();
+  const formatYMD = d => d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+  const todayYMD = formatYMD(now);
+  const tom = new Date(now); tom.setDate(tom.getDate() + 1);
+  const tomYMD = formatYMD(tom);
+
   const dayCard = (d, label, big) => `
     <div class="wx-card card p-5 ${big ? 'ring-2' : ''}" style="${big ? '--tw-ring-color:var(--accent);' : ''}">
       <div class="flex items-center justify-between mb-2">
@@ -1026,9 +1036,28 @@ function renderWeather(){
       </div>
       ${d.PSR ? `<p class="mt-2 text-xs font-bold" style="color:var(--accent);"><i class="fa-solid fa-cloud-rain mr-1"></i>${escapeHtml(psrLabel(d.PSR))}</p>` : ''}
     </div>`;
-  twoBox.innerHTML = days.length >= 2
-    ? dayCard(days[0], t('today'), true) + dayCard(days[1], t('tomorrow'), false)
-    : emptyHtml(t('noMatch'));
+
+  if(days.length >= 2){
+    const d0Date = String(days[0].forecastDate);
+    let label0 = t('today');
+    let label1 = t('tomorrow');
+    let titleText = t('wx2day');
+
+    if(d0Date === tomYMD){
+      label0 = t('tomorrow');
+      label1 = t('afterTomorrow');
+      titleText = t('wxTom2day');
+    } else if(d0Date !== todayYMD){
+      label0 = days[0].week || d0Date;
+      label1 = days[1].week || String(days[1].forecastDate);
+      titleText = t('wxNext2day');
+    }
+
+    if(twoTitle) twoTitle.textContent = titleText;
+    twoBox.innerHTML = dayCard(days[0], label0, true) + dayCard(days[1], label1, false);
+  } else {
+    twoBox.innerHTML = emptyHtml(t('noMatch'));
+  }
 
   /* ---- 9-day ---- */
   const nineBox = document.getElementById('wx-9day');
@@ -1081,7 +1110,7 @@ document.getElementById('btn-lang').addEventListener('click', () => {
   if(routeGroups.length) renderRouteList();
   if(stopState.rows.length) renderStopBoard();
   if(tmriLoaded) renderTmri();
-  if(wxData) loadWeather(); // refetch localized weather text from HKO
+  if(wxData) loadWeather();
 });
 document.getElementById('btn-contrast').addEventListener('click', function(){
   document.body.classList.toggle('hc');
@@ -1148,7 +1177,7 @@ document.getElementById('route-list').addEventListener('click', e => {
 /* stop tab events */
 document.getElementById('stop-select').addEventListener('change', e => {
   stopState.station = PRESET_STATIONS.find(s => s.id === e.target.value) || PRESET_STATIONS[0];
-  stopState.codes = []; // force re-resolution for the newly selected station
+  stopState.codes = [];
   stopState.rows = [];
   renderStopSelect();
   renderStopCodes();
@@ -1200,7 +1229,7 @@ document.getElementById('stop-custom-results').addEventListener('click', e => {
     if(clearBtn) clearBtn.classList.remove('hidden');
   }
   document.getElementById('stop-custom-results').innerHTML = '';
-  const sel = document.getElementById('stop-select');
+  sel = document.getElementById('stop-select');
   sel.value = 'custom';
   stopState.station = PRESET_STATIONS.find(s => s.id === 'custom');
   renderStopCodes();
