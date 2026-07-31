@@ -105,8 +105,8 @@
     <button id="btn-lang" class="btn-ghost px-3 py-2 text-sm" data-i18n-title="langTitle">
       <i class="fa-solid fa-language mr-1"></i><span id="lang-label">English</span>
     </button>
-    <button id="btn-auto-refresh" class="btn-ghost px-3 py-2 text-sm" data-i18n-title="autoRefreshTitle">
-      <i id="icon-auto-refresh" class="fa-solid fa-clock-rotate-left mr-1" style="color:var(--good);"></i><span id="auto-refresh-label"></span>
+    <button id="btn-auto-refresh" class="btn-ghost px-3 py-2 text-sm" aria-pressed="true" data-i18n-title="autoRefreshTitle">
+      <i class="fa-solid fa-rotate-right mr-1"></i><span id="auto-refresh-label" data-i18n="autoRefreshOn">自動更新：開</span>
     </button>
     <button id="btn-global-refresh" class="btn-primary px-3.5 py-2 text-sm whitespace-nowrap">
       <i class="fa-solid fa-rotate mr-1"></i><span data-i18n="refresh">重新整理</span>
@@ -280,7 +280,7 @@ const HKO = 'https://data.weather.gov.hk/weatherAPI/opendata/weather.php';
 let lang = localStorage.getItem('app-lang') || 'tc';
 let activeApp = 'bus';
 let activeBtab = 'route';
-let autoRefreshEnabled = true;
+let autoRefreshEnabled = localStorage.getItem('app-auto-refresh') !== '0';
 const dirSel = { stop:'all', tmri:'all' };
 
 /* =========================================================
@@ -291,9 +291,9 @@ const I18N = {
   contrast:{tc:'高對比', en:'High Contrast'},
   contrastTitle:{tc:'切換高對比模式', en:'Toggle high contrast mode'},
   langTitle:{tc:'切換語言', en:'Switch language'},
-  autoRefreshTitle:{tc:'切換自動更新 (每60秒)', en:'Toggle auto refresh (every 60s)'},
-  autoRefreshOn:{tc:'自動更新 (開)', en:'Auto Refresh (ON)'},
-  autoRefreshOff:{tc:'自動更新 (關)', en:'Auto Refresh (OFF)'},
+  autoRefreshOn:{tc:'自動更新：開', en:'Auto Refresh: ON'},
+  autoRefreshOff:{tc:'自動更新：關', en:'Auto Refresh: OFF'},
+  autoRefreshTitle:{tc:'開啟／關閉自動更新', en:'Toggle Auto Refresh'},
   tabBus:{tc:'巴士到站時間', en:'Bus Arrival Times'},
   tabWeather:{tc:'香港天氣', en:'Hong Kong Weather'},
   subRoute:{tc:'按路線搜尋', en:'Search by Route'},
@@ -375,8 +375,22 @@ function applyStaticI18n(){
   document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = t(el.dataset.i18nPh));
   document.querySelectorAll('[data-i18n-title]').forEach(el => el.title = t(el.dataset.i18nTitle));
   document.getElementById('lang-label').textContent = lang === 'tc' ? 'English' : '繁體中文';
-  document.getElementById('auto-refresh-label').textContent = t(autoRefreshEnabled ? 'autoRefreshOn' : 'autoRefreshOff');
+  updateAutoRefreshUI();
   document.title = t('appTitle');
+}
+
+function updateAutoRefreshUI(){
+  const btn = document.getElementById('btn-auto-refresh');
+  const label = document.getElementById('auto-refresh-label');
+  if(!btn || !label) return;
+  btn.setAttribute('aria-pressed', autoRefreshEnabled ? 'true' : 'false');
+  if(autoRefreshEnabled){
+    btn.classList.remove('opacity-60');
+    label.textContent = t('autoRefreshOn');
+  } else {
+    btn.classList.add('opacity-60');
+    label.textContent = t('autoRefreshOff');
+  }
 }
 
 /* =========================================================
@@ -1071,6 +1085,13 @@ document.getElementById('btn-contrast').addEventListener('click', function(){
   this.setAttribute('aria-pressed', document.body.classList.contains('hc'));
 });
 
+document.getElementById('btn-auto-refresh')?.addEventListener('click', () => {
+  autoRefreshEnabled = !autoRefreshEnabled;
+  localStorage.setItem('app-auto-refresh', autoRefreshEnabled ? '1' : '0');
+  updateAutoRefreshUI();
+  toast(autoRefreshEnabled ? t('autoRefreshOn') : t('autoRefreshOff'));
+});
+
 /* route tab events */
 document.getElementById('route-select')?.addEventListener('change', e => {
   const val = e.target.value;
@@ -1200,23 +1221,18 @@ function handleGlobalRefresh(){
 }
 document.getElementById('btn-global-refresh').addEventListener('click', handleGlobalRefresh);
 
-document.getElementById('btn-auto-refresh').addEventListener('click', function() {
-  autoRefreshEnabled = !autoRefreshEnabled;
-  document.getElementById('auto-refresh-label').textContent = t(autoRefreshEnabled ? 'autoRefreshOn' : 'autoRefreshOff');
-  const icon = document.getElementById('icon-auto-refresh');
-  if(autoRefreshEnabled){
-    icon.className = 'fa-solid fa-clock-rotate-left mr-1';
-    icon.style.color = 'var(--good)';
-  } else {
-    icon.className = 'fa-solid fa-clock mr-1';
-    icon.style.color = 'var(--muted)';
-  }
-});
+/* direction segmented controls */
+document.querySelectorAll('.seg-btn').forEach(b => b.addEventListener('click', () => {
+  const scope = b.dataset.scope;
+  dirSel[scope] = b.dataset.dir;
+  document.querySelectorAll(`.seg-btn[data-scope="${scope}"]`).forEach(x => x.classList.toggle('active', x === b));
+  if(scope === 'stop') renderStopBoard();
+  else renderTmri();
+}));
 
 /* auto-refresh ETAs every 60s for the visible bus view */
 setInterval(() => {
-  if(!autoRefreshEnabled) return;
-  if(activeApp !== 'bus' || document.hidden) return;
+  if(!autoRefreshEnabled || activeApp !== 'bus' || document.hidden) return;
   if(activeBtab === 'stop') loadStopBoard(true);
   else if(activeBtab === 'tmri') loadTmri(true);
   else if(activeBtab === 'route' && expandedKey){
