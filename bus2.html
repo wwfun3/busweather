@@ -749,11 +749,22 @@ function renderStopCodes(){
   const box = document.getElementById('stop-codes');
   const s = stopState.station;
   const codes = s.id === 'custom' ? stopState.customCodes : stopState.codes;
-  if(!codes.length){ box.innerHTML = `<span class="text-xs txt-muted">${escapeHtml(t('selectStopFirst'))}</span>`; return; }
-  box.innerHTML = `<span class="text-xs txt-muted self-center font-medium">${escapeHtml(t('stopCount').replace('{n}', codes.length))} (${escapeHtml(t('mergedNote'))})</span>` +
-    codes.map(c => `<span class="text-xs font-mono px-2 py-1 rounded-lg border flex items-center gap-1" style="border-color:var(--border); background:var(--chip);">${escapeHtml(c)}
-      ${s.id==='custom' ? `<button class="ml-1 txt-muted hover:opacity-60 stopcode-del" data-code="${escapeHtml(c)}" title="${escapeHtml(t('remove'))}"><i class="fa-solid fa-xmark"></i></button>` : ''}
-    </span>`).join('');
+  if(!codes.length){
+    if(s.id === 'custom'){
+      box.innerHTML = `<span class="text-xs txt-muted">${escapeHtml(t('selectStopFirst'))}</span>`;
+    } else {
+      box.innerHTML = '';
+    }
+    return;
+  }
+  if(s.id === 'custom'){
+    box.innerHTML = `<span class="text-xs txt-muted self-center font-medium">${escapeHtml(t('stopCount').replace('{n}', codes.length))} (${escapeHtml(t('mergedNote'))})</span>` +
+      codes.map(c => `<span class="text-xs font-mono px-2 py-1 rounded-lg border flex items-center gap-1" style="border-color:var(--border); background:var(--chip);">${escapeHtml(c)}
+        <button class="ml-1 txt-muted hover:opacity-60 stopcode-del" data-code="${escapeHtml(c)}" title="${escapeHtml(t('remove'))}"><i class="fa-solid fa-xmark"></i></button>
+      </span>`).join('');
+  } else {
+    box.innerHTML = `<span class="text-xs txt-muted font-medium">${escapeHtml(t('stopCount').replace('{n}', codes.length))} (${escapeHtml(t('mergedNote'))})</span>`;
+  }
 }
 async function loadStopBoard(force){
   const list = document.getElementById('stop-list');
