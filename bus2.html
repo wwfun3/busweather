@@ -757,14 +757,7 @@ function renderStopCodes(){
     }
     return;
   }
-  if(s.id === 'custom'){
-    box.innerHTML = `<span class="text-xs txt-muted self-center font-medium">${escapeHtml(t('stopCount').replace('{n}', codes.length))} (${escapeHtml(t('mergedNote'))})</span>` +
-      codes.map(c => `<span class="text-xs font-mono px-2 py-1 rounded-lg border flex items-center gap-1" style="border-color:var(--border); background:var(--chip);">${escapeHtml(c)}
-        <button class="ml-1 txt-muted hover:opacity-60 stopcode-del" data-code="${escapeHtml(c)}" title="${escapeHtml(t('remove'))}"><i class="fa-solid fa-xmark"></i></button>
-      </span>`).join('');
-  } else {
-    box.innerHTML = `<span class="text-xs txt-muted font-medium">${escapeHtml(t('stopCount').replace('{n}', codes.length))} (${escapeHtml(t('mergedNote'))})</span>`;
-  }
+  box.innerHTML = `<span class="text-xs txt-muted font-medium">${escapeHtml(t('stopCount').replace('{n}', codes.length))} (${escapeHtml(t('mergedNote'))})</span>`;
 }
 async function loadStopBoard(force){
   const list = document.getElementById('stop-list');
@@ -844,7 +837,7 @@ async function searchStops(q){
       const codeList = g.codes.join(',');
       return `<button class="w-full text-left px-3 py-2 rounded-lg border text-sm flex items-center gap-2 hover:opacity-80" style="border-color:var(--border); background:var(--panel2);" data-addcodes="${escapeHtml(codeList)}" data-stopname="${escapeHtml(displayName)}">
         <i class="fa-solid fa-location-dot txt-muted"></i>
-        <span class="flex-1 font-semibold">${escapeHtml(displayName)} <span class="text-xs font-mono txt-muted">(${escapeHtml(g.codes[0])}${g.codes.length > 1 ? ' +' + (g.codes.length - 1) : ''})</span></span>
+        <span class="flex-1 font-semibold">${escapeHtml(displayName)}</span>
         <span class="text-xs font-mono txt-muted">${escapeHtml(t('stopCount').replace('{n}', g.codes.length))}</span>
       </button>`;
     }).join('');
