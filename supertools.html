@@ -690,6 +690,57 @@
           );
         };
 
+        const Pomodoro = ({ t }) => {
+          const [timeLeft, setTimeLeft] = useState(1500);
+          const [isActive, setIsActive] = useState(false);
+          const [mode, setMode] = useState('work');
+
+          useEffect(() => {
+            let interval = null;
+            if (isActive && timeLeft > 0) {
+              interval = setInterval(() => {
+                setTimeLeft((prev) => prev - 1);
+              }, 1000);
+            } else if (timeLeft === 0) {
+              const nextMode = mode === 'work' ? 'break' : 'work';
+              setMode(nextMode);
+              setTimeLeft(nextMode === 'work' ? 1500 : 300);
+              setIsActive(false);
+            }
+            return () => clearInterval(interval);
+          }, [isActive, timeLeft, mode]);
+
+          const toggle = () => setIsActive(!isActive);
+          const reset = () => {
+            setIsActive(false);
+            setMode('work');
+            setTimeLeft(1500);
+          };
+
+          const formatTime = (seconds) => {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m}:${s.toString().padStart(2, '0')}`;
+          };
+
+          return (
+            <div className="flex flex-col items-center justify-center p-8 bg-white rounded-2xl border border-[#E5E5E5] shadow-sm">
+              <div className="mb-8 text-center">
+                <div className="text-[10px] font-black uppercase tracking-widest text-[#7C8363] mb-3">
+                  {mode === 'work' ? t.pomodoro.work : t.pomodoro.break}
+                </div>
+                <div className={`text-6xl font-black tabular-nums tracking-tighter ${isActive ? 'text-[#7C8363]' : 'text-[#4A4A4A]'}`}>
+                  {formatTime(timeLeft)}
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Button onClick={toggle} variant={isActive ? 'outline' : 'primary'} icon={isActive ? IconPause : IconPlay} />
+                <Button onClick={reset} variant="ghost" icon={IconReset} />
+              </div>
+            </div>
+          );
+        };
+
         const TimeDepositCalc = ({ t }) => {
           const [principal, setPrincipal] = useState('50000');
           const [rates, setRates] = useState(['2.2', '2.6', '2.85']);
