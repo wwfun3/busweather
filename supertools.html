@@ -745,6 +745,7 @@
           const [principal, setPrincipal] = useState('50000');
           const [rates, setRates] = useState(['2.2', '2.6', '2.85']);
           const [durations, setDurations] = useState(['1', '3', '6']);
+          const [hoveredIdx, setHoveredIdx] = useState(null);
 
           const updateRate = (idx, val) => {
             const updated = [...rates];
@@ -773,15 +774,15 @@
           const yTicks = [0, Math.round(yMax * 0.5), yMax];
 
           const lineColors = [
-            { line: '#3B82F6', fill: 'rgba(59, 130, 246, 0.08)' }, // Scenario A Blue
-            { line: '#10B981', fill: 'rgba(16, 185, 129, 0.08)' }, // Scenario B Green
-            { line: '#F59E0B', fill: 'rgba(245, 158, 11, 0.08)' }  // Scenario C Orange
+            { line: '#2563EB', fill: 'rgba(37, 99, 235, 0.12)' }, // Scenario A Blue
+            { line: '#059669', fill: 'rgba(5, 150, 105, 0.12)' }, // Scenario B Green
+            { line: '#D97706', fill: 'rgba(217, 119, 6, 0.12)' }   // Scenario C Orange
           ];
 
-          // SVG layout configurations
-          const svgWidth = 500;
-          const svgHeight = 200;
-          const padL = 40, padR = 30, padT = 20, padB = 35;
+          // Enhanced SVG layout configurations
+          const svgWidth = 620;
+          const svgHeight = 260;
+          const padL = 55, padR = 45, padT = 35, padB = 45;
           const plotW = svgWidth - padL - padR;
           const plotH = svgHeight - padT - padB;
 
@@ -790,15 +791,15 @@
 
           return (
             <div className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 {/* Left Inputs Column */}
                 <div className="lg:col-span-4 space-y-4">
                   {/* Principal Card */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E5E5E5] shadow-sm">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-blue-600 font-bold text-sm">$</span>
-                        <h3 className="font-bold text-sm">{t.depositCalc.principal}</h3>
+                        <span className="text-blue-600 font-extrabold text-base">$</span>
+                        <h3 className="font-bold text-sm sm:text-base">{t.depositCalc.principal}</h3>
                       </div>
                     </div>
                     <label className="block text-[10px] font-bold uppercase tracking-wider opacity-50 mb-1">
@@ -809,18 +810,18 @@
                       inputMode="decimal"
                       value={principal}
                       onChange={(e) => setPrincipal(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl border border-[#E5E5E5] focus:ring-2 focus:ring-[#7C8363] outline-none text-base font-bold bg-[#FDFCFB]"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5E5E5] focus:ring-2 focus:ring-[#7C8363] outline-none text-base font-extrabold bg-[#FDFCFB] text-[#4A4A4A]"
                     />
                     
-                    {/* Quick Amount Presets for Mobile */}
+                    {/* Quick Amount Presets */}
                     <div className="flex gap-1.5 mt-3 pt-3 border-t border-[#F0EBE3]">
                       {['10000', '50000', '100000', '500000'].map(amt => (
                         <button
                           key={amt}
                           onClick={() => setPrincipal(amt)}
-                          className={`flex-1 text-[11px] font-bold py-1 px-1 rounded-lg border transition-all ${
+                          className={`flex-1 text-[11px] font-bold py-1.5 px-1 rounded-lg border transition-all ${
                             principal === amt 
-                              ? 'bg-[#7C8363] text-white border-[#7C8363]' 
+                              ? 'bg-[#7C8363] text-white border-[#7C8363] shadow-xs' 
                               : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
                           }`}
                         >
@@ -833,23 +834,26 @@
                   {/* Rates Card */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E5E5E5] shadow-sm space-y-3">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-emerald-600 font-bold text-sm">📈</span>
-                      <h3 className="font-bold text-sm">{t.depositCalc.rates}</h3>
+                      <span className="text-emerald-600 font-bold text-base">📈</span>
+                      <h3 className="font-bold text-sm sm:text-base">{t.depositCalc.rates}</h3>
                     </div>
-                    <div className="grid grid-cols-3 lg:grid-cols-1 gap-2">
+                    <div className="grid grid-cols-3 lg:grid-cols-1 gap-2.5">
                       {rates.map((rate, idx) => (
-                        <div key={idx}>
-                          <label className="block text-[10px] font-bold uppercase tracking-wider opacity-50 mb-1">
+                        <div key={idx} className="flex flex-col lg:flex-row lg:items-center justify-between gap-1">
+                          <label className="text-[10px] lg:text-xs font-bold uppercase tracking-wider text-gray-500 whitespace-nowrap">
                             {t.depositCalc.scenario} {String.fromCharCode(65 + idx)}
                           </label>
-                          <input
-                            type="number"
-                            inputMode="decimal"
-                            step="0.01"
-                            value={rate}
-                            onChange={(e) => updateRate(idx, e.target.value)}
-                            className="w-full px-2.5 py-2 rounded-xl border border-[#E5E5E5] focus:ring-2 focus:ring-[#7C8363] outline-none text-sm bg-[#FDFCFB]"
-                          />
+                          <div className="relative w-full lg:w-32">
+                            <input
+                              type="number"
+                              inputMode="decimal"
+                              step="0.01"
+                              value={rate}
+                              onChange={(e) => updateRate(idx, e.target.value)}
+                              className="w-full pl-3 pr-6 py-2 rounded-xl border border-[#E5E5E5] focus:ring-2 focus:ring-[#7C8363] outline-none text-sm font-bold bg-[#FDFCFB]"
+                            />
+                            <span className="absolute right-2.5 top-2 text-xs font-bold text-gray-400">%</span>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -858,8 +862,8 @@
                   {/* Durations Card */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E5E5E5] shadow-sm">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-amber-600 font-bold text-sm">📅</span>
-                      <h3 className="font-bold text-sm">{t.depositCalc.durations}</h3>
+                      <span className="text-amber-600 font-bold text-base">📅</span>
+                      <h3 className="font-bold text-sm sm:text-base">{t.depositCalc.durations}</h3>
                     </div>
                     <div className="grid grid-cols-3 gap-2">
                       {durations.map((dur, idx) => (
@@ -869,7 +873,7 @@
                             inputMode="numeric"
                             value={dur}
                             onChange={(e) => updateDuration(idx, e.target.value)}
-                            className="w-full text-center px-2 py-2 rounded-xl border border-[#E5E5E5] focus:ring-2 focus:ring-[#7C8363] outline-none text-sm bg-[#FDFCFB]"
+                            className="w-full text-center px-2 py-2 rounded-xl border border-[#E5E5E5] focus:ring-2 focus:ring-[#7C8363] outline-none text-sm font-bold bg-[#FDFCFB]"
                           />
                         </div>
                       ))}
@@ -878,51 +882,96 @@
                 </div>
 
                 {/* Right Chart & Breakdown Column */}
-                <div className="lg:col-span-8 bg-white p-4 sm:p-6 rounded-2xl border border-[#E5E5E5] shadow-sm flex flex-col justify-between space-y-5">
+                {}
+                <div className="lg:col-span-8 bg-white p-5 sm:p-7 rounded-2xl border border-[#E5E5E5] shadow-md flex flex-col justify-between space-y-6">
                   <div>
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                      <h3 className="font-bold text-sm sm:text-base text-[#4A4A4A]">{t.depositCalc.chartTitle}</h3>
-                      {/* Legend */}
-                      <div className="flex flex-wrap gap-3 text-xs font-bold">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-[#F0EBE3]">
+                      <div>
+                        <h3 className="font-black text-base sm:text-lg text-[#4A4A4A]">{t.depositCalc.chartTitle}</h3>
+                      </div>
+                      {/* Legend Items matching reference design */}
+                      <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-gray-700">
                         {parsedRates.map((r, rIdx) => (
-                          <div key={rIdx} className="flex items-center gap-1.5">
+                          <div key={rIdx} className="flex items-center gap-2">
                             <span 
-                              className="w-2.5 h-2.5 rounded-full border-2 bg-white" 
+                              className="w-3.5 h-3.5 rounded-full border-2 bg-white" 
                               style={{ borderColor: lineColors[rIdx].line }}
                             />
-                            <span className="text-gray-600">{r}%</span>
+                            <span>{r}% Rate</span>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    {/* SVG Line Chart */}
-                    <div className="w-full overflow-x-auto">
-                      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-auto min-w-[280px]">
+                    {/* SVG Line Chart with Tooltip */}
+                    <div className="w-full overflow-x-auto pt-2">
+                      <svg 
+                        viewBox={`0 0 ${svgWidth} ${svgHeight}`} 
+                        className="w-full h-auto min-w-[320px] select-none"
+                        onMouseLeave={() => setHoveredIdx(null)}
+                      >
+                        {/* Background Grid Box */}
+                        <rect x={padL} y={padT} width={plotW} height={plotH} fill="#FAF9F6" rx="8" />
+
                         {/* Y Grid Lines */}
                         {yTicks.map((tick, i) => {
                           const y = getY(tick);
                           return (
                             <g key={i}>
-                              <line x1={padL} y1={y} x2={svgWidth - padR} y2={y} stroke="#F0F0F0" strokeWidth="1" strokeDasharray={i === 0 ? "" : "3 3"} />
-                              <text x={padL - 8} y={y + 4} textAnchor="end" className="text-[10px] fill-gray-400 font-sans">
-                                ${Math.round(tick)}
+                              <line x1={padL} y1={y} x2={svgWidth - padR} y2={y} stroke="#E5E5E5" strokeWidth="1" strokeDasharray={i === 0 ? "" : "4 4"} />
+                              <text x={padL - 10} y={y + 4} textAnchor="end" className="text-[11px] fill-gray-500 font-bold font-sans">
+                                {Math.round(tick)}
                               </text>
                             </g>
                           );
                         })}
 
-                        {/* X Labels */}
+                        {/* X Axis Labels */}
                         {parsedDurations.map((d, dIdx) => {
                           const x = getX(dIdx);
                           return (
-                            <text key={dIdx} x={x} y={svgHeight - 8} textAnchor="middle" className="text-[10px] fill-gray-500 font-bold font-sans">
-                              {d}M
-                            </text>
+                            <g key={dIdx}>
+                              <line x1={x} y1={padT} x2={x} y2={padT + plotH} stroke="#E8E8E8" strokeWidth="1" strokeDasharray="3 3" />
+                              <text x={x} y={svgHeight - 12} textAnchor="middle" className="text-[12px] fill-gray-700 font-extrabold font-sans">
+                                {d} Months
+                              </text>
+                            </g>
                           );
                         })}
 
-                        {/* Plot Lines */}
+                        {/* Interactive Column Hover Zones */}
+                        {parsedDurations.map((_, dIdx) => {
+                          const x = getX(dIdx);
+                          const colW = plotW / Math.max(parsedDurations.length - 1, 1);
+                          return (
+                            <rect
+                              key={`hover-zone-${dIdx}`}
+                              x={dIdx === 0 ? padL : x - colW / 2}
+                              y={padT}
+                              width={dIdx === 0 || dIdx === parsedDurations.length - 1 ? colW / 2 + 25 : colW}
+                              fill="transparent"
+                              height={plotH}
+                              className="cursor-pointer"
+                              onMouseEnter={() => setHoveredIdx(dIdx)}
+                              onTouchStart={() => setHoveredIdx(dIdx)}
+                            />
+                          );
+                        })}
+
+                        {/* Dotted Vertical Guide Line on Hover */}
+                        {hoveredIdx !== null && (
+                          <line
+                            x1={getX(hoveredIdx)}
+                            y1={padT}
+                            x2={getX(hoveredIdx)}
+                            y2={padT + plotH}
+                            stroke="#475569"
+                            strokeWidth="1.5"
+                            strokeDasharray="3 3"
+                          />
+                        )}
+
+                        {/* Plot Lines & Area Fill */}
                         {matrix.map((row, rIdx) => {
                           const points = row.map((val, dIdx) => `${getX(dIdx)},${getY(val)}`).join(' ');
                           const fillPoints = `${getX(0)},${getY(0)} ${points} ${getX(row.length - 1)},${getY(0)}`;
@@ -933,53 +982,138 @@
                               <polyline
                                 fill="none"
                                 stroke={lineColors[rIdx].line}
-                                strokeWidth="2.5"
+                                strokeWidth="3"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 points={points}
                               />
-                              {row.map((val, dIdx) => (
-                                <circle
-                                  key={dIdx}
-                                  cx={getX(dIdx)}
-                                  cy={getY(val)}
-                                  r="4.5"
-                                  fill="#FFFFFF"
-                                  stroke={lineColors[rIdx].line}
-                                  strokeWidth="2"
-                                />
-                              ))}
+                              {row.map((val, dIdx) => {
+                                const cx = getX(dIdx);
+                                const cy = getY(val);
+                                const isHovered = hoveredIdx === dIdx;
+                                return (
+                                  <g key={dIdx}>
+                                    <circle
+                                      cx={cx}
+                                      cy={cy}
+                                      r={isHovered ? "7" : "5"}
+                                      fill="#FFFFFF"
+                                      stroke={lineColors[rIdx].line}
+                                      strokeWidth={isHovered ? "3.5" : "2.5"}
+                                      className="transition-all duration-150 cursor-pointer"
+                                      onMouseEnter={() => setHoveredIdx(dIdx)}
+                                    />
+                                  </g>
+                                );
+                              })}
                             </g>
                           );
                         })}
+
+                        {/* Hover Tooltip Box */}
+                        {hoveredIdx !== null && (
+                          (() => {
+                            const dVal = parsedDurations[hoveredIdx];
+                            const tooltipX = getX(hoveredIdx);
+                            const pointsY = matrix.map(row => getY(row[hoveredIdx]));
+                            const avgY = pointsY.reduce((a, b) => a + b, 0) / pointsY.length;
+                            
+                            const boxW = 150;
+                            const boxH = 26 + parsedRates.length * 20;
+                            
+                            let rectX = tooltipX + 12;
+                            if (hoveredIdx >= parsedDurations.length - 1) {
+                              rectX = tooltipX - boxW - 12;
+                            }
+                            let rectY = Math.min(Math.max(avgY - boxH / 2, padT + 5), padT + plotH - boxH - 5);
+
+                            return (
+                              <g className="pointer-events-none transition-all duration-150">
+                                {/* Dark Card Tooltip Container */}
+                                <rect
+                                  x={rectX}
+                                  y={rectY}
+                                  width={boxW}
+                                  height={boxH}
+                                  rx="8"
+                                  fill="#1E293B"
+                                  fillOpacity="0.95"
+                                  stroke="#334155"
+                                  strokeWidth="1"
+                                />
+                                {/* Tooltip Header */}
+                                <text
+                                  x={rectX + 12}
+                                  y={rectY + 18}
+                                  className="text-[12px] font-bold fill-white font-sans"
+                                >
+                                  {dVal} Months
+                                </text>
+                                {/* Rate Rows with Color Legend Square */}
+                                {parsedRates.map((r, rIdx) => {
+                                  const val = matrix[rIdx][hoveredIdx];
+                                  const rowY = rectY + 36 + rIdx * 19;
+                                  return (
+                                    <g key={rIdx}>
+                                      <rect
+                                        x={rectX + 12}
+                                        y={rowY - 8}
+                                        width="9"
+                                        height="9"
+                                        rx="1.5"
+                                        fill={lineColors[rIdx].line}
+                                      />
+                                      <text
+                                        x={rectX + 26}
+                                        y={rowY}
+                                        className="text-[11px] font-semibold fill-gray-200 font-sans"
+                                      >
+                                        {r}% Rate: ${val.toLocaleString()}
+                                      </text>
+                                    </g>
+                                  );
+                                })}
+                              </g>
+                            );
+                          })()
+                        )}
                       </svg>
                     </div>
                   </div>
 
                   {/* Breakdown Table */}
-                  <div className="border-t border-[#F0EBE3] pt-3 overflow-x-auto">
-                    <table className="w-full text-left text-xs">
+                  <div className="border-t border-[#F0EBE3] pt-4 overflow-x-auto">
+                    <table className="w-full text-left">
                       <thead>
-                        <tr className="text-gray-400 border-b border-[#F0EBE3]">
-                          <th className="pb-2 font-bold">{t.depositCalc.scenarioRate}</th>
+                        <tr className="text-gray-400 border-b border-[#F0EBE3] text-xs">
+                          <th className="pb-3 font-bold uppercase tracking-wider">{t.depositCalc.scenarioRate}</th>
                           {parsedDurations.map((d, dIdx) => (
-                            <th key={dIdx} className="pb-2 font-bold text-right">{d}m</th>
+                            <th key={dIdx} className="pb-3 font-bold text-right uppercase tracking-wider">{d} Months</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[#F8F6F0]">
-                        {parsedRates.map((r, rIdx) => (
-                          <tr key={rIdx} className="hover:bg-gray-50/50 transition-colors">
-                            <td className="py-2.5 font-bold text-xs sm:text-sm text-[#4A4A4A]">
-                              {r}%
-                            </td>
-                            {matrix[rIdx].map((earned, dIdx) => (
-                              <td key={dIdx} className="py-2.5 font-bold text-right text-blue-600 text-xs sm:text-sm">
-                                ${earned.toLocaleString()}
+                        {parsedRates.map((r, rIdx) => {
+                          const maxRowVal = Math.max(...matrix[rIdx]);
+                          return (
+                            <tr key={rIdx} className="hover:bg-gray-50/80 transition-colors">
+                              <td className="py-3.5 font-bold text-sm text-[#4A4A4A] flex items-center gap-2">
+                                <span className={`w-3 h-3 rounded-full`} style={{ backgroundColor: lineColors[rIdx].line }} />
+                                <span>{String.fromCharCode(65 + rIdx)} ({r}%)</span>
                               </td>
-                            ))}
-                          </tr>
-                        ))}
+                              {matrix[rIdx].map((earned, dIdx) => {
+                                const isHighestOverall = earned === maxEarned && earned > 0;
+                                return (
+                                  <td key={dIdx} className="py-3.5 font-extrabold text-right text-sm sm:text-base text-gray-800">
+                                    <span className={isHighestOverall ? 'text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200' : ''}>
+                                      ${earned.toLocaleString()}
+                                    </span>
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -1151,7 +1285,7 @@
               </header>
 
               {/* Main Content Area */}
-              <main className="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto max-w-5xl mx-auto w-full">
+              <main className="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto max-w-6xl mx-auto w-full">
                 {currentView === 'home' ? (
                   <div className="animate-fade-in max-w-3xl mx-auto space-y-6">
                     {/* Hero Banner */}
@@ -1211,7 +1345,7 @@
                       </div>
                     </div>
 
-                    {/* Grid of Tools (Mobile 2-col or 1-col flexible) */}
+                    {/* Grid of Tools */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       {filteredTools.map(tool => {
                         const ToolIcon = tool.icon;
@@ -1235,7 +1369,7 @@
                     </div>
                   </div>
                 ) : (
-                  <div className="animate-fade-in max-w-2xl mx-auto space-y-4">
+                  <div className={`animate-fade-in mx-auto space-y-4 ${currentView === 'deposit' || currentView === 'compare' ? 'max-w-5xl' : 'max-w-2xl'}`}>
                      <div className="mb-4">
                         <div className="hidden md:flex items-center gap-2 text-xs font-bold text-[#7C8363] mb-1.5 uppercase tracking-wider">
                           <span>EcoTools</span>
