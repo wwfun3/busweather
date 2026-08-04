@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Translation Craft 譯藝 — 信達雅 Professional Translation Base & AI Assistant</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Noto Serif SC/TC and Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Noto Serif TC', 'serif'],
+          },
+          colors: {
+            vermilion: {
+              50: '#fdf3f2',
+              100: '#fbe5e3',
+              500: '#d93829',
+              600: '#b92518',
+              700: '#9b1c11',
+            },
+            jade: {
+              50: '#f0fdf7',
+              500: '#10b981',
+              600: '#059669',
+              800: '#065f46',
+            },
+            ink: {
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    /* Custom Scrollbars and Typography refinements */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.5);
+      border-radius: 4px;
+    }
+    .serif-title {
+      font-family: 'Noto Serif TC', serif;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+    }
+    .dark .glass-card {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-ink-950 dark:text-slate-100 min-h-full flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-ink-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo & Title -->
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-vermilion-600 to-amber-600 flex items-center justify-center text-white shadow-md shadow-vermilion-600/20">
+            <span class="serif-title font-bold text-xl">雅</span>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white serif-title">譯藝 Translation Craft</h1>
+              <span class="text-xs bg-vermilion-50 dark:bg-vermilion-700/30 text-vermilion-600 dark:text-vermilion-300 border border-vermilion-500/20 px-2 py-0.5 rounded-full font-medium">信達雅 3.0</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Chinese-English Professional Translation Knowledge Base & AI Engine</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs (Desktop) -->
+        <nav class="hidden md:flex space-x-1 lg:space-x-2">
+          <button onclick="switchTab('workbench')" id="tab-workbench" class="nav-btn active-tab px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition-all">
+            <i class="fa-solid fa-wand-magic-sparkles text-vermilion-500"></i>
+            <span>AI 翻譯工作台</span>
+          </button>
+          <button onclick="switchTab('glossary')" id="tab-glossary" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2 transition-all">
+            <i class="fa-solid fa-book-bookmark text-indigo-500"></i>
+            <span>專業術語庫</span>
+          </button>
+          <button onclick="switchTab('templates')" id="tab-templates" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2 transition-all">
+            <i class="fa-solid fa-arrows-split-up-and-left text-emerald-500"></i>
+            <span>句型轉換模板</span>
+          </button>
+          <button onclick="switchTab('audit')" id="tab-audit" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2 transition-all">
+            <i class="fa-solid fa-list-check text-amber-500"></i>
+            <span>質量審核與回譯</span>
+          </button>
+          <button onclick="switchTab('framework')" id="tab-framework" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2 transition-all">
+            <i class="fa-solid fa-graduation-cap text-sky-500"></i>
+            <span>信達雅體系與避坑</span>
+          </button>
+        </nav>
+
+        <!-- Right Tools -->
+        <div class="flex items-center space-x-2">
+          <!-- Dark Mode Toggle -->
+          <button onclick="toggleDarkMode()" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors" title="切換深色/淺色模式">
+            <i id="theme-icon" class="fa-solid fa-moon"></i>
+          </button>
+          <!-- API Key Modal Toggle -->
+          <button onclick="openApiKeyModal()" id="api-key-btn" class="p-2 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center space-x-1" title="設置 OpenRouter API 金鑰 (Bring Your Own Key)">
+            <i id="api-key-btn-icon" class="fa-solid fa-key text-slate-400"></i>
+            <span class="hidden lg:inline">API Key</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Bar (Scrollable horizontally) -->
+    <div class="md:hidden border-t border-slate-200 dark:border-slate-800 px-2 py-1.5 flex space-x-1 overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('workbench')" id="mob-tab-workbench" class="mob-nav-btn whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium bg-vermilion-500 text-white">
+        <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI 工作台
+      </button>
+      <button onclick="switchTab('glossary')" id="mob-tab-glossary" class="mob-nav-btn whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300">
+        <i class="fa-solid fa-book-bookmark mr-1"></i>術語庫
+      </button>
+      <button onclick="switchTab('templates')" id="mob-tab-templates" class="mob-nav-btn whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300">
+        <i class="fa-solid fa-arrows-split-up-and-left mr-1"></i>句型轉換
+      </button>
+      <button onclick="switchTab('audit')" id="mob-tab-audit" class="mob-nav-btn whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300">
+        <i class="fa-solid fa-list-check mr-1"></i>質量回譯
+      </button>
+      <button onclick="switchTab('framework')" id="mob-tab-framework" class="mob-nav-btn whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300">
+        <i class="fa-solid fa-graduation-cap mr-1"></i>理論與避坑
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- TAB 1: AI TRANSLATION WORKBENCH -->
+    <section id="section-workbench" class="tab-section space-y-6">
+      
+      <!-- Top Domain & Controls Bar -->
+      <div class="glass-card rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          
+          <!-- Domain Selection -->
+          <div class="md:col-span-4">
+            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+              <i class="fa-solid fa-layer-group text-vermilion-500 mr-1"></i>專業領域 (Domain)
+            </label>
+            <select id="wb-domain" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-vermilion-500 focus:outline-none">
+              <option value="auto">🔍 自動辨識領域 (Auto Detect)</option>
+              <option value="academic">🎓 學術論文 (Academic)</option>
+              <option value="business">💼 商務金融 (Business & Finance)</option>
+              <option value="technical">💻 工程技術 (Technical & Software)</option>
+              <option value="legal">⚖️ 法律合同 (Legal & Contracts)</option>
+              <option value="general">🌐 通用領域 (General)</option>
+            </select>
+          </div>
+
+          <!-- Language Direction -->
+          <div class="md:col-span-4">
+            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+              <i class="fa-solid fa-language text-indigo-500 mr-1"></i>翻譯方向 (Direction)
+            </label>
+            <div class="flex items-center space-x-2">
+              <select id="wb-direction" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-vermilion-500 focus:outline-none">
+                <option value="auto">🔄 自動檢測 (Auto Detect)</option>
+                <option value="zh2en">中譯英 (Chinese → English)</option>
+                <option value="en2zh">英譯中 (English → Chinese)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Quick Template Presets -->
+          <div class="md:col-span-4">
+            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+              <i class="fa-solid fa-bolt text-amber-500 mr-1"></i>快速範本輸入
+            </label>
+            <div class="flex space-x-2">
+              <button onclick="loadSample('academic')" class="flex-1 px-2.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">學術摘要</button>
+              <button onclick="loadSample('business')" class="flex-1 px-2.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">商務函件</button>
+              <button onclick="loadSample('technical')" class="flex-1 px-2.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">技術文檔</button>
+              <button onclick="loadSample('legal')" class="flex-1 px-2.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">法律條款</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Main Dual Input/Output Panel -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Source Input Box -->
+        <div class="flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-ink-900 shadow-sm overflow-hidden">
+          <div class="bg-slate-100/80 dark:bg-slate-800/80 px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between min-h-[52px]">
+            <span class="text-sm font-semibold flex items-center text-slate-700 dark:text-slate-200">
+              <i class="fa-solid fa-align-left text-slate-400 mr-2"></i>原文輸入 (Source Text)
+            </span>
+            <div class="flex items-center space-x-2">
+              <span id="char-count" class="text-xs text-slate-400 mr-1">0 字</span>
+              <button onclick="clearSourceInput()" class="text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-vermilion-600 dark:hover:text-vermilion-400 px-2.5 py-1 rounded-lg flex items-center space-x-1.5 transition-all shadow-sm active:scale-95" title="清空原文 Clear Source Text">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>Clear</span>
+              </button>
+            </div>
+          </div>
+          <div class="p-4 flex-grow flex flex-col">
+            <textarea id="wb-source-input" rows="10" placeholder="請在此貼上或輸入需要翻譯的原文文本...&#10;例如：「本文旨在探討在大語言模型架構下，如何通過檢索增強生成（RAG）提升文獻綜述的準確性與可複現性。」" class="w-full h-full bg-transparent resize-none border-0 p-0 focus:ring-0 text-slate-800 dark:text-slate-100 placeholder-slate-400 text-base leading-relaxed focus:outline-none"></textarea>
+          </div>
+          <!-- Action Button Area -->
+          <div class="p-4 border-t border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/30 flex items-center justify-between">
+            <div class="flex items-center space-x-3 text-xs text-slate-500">
+              <label class="flex items-center cursor-pointer">
+                <input type="checkbox" id="chk-back-translate" checked class="rounded border-slate-300 text-vermilion-600 focus:ring-vermilion-500 mr-1.5">
+                <span>附帶「信達雅」評分與回譯驗證</span>
+              </label>
+            </div>
+            <button onclick="executeTranslation()" id="btn-translate" class="px-6 py-2.5 bg-gradient-to-r from-vermilion-600 to-amber-600 hover:from-vermilion-700 hover:to-amber-700 text-white font-medium text-sm rounded-xl shadow-md shadow-vermilion-600/20 flex items-center space-x-2 transition-all transform active:scale-95">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>開始「信達雅」專業翻譯</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Target Output Box -->
+        <div class="flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-ink-900 shadow-sm overflow-hidden">
+          <div class="bg-slate-100/80 dark:bg-slate-800/80 px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between min-h-[52px]">
+            <div class="flex items-center space-x-2 overflow-hidden">
+              <span class="text-sm font-semibold flex items-center text-slate-700 dark:text-slate-200 shrink-0">
+                <i class="fa-solid fa-signature text-vermilion-500 mr-2"></i>專業譯文成果 (Output)
+              </span>
+              <span id="output-meta-domain" class="hidden text-xs bg-vermilion-50 dark:bg-vermilion-900/40 text-vermilion-700 dark:text-vermilion-300 border border-vermilion-200 dark:border-vermilion-800 px-2 py-0.5 rounded-md font-medium truncate"></span>
+            </div>
+            <div class="flex items-center space-x-2 shrink-0">
+              <span id="output-meta-dir" class="hidden text-xs text-slate-500 dark:text-slate-400"></span>
+              <div class="flex items-center space-x-1" id="output-actions">
+                <button onclick="copyOutputText()" class="text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 px-3 py-1 rounded-lg flex items-center space-x-1 transition-colors">
+                  <i class="fa-solid fa-copy"></i>
+                  <span>複製譯文</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading State Indicator -->
+          <div id="wb-loading" class="hidden p-12 flex-grow flex flex-col items-center justify-center text-center space-y-4">
+            <div class="w-12 h-12 border-4 border-vermilion-500 border-t-transparent rounded-full animate-spin"></div>
+            <div>
+              <h4 class="font-semibold text-slate-800 dark:text-slate-200">Yan Fu「信達雅」引擎審研中...</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">1. 識別領域 → 2. 匹配術語庫 → 3. 信( fidelity ) → 達( fluency ) → 雅( register ) 逐步校準</p>
+            </div>
+          </div>
+
+          <!-- Translation Output Display -->
+          <div id="wb-output-container" class="p-4 flex-grow overflow-y-auto space-y-4 text-sm">
+            <div class="text-slate-400 dark:text-slate-500 text-center py-16 flex flex-col items-center space-y-3">
+              <i class="fa-solid fa-feather-pointed text-4xl text-slate-300 dark:text-slate-700"></i>
+              <p class="max-w-xs text-xs">輸入原文並點擊「開始翻譯」，系統將依據嚴謹的信達雅三階標準生成具備對應領域專業風格的譯文與術語對照表。</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live Analysis Card (Rendered after translation) -->
+      <div id="wb-analysis-card" class="hidden glass-card rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center serif-title">
+          <i class="fa-solid fa-chart-pie text-vermilion-500 mr-2"></i>翻譯質量三階診斷與對照
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          <!-- Faithfulness Box -->
+          <div class="bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-blue-900 dark:text-blue-300 text-sm flex items-center">
+                <i class="fa-solid fa-shield-halved mr-1.5 text-blue-500"></i>信 (Faithfulness)
+              </span>
+              <span id="score-faithfulness" class="text-xs font-bold px-2 py-0.5 rounded bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200">100%</span>
+            </div>
+            <p id="desc-faithfulness" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">事實、資料、因果邏輯及否定語意準確無誤。</p>
+          </div>
+
+          <!-- Expressiveness Box -->
+          <div class="bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-900 dark:text-emerald-300 text-sm flex items-center">
+                <i class="fa-solid fa-wind mr-1.5 text-emerald-500"></i>達 (Expressiveness)
+              </span>
+              <span id="score-expressiveness" class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-200 dark:bg-emerald-800 text-emerald-800 dark:text-emerald-200">95%</span>
+            </div>
+            <p id="desc-expressiveness" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">符合目標語表達習慣，語序調整自然，長句切分流暢。</p>
+          </div>
+
+          <!-- Elegance Box -->
+          <div class="bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-amber-900 dark:text-amber-300 text-sm flex items-center">
+                <i class="fa-solid fa-gem mr-1.5 text-amber-500"></i>雅 (Elegance)
+              </span>
+              <span id="score-elegance" class="text-xs font-bold px-2 py-0.5 rounded bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200">90%</span>
+            </div>
+            <p id="desc-elegance" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">用詞精準契合該領域語域，風格典雅規範。</p>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: TERMINOLOGY GLOSSARY -->
+    <section id="section-glossary" class="tab-section hidden space-y-6">
+      
+      <!-- Glossary Control Header -->
+      <div class="glass-card rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white serif-title flex items-center">
+              <i class="fa-solid fa-book-bookmark text-indigo-500 mr-2"></i>四大領域專業雙語術語庫
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Grounding key terminology across Academic, Business, Technical, and Legal domains</p>
+          </div>
+
+          <!-- Search Input -->
+          <div class="relative w-full md:w-80">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+            <input type="text" id="glossary-search" oninput="filterGlossary()" placeholder="搜尋中文或英文術語 (e.g., RAG, 顯著性)..." class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+        </div>
+
+        <!-- Domain Filter Buttons -->
+        <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-800/60">
+          <button onclick="setGlossaryDomain('all')" class="glossary-domain-btn active-g-btn px-4 py-1.5 rounded-lg text-xs font-medium transition-all">全部 (All)</button>
+          <button onclick="setGlossaryDomain('academic')" class="glossary-domain-btn px-4 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 transition-all">🎓 學術 Academic</button>
+          <button onclick="setGlossaryDomain('business')" class="glossary-domain-btn px-4 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 transition-all">💼 商務 Business</button>
+          <button onclick="setGlossaryDomain('technical')" class="glossary-domain-btn px-4 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 transition-all">💻 技術 Technical</button>
+          <button onclick="setGlossaryDomain('legal')" class="glossary-domain-btn px-4 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 transition-all">⚖️ 法律 Legal</button>
+        </div>
+      </div>
+
+      <!-- Glossary Table Container -->
+      <div class="bg-white dark:bg-ink-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-800">
+              <tr>
+                <th class="py-3.5 px-4 sm:px-6">中文術語 (Chinese)</th>
+                <th class="py-3.5 px-4 sm:px-6">英文對應 (English)</th>
+                <th class="py-3.5 px-4 sm:px-6">領域 (Domain)</th>
+                <th class="py-3.5 px-4 sm:px-6">使用語境 / Context</th>
+                <th class="py-3.5 px-4 sm:px-6 text-right">操作</th>
+              </tr>
+            </thead>
+            <tbody id="glossary-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/60">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 3: SENTENCE CONVERSION TEMPLATES -->
+    <section id="section-templates" class="tab-section hidden space-y-6">
+      
+      <div class="glass-card rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white serif-title flex items-center">
+              <i class="fa-solid fa-arrows-split-up-and-left text-emerald-500 mr-2"></i>專業句型轉換與對照模板
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Cross-lingual High-frequency Sentence Patterns for Academic, Business, and Legal Writing</p>
+          </div>
+          
+          <!-- Category Selector -->
+          <div class="flex items-center space-x-2">
+            <select id="template-domain" onchange="renderTemplates()" class="bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none">
+              <option value="academic">🎓 學術句型模板 (Academic)</option>
+              <option value="business">💼 商務句型模板 (Business)</option>
+              <option value="legal">⚖️ 法律句型模板 (Legal)</option>
+              <option value="tech_struct">💻 技術文檔結構對照 (Tech Mapping)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Templates Grid -->
+      <div id="templates-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Dynamically rendered templates -->
+      </div>
+
+    </section>
+
+    <!-- TAB 4: QUALITY CHECKLIST & BACK TRANSLATION -->
+    <section id="section-audit" class="tab-section hidden space-y-6">
+      
+      <!-- Top Overview Card -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Checklist Interactive Widget -->
+        <div class="lg:col-span-7 glass-card rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white serif-title flex items-center">
+              <i class="fa-solid fa-clipboard-check text-amber-500 mr-2"></i>翻譯質量七維核查表 (Interactive Checklist)
+            </h3>
+            <span id="audit-score-badge" class="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200">
+              完成度: 0 / 7
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">在提交翻譯前，請逐項對照以下指標以確保無語意偏差或文法瑕疵：</p>
+
+          <div class="space-y-3" id="checklist-items">
+            <!-- Rendered Checklist -->
+          </div>
+        </div>
+
+        <!-- Interactive Back-Translation Sandbox -->
+        <div class="lg:col-span-5 flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-ink-900 p-6 shadow-sm space-y-4">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white serif-title flex items-center">
+              <i class="fa-solid fa-rotate text-indigo-500 mr-2"></i>回譯驗證器 (Back-Translation Validator)
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">將譯文再次逆向翻譯為原文，測試是否存在「語義漂移 (Semantic Drift)」</p>
+          </div>
+
+          <div class="space-y-3 flex-grow">
+            <div>
+              <label class="block text-xs font-medium text-slate-500 mb-1">1. 待驗證譯文 (Target Translation)</label>
+              <textarea id="bt-target" rows="3" placeholder="例如：The experiment was conducted under controlled conditions." class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-xs focus:outline-none"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-500 mb-1">2. 初始原文 (Original Source for comparison)</label>
+              <textarea id="bt-original" rows="3" placeholder="例如：該實驗在控制變數條件下進行" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-xs focus:outline-none"></textarea>
+            </div>
+          </div>
+
+          <button onclick="executeBackTranslation()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs rounded-xl shadow transition-colors flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+            <span>執行回譯並評估一致性</span>
+          </button>
+
+          <div id="bt-result" class="hidden p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-1">
+            <!-- Result rendered -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 5: FAITHFULNESS-EXPRESSIVENESS-ELEGANCE FRAMEWORK & PITFALLS -->
+    <section id="section-framework" class="tab-section hidden space-y-6">
+      
+      <!-- Theory Overview -->
+      <div class="glass-card rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white serif-title flex items-center">
+            <i class="fa-solid fa-graduation-cap text-sky-500 mr-2.5"></i>嚴復「信達雅」三階翻譯理論體系
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Faithfulness (信) > Expressiveness (達) > Elegance (雅) 決策優先級與流程指南</p>
+        </div>
+
+        <!-- 3 Tier Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="border-l-4 border-blue-500 bg-white dark:bg-slate-900 p-5 rounded-r-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-blue-600 dark:text-blue-400 text-base">信 (Faithfulness)</h3>
+              <span class="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-bold">最高優先級</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300"><b>忠實於原文：</b>準確傳達事實、數據、邏輯與語氣。術語一致、數字精準、不顛倒否定關係，保留因果鏈條。</p>
+          </div>
+
+          <div class="border-l-4 border-emerald-500 bg-white dark:bg-slate-900 p-5 rounded-r-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-emerald-600 dark:text-emerald-400 text-base">達 (Expressiveness)</h3>
+              <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold">次優先級</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300"><b>通順與清晰：</b>譯文符合目標語表達習慣，無理解障礙。靈活進行語序調整、主被動轉換、長句切分與連接詞補充。</p>
+          </div>
+
+          <div class="border-l-4 border-amber-500 bg-white dark:bg-slate-900 p-5 rounded-r-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-amber-600 dark:text-amber-400 text-base">雅 (Elegance)</h3>
+              <span class="text-xs px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 font-bold">潤色與典雅</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300"><b>風格契合：</b>譯文風格精確匹配原用語域（Register）。學術用正式書面語，商務用專業措辭，法律用規範法條體。</p>
+          </div>
+        </div>
+
+        <!-- 6 Step Workflow Display -->
+        <div class="bg-slate-100 dark:bg-slate-800/60 rounded-xl p-4 sm:p-5 border border-slate-200 dark:border-slate-700 space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">標準 6 步翻譯作業流程 (General Workflow)</h4>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-center text-xs">
+            <div class="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div class="font-bold text-vermilion-600 mb-0.5">Step 1</div>
+              <div>通讀全文，理解主旨</div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div class="font-bold text-vermilion-600 mb-0.5">Step 2</div>
+              <div>識別領域與術語要求</div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div class="font-bold text-vermilion-600 mb-0.5">Step 3</div>
+              <div>逐句翻譯（確保「信」）</div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div class="font-bold text-vermilion-600 mb-0.5">Step 4</div>
+              <div>調整語序（實現「達」）</div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800">
+              <div class="font-bold text-vermilion-600 mb-0.5">Step 5</div>
+              <div>潤色文風（追求「雅」）</div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div class="font-bold text-vermilion-600 mb-0.5">Step 6</div>
+              <div>回譯驗證，消除歪曲</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Common Pitfalls Visual Cards -->
+      <div class="space-y-4">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white serif-title flex items-center">
+          <i class="fa-solid fa-triangle-exclamation text-vermilion-500 mr-2"></i>常見翻譯陷阱與避坑指南 (Translation Pitfalls)
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="pitfalls-grid">
+          <!-- Dynamically populated pitfalls -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- API Key Modal (OpenRouter BYOK) -->
+  <div id="api-key-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-ink-900 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 dark:border-slate-800 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center">
+          <i class="fa-solid fa-key text-amber-500 mr-2"></i>OpenRouter API Key 設定 (BYOK)
+        </h3>
+        <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p class="text-xs text-slate-500 leading-relaxed">
+        本應用透過 <a href="https://openrouter.ai/models?q=free&order=most-popular" target="_blank" rel="noopener" class="text-vermilion-600 dark:text-vermilion-400 font-semibold hover:underline">OpenRouter</a> 統一介面調用 AI 模型進行「信達雅」智能翻譯。請自備您自己的 OpenRouter API Key（BYOK，自帶金鑰），金鑰僅儲存於您瀏覽器的 localStorage，不會上傳至任何第三方伺服器。
+      </p>
+      <p class="text-xs text-slate-500 leading-relaxed">
+        還沒有金鑰？前往
+        <a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener" class="text-vermilion-600 dark:text-vermilion-400 font-medium hover:underline">openrouter.ai/settings/keys</a>
+        免費註冊並建立一組金鑰（格式為 <code class="bg-slate-100 dark:bg-slate-800 px-1 rounded">sk-or-v1-...</code>）。
+      </p>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">API Key</label>
+        <div class="relative">
+          <input type="password" id="api-key-input" placeholder="sk-or-v1-..." class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-vermilion-500">
+          <button type="button" onclick="toggleApiKeyVisibility()" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="顯示/隱藏金鑰">
+            <i id="api-key-eye-icon" class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">模型 (Model)</label>
+        <select id="api-model-select" onchange="handleModelSelectChange()" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-vermilion-500">
+          <option value="nvidia/nemotron-3-ultra-550b-a55b:free">Nemotron 3 Ultra 550B (free)</option>
+          <option value="openai/gpt-oss-20b:free">OpenAI: gpt-oss-20b (free)</option>
+          <option value="google/gemma-4-26b-a4b-it:free">Gemma 4 26B (free)</option>
+          <option value="google/gemma-4-31b-it:free">Gemma 4 31B (free)</option>
+          <option value="__custom__">自訂 Model ID...</option>
+        </select>
+        <input type="text" id="api-model-custom-input" placeholder="例如：anthropic/claude-sonnet-5" class="hidden mt-2 w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-vermilion-500">
+        <p class="text-[11px] text-slate-400 mt-1">免費模型 (:free) 有速率限制，且供應清單會不時變動；可至 <a href="https://openrouter.ai/models?q=free&order=most-popular" target="_blank" rel="noopener" class="hover:underline text-slate-500 dark:text-slate-400 font-medium">OpenRouter</a> 查看目前可用模型，並貼上任一 Model ID 至「自訂」欄位。</p>
+      </div>
+      <div class="flex justify-end space-x-2 pt-2">
+        <button onclick="closeApiKeyModal()" class="px-4 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">取消</button>
+        <button onclick="saveApiKey()" class="px-4 py-2 rounded-xl text-xs font-medium bg-vermilion-600 hover:bg-vermilion-700 text-white">儲存 Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform transition-all duration-300 translate-y-20 opacity-0 pointer-events-none bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 px-4 py-2.5 rounded-xl shadow-lg text-xs font-medium flex items-center space-x-2">
+    <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+    <span id="toast-message">操作成功</span>
+  </div>
+
+  <script>
+    /* =========================================================================
+       DATA STORE: Glossaries, Templates, Quality Checklist, Pitfalls & Samples
+       ========================================================================= */
+    
+    const GLOSSARY_DATA = [
+      // Academic
+      { zh: "顯著性", en: "statistical significance", domain: "academic", context: "Statistical testing" },
+      { zh: "自變數 / 因變數", en: "independent variable / dependent variable", domain: "academic", context: "Experimental design" },
+      { zh: "假設檢定", en: "hypothesis testing", domain: "academic", context: "Research methods" },
+      { zh: "文獻綜述", en: "literature review", domain: "academic", context: "Paper structure" },
+      { zh: "研究局限性", en: "limitations", domain: "academic", context: "Discussion section" },
+      { zh: "實證研究", en: "empirical study", domain: "academic", context: "Research type" },
+      { zh: "質性分析 / 量化分析", en: "qualitative analysis / quantitative analysis", domain: "academic", context: "Methodology" },
+      { zh: "同行評審", en: "peer review", domain: "academic", context: "Publication process" },
+      { zh: "交叉驗證", en: "cross-validation", domain: "academic", context: "Machine learning / statistics" },
+      { zh: "置信區間", en: "confidence interval", domain: "academic", context: "Statistical inference" },
+      { zh: "後設分析 / 元分析", en: "meta-analysis", domain: "academic", context: "Comprehensive research" },
+      { zh: "隨機對照試驗", en: "randomized controlled trial (RCT)", domain: "academic", context: "Medical / social sciences" },
+      { zh: "相關性 vs 因果性", en: "correlation vs causation", domain: "academic", context: "Research conclusions" },
+      { zh: "可複現性", en: "reproducibility", domain: "academic", context: "Research quality" },
+
+      // Business
+      { zh: "季度環比增長", en: "quarter-over-quarter (QoQ) growth", domain: "business", context: "Financial reports" },
+      { zh: "同比增長", en: "year-over-year (YoY) growth", domain: "business", context: "Financial reports" },
+      { zh: "毛利率 / 淨利率", en: "gross margin / net margin", domain: "business", context: "Financial metrics" },
+      { zh: "供應鏈", en: "supply chain", domain: "business", context: "Operations" },
+      { zh: "盡職調查", en: "due diligence", domain: "business", context: "Investment & financing" },
+      { zh: "股東權益", en: "shareholders' equity", domain: "business", context: "Financial statements" },
+      { zh: "現金流", en: "cash flow", domain: "business", context: "Financial analysis" },
+      { zh: "市盈率", en: "price-to-earnings ratio (P/E)", domain: "business", context: "Valuation" },
+      { zh: "利益相關方", en: "stakeholders", domain: "business", context: "Corporate governance" },
+      { zh: "戰略合作夥伴關係", en: "strategic partnership", domain: "business", context: "Business cooperation" },
+      { zh: "核心競爭力", en: "core competency", domain: "business", context: "Strategic analysis" },
+      { zh: "品牌溢價", en: "brand premium", domain: "business", context: "Marketing" },
+      { zh: "商業模式圖", en: "Business Model Canvas", domain: "business", context: "Startups / strategy" },
+      { zh: "投資報酬率", en: "return on investment (ROI)", domain: "business", context: "Investment analysis" },
+
+      // Technical
+      { zh: "應用程式介面", en: "API (Application Programming Interface)", domain: "technical", context: "Software development" },
+      { zh: "容器化", en: "containerization", domain: "technical", context: "DevOps" },
+      { zh: "微服務架構", en: "microservices architecture", domain: "technical", context: "System architecture" },
+      { zh: "負載平衡", en: "load balancing", domain: "technical", context: "Networking / operations" },
+      { zh: "持續整合/持續部署", en: "CI/CD (Continuous Integration/Continuous Deployment)", domain: "technical", context: "DevOps" },
+      { zh: "版本控制", en: "version control", domain: "technical", context: "Development workflow" },
+      { zh: "延遲 / 吞吐量", en: "latency / throughput", domain: "technical", context: "Performance metrics" },
+      { zh: "端到端加密", en: "end-to-end encryption (E2EE)", domain: "technical", context: "Security" },
+      { zh: "大型語言模型", en: "large language model (LLM)", domain: "technical", context: "AI" },
+      { zh: "向量資料庫", en: "vector database", domain: "technical", context: "AI / data" },
+      { zh: "檢索增強生成", en: "Retrieval-Augmented Generation (RAG)", domain: "technical", context: "AI" },
+      { zh: "提示工程", en: "prompt engineering", domain: "technical", context: "AI" },
+      { zh: "冪等性", en: "idempotency", domain: "technical", context: "System design" },
+      { zh: "序列化 / 反序列化", en: "serialization / deserialization", domain: "technical", context: "Data processing" },
+
+      // Legal
+      { zh: "甲方 / 乙方", en: "Party A / Party B", domain: "legal", context: "Contract parties" },
+      { zh: "不可抗力", en: "force majeure", domain: "legal", context: "Exemption clauses" },
+      { zh: "違約責任", en: "liability for breach of contract", domain: "legal", context: "Breach clauses" },
+      { zh: "知識產權", en: "intellectual property (IP)", domain: "legal", context: "Rights clauses" },
+      { zh: "保密義務", en: "confidentiality obligation", domain: "legal", context: "NDAs" },
+      { zh: "爭議解決", en: "dispute resolution", domain: "legal", context: "Arbitration / litigation" },
+      { zh: "適用法律", en: "governing law", domain: "legal", context: "Applicable law" },
+      { zh: "仲裁條款", en: "arbitration clause", domain: "legal", context: "Dispute resolution" },
+      { zh: "連帶責任", en: "joint and several liability", domain: "legal", context: "Liability allocation" },
+      { zh: "善意第三人", en: "bona fide third party", domain: "legal", context: "Contract enforceability" },
+      { zh: "管轄權", en: "jurisdiction", domain: "legal", context: "Court jurisdiction" },
+      { zh: "損害賠償", en: "damages", domain: "legal", context: "Breach remedies" },
+      { zh: "不可撤銷的", en: "irrevocable", domain: "legal", context: "Authorization / commitments" },
+      { zh: "生效日期", en: "effective date", domain: "legal", context: "Contract timeline" },
+      { zh: "競業限制", en: "non-compete clause", domain: "legal", context: "Employment contracts" }
+    ];
+
+    const TEMPLATE_PATTERNS = {
+      academic: [
+        { zh: "本文旨在探討…", en: "This paper aims to investigate… / This study seeks to examine…" },
+        { zh: "研究結果表明…", en: "The results indicate that… / Findings suggest that…" },
+        { zh: "與前人研究一致", en: "Consistent with prior research… / In line with previous findings…" },
+        { zh: "值得注意的是", en: "It is noteworthy that… / Notably, …" },
+        { zh: "存在一定局限性", en: "Several limitations should be acknowledged…" },
+        { zh: "未來研究可以…", en: "Future research could explore… / Further investigation is warranted…" },
+        { zh: "已有大量研究證實…", en: "It has been well established that…" },
+        { zh: "本研究對…做出了貢獻", en: "The present study contributes to…" },
+        { zh: "在控制混雜變數後…", en: "Controlling for confounding variables…" }
+      ],
+      business: [
+        { zh: "我方願與貴方建立長期合作關係", en: "We look forward to establishing a long-term partnership with your organization." },
+        { zh: "經雙方友好協商", en: "Following amicable negotiations between both parties, …" },
+        { zh: "請予以確認", en: "We kindly request your confirmation. / Please confirm at your earliest convenience." },
+        { zh: "隨函附上…", en: "Please find enclosed… / Attached herewith is…" },
+        { zh: "就此事宜，我方立場如下", en: "With regard to this matter, our position is as follows:" },
+        { zh: "我方遺憾地通知貴方…", en: "We regret to inform you that…" },
+        { zh: "如有任何疑問，請隨時與我方聯繫", en: "Please do not hesitate to contact us." },
+        { zh: "依據本協議條款…", en: "Subject to the terms and conditions herein…" }
+      ],
+      legal: [
+        { zh: "本合同自雙方簽字之日起生效", en: "This Agreement shall come into effect upon execution by both parties." },
+        { zh: "任何一方不得擅自轉讓本合同項下的權利義務", en: "Neither party shall assign any rights or obligations under this Agreement without prior written consent." },
+        { zh: "本合同一式兩份，雙方各執一份", en: "This Agreement is executed in duplicate, with each party retaining one copy." },
+        { zh: "如有未盡事宜，雙方另行協商", en: "Any matters not covered herein shall be resolved through mutual consultation." },
+        { zh: "儘管本協議有任何相反規定…", en: "Notwithstanding anything to the contrary herein…" },
+        { zh: "雙方特此約定如下：", en: "The parties hereby agree as follows:" },
+        { zh: "在法律允許的最大範圍內…", en: "To the fullest extent permitted by law…" }
+      ],
+      tech_struct: [
+        { zh: "概述", en: "Overview" },
+        { zh: "快速開始", en: "Quick Start / Getting Started" },
+        { zh: "安裝指南", en: "Installation Guide" },
+        { zh: "配置說明", en: "Configuration" },
+        { zh: "使用示例", en: "Usage / Examples" },
+        { zh: "常見問題", en: "FAQ / Troubleshooting" },
+        { zh: "更新日誌", en: "Changelog / Release Notes" },
+        { zh: "參考文檔", en: "API Reference / Reference" }
+      ]
+    };
+
+    const PITFALLS_DATA = [
+      { type: "False friends (假友詞)", example: "actually ≠ 實際上", solution: "英文 'actually' 更接近「其實 / 事實上」。請根據語境選擇精確涵義。" },
+      { type: "Chinglish (中式英語)", example: "give you some color to see see", solution: "避免逐字硬譯，應使用目標語言道地習慣用語表達。" },
+      { type: "Number Traps (數字單位陷阱)", example: "十億 = 1 billion (非 10 billion)", solution: "交叉核對中英文數字單位轉換：萬 = 10,000；億 = 100,000,000 (1.5萬 = 15,000；3億 = 300M)。" },
+      { type: "Negation Transfer (否定轉移)", example: "I don't think he is right", solution: "翻譯為「我認為他不對」，而非字面直譯「我不認為他是對的」。" },
+      { type: "Missing Articles (冠詞缺失)", example: "中文缺乏直接冠詞系統", solution: "中譯英時，檢查每個英文名詞片語是否需要 'a/an/the'。" },
+      { type: "respectively Placement", example: "中文「分別」常出現在句中", solution: "英文中 'respectively' 通常放置於句尾：'A and B are X and Y, respectively.'" }
+    ];
+
+    const CHECKLIST_ITEMS = [
+      { id: "c1", label: "完整性 (Completeness)", desc: "沒有漏譯句子或段落，保留所有標點、換行與腳註。" },
+      { id: "c2", label: "資料與專有名詞準確度 (Accuracy)", desc: "數字、日期、貨幣單位及專有名詞核對無誤。" },
+      { id: "c3", label: "術語一致性 (Terminology Consistency)", desc: "全文關鍵術語一致，符合該領域專業Glossary。" },
+      { id: "c4", label: "邏輯關係保留 (Logical Integrity)", desc: "因果、轉折、並列與條件邏輯關係無錯位。" },
+      { id: "c5", label: "語法與時態規律 (Grammar & Tenses)", desc: "學術時態（方法過去時，結論現在時）、法律 shall/will 精準。" },
+      { id: "c6", label: "通順度與地道表達 (Fluency)", desc: "無中式英語（Chinglish），長句適度拆分，連接詞自然。" },
+      { id: "c7", label: "格式規範 (Formatting)", desc: "段落縮進、大小寫、縮寫首詞展開（e.g., AI (Artificial Intelligence)）符合要求。" }
+    ];
+
+    const SAMPLES = {
+      academic: "本文旨在探討在大語言模型架構下，如何通過檢索增強生成（RAG）提升文獻綜述的準確性與可複現性。\n\n研究結果表明，在控制混雜變數後，相關性與因果性的區分度提高了25%。",
+      business: "經雙方友好協商，我方願與貴方建立戰略合作夥伴關係。\n\n隨函附上季度環比增長（QoQ）報告及盡職調查草案，請予以確認。",
+      technical: "微服務架構中，負載平衡器通過持續整合/持續部署（CI/CD）流程自動分發流量，以降低系統延遲並保障端到端加密的安全性。",
+      legal: "本合同自雙方簽字之日起生效。\n\n未經另一方事先書面同意，任何一方不得擅自轉讓本合同項下的權利義務。如遇不可抗力，責任適當免除。"
+    };
+
+    /* =========================================================================
+       APP STATE & UI CONTROLLERS
+       ========================================================================= */
+    let currentTab = 'workbench';
+    let currentGlossaryDomain = 'all';
+
+    // --- OpenRouter BYOK (Bring Your Own Key) state ---
+    const DEFAULT_OPENROUTER_MODEL = 'nvidia/nemotron-3-ultra-550b-a55b:free';
+    let apiKey = localStorage.getItem('openrouter_api_key') || "";
+    let apiModel = localStorage.getItem('openrouter_model') || DEFAULT_OPENROUTER_MODEL;
+
+    window.onload = function() {
+      // Setup text character counter listener
+      const sourceInput = document.getElementById('wb-source-input');
+      sourceInput.addEventListener('input', () => {
+        document.getElementById('char-count').innerText = `${sourceInput.value.length} 字`;
+      });
+
+      // Initial renders
+      renderGlossary();
+      renderTemplates();
+      renderChecklist();
+      renderPitfalls();
+      updateApiKeyIndicator();
+    };
+
+    function switchTab(tabId) {
+      currentTab = tabId;
+      document.querySelectorAll('.tab-section').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`section-${tabId}`).classList.remove('hidden');
+
+      // Update Nav Buttons Desktop
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active-tab', 'bg-slate-100', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white');
+        btn.classList.add('text-slate-600', 'dark:text-slate-300');
+      });
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('active-tab', 'bg-slate-100', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white');
+      }
+
+      // Update Mobile Nav
+      document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+        btn.classList.remove('bg-vermilion-500', 'text-white');
+        btn.classList.add('text-slate-600', 'dark:text-slate-300');
+      });
+      const mobActive = document.getElementById(`mob-tab-${tabId}`);
+      if (mobActive) {
+        mobActive.classList.add('bg-vermilion-500', 'text-white');
+      }
+    }
+
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon';
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMsg.innerText = message;
+      toastIcon.className = isError ? "fa-solid fa-circle-xmark text-red-400" : "fa-solid fa-circle-check text-emerald-400";
+
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 3000);
+    }
+
+    function loadSample(key) {
+      if (SAMPLES[key]) {
+        document.getElementById('wb-source-input').value = SAMPLES[key];
+        document.getElementById('char-count').innerText = `${SAMPLES[key].length} 字`;
+        document.getElementById('wb-domain').value = key;
+        showToast(`已加載 ${key} 範本`);
+      }
+    }
+
+    function clearSourceInput() {
+      const input = document.getElementById('wb-source-input');
+      if (input.value.length > 0) {
+        input.value = "";
+        document.getElementById('char-count').innerText = "0 字";
+        showToast("已清空原文");
+      }
+    }
+
+    const OPENROUTER_MODEL_PRESETS = [
+      'nvidia/nemotron-3-ultra-550b-a55b:free',
+      'openai/gpt-oss-20b:free',
+      'google/gemma-4-26b-a4b-it:free',
+      'google/gemma-4-31b-it:free'
+    ];
+
+    function openApiKeyModal() {
+      document.getElementById('api-key-input').value = apiKey;
+
+      const select = document.getElementById('api-model-select');
+      const customInput = document.getElementById('api-model-custom-input');
+      if (OPENROUTER_MODEL_PRESETS.includes(apiModel)) {
+        select.value = apiModel;
+        customInput.classList.add('hidden');
+        customInput.value = "";
+      } else {
+        select.value = '__custom__';
+        customInput.classList.remove('hidden');
+        customInput.value = apiModel;
+      }
+
+      document.getElementById('api-key-modal').classList.remove('hidden');
+    }
+
+    function closeApiKeyModal() {
+      document.getElementById('api-key-modal').classList.add('hidden');
+    }
+
+    function toggleApiKeyVisibility() {
+      const input = document.getElementById('api-key-input');
+      const icon = document.getElementById('api-key-eye-icon');
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      icon.className = show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+    }
+
+    function handleModelSelectChange() {
+      const select = document.getElementById('api-model-select');
+      const customInput = document.getElementById('api-model-custom-input');
+      if (select.value === '__custom__') {
+        customInput.classList.remove('hidden');
+        customInput.focus();
+      } else {
+        customInput.classList.add('hidden');
+      }
+    }
+
+    function saveApiKey() {
+      apiKey = document.getElementById('api-key-input').value.trim();
+
+      const select = document.getElementById('api-model-select');
+      const customInput = document.getElementById('api-model-custom-input');
+      const chosenModel = select.value === '__custom__' ? customInput.value.trim() : select.value;
+      apiModel = chosenModel || DEFAULT_OPENROUTER_MODEL;
+
+      localStorage.setItem('openrouter_api_key', apiKey);
+      localStorage.setItem('openrouter_model', apiModel);
+
+      updateApiKeyIndicator();
+      closeApiKeyModal();
+      showToast(apiKey ? "OpenRouter API Key 已儲存！" : "API Key 已清除");
+    }
+
+    function updateApiKeyIndicator() {
+      const icon = document.getElementById('api-key-btn-icon');
+      const btn = document.getElementById('api-key-btn');
+      if (!icon || !btn) return;
+      if (apiKey) {
+        icon.className = 'fa-solid fa-key text-emerald-500';
+        btn.title = `OpenRouter API Key 已設定 (模型: ${apiModel})`;
+      } else {
+        icon.className = 'fa-solid fa-key text-amber-500';
+        btn.title = '設置 OpenRouter API 金鑰 (Bring Your Own Key)';
+      }
+    }
+
+    /* =========================================================================
+       STREAMING_CHUNK:Implementing Gemini API translation engine...
+       ========================================================================= */
+
+    async function executeTranslation() {
+      const sourceText = document.getElementById('wb-source-input').value.trim();
+      if (!sourceText) {
+        showToast("請先輸入需翻譯的原文內容", true);
+        return;
+      }
+
+      if (!apiKey) {
+        showToast("請先設置您的 OpenRouter API Key", true);
+        openApiKeyModal();
+        return;
+      }
+
+      const domain = document.getElementById('wb-domain').value;
+      const direction = document.getElementById('wb-direction').value;
+      const includeAudit = document.getElementById('chk-back-translate').checked;
+
+      // Show Loading Spinner
+      document.getElementById('wb-output-container').classList.add('hidden');
+      document.getElementById('wb-loading').classList.remove('hidden');
+      document.getElementById('wb-analysis-card').classList.add('hidden');
+
+      const systemPrompt = `You are Translation Craft (譯藝), a world-class Chinese-English bidirectional professional translator grounded in Yan Fu's "Faithfulness-Expressiveness-Elegance" (信達雅) translation theory framework.
+
+YOUR MANDATE:
+1. Adhere strictly to Faithfulness (信) > Expressiveness (達) > Elegance (雅).
+2. PARAGRAPHING & FORMATTING RULE (CRITICAL):
+   - You MUST STRICTLY preserve the original paragraphing, newline breaks, and line structures of the source text in your final translation.
+   - Do NOT merge separate paragraphs into a single dense block of text.
+3. Language preference:
+   - All Chinese explanations, labels, notes, and translations MUST strictly use Traditional Chinese (繁體中文).
+4. Domain rules:
+   - Academic: Formal register, passive voice/present-past tense rules, official terminology.
+   - Business: Polite, diplomatic, precise financial/strategic metrics.
+   - Technical: Preserve code/APIs, standard IT glossaries.
+   - Legal: Highest accuracy, 'shall/will' rules, capitalized defined terms.
+5. OUTPUT STRUCTURE REQUIREMENT:
+You MUST respond in valid JSON format adhering strictly to this schema:
+{
+  "domainIdentified": "Academic / Business / Technical / Legal / General",
+  "direction": "Chinese -> English" or "English -> Chinese",
+  "translation": "The polished final translation string preserving original paragraphing and newlines (\\n\\n)",
+  "terminologyTable": [
+    {"source": "term in source", "target": "translated term in Traditional Chinese or English", "note": "brief usage note in Traditional Chinese"}
+  ],
+  "faithfulnessScore": 100,
+  "expressivenessScore": 95,
+  "eleganceScore": 90,
+  "faithfulnessNotes": "Brief explanation of fidelity in Traditional Chinese",
+  "expressivenessNotes": "Brief explanation of fluency/word order adjustments in Traditional Chinese",
+  "eleganceNotes": "Brief explanation of style/register match in Traditional Chinese",
+  "backTranslation": "Back-translated sentence in Traditional Chinese to verify zero semantic drift"
+}`;
+
+      const userPrompt = `Translate the following input:
+Domain Preference: ${domain}
+Direction Preference: ${direction}
+Source Text:
+"""
+${sourceText}
+"""`;
+
+      try {
+        const resObj = await callOpenRouter(systemPrompt, userPrompt);
+        renderTranslationResult(resObj);
+        showToast("「信達雅」專業翻譯完成！");
+
+      } catch (err) {
+        console.error("Translation Error:", err);
+        showToast("翻譯過程發生錯誤: " + err.message, true);
+        document.getElementById('wb-loading').classList.add('hidden');
+        document.getElementById('wb-output-container').classList.remove('hidden');
+      }
+    }
+
+    /* =========================================================================
+       OPENROUTER API HELPERS (Bring Your Own Key)
+       OpenRouter exposes an OpenAI-compatible Chat Completions endpoint at
+       https://openrouter.ai/api/v1/chat/completions — the user's own key is
+       read from localStorage and sent as a Bearer token. Nothing is proxied
+       through any server owned by this app.
+       ========================================================================= */
+    const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+
+    async function callOpenRouter(systemPrompt, userPrompt) {
+      if (!apiKey) {
+        throw new Error("尚未設置 OpenRouter API Key，請點擊右上角「API Key」按鈕設定。");
+      }
+
+      const payload = {
+        model: apiModel || DEFAULT_OPENROUTER_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        response_format: { type: 'json_object' }
+      };
+
+      const response = await fetchWithRetry(OPENROUTER_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          // Optional but recommended by OpenRouter for attribution/rankings:
+          'HTTP-Referer': window.location.href,
+          'X-Title': 'Translation Craft'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error.message || `OpenRouter 錯誤 (${data.error.code || 'unknown'})`);
+      }
+
+      const rawText = data.choices?.[0]?.message?.content;
+      if (!rawText) {
+        throw new Error("模型無回應內容，請檢查輸入、金鑰額度或重試。");
+      }
+
+      return parseModelJson(rawText);
+    }
+
+    // Some models (especially free ones) wrap JSON in ```json fences or add
+    // stray text around it even when response_format is requested. Strip
+    // fences and extract the outermost {...} block before parsing.
+    function parseModelJson(rawText) {
+      let text = rawText.trim();
+      const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+      if (fenceMatch) {
+        text = fenceMatch[1].trim();
+      }
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        const first = text.indexOf('{');
+        const last = text.lastIndexOf('}');
+        if (first !== -1 && last !== -1 && last > first) {
+          return JSON.parse(text.slice(first, last + 1));
+        }
+        throw new Error("模型回傳格式無法解析為 JSON，請重試或更換模型。");
+      }
+    }
+
+    async function fetchWithRetry(url, options, retries = 3, backoff = 1000) {
+      let res;
+      try {
+        res = await fetch(url, options);
+      } catch (networkErr) {
+        // Network-level failure (offline, CORS, DNS, etc.) — worth retrying.
+        if (retries > 0) {
+          await new Promise(r => setTimeout(r, backoff));
+          return fetchWithRetry(url, options, retries - 1, backoff * 2);
+        }
+        throw new Error("網路連線失敗，請檢查您的網路狀態後重試。");
+      }
+
+      if (res.ok) return res;
+
+      // Retry only on rate limiting (429) or transient server errors (5xx).
+      const isRetryable = (res.status === 429 || res.status >= 500) && retries > 0;
+      if (isRetryable) {
+        await new Promise(r => setTimeout(r, backoff));
+        return fetchWithRetry(url, options, retries - 1, backoff * 2);
+      }
+
+      // Not retryable (or out of retries) — surface the clearest message we can.
+      let detail = `HTTP Error ${res.status}`;
+      try {
+        const errBody = await res.clone().json();
+        if (errBody?.error?.message) detail = errBody.error.message;
+      } catch (_) { /* response wasn't JSON, keep generic message */ }
+      if (res.status === 401) detail = "API Key 無效或已過期，請重新設置。";
+      if (res.status === 402) detail = "OpenRouter 帳戶額度不足，請至 openrouter.ai 儲值或更換免費模型。";
+      throw new Error(detail);
+    }
+
+    function renderTranslationResult(data) {
+      document.getElementById('wb-loading').classList.add('hidden');
+      const container = document.getElementById('wb-output-container');
+      container.classList.remove('hidden');
+
+      // Update header metadata badges directly in top header bar
+      const domainBadge = document.getElementById('output-meta-domain');
+      const dirBadge = document.getElementById('output-meta-dir');
+      if (domainBadge) {
+        domainBadge.innerText = data.domainIdentified || '通用';
+        domainBadge.classList.remove('hidden');
+      }
+      if (dirBadge) {
+        dirBadge.innerHTML = `<i class="fa-solid fa-right-left text-slate-400 mr-1"></i>${data.direction || 'Bidirectional'}`;
+        dirBadge.classList.remove('hidden');
+      }
+
+      let termTableHtml = '';
+      if (data.terminologyTable && data.terminologyTable.length > 0) {
+        termTableHtml = `
+          <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 flex items-center">
+              <i class="fa-solid fa-table-list text-indigo-500 mr-1.5"></i>關鍵對照術語表 (Key Terminology Reference)
+            </h4>
+            <div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">
+                  <tr>
+                    <th class="p-2">原文 (Source)</th>
+                    <th class="p-2">譯文 (Target)</th>
+                    <th class="p-2">領域說明 (Notes)</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                  ${data.terminologyTable.map(t => `
+                    <tr>
+                      <td class="p-2 font-medium text-slate-800 dark:text-slate-200">${t.source}</td>
+                      <td class="p-2 text-vermilion-600 dark:text-vermilion-400 font-medium">${t.target}</td>
+                      <td class="p-2 text-slate-500">${t.note || '-'}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="space-y-4">
+          <!-- Main Translation Result Text (Aligned to Source Baseline) -->
+          <div id="final-translation-text" class="text-base text-slate-900 dark:text-slate-100 font-serif leading-relaxed p-0 border-0 bg-transparent selection:bg-vermilion-100 dark:selection:bg-vermilion-900 whitespace-pre-wrap">${data.translation}</div>
+
+          ${termTableHtml}
+
+          ${data.backTranslation ? `
+            <div class="p-3 bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-200/60 dark:border-indigo-900/40 rounded-xl text-xs space-y-1">
+              <span class="font-bold text-indigo-700 dark:text-indigo-300 flex items-center">
+                <i class="fa-solid fa-rotate mr-1"></i>語義回譯對照 (Back-Translation Check):
+              </span>
+              <p class="text-slate-600 dark:text-slate-300 italic">「${data.backTranslation}」</p>
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      // Update 3-Tier Analysis Card
+      document.getElementById('score-faithfulness').innerText = `${data.faithfulnessScore || 100}%`;
+      document.getElementById('score-expressiveness').innerText = `${data.expressivenessScore || 95}%`;
+      document.getElementById('score-elegance').innerText = `${data.eleganceScore || 90}%`;
+
+      document.getElementById('desc-faithfulness').innerText = data.faithfulnessNotes || "事實、資料、邏輯忠實無誤。";
+      document.getElementById('desc-expressiveness').innerText = data.expressivenessNotes || "目標語表達流暢，語序自然。";
+      document.getElementById('desc-elegance').innerText = data.eleganceNotes || "符合領域文體語域要求。";
+
+      document.getElementById('wb-analysis-card').classList.remove('hidden');
+    }
+
+    function copyOutputText() {
+      const translationDiv = document.getElementById('final-translation-text');
+      if (!translationDiv) {
+        showToast("尚無可複製的譯文", true);
+        return;
+      }
+      const textToCopy = translationDiv.innerText.trim();
+      
+      // Fallback copy execution
+      const textarea = document.createElement('textarea');
+      textarea.value = textToCopy;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+
+      showToast("譯文已成功複製到剪貼板！");
+    }
+
+    /* =========================================================================
+       STREAMING_CHUNK:Implementing UI interactions, search filters, and copy handlers...
+       ========================================================================= */
+
+    /* TAB 2: Glossary Handlers */
+    function renderGlossary() {
+      const search = document.getElementById('glossary-search')?.value.toLowerCase() || "";
+      const tbody = document.getElementById('glossary-tbody');
+      tbody.innerHTML = "";
+
+      const filtered = GLOSSARY_DATA.filter(item => {
+        const matchesDomain = (currentGlossaryDomain === 'all' || item.domain === currentGlossaryDomain);
+        const matchesSearch = item.zh.toLowerCase().includes(search) || item.en.toLowerCase().includes(search) || item.context.toLowerCase().includes(search);
+        return matchesDomain && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400">未找到符合條件的術語</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors";
+        
+        let badgeColor = "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300";
+        if (item.domain === 'academic') badgeColor = "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300";
+        if (item.domain === 'business') badgeColor = "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300";
+        if (item.domain === 'technical') badgeColor = "bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300";
+        if (item.domain === 'legal') badgeColor = "bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300";
+
+        tr.innerHTML = `
+          <td class="py-3 px-4 sm:px-6 font-semibold text-slate-900 dark:text-white">${item.zh}</td>
+          <td class="py-3 px-4 sm:px-6 font-mono text-xs text-vermilion-600 dark:text-vermilion-400 font-medium">${item.en}</td>
+          <td class="py-3 px-4 sm:px-6"><span class="text-xs px-2.5 py-1 rounded-full font-medium ${badgeColor}">${item.domain.toUpperCase()}</span></td>
+          <td class="py-3 px-4 sm:px-6 text-slate-500 text-xs">${item.context}</td>
+          <td class="py-3 px-4 sm:px-6 text-right">
+            <button onclick="copyToClipboard('${item.zh} - ${item.en}')" class="text-xs text-slate-400 hover:text-indigo-500 p-1 rounded" title="複製對照">
+              <i class="fa-solid fa-copy"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function setGlossaryDomain(domain) {
+      currentGlossaryDomain = domain;
+      document.querySelectorAll('.glossary-domain-btn').forEach(btn => {
+        btn.classList.remove('active-g-btn', 'bg-slate-900', 'text-white', 'dark:bg-slate-100', 'dark:text-slate-900');
+        btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+      });
+      event.currentTarget.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+      event.currentTarget.classList.add('active-g-btn', 'bg-slate-900', 'text-white', 'dark:bg-slate-100', 'dark:text-slate-900');
+      renderGlossary();
+    }
+
+    function filterGlossary() {
+      renderGlossary();
+    }
+
+    /* TAB 3: Sentence Templates */
+    function renderTemplates() {
+      const domain = document.getElementById('template-domain').value;
+      const list = TEMPLATE_PATTERNS[domain] || [];
+      const container = document.getElementById('templates-container');
+      container.innerHTML = "";
+
+      list.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-white dark:bg-ink-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm hover:shadow-md transition-all space-y-2 flex flex-col justify-between";
+        card.innerHTML = `
+          <div class="space-y-1.5">
+            <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider">中文常見表達</div>
+            <div class="text-sm font-semibold text-slate-800 dark:text-slate-200">${item.zh}</div>
+            <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider pt-2">英文地道對應 (Expressiveness & Elegance)</div>
+            <div class="text-sm font-mono text-emerald-600 dark:text-emerald-400 leading-relaxed">${item.en}</div>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800/60 flex justify-end">
+            <button onclick="copyToClipboard('${item.en}')" class="text-xs text-slate-500 hover:text-emerald-600 flex items-center space-x-1">
+              <i class="fa-solid fa-copy"></i>
+              <span>複製英文範本</span>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* TAB 4: Audit & Back Translation */
+    function renderChecklist() {
+      const container = document.getElementById('checklist-items');
+      container.innerHTML = "";
+
+      CHECKLIST_ITEMS.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = "flex items-start space-x-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800";
+        div.innerHTML = `
+          <input type="checkbox" id="${item.id}" onchange="updateAuditBadge()" class="mt-1 rounded border-slate-300 text-amber-500 focus:ring-amber-500">
+          <div>
+            <label for="${item.id}" class="text-sm font-bold text-slate-800 dark:text-slate-200 cursor-pointer">${item.label}</label>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${item.desc}</p>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function updateAuditBadge() {
+      const checkedCount = document.querySelectorAll('#checklist-items input[type="checkbox"]:checked').length;
+      document.getElementById('audit-score-badge').innerText = `完成度: ${checkedCount} / ${CHECKLIST_ITEMS.length}`;
+      if (checkedCount === CHECKLIST_ITEMS.length) {
+        showToast("已完成全部 7 項質量核查！符合「信達雅」交付標準。");
+      }
+    }
+
+    async function executeBackTranslation() {
+      const targetText = document.getElementById('bt-target').value.trim();
+      const originalText = document.getElementById('bt-original').value.trim();
+
+      if (!targetText) {
+        showToast("請輸入待驗證的譯文", true);
+        return;
+      }
+
+      if (!apiKey) {
+        showToast("請先設置您的 OpenRouter API Key", true);
+        openApiKeyModal();
+        return;
+      }
+
+      const resBox = document.getElementById('bt-result');
+      resBox.classList.remove('hidden');
+      resBox.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i> 回譯驗證中...`;
+
+      const systemPrompt = `You are an expert back-translator used for translation quality assurance. Always respond with valid JSON only, matching the exact schema you are given.`;
+
+      const userPrompt = `Act as an expert back-translator. Back-translate this English/Chinese target text to the source language, and evaluate semantic consistency against the original source text.
+Target Text to back-translate: "${targetText}"
+Original Source Text: "${originalText || 'N/A'}"
+
+Return JSON:
+{
+  "backTranslatedText": "string",
+  "semanticDriftDetected": false,
+  "commentary": "Short critique"
+}`;
+
+      try {
+        const resObj = await callOpenRouter(systemPrompt, userPrompt);
+
+        resBox.innerHTML = `
+          <div class="font-bold text-slate-800 dark:text-slate-200">逆向回譯結果：</div>
+          <div class="text-indigo-600 dark:text-indigo-400 font-serif">「${resObj.backTranslatedText}」</div>
+          <div class="pt-1 text-slate-500">
+            <b>語義一致性判定：</b> ${resObj.semanticDriftDetected ? '⚠️ 存在語義偏離' : '✅ 語義高度一致'}<br/>
+            ${resObj.commentary}
+          </div>
+        `;
+      } catch (e) {
+        resBox.innerHTML = `<span class="text-red-500">回譯失敗: ${e.message}</span>`;
+      }
+    }
+
+    /* TAB 5: Render Pitfalls */
+    function renderPitfalls() {
+      const container = document.getElementById('pitfalls-grid');
+      container.innerHTML = "";
+
+      PITFALLS_DATA.forEach(p => {
+        const card = document.createElement('div');
+        card.className = "bg-white dark:bg-ink-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-vermilion-100 dark:bg-vermilion-900/50 text-vermilion-700 dark:text-vermilion-300">${p.type}</span>
+          </div>
+          <div class="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-2 rounded text-red-500 dark:text-red-400">
+            ❌ 誤區範例: ${p.example}
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            💡 <b>正確處理：</b> ${p.solution}
+          </p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* Helper Utilities */
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showToast("已複製到剪貼板！");
+    }
+  </script>
+</body>
+</html>
