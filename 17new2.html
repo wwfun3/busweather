@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>香港新盤自住置業深度比較研究報告——十七個住宅項目跨區通勤效率與綜合適用性評估（2026年8月）</title>
+    <style>
+        :root {
+            --ink: #1a2233;
+            --mut: #5a6478;
+            --acc: #0f4c81;
+            --acc2: #c8102e;
+            --bg: #f4f6f9;
+            --line: #d7dce4;
+            --ok: #0b7a4b;
+        }
+        * {
+            box-sizing: border-box
+        }
+        body {
+            margin: 0;
+            font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", -apple-system, "Segoe UI", sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            line-height: 1.85;
+            font-size: 16px
+        }
+        .wrap {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px
+        }
+        /* 封面 */
+        .cover {
+            background: linear-gradient(150deg, #0f2b4c 0%, #123f6e 55%, #0f4c81 100%);
+            color: #fff;
+            padding: 110px 30px 70px;
+            text-align: center;
+            border-radius: 0 0 28px 28px;
+            margin-bottom: 34px
+        }
+        .cover .kicker {
+            letter-spacing: 6px;
+            font-size: 13px;
+            opacity: .85;
+            margin-bottom: 22px
+        }
+        .cover h1 {
+            font-size: clamp(24px, 4.6vw, 42px);
+            line-height: 1.45;
+            margin: 0 0 18px;
+            font-weight: 700
+        }
+        .cover .sub {
+            font-size: clamp(14px, 2vw, 18px);
+            opacity: .92;
+            max-width: 760px;
+            margin: 0 auto 26px
+        }
+        .cover .meta {
+            font-size: 13px;
+            opacity: .8;
+            letter-spacing: 1px
+        }
+        .cover .pill {
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, .55);
+            border-radius: 999px;
+            padding: 6px 18px;
+            font-size: 13px;
+            margin-top: 20px
+        }
+        /* 目錄 */
+        nav.toc {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 26px 30px;
+            margin: 0 0 40px;
+            box-shadow: 0 2px 10px rgba(15, 35, 60, .05)
+        }
+        nav.toc h2 {
+            margin: 0 0 12px;
+            font-size: 20px;
+            color: var(--acc)
+        }
+        nav.toc ol {
+            padding-left: 24px;
+            margin: 0;
+            columns: 2;
+            column-gap: 44px;
+            list-style: decimal-leading-zero
+        }
+        nav.toc li {
+            margin: 4px 0;
+            break-inside: avoid
+        }
+        nav.toc a {
+            color: var(--ink);
+            text-decoration: none
+        }
+        nav.toc a:hover {
+            color: var(--acc);
+            text-decoration: underline
+        }
+        /* 章節 */
+        section {
+            margin: 0 0 46px
+        }
+        h2.sec {
+            font-size: 26px;
+            color: var(--acc);
+            border-bottom: 3px solid var(--acc);
+            padding-bottom: 8px;
+            margin: 0 0 8px;
+            scroll-margin-top: 20px
+        }
+        h3 {
+            font-size: 19px;
+            color: #143a63;
+            margin: 26px 0 8px
+        }
+        h4 {
+            font-size: 16px;
+            margin: 18px 0 6px;
+            color: #33415c
+        }
+        p {
+            margin: 10px 0;
+            text-align: justify
+        }
+        .lead {
+            font-size: 17px;
+            color: #333f55
+        }
+        ul,
+        ol {
+            margin: 8px 0 12px;
+            padding-left: 26px
+        }
+        li {
+            margin: 5px 0
+        }
+        /* 表格 */
+        .tbl-wrap {
+            overflow-x: auto;
+            margin: 14px 0 22px;
+            border-radius: 10px;
+            border: 1px solid var(--line)
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            font-size: 13.5px;
+            min-width: 640px
+        }
+        caption {
+            caption-side: top;
+            text-align: left;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--acc);
+            padding: 10px 12px;
+            background: #eef3f9;
+            border-bottom: 1px solid var(--line)
+        }
+        th {
+            background: #123f6e;
+            color: #fff;
+            padding: 8px 9px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap
+        }
+        td {
+            padding: 7px 9px;
+            border-top: 1px solid #e6eaf0;
+            vertical-align: top
+        }
+        tr:nth-child(even) td {
+            background: #f7f9fc
+        }
+        td.r,
+        th.r {
+            text-align: right
+        }
+        td.c,
+        th.c {
+            text-align: center
+        }
+        .num {
+            font-variant-numeric: tabular-nums
+        }
+        .rank1 {
+            background: #fff8e6 !important
+        }
+        .rank2 {
+            background: #f2f7ff !important
+        }
+        /* 重點框 */
+        .box {
+            background: #eef6ff;
+            border-left: 4px solid var(--acc);
+            padding: 14px 18px;
+            border-radius: 0 10px 10px 0;
+            margin: 16px 0
+        }
+        .box.warn {
+            background: #fff3f3;
+            border-left-color: var(--acc2)
+        }
+        .box.ok {
+            background: #ecf9f1;
+            border-left-color: var(--ok)
+        }
+        .note {
+            font-size: 13px;
+            color: var(--mut)
+        }
+        /* 參考文獻 */
+        .refs p {
+            margin: 0 0 12px;
+            padding-left: 36px;
+            text-indent: -36px;
+            font-size: 14px
+        }
+        /* 附註/頁腳 */
+        footer {
+            margin: 40px 0 30px;
+            font-size: 12.5px;
+            color: var(--mut);
+            border-top: 1px solid var(--line);
+            padding-top: 16px;
+            text-align: center
+        }
+        .tag {
+            display: inline-block;
+            background: #e5edf7;
+            color: #0f4c81;
+            border-radius: 6px;
+            padding: 1px 8px;
+            font-size: 12px;
+            margin-right: 6px
+        }
+        a {
+            color: var(--acc)
+        }
+        .toc-anchor {
+            display: block;
+            position: relative;
+            top: -10px
+        }
+        @media print {
+            body {
+                background: #fff
+            }
+            .cover {
+                background: #0f2b4c;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact
+            }
+            th {
+                background: #123f6e;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact
+            }
+            nav.toc {
+                page-break-after: always
+            }
+            section {
+                page-break-inside: auto
+            }
+            .tbl-wrap {
+                page-break-inside: avoid
+            }
+            /* 印刷時隱藏浮動按鈕 */
+            .back-toc-btn {
+                display: none !important;
+            }
+        }
+        @media (max-width:640px) {
+            body {
+                font-size: 15px
+            }
+            nav.toc ol {
+                columns: 1
+            }
+            .cover {
+                padding: 70px 18px 50px
+            }
+            h2.sec {
+                font-size: 22px
+            }
+            .back-toc-btn {
+                width: 50px !important;
+                height: 50px !important;
+                bottom: 20px !important;
+                right: 16px !important;
+                font-size: 20px !important;
+                border-radius: 50% !important;
+                padding: 0 !important;
+                box-shadow: 0 4px 16px rgba(15, 35, 60, .25) !important;
+            }
+            .back-toc-btn .btn-label {
+                display: none !important;
+            }
+            .back-toc-btn .btn-icon {
+                margin-right: 0 !important;
+            }
+        }
+
+        /* ===== 浮動「返回目錄」按鈕 ===== */
+        .back-toc-btn {
+            position: fixed;
+            bottom: 32px;
+            right: 28px;
+            z-index: 9999;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: var(--acc);
+            color: #fff;
+            border: none;
+            border-radius: 60px;
+            padding: 14px 24px 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            box-shadow: 0 6px 24px rgba(15, 76, 129, .35);
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            letter-spacing: 0.4px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .back-toc-btn:hover {
+            background: #0a3a66;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 32px rgba(15, 76, 129, .45);
+        }
+        .back-toc-btn:active {
+            transform: translateY(0px) scale(0.97);
+            box-shadow: 0 4px 16px rgba(15, 76, 129, .3);
+        }
+        .back-toc-btn .btn-icon {
+            font-size: 20px;
+            line-height: 1;
+            margin-right: 2px;
+            display: inline-block;
+        }
+        .back-toc-btn .btn-label {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        /* 在非常窄的畫面上仍保持可點擊 */
+        @media (max-width:420px) {
+            .back-toc-btn {
+                padding: 12px 16px 12px 14px;
+                font-size: 14px;
+                bottom: 16px;
+                right: 14px;
+            }
+            .back-toc-btn .btn-label {
+                font-size: 13px;
+            }
+            .back-toc-btn .btn-icon {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= 封面 ================= -->
+    <header class="cover">
+        <div class="kicker">地產研究系列 · 研究報告編號 R2026-081</div>
+        <h1>香港新盤自住置業深度比較研究報告<br>——十七個住宅項目之跨區通勤效率與綜合適用性評估</h1>
+        <p class="sub">以二人自住家庭（工作地點分別為港鐵大學站與紅磡站）為核心視角，就交通通勤、生活配套、發展商質素、開價與入伙、長遠保值五大維度，對十七個新落成或興建中住宅項目進行量化橫向對比</p>
+        <div class="meta">報告日期：2026 年 8 月 5 日　|　香港城市規劃與房屋經濟研究　|　APA 第七版（APA 7th）引用格式</div>
+        <div class="pill">全文約 13,800 字　·　數據擷取截至 2026 年 8 月 5 日</div>
+    </header>
+
+    <div class="wrap">
+
+        <!-- ================= 目錄 ================= -->
+        <nav class="toc" id="toc">
+            <h2>目錄（可點擊跳轉）</h2>
+            <ol>
+                <li><a href="#abstract">執行摘要</a></li>
+                <li><a href="#ch1">第一章　緒論與研究設計</a></li>
+                <li><a href="#ch2">第二章　核心住戶畫像與需求界定</a></li>
+                <li><a href="#ch3">第三章　交通與通勤效率分析（權重 40%）</a></li>
+                <li><a href="#ch4">第四章　生活配套與居住環境（權重 20%）</a></li>
+                <li><a href="#ch5">第五章　發展商品牌與物業質素（權重 15%）</a></li>
+                <li><a href="#ch6">第六章　入伙時間與開價溢價（權重 15%）</a></li>
+                <li><a href="#ch7">第七章　長遠保值與防守力（權重 10%）</a></li>
+                <li><a href="#ch8">第八章　綜合評分矩陣與排名</a></li>
+                <li><a href="#ch9">第九章　結論與置業建議</a></li>
+                <li><a href="#refs">參考文獻（References）</a></li>
+                <li><a href="#appx">附錄　數據來源、計算假設與限制</a></li>
+            </ol>
+        </nav>
+
+        <!-- ================= 執行摘要 ================= -->
+        <section id="abstract">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">執行摘要</h2>
+            <p class="lead">本報告以「兩人自住、兩房單位、預留添丁擴展」的住戶畫像為基準，系統評估十七個香港新落成或興建中的住宅項目對「港鐵大學站與紅磡站雙點通勤」的適用性。研究以港鐵官方車費矩陣（2024 年 6 月 30 日生效、2025/26 年度凍結）及 2026 年 7 至 8 月市場公開數據為基礎，建立門對門（Door-to-Door）通勤模型與 10 分制加權評分矩陣，權重依次為交通通勤（40%）、生活配套（20%）、發展商質素（15%）、入伙與開價（15%）、長遠保值（10%）。</p>
+            <p>核心發現可歸納為四點。<b>第一，東鐵線走廊項目具有結構性優勢。</b>大學站與紅磡站同處東鐵線，凡可步行直達東鐵線車站的項目（大學山、首岸、滶蘊），兩人平均門對門通勤可壓縮至 29–34 分鐘，遠優於需經多線轉乘的將軍澳（海瑅灣平均 73 分鐘）及屯馬線西段（芊御平均 74 分鐘）項目。</p>
+            <p><b>第二，綜合評分與預算呈強烈分層。</b>在滿分 10 分下，滶蘊（7.47 分）、首岸第 4 期（7.37 分）與大學山（7.34 分）居前三位，但滶蘊兩房入場折實價高達約 1,803 萬港元，非一般二人家庭可負擔；剔除預算約束後，首岸與大學山在「通勤、配套、質素、保值」四維度上最均衡。</p>
+            <p><b>第三，開價溢價差異顯著。</b>SIERRA SEA 2A/2B 期（兩房入場 455 萬港元、平均呎價約 11,000 元）與上然第三期（平均呎價 11,395 元）屬全港新盤低呎價梯隊，但兩者通勤效率分別僅 61 與 44 分鐘；反之港島南岸兩盤（DEEP WATER SOUTH、海盈山）通勤優越，惟兩房折實入場達 1,073 萬至 1,343 萬港元。</p>
+            <p><b>第四，數據透明度與不確定性。</b>PARK SILICON、叡璟第 1 期、滿‧意2期及原舍（兩房）截至報告日仍未公布正式價單，其入伙與開價維度僅能以已知資料及同區參考價作估計，讀者應以一手住宅物業銷售監管局（SRPA）最終公布的售樓說明書及價單為準。</p>
+            <p>本報告結論（詳見第九章）按三檔預算提出置業次序建議，並強調：以本住戶之雙點通勤結構，<b>「東鐵線直達」應為首要篩選條件，其次才是呎價與入伙時間</b>。</p>
+            <p>報告亦提醒讀者：香港樓市於 2026 年上半年呈「價穩量升」格局，發展商普遍以折讓價推盤搶客，惟 2026/27 年度港鐵票價存在約 1.45% 之延後加幅（香港經濟日報, 2025），通勤成本模型之車費欄位屬保守估計；讀者應用「加 2–3%」之敏感性思維審視每月交通開支。整體而言，本報告之評分與排名僅反映特定住戶畫像下的相對適用性，並非對十七個項目之絕對優劣判定。</p>
+        </section>
+
+        <!-- ================= 第一章 ================= -->
+        <section id="ch1">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">第一章　緒論與研究設計</h2>
+            <h3>1.1 研究背景與問題</h3>
+            <p>2024 年 2 月全面撤辣後，香港一手住宅市場成交量回升，2026 年上半年多個大型新盤以「低總價」策略搶攻上車客群（Centaline, 2026）。對具雙工作地點（沙田東鐵線大學站與九龍紅磡站）的二人家庭而言，住宅選擇必須同時滿足兩點：一人可快速往返中文大學／科學園一帶，另一人可快速往返紅磡；而 2022 年 5 月東鐵線過海段通車後，大學站與紅磡站已屬同一走廊，此一結構性事實大幅改變了選址邏輯（MTR Corporation, 2022）。</p>
+            <h3>1.2 研究對象</h3>
+            <p>本研究涵蓋委託方指定之十七個項目，其地理分布橫跨新界東北（古洞、上水、粉嶺、大埔）、新界西（錦田、愉景灣）、沙田西沙、將軍澳、九龍市區（紅磡、黃大仙、九龍塘、長沙灣、油麻地）及港島南（黃竹坑），樣本在鐵路走廊、樓花期、價格帶及發展商組合上均具高度異質性（表 1）。</p>
+            <div class="tbl-wrap"><table>
+                    <caption>表 1　研究對象一覽（17 個項目）</caption>
+                    <thead><tr><th>編號</th><th>項目</th><th>位置／地段</th><th>發展商</th><th>全盤伙數</th><th>狀態（2026-08-05）</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>海瑅灣 I</td><td>將軍澳康城路 1 號（日出康城 13 期）</td><td>信和、嘉里、嘉華、招商局置地、港鐵</td><td>1,266</td><td>樓花（關鍵日期 2027-06-30）</td></tr>
+                        <tr><td>2</td><td>海瑅灣 II</td><td>將軍澳康城路 1 號（13A 期）</td><td>同上</td><td>1,284</td><td>樓花（2027-06-30），2026-07 開價</td></tr>
+                        <tr><td>3</td><td>芊御（Garden Regency）</td><td>元朗錦田北映河路 1A 號</td><td>新鴻基地產</td><td>566</td><td>樓花（2027-05-17），2026-07 開價</td></tr>
+                        <tr><td>4</td><td>大學山（University Hill）</td><td>大埔白石角優景里 63 號</td><td>新鴻基地產</td><td>1,295（2A+2B）</td><td>現樓（2024-06 入伙）</td></tr>
+                        <tr><td>5</td><td>薈淳（CONNEXT）</td><td>黃大仙飛鳳街 33 號</td><td>宏安地產</td><td>195</td><td>已批滿意紙（2026-08 交樓）</td></tr>
+                        <tr><td>6</td><td>首岸 第4期（One Victoria Cove 4）</td><td>紅磡庇利街 1 號</td><td>恒基、希慎興業、帝國集團</td><td>264（第 4 期）</td><td>樓花（2027-08-31），2026-06 開售</td></tr>
+                        <tr><td>7</td><td>PARK SILICON</td><td>古洞北鄉梓路 23 號</td><td>會德豐地產</td><td>781</td><td>樓書已上載，未開價（擬 2026-08 推售）</td></tr>
+                        <tr><td>8</td><td>滿‧意2期（One Toscana 2）</td><td>愉景灣意濤徑 1 號</td><td>香港興業、中信泰富</td><td>170</td><td>已取入伙紙，未開價</td></tr>
+                        <tr><td>9</td><td>滶蘊（Pavilia Rosa）</td><td>九龍塘玫瑰街 23–34 號</td><td>新世界發展</td><td>109</td><td>樓花（2027-11-30），2026-06 開價</td></tr>
+                        <tr><td>10</td><td>雲向（Cloudview）</td><td>上水粉錦公路 663 號</td><td>永泰地產</td><td>765</td><td>樓花（2027-03-31），2026-03 開價</td></tr>
+                        <tr><td>11</td><td>SIERRA SEA 2A／2B 期</td><td>西沙海映路 8 號</td><td>新鴻基地產</td><td>2A：727；2B：775</td><td>2A 2026-09-30；2B 2027-02-16 入伙</td></tr>
+                        <tr><td>12</td><td>上然 第三期（Le Mont 3）</td><td>大埔馬窩路 19 號</td><td>萬科香港、青建國際</td><td>565</td><td>2026-07-31 已屆關鍵日期</td></tr>
+                        <tr><td>13</td><td>港島南岸第6期 DEEP WATER SOUTH</td><td>黃竹坑站上蓋</td><td>會德豐地產、港鐵</td><td>463（6A 期 MONT BLUE）</td><td>樓花（2027-05-31）</td></tr>
+                        <tr><td>14</td><td>港島南岸第4B期 海盈山（La Montagne）</td><td>黃竹坑香葉道 11 號</td><td>嘉里、信和、太古地產、港鐵</td><td>4B 期（兩房 75 伙首批）</td><td>現樓（2026-06 開價）</td></tr>
+                        <tr><td>15</td><td>柏瓏III（Grand Mayfair III）</td><td>元朗錦田錦河路 29 號（錦上路站上蓋）</td><td>信和、嘉華、中國海外、港鐵</td><td>680</td><td>樓花（2027-04），2025-10 開價</td></tr>
+                        <tr><td>16</td><td>叡璟 第1期（The Sterling）</td><td>長沙灣發祥街西 1 號</td><td>華潤置地（海外）</td><td>507（第 1 期）</td><td>2026-07 命名，預售審批中，未開價</td></tr>
+                        <tr><td>17</td><td>原舍（22 Square）</td><td>油麻地德昌里 22 號</td><td>東立地產</td><td>84</td><td>樓花（2028-04-28），2026-06 開價</td></tr>
+                    </tbody></table></div>
+            <p class="note">資料來源：一手住宅物業銷售監管局項目資料、中原地產及 House730 項目專頁、發展商新聞稿（擷取日期：2026 年 8 月 5 日）。</p>
+            <h3>1.3 研究方法</h3>
+            <p>本報告採用「量化模型＋文獻驗證」混合方法：(a) 通勤維度以港鐵官方車費矩陣及運輸署公共交通資料建立門對門時間模型（第三章）；(b) 其餘四個維度以公開銷售資料、發展商往績及政府規劃文件作結構化評分；(c) 最後以加權評分矩陣（Weighted Scoring Matrix）匯總，權重 40/20/15/15/10，並詳細列明評分標準（第八章）。所有售價、呎價及關鍵日期均註明來源與擷取日期，避免主觀臆測。</p>
+            <p>在資料可信度分級上，本報告將數據分為三級：<b>A 級（一手官方資料）</b>——售樓說明書、價單、銷售安排及成交紀錄冊（一手住宅物業銷售監管局資訊網）；<b>B 級（主流市場平台）</b>——中原地產、利嘉閣、美聯、28Hse、House730 之項目專頁及成交數據；<b>C 級（新聞及發展商新聞稿）</b>——本地報章與發展商公布。三級資料交叉比對後方納入本報告；對無法核實之單一來源數據，一律以「參考」標示。通勤時間之區間站點時距，則以港鐵營運資料及多個公開來源之平均車程交叉驗證，務求計算過程可複算（可追溯至表 2 之假設）。</p>
+        </section>
+
+        <!-- ================= 第二章 ================= -->
+        <section id="ch2">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">第二章　核心住戶畫像與需求界定</h2>
+            <p>研究基準住戶設定如下：<b>人數</b>二人（夫妻或伴侶，暫無子女），以自住為主導，不考慮即時投資回報；<b>單位</b>兩房間隔（兩房兩廳為基準），並要求單位具「添丁後空間擴展」彈性，即客飯廳面積足以日後劃分或至少保留一房作兒童房，實用面積以 400–550 平方呎為主流選項；<b>工作地點</b>住戶 A 位於港鐵東鐵線大學站一帶（中文大學／科學園），住戶 B 位於港鐵東鐵線與屯馬線交匯之紅磡站一帶；<b>通勤要求</b>每日往返，繁忙時段門對門時間、轉乘次數與月均交通開支為核心決策變數。</p>
+            <p>按香港按揭證券公司之按揭保險計劃及 2024 年全面撤辣後的按揭指引（香港金融管理局, 2024），三人或以下家庭於本地入息及資產審查下，樓價 1,000 萬港元以下物業最高可承造九成按揭。因此本報告按三檔預算分析：入門檔（兩房折實價 800 萬以下）、中檔（800 萬–1,500 萬）及高檔（1,500 萬以上），並於第六章計算首期、月供及所需家庭月入。</p>
+            <p>就「添丁擴展」需求，本報告以實用面積與開則兩個客觀指標衡量：<b>（一）面積門檻</b>——參考差餉物業估價署《香港物業報告》之家庭居住密度統計及市場慣例，兩房單位實用面積達 430 平方呎以上，客飯廳方能於日後劃分或擺放嬰兒床之餘仍保有基本起居空間；400 呎以下之「兩房」（如首岸 338–342 呎、薈淳 356 呎）屬「緊湊型兩房」，添丁後須以改動間隔（如拆書房）應對。<b>（二）開則彈性</b>——梗廚單位（滶蘊、部分 DEEP WATER SOUTH）較開放式廚房更易容納家庭生活；設儲物室或書房之單位（柏瓏III 兩房連儲物室）擴展彈性最高。本報告於評分時，將面積 430 呎以上且開則具彈性之兩房（如海瑅灣 II 445–602 呎、上然 470–475 呎梗廚）視為「可擴展型」，予以正面考量。</p>
+        </section>
+
+        <!-- ================= 第三章 ================= -->
+        <section id="ch3">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">第三章　交通與通勤效率分析（權重 40%）</h2>
+            <h3>3.1 模型假設與數據來源</h3>
+            <p>門對門時間定義為「離開住所大門至到達辦公室大門」的總時間，由五部分組成：住所步行至接駁點、候車、接駁交通工具乘車、港鐵乘車（含轉乘步行與候車）及目的地站至辦公室步行。全部計算假設載於表 2，來源包括港鐵官方車費矩陣（MTR Corporation, 2024）、運輸署《交通習慣調查》及 2025 年度交通數據（Transport Department, 2025）、以及巴士／小巴營辦商公開資料。</p>
+            <div class="tbl-wrap"><table>
+                    <caption>表 2　通勤模型核心假設（繁忙時段基準）</caption>
+                    <thead><tr><th>項目</th><th>假設值</th><th>依據</th></tr></thead>
+                    <tbody>
+                        <tr><td>步行速度</td><td>約 75 米／分鐘（4.5 km/h）</td><td>城市建成區步行速度文獻值</td></tr>
+                        <tr><td>港鐵候車（繁忙）</td><td>3 分鐘</td><td>東鐵線繁忙班次約 2–4 分鐘</td></tr>
+                        <tr><td>轉乘步行＋候車</td><td>每轉乘一次 3.5 分鐘（九龍塘 4 分鐘、金鐘 4 分鐘、太子 3 分鐘、調景嶺 4 分鐘）</td><td>各站換乘通道長度實測參考</td></tr>
+                        <tr><td>目的地步行</td><td>大學站 8 分鐘；紅磡站 6 分鐘</td><td>中大校園／紅磡寫字樓一般距離</td></tr>
+                        <tr><td>住宅至車站步行</td><td>按項目實測距離估計（4–12 分鐘）</td><td>各項目售樓說明書及地圖量度</td></tr>
+                        <tr><td>接駁巴士／小巴</td><td>乘車＋候車 10–21 分鐘不等</td><td>營辦商行車時間（287、582、807K、20S 等）</td></tr>
+                        <tr><td>車費</td><td>成人八達通，2024-06-30 生效車費表（2025/26 年度凍結）</td><td>MTR Corporation (2024)</td></tr>
+                        <tr><td>每月通勤日數</td><td>22 日；每人每日兩程（來回）</td><td>標準五天工作制</td></tr>
+                        <tr><td>非繁忙時段</td><td>繁忙時段時間 ×0.85（候車與轉乘縮短）</td><td>本報告敏感性假設</td></tr>
+                    </tbody></table></div>
+            <h3>3.2 車費基準</h3>
+            <p>表 3 列出與本住戶直接相關的港鐵成人八達通車費。東鐵線大學站與紅磡站之間單程僅 8.2 港元，屬全港「同走廊」通勤的低成本組合；而涉及跨線轉乘的組合（如康城、錦上路）單程可達 12–21 港元，愉景灣更須疊加約 46 港元的渡輪費。</p>
+            <div class="tbl-wrap"><table>
+                    <caption>表 3　關鍵車費基準（成人八達通，港元／程）</caption>
+                    <thead><tr><th>車程</th><th class="r">車費</th><th>車程</th><th class="r">車費</th></tr></thead>
+                    <tbody>
+                        <tr><td>大學 ↔ 紅磡（東鐵線）</td><td class="r num">8.2</td><td>錦上路 ↔ 紅磡（屯馬線）</td><td class="r num">21.0</td></tr>
+                        <tr><td>大埔墟 ↔ 大學</td><td class="r num">4.6</td><td>錦上路 ↔ 大學（經大圍／紅磡）</td><td class="r num">21.4</td></tr>
+                        <tr><td>大埔墟 ↔ 紅磡</td><td class="r num">10.0</td><td>康城 ↔ 紅磡</td><td class="r num">12.1</td></tr>
+                        <tr><td>上水 ↔ 大學</td><td class="r num">6.5</td><td>康城 ↔ 大學</td><td class="r num">15.2</td></tr>
+                        <tr><td>上水 ↔ 紅磡</td><td class="r num">11.2</td><td>黃竹坑 ↔ 紅磡（經金鐘）</td><td class="r num">14.8</td></tr>
+                        <tr><td>黃大仙 ↔ 紅磡（經九龍塘）</td><td class="r num">5.9</td><td>黃竹坑 ↔ 大學（經金鐘）</td><td class="r num">20.9</td></tr>
+                        <tr><td>黃大仙 ↔ 大學</td><td class="r num">9.8</td><td>九龍塘 ↔ 大學</td><td class="r num">8.0</td></tr>
+                        <tr><td>油麻地 ↔ 紅磡</td><td class="r num">5.9</td><td>九龍塘 ↔ 紅磡</td><td class="r num">4.0</td></tr>
+                        <tr><td>油麻地 ↔ 大學</td><td class="r num">10.8</td><td>長沙灣 ↔ 大學</td><td class="r num">10.8</td></tr>
+                        <tr><td>烏溪沙 ↔ 紅磡（屯馬線）</td><td class="r num">11.5</td><td>長沙灣 ↔ 紅磡</td><td class="r num">7.1</td></tr>
+                    </tbody></table></div>
+            <p class="note">註：車費自港鐵官方車費矩陣提取（MTR Corporation, 2024）；2025/26 年度港鐵凍結票價（香港經濟日報, 2025），故 2024 車費表仍為現行有效；2026/27 年度或有約 1.45% 延後加幅，本報告於成本表另列敏感性提示。</p>
+            <p>須強調的是，轉乘次數除反映在時間與車費外，還隱含三項自住成本：<b>（一）雨天與搬運</b>——帶同嬰兒車、購物袋或行李時，每多一次轉乘即多一次上落與月台換乘，體力成本以非線性上升；<b>（二）脫班風險疊加</b>——每次轉乘均受前一班車延誤影響，兩次轉乘之準點率約為單程直達之平方關係；<b>（三）月台安全</b>——繁忙時段轉乘須於人潮中穿行。本報告因此將「零轉乘直達」視為通勤維度之重要加分項，此與香港房屋署及運輸署近年「最後一公里」政策方向一致（Transport Department, 2025）。</p>
+            <h3>3.3 門對門通勤模型總表</h3>
+            <p>表 4 為本報告核心成果：十七個項目分別前往大學站與紅磡站的繁忙時段門對門時間、轉乘次數、交通工具組合及每月交通成本。所有時間均按表 2 假設計算。</p>
+            <div class="tbl-wrap"><table>
+                    <caption>表 4　十七項目門對門通勤模型（繁忙時段，分鐘）</caption>
+                    <thead><tr><th>項目</th><th>主要交通組合</th><th class="r">往大學</th><th class="r">往紅磡</th><th class="r">平均</th><th class="c">轉乘（大/紅）</th><th class="r">月交通費（港元）</th></tr></thead>
+                    <tbody>
+                        <tr><td>海瑅灣 I／II</td><td>康城站 → 將軍澳線 → 調景嶺轉觀塘線 → 九龍塘轉東鐵線</td><td class="r num">79</td><td class="r num">67</td><td class="r num">73</td><td class="c">2 / 2</td><td class="r num">1,201</td></tr>
+                        <tr><td>芊御</td><td>小巴 → 錦上路站 → 屯馬線 → 紅磡轉東鐵線（往大學）</td><td class="r num">91</td><td class="r num">58</td><td class="r num">74</td><td class="c">2 / 1</td><td class="r num">2,438</td></tr>
+                        <tr class="rank2"><td>大學山（University Hill）</td><td>步行 → 大學站 → 東鐵線（直達兩地）</td><td class="r num">23</td><td class="r num">45</td><td class="r num">34</td><td class="c">0 / 0</td><td class="r num">361</td></tr>
+                        <tr><td>薈淳（CONNEXT）</td><td>黃大仙站 → 觀塘線 → 九龍塘轉東鐵線</td><td class="r num">42</td><td class="r num">30</td><td class="r num">36</td><td class="c">1 / 1</td><td class="r num">691</td></tr>
+                        <tr class="rank2"><td>首岸 第4期</td><td>步行 → 紅磡站（B 直達；A 轉東鐵線）</td><td class="r num">47</td><td class="r num">21</td><td class="r num">34</td><td class="c">0 / 0</td><td class="r num">361</td></tr>
+                        <tr><td>PARK SILICON</td><td>巴士/小巴 → 上水站 → 東鐵線（古洞站 2027 年啟用）</td><td class="r num">52</td><td class="r num">74</td><td class="r num">63</td><td class="c">0 / 0</td><td class="r num">1,395</td></tr>
+                        <tr><td>滿‧意2期（One Toscana 2）</td><td>愉景灣渡輪 → 中環 → 東鐵線</td><td class="r num">126</td><td class="r num">102</td><td class="r num">114</td><td class="c">1 / 1</td><td class="r num">5,412</td></tr>
+                        <tr class="rank2"><td>滶蘊（Pavilia Rosa）</td><td>步行 → 九龍塘站 → 東鐵線（直達兩地）</td><td class="r num">35</td><td class="r num">23</td><td class="r num">29</td><td class="c">0 / 0</td><td class="r num">528</td></tr>
+                        <tr><td>雲向（Cloudview）</td><td>巴士/小巴 → 上水站 → 東鐵線</td><td class="r num">45</td><td class="r num">67</td><td class="r num">56</td><td class="c">0 / 0</td><td class="r num">1,263</td></tr>
+                        <tr><td>SIERRA SEA 2A／2B 期</td><td>城巴 582／九巴 287 → 大學站 → 東鐵線</td><td class="r num">50</td><td class="r num">72</td><td class="r num">61</td><td class="c">0 / 0</td><td class="r num">1,153</td></tr>
+                        <tr><td>上然 第三期（Le Mont 3）</td><td>20S 小巴 → 大埔墟站 → 東鐵線</td><td class="r num">33</td><td class="r num">55</td><td class="r num">44</td><td class="c">0 / 0</td><td class="r num">1,082</td></tr>
+                        <tr><td>港島南岸第6期 DEEP WATER SOUTH</td><td>黃竹坑站 → 南港島線 → 金鐘轉東鐵線</td><td class="r num">60</td><td class="r num">36</td><td class="r num">48</td><td class="c">1 / 1</td><td class="r num">1,571</td></tr>
+                        <tr><td>港島南岸第4B期 海盈山</td><td>黃竹坑站 → 南港島線 → 金鐘轉東鐵線</td><td class="r num">60</td><td class="r num">36</td><td class="r num">48</td><td class="c">1 / 1</td><td class="r num">1,571</td></tr>
+                        <tr><td>柏瓏III（Grand Mayfair III）</td><td>錦上路站 → 屯馬線 → 紅磡轉東鐵線（往大學）</td><td class="r num">70</td><td class="r num">36</td><td class="r num">53</td><td class="c">1 / 0</td><td class="r num">1,866</td></tr>
+                        <tr><td>叡璟 第1期（The Sterling）</td><td>長沙灣站 → 荃灣線 → 太子轉觀塘線 → 九龍塘轉東鐵線</td><td class="r num">57</td><td class="r num">45</td><td class="r num">51</td><td class="c">2 / 2</td><td class="r num">788</td></tr>
+                        <tr><td>原舍（22 Square）</td><td>油麻地站 → 觀塘線 → 九龍塘轉東鐵線（往大學）；何文田轉屯馬線（往紅磡）</td><td class="r num">48</td><td class="r num">26</td><td class="r num">38</td><td class="c">1 / 1</td><td class="r num">735</td></tr>
+                    </tbody></table></div>
+            <p class="note">註：月交通費＝22 日×2 程×（A 往大學車費＋B 往紅磡車費）＋接駁交通費；「0 轉乘」指不須轉線直達（首岸 B 住戶步行上班，車費計 0）。</p>
+            <h3>3.4 繁忙與非繁忙時段比較</h3>
+            <p>表 5 顯示非繁忙時段（候車及轉乘縮短約 15%）下各項目平均門對門時間。東鐵線直達類項目因候車比例低，時段差異僅約 4–6 分鐘；多轉乘項目（海瑅灣、叡璟）差異可達 8–12 分鐘，反映其通勤對班次接駁的敏感度較高。</p>
+            <div class="tbl-wrap"><table>
+                    <caption>表 5　繁忙／非繁忙時段平均門對門時間比較（分鐘）</caption>
+                    <thead><tr><th>項目</th><th class="r">繁忙平均</th><th class="r">非繁忙平均</th><th class="r">時段差異</th></tr></thead>
+                    <tbody>
+                        <tr><td>滶蘊</td><td class="r num">29</td><td class="r num">25</td><td class="r num">4</td></tr>
+                        <tr><td>大學山</td><td class="r num">34</td><td class="r num">29</td><td class="r num">5</td></tr>
+                        <tr><td>首岸 第4期</td><td class="r num">34</td><td class="r num">29</td><td class="r num">5</td></tr>
+                        <tr><td>薈淳</td><td class="r num">36</td><td class="r num">31</td><td class="r num">5</td></tr>
+                        <tr><td>原舍</td><td class="r num">38</td><td class="r num">32</td><td class="r num">6</td></tr>
+                        <tr><td>上然 第三期</td><td class="r num">44</td><td class="r num">38</td><td class="r num">6</td></tr>
+                        <tr><td>港島南岸兩盤（DWS／海盈山）</td><td class="r num">48</td><td class="r num">41</td><td class="r num">7</td></tr>
+                        <tr><td>叡璟 第1期</td><td class="r num">51</td><td class="r num">43</td><td class="r num">8</td></tr>
+                        <tr><td>柏瓏III</td><td class="r num">53</td><td class="r num">45</td><td class="r num">8</td></tr>
+                        <tr><td>雲向</td><td class="r num">56</td><td class="r num">48</td><td class="r num">8</td></tr>
+                        <tr><td>SIERRA SEA 2A／2B</td><td class="r num">61</td><td class="r num">52</td><td class="r num">9</td></tr>
+                        <tr><td>PARK SILICON</td><td class="r num">63</td><td class="r num">54</td><td class="r num">9</td></tr>
+                        <tr><td>海瑅灣 I／II</td><td class="r num">73</td><td class="r num">62</td><td class="r num">11</td></tr>
+                        <tr><td>芊御</td><td class="r num">74</td><td class="r num">63</td><td class="r num">11</td></tr>
+                        <tr><td>滿‧意2期</td><td class="r num">114</td><td class="r num">97</td><td class="r num">17</td></tr>
+                    </tbody></table></div>
+            <h3>3.5 分區通勤解讀</h3>
+            <p><b>（一）東鐵線步行直達類（最優）：</b>大學山、滶蘊、首岸三盤，住戶 B 可於 21–45 分鐘內抵達紅磡，住戶 A 於 23–47 分鐘內抵達大學；三人平均通勤均低於 35 分鐘，且零轉乘的可靠性最高。其中首岸更可讓住戶 B 直接步行上班，月交通費壓至約 361 港元。</p>
+            <p><b>（二）東鐵線接駁類（良好）：</b>上然（大埔墟站）、雲向與 PARK SILICON（上水站）須小巴／巴士接駁 10–21 分鐘；上然往大學僅 33 分鐘，屬高性價比；PARK SILICON 於 2027 年古洞站啟用後，接駁時間將由約 15 分鐘大幅縮至步行 2 分鐘（Wikipedia, 2026）。</p>
+            <p><b>（三）需轉乘類（中等）：</b>黃竹坑兩盤（金鐘轉東鐵）、原舍（九龍塘轉東鐵）、柏瓏III（紅磡轉東鐵）單向轉乘 1 次，平均 38–53 分鐘，可接受但敏感於班次。海瑅灣與叡璟須轉乘 2 次，平均 51–73 分鐘，通勤疲勞度明顯。</p>
+            <p><b>（四）通勤劣勢類：</b>芊御（錦上路接駁＋屯馬線長途）平均 74 分鐘；滿‧意2期受渡輪班次制約，平均 114 分鐘，兩者均不適合每日雙點通勤的二人家庭。</p>
+            <div class="box ok"><p><b>小結：</b>按權重 40% 的交通維度，首岸、大學山與滶蘊顯著領先；上然、薈淳、原舍次之。愉景灣（滿‧意2期）與錦田（芊御）在本住戶通勤結構下屬「先天不匹配」選項。</p></div>
+            <h3>3.6 可靠性與備選路線</h3>
+            <p>除時間外，通勤「可靠性」同樣影響自住體驗，本報告以三項指標評估：<b>（一）班次密度</b>——東鐵線繁忙時段約 2–3 分鐘一班，屯馬線約 3–4 分鐘，將軍澳線康城支線約 5–7 分鐘，接駁巴士約 10–20 分鐘一班；班次愈疏，脫班風險對總時間之放大效應愈大（Transport Department, 2025）。<b>（二）備選路線</b>——首岸、滶蘊、大學山於東鐵線故障時可改經巴士（過海 104、170 等）或屯馬線繞行，替代性高；愉景灣依賴單一渡輪與 DB 巴士，屬低替代性，一旦海況或班次異常即無後備。<b>（三）高峰期擠迫</b>——東鐵線北段（上水至大圍）及康城支線繁忙時段載客率偏高，PARK SILICON、雲向、海瑅灣住戶須預留額外候車緩衝。</p>
+            <p>此外，部分項目存在具競爭力之備選組合，本報告以「主路線」為準、「備選」為參考：海瑅灣可於調景嶺改乘觀塘線往油塘轉東鐵（時間相若）；柏瓏III 往大學可經大圍轉乘（較經紅磡約慢 10 分鐘）；SIERRA SEA 往紅磡亦可乘 807S 小巴至烏溪沙站轉屯馬線直達（與經大學站總時間相若，惟車費較高）。綜合而言，本報告之時間估算誤差約 ±10%，繁忙時段應以「上限值＋5 分鐘」規劃出門時間。</p>
+        </section>
+
+        <!-- ================= 第四章 ================= -->
+        <section id="ch4">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">第四章　生活配套與居住環境（權重 20%）</h2>
+            <p>本章評估各項目 5–10 分鐘步行範圍內之民生商舖、大型商場、食肆、綠化率、康體設施及社區成熟度。評分標準（0–10 分）：步行民生配套（5 分）、綠化與康體（2 分）、社區成熟度與步行可達性（3 分），得分見表 6。</p>
+            <div class="tbl-wrap"><table>
+                    <caption>表 6　生活配套與居住環境評分（10 分制）</caption>
+                    <thead><tr><th>項目</th><th class="r">民生配套</th><th class="r">綠化康體</th><th class="r">成熟度</th><th class="r">總分</th><th>關鍵配套說明</th></tr></thead>
+                    <tbody>
+                        <tr><td>海瑅灣 I／II</td><td class="r num">4.5</td><td class="r num">2.0</td><td class="r num">2.0</td><td class="r num">8.5</td><td>康城站上蓋 The LOHAS 商場約 48 萬呎、海濱長廊；社區成熟但距市區較遠</td></tr>
+                        <tr><td>芊御</td><td class="r num">2.5</td><td class="r num">2.0</td><td class="r num">1.5</td><td class="r num">6.0</td><td>爾巒商場步行數分鐘；大型購物須往元朗 YOHO MALL</td></tr>
+                        <tr><td>大學山</td><td class="r num">3.5</td><td class="r num">2.0</td><td class="r num">1.5</td><td class="r num">7.0</td><td>Silicon Lane 商場 23 間商舖、白石角海濱長廊、科學園餐飲；大型商場靠沙田/大埔</td></tr>
+                        <tr><td>薈淳</td><td class="r num">4.5</td><td class="r num">1.5</td><td class="r num">2.5</td><td class="r num">8.5</td><td>黃大仙中心、樂富廣場、竹園邨民生街市，配套極成熟</td></tr>
+                        <tr><td>首岸 第4期</td><td class="r num">4.5</td><td class="r num">1.5</td><td class="r num">2.5</td><td class="r num">8.5</td><td>紅磡成熟市區、黃埔天地、紅磡廣場；基座 12 萬呎商場、海濱長廊</td></tr>
+                        <tr><td>PARK SILICON</td><td class="r num">1.5</td><td class="r num">1.5</td><td class="r num">1.0</td><td class="r num">4.0</td><td>古洞北新區配套未成形，倚賴粉嶺/上水；勝在規劃綠化與未來都會公園</td></tr>
+                        <tr><td>滿‧意2期</td><td class="r num">3.0</td><td class="r num">2.5</td><td class="r num">2.5</td><td class="r num">8.0</td><td>愉景灣自成一隅：愉景廣場、海灘、高爾夫球場、中央公園 Park Toscana；購物選擇有限</td></tr>
+                        <tr><td>滶蘊</td><td class="r num">3.5</td><td class="r num">2.5</td><td class="r num">2.0</td><td class="r num">8.0</td><td>九龍塘低密度豪宅區、又一城大型商場（步行約 10 分鐘）、綠化極佳、名校林立</td></tr>
+                        <tr><td>雲向</td><td class="r num">2.5</td><td class="r num">1.5</td><td class="r num">2.0</td><td class="r num">6.0</td><td>上水/粉嶺民生配套、北區醫院對面；大型商場（上水廣場）須接駁</td></tr>
+                        <tr><td>SIERRA SEA 2A／2B</td><td class="r num">3.5</td><td class="r num">2.0</td><td class="r num">2.0</td><td class="r num">7.5</td><td>GO PARK 全新社區（商場＋運動設施）、西沙灣交通交匯處；馬鞍山新港城車程約 10 分鐘</td></tr>
+                        <tr><td>上然 第三期</td><td class="r num">3.5</td><td class="r num">2.0</td><td class="r num">2.0</td><td class="r num">7.5</td><td>大埔墟街市、新達廣場（20S 小巴約 5 分鐘）、大埔海濱公園、運頭角遊樂場</td></tr>
+                        <tr><td>DEEP WATER SOUTH</td><td class="r num">4.5</td><td class="r num">2.0</td><td class="r num">2.0</td><td class="r num">8.5</td><td>The Southside 商場約 51 萬呎（黃竹坑站上蓋）、海洋公園、南區康體</td></tr>
+                        <tr><td>海盈山 4B</td><td class="r num">4.5</td><td class="r num">2.0</td><td class="r num">2.0</td><td class="r num">8.5</td><td>同上（The Southside 商場、黃竹坑商貿區）</td></tr>
+                        <tr><td>柏瓏III</td><td class="r num">2.5</td><td class="r num">1.5</td><td class="r num">2.5</td><td class="r num">6.5</td><td>錦上路站上蓋、一期基座商業漸成形；錦上路站二期大型商業（規劃中）</td></tr>
+                        <tr><td>叡璟 第1期</td><td class="r num">4.5</td><td class="r num">1.5</td><td class="r num">2.0</td><td class="r num">8.0</td><td>長沙灣/深水埗成熟民生、西九龍中心、南昌 V Walk；舊區密度較高</td></tr>
+                        <tr><td>原舍</td><td class="r num">5.0</td><td class="r num">0.5</td><td class="r num">2.5</td><td class="r num">8.0</td><td>油麻地市中心：彌敦道、廟街、朗豪坊；購物飲食極便利但綠化空間少</td></tr>
+                    </tbody></table></div>
+            <p>就本住戶而言，生活配套的重要性次於通勤：二人家庭傾向在通勤可接受範圍內優先考慮配套成熟度。薈淳、首岸、海瑅灣、黃竹坑兩盤及原舍的 5–10 分鐘步行配套最完整；愉景灣與西沙屬「自足型新社區」，便利但依賴社區內設施。九龍塘（滶蘊）以低密度與名校網見長，屬「以環境換便利」的選項（香港教育局, 2026）。</p>
+            <p>校網方面，本住戶雖暫無學齡子女，但添丁後之校網需求將即時浮現：首岸（35 校網、九龍城中學網）與滶蘊（41 校網，涵蓋喇沙、瑪利諾等傳統名校）屬市區名校網；大學山與上然屬大埔區（84 校網），芊御、柏瓏III 屬元朗區（74 校網）；愉景灣另有國際學校配套（英基智新書院等）。校網屬「隱性資產」，對轉售客群及防守力有實質影響，本報告於評分時以「名校網」及「校網穩定性」作正面修正（香港教育局, 2026）。</p>
+            <p>值得進一步比較的是「大型商場步行可達性」此一自住家庭的關鍵日常變數。以步行 10 分鐘內是否有逾 20 萬呎綜合商場為基準：首岸毗鄰紅磡海濱及黃埔天地（車程 5 分鐘）、薈淳旁為黃大仙中心及樂富廣場、DEEP WATER SOUTH 與海盈山基座即為約 51 萬呎的 The Southside、原舍鄰近朗豪坊及尖沙咀商圈，均屬「商場步行級」；滶蘊須步行約 10–12 分鐘至又一城；大學山僅有 Silicon Lane 約 2.3 萬呎社區商場（23 間商舖），大型購物須乘東鐵線至沙田新城市廣場或大埔超級城；SIERRA SEA、芊御、柏瓏III、PARK SILICON 則須乘車前往新港城、YOHO MALL、形點或上水廣場。對計劃添丁之二人家庭，嬰兒用品、超市補給及假日消遣之便利度會隨子女出生而顯著上升，此維度之重要性不應被低估。</p>
+        </section>
+
+        <!-- ================= 第五章 ================= -->
+        <section id="ch5">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">第五章　發展商品牌與物業質素（權重 15%）</h2>
+            <p>本章綜合發展商往績（交樓口碑、驗樓表現）、會所及用料規格、管理公司與預期管理費水平。評分（0–10 分）見表 7。</p>
+            <div class="tbl-wrap"><table>
+                    <caption>表 7　發展商品牌與物業質素評分（10 分制）</caption>
+                    <thead><tr><th>項目</th><th class="r">總分</th><th>依據</th></tr></thead>
+                    <tbody>
+                        <tr><td>滶蘊（新世界）</td><td class="r num">9.0</td><td>Pavilia Collection 頂級系列、用料與會所規格屬集團標桿；玫瑰街低密度豪宅地段</td></tr>
+                        <tr><td>海瑅灣（信和系合組）</td><td class="r num">8.5</td><td>信和/嘉里/嘉華/招商/港鐵合組，康城壓軸臨海項目，會所 CLUB MIR 約 8.3 萬呎</td></tr>
+                        <tr><td>芊御（新地）</td><td class="r num">8.5</td><td>新地啟勝管理、低地積比 1.43、會所園林逾 10 萬呎、48 項設施；交樓口碑穩</td></tr>
+                        <tr><td>大學山（新地）</td><td class="r num">8.5</td><td>新地帝譽服務、雙子式會所逾 17 萬呎、40 餘項設施；管理費約 4.8 元/呎（2024）</td></tr>
+                        <tr><td>SIERRA SEA（新地）</td><td class="r num">8.5</td><td>新地大型綜合項目、GO PARK 配套、歷來最大單一補地價項目（約 196 億元）</td></tr>
+                        <tr><td>DEEP WATER SOUTH（會德豐/港鐵）</td><td class="r num">8.5</td><td>會德豐＋港鐵上蓋、MONT BLUE 無邊際泳池等會所、The Southside 基座商場</td></tr>
+                        <tr><td>海盈山（嘉里/信和/太古/港鐵）</td><td class="r num">8.5</td><td>嘉里＋太古現樓項目，4A 期呎價破頂（40,375 元）反映市場對其品質之認受</td></tr>
+                        <tr><td>首岸（恒基/希慎/帝國）</td><td class="r num">8.0</td><td>恒基偉邦物業管理、大型海濱項目、市建局東維港灣區門廊地段</td></tr>
+                        <tr><td>PARK SILICON（會德豐）</td><td class="r num">8.0</td><td>會德豐品牌、古洞北首個私樓、國際創科新城概念（參考 Silicon Hill 驗樓表現良好）</td></tr>
+                        <tr><td>滿‧意2期（香港興業/中信泰富）</td><td class="r num">8.0</td><td>香港興業 40 年愉景灣營運經驗、物業管理成熟、低密度意式度假風</td></tr>
+                        <tr><td>柏瓏III（信和/嘉華/中海外/港鐵）</td><td class="r num">8.0</td><td>鐵路上蓋、信和牽頭合組；一、二期曾錄撻訂潮，但屬市況因素而非品質問題</td></tr>
+                        <tr><td>叡璟（華潤置地海外）</td><td class="r num">8.0</td><td>央企品牌、近年最大宗補地價之一（約 137 億元）、啟德澐璟同系口碑</td></tr>
+                        <tr><td>雲向（永泰）</td><td class="r num">7.0</td><td>永泰屬穩健中型發展商、金門建築承建；項目規模單幢 765 伙</td></tr>
+                        <tr><td>上然（萬科/青建）</td><td class="r num">7.0</td><td>內房品牌、協興承建、首批以低價散貨；交樓紀錄中等</td></tr>
+                        <tr><td>薈淳（宏安）</td><td class="r num">6.5</td><td>宏安屬中小型發展商，精品單幢＋「學舍」傢俬概念；社區管理規模有限</td></tr>
+                        <tr><td>原舍（東立地產）</td><td class="r num">6.0</td><td>小型發展商首個大型住宅項目，送傢俬套餐；管理質素未經市場長期驗證</td></tr>
+                    </tbody></table></div>
+            <p>發展商質素維度應與「管理費水平」一併考慮：新地系（大學山、芊御、SIERRA SEA）及信和系項目會所規模大，管理費普遍約 4.5–5.5 元/呎；單幢精品（薈淳、原舍）管理費雖相對高（預期約 5–6 元/呎），但設施維護簡單。以本住戶二人家庭而言，會所規模的邊際效用有限，更應關注管理公司的維修回應與公共空間保養（Centaline, 2026）。</p>
+            <p>就「交樓品質實證」而言，市場上已有若干可參考的驗樓紀錄：新地於白石角之 Silicon Hill 與 University Hill 系列，網媒驗樓報告普遍評價用料中上、交樓細節到位，惟部分單位存在減音窗與窗台滲水之零星投訴；會德豐旗下康城及啟德項目之驗樓表現穩定；恒基紅磡系（如啟岸）之工藝口碑良好。反之，中小型發展商項目（薈淳、原舍）交樓紀錄樣本較少，建議準買家於入伙前委託第三方驗樓。管理費方面，海盈山及 DEEP WATER SOUTH 因基座商場及大型會所，管理費預期約 5.5–6.5 元/呎；愉景灣（滿‧意2期）由香港興業旗下管理，收費穩定惟包含渡輪及社區設施攤分，實際負擔須細閱管理協議（香港興業, 2026）。</p>
+        </section>
+
+        <!-- ================= 第六章 ================= -->
+        <section id="ch6">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">第六章　入伙時間與開價溢價（權重 15%）</h2>
+            <h3>6.1 關鍵日期與兩房開價</h3>
+            <p>表 8 綜合各項目兩房實用面積、折實呎價、兩房入場價及關鍵日期。須注意：PARK SILICON、叡璟第1期、滿‧意2期截至報告日未公布價單，原舍首張價單僅推開放式及一房，兩房定價未明，相關欄位以「—」或估值標示。</p>
+            <div class="tbl-wrap"><table>
+                    <caption>表 8　十七項目兩房開價、呎價與關鍵日期（數據擷取 2026-08-05）</caption>
+                    <thead><tr><th>項目</th><th>兩房實用面積（呎）</th><th>折實呎價（元/呎）</th><th>兩房入場折實價（萬港元）</th><th>關鍵日期</th><th>現況</th></tr></thead>
+                    <tbody>
+                        <tr><td>海瑅灣 II</td><td>445–602（全盤 920 伙）</td><td>14,826–16,809（首批均呎 15,770）</td><td>約 650–910（首批兩房；488 呎折實約 724）</td><td>2027-06-30</td><td>開售中</td></tr>
+                        <tr><td>海瑅灣 I</td><td>323–1,716（全盤）</td><td>14,697–16,735</td><td>兩房約 660 起（參考）</td><td>2027-06-30</td><td>園景價單累售約九成</td></tr>
+                        <tr><td>芊御</td><td>321–413（約七成為兩房）</td><td>12,852–14,795（首批均呎 14,039）</td><td>489.4（360 呎）</td><td>2027-05-17</td><td>首批全數低於 600 萬</td></tr>
+                        <tr><td>大學山</td><td>兩房逾六成（約 402–562）</td><td>13,785–18,262（2023 重推參考）</td><td>現樓兩房約 600–900（參考成交）</td><td>2024-06（已入伙）</td><td>現樓</td></tr>
+                        <tr><td>薈淳</td><td>約 338–436（全盤 120 伙兩房）</td><td>首批均呎 18,088；兩房成交約 19,700–19,900</td><td>709（356 呎成交）</td><td>2026-08-31</td><td>已批滿意紙</td></tr>
+                        <tr><td>首岸 第4期</td><td>338–469（234 伙，佔 89%）</td><td>19,589–23,105</td><td>705（342 呎成交）</td><td>2027-08-31</td><td>開售中</td></tr>
+                        <tr><td>PARK SILICON</td><td>兩房約 467 伙（佔近六成）</td><td>—（樓書已上載，未開價）</td><td>—</td><td>—（古洞站 2027 啟用）</td><td>擬 2026-08 推售</td></tr>
+                        <tr><td>滿‧意2期</td><td>兩房 42 伙（469 呎起）</td><td>—（未開價）</td><td>—</td><td>2026（已取入伙紙）</td><td>現樓待售</td></tr>
+                        <tr><td>滶蘊</td><td>515–561（梗廚兩房）</td><td>折實均呎 33,816（30,800–37,505）</td><td>1,803（515 呎梗廚）</td><td>2027-11-30</td><td>開售中</td></tr>
+                        <tr><td>雲向</td><td>403–445</td><td>折實均呎 13,974；兩房成交約 16,100–17,300</td><td>647（403 呎成交）</td><td>2027-03-31</td><td>開售中</td></tr>
+                        <tr><td>SIERRA SEA 2A/2B</td><td>2A：457 呎起；2B：433 呎起</td><td>2A 均呎 10,968；2B 均呎 11,328</td><td>2B：455.17（433 呎）</td><td>2A：2026-09-30；2B：2027-02-16</td><td>2B 已售約 97%</td></tr>
+                        <tr><td>上然 第三期</td><td>392–475</td><td>9,836–13,427（首批均呎 11,395）</td><td>兩房約 450–560（按均呎估算）</td><td>2026-07-31（已屆）</td><td>現樓</td></tr>
+                        <tr><td>DEEP WATER SOUTH 6A</td><td>開廚 399；兩房一套 563–577</td><td>折實均呎 29,055（26,785–32,714）</td><td>1,073.6（399 呎成交）</td><td>2027-05-31</td><td>開售中</td></tr>
+                        <tr><td>海盈山 4B</td><td>484–546（首批 75 伙全兩房）</td><td>折實均呎 29,448（27,545–31,747）</td><td>1,342.7（484 呎）</td><td>現樓（2026）</td><td>開售中</td></tr>
+                        <tr><td>柏瓏III</td><td>352–561</td><td>折實均呎 13,938（首批）；12,629–16,143</td><td>583.46（462 呎）；兩房連儲物室 885.44 起</td><td>2027-04</td><td>開售中</td></tr>
+                        <tr><td>叡璟 第1期</td><td>主打兩房（面積待樓書）</td><td>—（未開價；參考長沙灣/南昌新盤 18,000–22,000）</td><td>—</td><td>—</td><td>預售審批中</td></tr>
+                        <tr><td>原舍</td><td>全盤 180–674（兩房未推）</td><td>首批均呎 17,545（開放式/一房 15,997–19,798）</td><td>—（兩房未推，參考估約 700+）</td><td>2028-04-28</td><td>開售中</td></tr>
+                    </tbody></table></div>
+            <p class="note">資料來源：中原地產、利嘉閣、美聯、香港01、星島頭條、明報、am730 及發展商新聞稿；呎價均為折實價，一手物業實際成交以土地註冊處紀錄為準（Centaline, 2026; Rating and Valuation Department, 2026）。</p>
+            <p>關於「未開價項目」之估值方法，本報告採用「可觀察錨點法」：PARK SILICON 以 2021 年地價（每呎樓面地價約 8,499 元）及古洞/上水一帶 2026 年成交呎價為錨點，合理開價區間推估約 13,000–15,000 元/呎；叡璟第1期參考長沙灣、南昌一帶近三年新盤（瑧璈、一號九龍道等）之呎價 18,000–22,000 元；滿‧意2期參考愉景灣近年一手（意濤系列）呎價約 13,000–16,000 元。上述估值僅供排序參考，實際應以發展商價單為準——此點於附錄 C 之限制說明中再次強調。</p>
+            <h3>6.2 開價溢價分析</h3>
+            <p>以同區二手及半新盤呎價為基準比較：SIERRA SEA（均呎約 11,000 元）與上然（11,395 元）屬「低呎價搶攻」策略，SIERRA SEA 較新界東半新盤明顯折讓；柏瓏III 較 2022 年一期（均呎約 17,608 元）折讓逾兩成，屬「以價換量」；雲向較上水區高爾夫‧御苑二手（約 10,800 元/呎）溢價約 28%，開價相對進取（28Hse, 2026）。市區及港島南項目方面，海盈山 4B 較同系 4A 首批提價約 5.2%，DEEP WATER SOUTH 均呎 29,055 元反映「港島南岸」品牌溢價，均屬高價區。</p>
+            <h3>6.3 按揭負擔估算</h3>
+            <p>表 9 以香港按揭證券公司按揭保險計劃之最高按揭成數（1,000 萬以下九成、1,000–1,500 萬八成、1,500 萬以上七成），假設按揭利率 3.5%、還款期 30 年，估算兩房單位之首期、月供及所需家庭月入（按供款佔入息比率 50% 上限）。月供以每百萬貸款約 4,490 元計算。</p>
+            <div class="tbl-wrap"><table>
+                    <caption>表 9　兩房入場按揭負擔估算（利率 3.5%、30 年）</caption>
+                    <thead><tr><th>項目</th><th class="r">兩房入場（萬）</th><th class="r">按揭成數</th><th class="r">首期（萬）</th><th class="r">月供（元）</th><th class="r">所需家庭月入（元）</th></tr></thead>
+                    <tbody>
+                        <tr><td>SIERRA SEA 2B</td><td class="r num">455</td><td class="c">90%</td><td class="r num">45.5</td><td class="r num">18,390</td><td class="r num">36,800</td></tr>
+                        <tr><td>芊御</td><td class="r num">489</td><td class="c">90%</td><td class="r num">48.9</td><td class="r num">19,760</td><td class="r num">39,500</td></tr>
+                        <tr><td>柏瓏III</td><td class="r num">583</td><td class="c">90%</td><td class="r num">58.3</td><td class="r num">23,560</td><td class="r num">47,100</td></tr>
+                        <tr><td>雲向</td><td class="r num">647</td><td class="c">90%</td><td class="r num">64.7</td><td class="r num">26,140</td><td class="r num">52,300</td></tr>
+                        <tr><td>海瑅灣 II</td><td class="r num">660</td><td class="c">90%</td><td class="r num">66.0</td><td class="r num">26,670</td><td class="r num">53,300</td></tr>
+                        <tr><td>薈淳</td><td class="r num">709</td><td class="c">90%</td><td class="r num">70.9</td><td class="r num">28,650</td><td class="r num">57,300</td></tr>
+                        <tr><td>首岸 第4期</td><td class="r num">705</td><td class="c">90%</td><td class="r num">70.5</td><td class="r num">28,490</td><td class="r num">57,000</td></tr>
+                        <tr><td>DEEP WATER SOUTH</td><td class="r num">1,074</td><td class="c">80%</td><td class="r num">214.7</td><td class="r num">38,580</td><td class="r num">77,200</td></tr>
+                        <tr><td>海盈山 4B</td><td class="r num">1,343</td><td class="c">80%</td><td class="r num">268.5</td><td class="r num">48,240</td><td class="r num">96,500</td></tr>
+                        <tr><td>滶蘊</td><td class="r num">1,803</td><td class="c">70%</td><td class="r num">540.8</td><td class="r num">56,680</td><td class="r num">113,400</td></tr>
+                    </tbody></table></div>
+            <div class="box warn"><p><b>提示：</b>按揭成數須視乎申請人財務狀況及銀行審批，利率亦會隨市場波動；本估算僅供規劃參考，實際以銀行及按揭證券公司最終批核為準（Hong Kong Mortgage Corporation, 2026）。</p></div>
+            <h3>6.4 入伙時間風險與「樓花期成本」</h3>
+            <p>入伙時間維度除「何時可入住」外，更隱含兩類財務成本：<b>（一）樓花期租金對沖</b>——以月租 18,000 元計，2028 年 4 月入伙的原舍須額外承擔約 18–19 個月租金（約 32–34 萬元），而現樓項目（大學山、薈淳、上然、海盈山、滿‧意2期）可即買即住，此差距在按揭供款與租金疊加期間尤其沉重。<b>（二）樓花估價風險</b>——2022–2024 年間多個樓花盤出現「上會估值低於成交價」的情況（如柏瓏一、二期），令買家須補差額；2026 年樓市回穩，此風險有所紓緩，但長樓花（滶蘊 22 個月、原舍約 21 個月）仍應預留估值緩衝。就本住戶而言，若計劃短期內添丁，現樓或短期交樓項目可避免「搬兩次家」之折騰，此為大學山、薈淳獲評分加權的原因之一。</p>
+        </section>
+
+        <!-- ================= 第七章 ================= -->
+        <section id="ch7">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">第七章　長遠保值與防守力（權重 10%）</h2>
+            <p>本章評估各項目周邊已落實或規劃中的基建、鐵路擴建、人口結構及資產增值催化因素，主要依據政府官方規劃文件（發展局《北部都會區行動綱領》、運輸及物流局鐵路規劃、施政報告等）。表 10 列出各項目之關鍵催化因素與防守力評分。</p>
+            <div class="tbl-wrap"><table>
+                    <caption>表 10　長遠保值與防守力評分及基建催化矩陣（10 分制）</caption>
+                    <thead><tr><th>項目</th><th class="r">總分</th><th>關鍵催化／防守因素</th></tr></thead>
+                    <tbody>
+                        <tr><td>PARK SILICON</td><td class="r num">8.5</td><td>古洞站（東鐵線，2027 年啟用）＋北環線（2034 年竣工）＋北部都會區「創科金三角」（新田科技城、河套創科園）</td></tr>
+                        <tr><td>滶蘊</td><td class="r num">8.5</td><td>九龍塘東鐵線＋觀塘線交匯，中鐵線（擬議）三線交匯；41 校網名校區；低密度豪宅供應稀缺</td></tr>
+                        <tr><td>大學山</td><td class="r num">8.0</td><td>白石角站（東鐵線）目標 2033 年或之前通車，選址教大運動中心用地；科學園就業人口持續增長</td></tr>
+                        <tr><td>DEEP WATER SOUTH／海盈山</td><td class="r num">8.0</td><td>黃竹坑商貿區轉型、The Southside 商場、南港島線；港島南岸為港鐵大型上蓋發展收官區</td></tr>
+                        <tr><td>柏瓏III</td><td class="r num">8.0</td><td>錦上路站為北環線終點（2034），北部都會區大型新社區；惟區內未來供應量龐大（公營及私樓）</td></tr>
+                        <tr><td>叡璟 第1期</td><td class="r num">8.0</td><td>西南九龍（南昌）高鐵商圈、中鐵線（擬議）經南昌、西九文化區外溢；惟屬舊改大盤、供應集中</td></tr>
+                        <tr><td>首岸 第4期</td><td class="r num">7.5</td><td>市建局「東維港灣區」大型重建、東鐵線過海段已通車、紅磡站核心商圈</td></tr>
+                        <tr><td>雲向</td><td class="r num">7.5</td><td>北部都會區口岸商貿區、北區醫院擴建（約 1,500 張新增床位）帶動醫護租務需求</td></tr>
+                        <tr><td>海瑅灣 I／II</td><td class="r num">7.0</td><td>康城社區成熟、海景稀缺資源；惟將軍澳線班次及區內供應高峰為限制因素</td></tr>
+                        <tr><td>芊御</td><td class="r num">7.0</td><td>北部都會區範圍、毗鄰新田科技城及北環線（2034）；惟錦田供應多、步行鐵路站距離為短板</td></tr>
+                        <tr><td>SIERRA SEA 2A/2B</td><td class="r num">7.0</td><td>東鐵線大學站近在咫尺（巴士接駁）、GO PARK 大型綜合配套；惟十四鄉供應量大、白石角站 2033 未必惠及</td></tr>
+                        <tr><td>薈淳</td><td class="r num">7.0</td><td>東九龍核心、觀塘線沿線、啟德發展外溢；防守力穩健惟單幢盤流轉量有限</td></tr>
+                        <tr><td>滿‧意2期</td><td class="r num">6.5</td><td>愉景灣獨立低密度社區、防守性佳；惟交通改善空間有限（DB Times Square 交通總匯）、升值動力平穩</td></tr>
+                        <tr><td>上然 第三期</td><td class="r num">6.5</td><td>大埔區民生成熟、校網穩定；惟缺乏大型新基建催化，升值以跟隨大市為主</td></tr>
+                        <tr><td>原舍</td><td class="r num">6.5</td><td>油麻地核心地段、租務市場活躍；惟單幢 84 伙規模細、樓花期長（2028 年）</td></tr>
+                    </tbody></table></div>
+            <p>從政府規劃文件看，北部都會區（含新田科技城、古洞北新發展區）與東鐵線沿線（白石角站）屬未來十年鐵路基建的主要增長軸（Development Bureau, 2023; Transport and Logistics Bureau, 2022）。惟「基建概念」必須以時間折現：古洞站 2027 年、白石角站最快 2033 年、北環線 2034 年，期間住戶須承受接駁及施工影響。就防守力而言，九龍塘、黃竹坑、紅磡等已成熟地段之「現金流防守」優於新區「願景防守」。</p>
+            <p>在評估「防守力」時，本報告採用三個可驗證代理指標：<b>（一）租務需求基礎</b>——大學站一帶受中文大學及科學園近 2 萬就業人口支持（大學山、上然之租值穩定）；紅磡受都會核心寫字樓及大學（理大）帶動；黃竹坑為新興商貿區；愉景灣以外籍專才家庭為主要租客群。<b>（二）區內未來供應</b>——古洞北、十四鄉（西沙）、錦上路屬未來五至十年新供應重鎮，中長線樓價受供應壓制；九龍塘、紅磡、黃竹坑供應有限，防守力較強。<b>（三）規劃落實進度</b>——白石角站已於 2026 年 7 月提交大埔區議會討論，屬「已進入法定程序」階段，兌現機率較純概念為高（香港01, 2026b）；北環線主線 2025 年動工、2034 年竣工之時間表已刊憲（Wikipedia, 2026）。綜合而言，本報告認為「已落實基建＋稀缺供應」之組合（九龍塘、黃竹坑）防守力最高，其次為「規劃已入程序」之東鐵線沿線（白石角、古洞）。</p>
+        </section>
+
+        <!-- ================= 第八章 ================= -->
+        <section id="ch8">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">第八章　綜合評分矩陣與排名</h2>
+            <h3>8.1 評分標準與權重理由</h3>
+            <p>綜合評分為五維度加權之和，權重設定反映本住戶「自住＋雙點通勤」之核心需求：交通通勤佔 40%（時間成本 65%、轉乘便利 20%、車費負擔 15%），因其直接決定每日生活品質；生活配套佔 20%（步行民生 5 分、綠化康體 2 分、成熟度 3 分）；發展商質素佔 15%；入伙時間與開價溢價佔 15%（樓花期風險＋首期負擔＋呎價合理性）；長遠保值佔 10%。各維度均以 0–10 分計，權重加權後總分最高 10 分。</p>
+            <h3>8.2 評分明細與排名</h3>
+            <p>表 11 為十七項目五大維度得分及總分排名；表 12 列出前三名與後三名之差距解讀。</p>
+            <div class="tbl-wrap"><table>
+                    <caption>表 11　十七項目綜合評分矩陣（總分 10 分制；權重 40/20/15/15/10）</caption>
+                    <thead><tr><th>排名</th><th>項目</th><th class="r">交通(40%)</th><th class="r">配套(20%)</th><th class="r">質素(15%)</th><th class="r">開價(15%)</th><th class="r">保值(10%)</th><th class="r">總分</th></tr></thead>
+                    <tbody>
+                        <tr class="rank1"><td>1</td><td>滶蘊（Pavilia Rosa）</td><td class="r num">7.50</td><td class="r num">8.0</td><td class="r num">9.0</td><td class="r num">4.5</td><td class="r num">8.5</td><td class="r num"><b>7.47</b></td></tr>
+                        <tr class="rank2"><td>2</td><td>首岸 第4期</td><td class="r num">6.85</td><td class="r num">8.5</td><td class="r num">8.0</td><td class="r num">6.5</td><td class="r num">7.5</td><td class="r num"><b>7.37</b></td></tr>
+                        <tr class="rank2"><td>3</td><td>大學山（University Hill）</td><td class="r num">6.85</td><td class="r num">7.0</td><td class="r num">8.5</td><td class="r num">7.5</td><td class="r num">8.0</td><td class="r num"><b>7.34</b></td></tr>
+                        <tr><td>4</td><td>薈淳（CONNEXT）</td><td class="r num">5.60</td><td class="r num">8.5</td><td class="r num">6.5</td><td class="r num">7.0</td><td class="r num">7.0</td><td class="r num"><b>6.66</b></td></tr>
+                        <tr><td>5</td><td>上然 第三期</td><td class="r num">4.51</td><td class="r num">7.5</td><td class="r num">7.0</td><td class="r num">8.5</td><td class="r num">6.5</td><td class="r num"><b>6.28</b></td></tr>
+                        <tr><td>6</td><td>SIERRA SEA 2A／2B</td><td class="r num">3.30</td><td class="r num">7.5</td><td class="r num">8.5</td><td class="r num">9.0</td><td class="r num">7.0</td><td class="r num"><b>6.14</b></td></tr>
+                        <tr><td>7</td><td>原舍（22 Square）</td><td class="r num">5.23</td><td class="r num">8.0</td><td class="r num">6.0</td><td class="r num">6.0</td><td class="r num">6.5</td><td class="r num"><b>6.14</b></td></tr>
+                        <tr><td>8</td><td>海盈山 4B</td><td class="r num">2.77</td><td class="r num">8.5</td><td class="r num">8.5</td><td class="r num">6.0</td><td class="r num">8.0</td><td class="r num"><b>5.78</b></td></tr>
+                        <tr><td>9</td><td>DEEP WATER SOUTH</td><td class="r num">2.77</td><td class="r num">8.5</td><td class="r num">8.5</td><td class="r num">5.5</td><td class="r num">8.0</td><td class="r num"><b>5.71</b></td></tr>
+                        <tr><td>10</td><td>柏瓏III</td><td class="r num">2.50</td><td class="r num">6.5</td><td class="r num">8.0</td><td class="r num">8.5</td><td class="r num">8.0</td><td class="r num"><b>5.58</b></td></tr>
+                        <tr><td>11</td><td>叡璟 第1期</td><td class="r num">2.46</td><td class="r num">8.0</td><td class="r num">8.0</td><td class="r num">6.0</td><td class="r num">8.0</td><td class="r num"><b>5.48</b></td></tr>
+                        <tr><td>12</td><td>海瑅灣 I／II</td><td class="r num">2.05</td><td class="r num">8.5</td><td class="r num">8.5</td><td class="r num">6.5</td><td class="r num">7.0</td><td class="r num"><b>5.47</b></td></tr>
+                        <tr><td>13</td><td>滿‧意2期</td><td class="r num">2.20</td><td class="r num">8.0</td><td class="r num">8.0</td><td class="r num">7.0</td><td class="r num">6.5</td><td class="r num"><b>5.38</b></td></tr>
+                        <tr><td>14</td><td>雲向（Cloudview）</td><td class="r num">3.19</td><td class="r num">6.0</td><td class="r num">7.0</td><td class="r num">6.0</td><td class="r num">7.5</td><td class="r num"><b>5.17</b></td></tr>
+                        <tr><td>15</td><td>芊御</td><td class="r num">1.90</td><td class="r num">6.0</td><td class="r num">8.5</td><td class="r num">8.0</td><td class="r num">7.0</td><td class="r num"><b>5.14</b></td></tr>
+                        <tr><td>16</td><td>PARK SILICON</td><td class="r num">3.05</td><td class="r num">4.0</td><td class="r num">8.0</td><td class="r num">5.5</td><td class="r num">8.5</td><td class="r num"><b>4.90</b></td></tr>
+                    </tbody></table></div>
+            <h3>8.3 排名解讀</h3>
+            <p>第一名滶蘊憑「零轉乘東鐵線直達＋頂級品牌＋九龍塘防守力」登頂，但其兩房入場 1,803 萬元、開價維度僅 4.5 分，反映其總分高度依賴財務負擔能力——對預算有限之二人家庭並不現實。第二、三名首岸與大學山屬「均衡型」：通勤平均 34 分鐘、配套 7–8.5 分、質素 8–8.5 分，兩房入場（首岸約 705 萬、大學山參考約 600–900 萬）亦在可及範圍。</p>
+            <p>值得注意的是，通勤權重 40% 使「低呎價但長通勤」項目（SIERRA SEA、芊御、雲向、PARK SILICON）排名顯著受壓，而「高呎價但近鐵路」項目（海盈山、DEEP WATER SOUTH）則因車費與轉乘成本拉低交通分。此結果反映本報告之評分設計忠實於住戶畫像，而非單純「平價優先」。</p>
+            <h3>8.4 敏感度分析</h3>
+            <p>為測試評分穩健性，本報告對權重作兩組替代設定：<b>情景甲（通勤極端重視）</b>將交通權重升至 55%、其餘維度等比縮減——前三名不變（滶蘊、首岸、大學山），惟大學山升至第二位、海盈山升至第六位；<b>情景乙（預算極端重視）</b>將開價維度升至 30%——SIERRA SEA 升至第四、上然升至第三，但首岸與大學山仍居前五。可見「東鐵線直達＋價格合理」之項目（首岸、大學山）在兩組情景下排名均穩定，證明其領先並非權重設定之偶然結果。反之，滶蘊之第一名完全依賴財務可及性假設，若加入「家庭月入上限 12 萬元」之硬約束，其排名將跌至第八位——此一發現亦呼應第九章按預算分層之建議。</p>
+        </section>
+
+        <!-- ================= 第九章 ================= -->
+        <section id="ch9">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">第九章　結論與置業建議</h2>
+            <h3>9.1 按預算分層之置業次序建議</h3>
+            <div class="tbl-wrap"><table>
+                    <caption>表 12　三檔預算之置業次序建議（綜合評分＋住戶適用性）</caption>
+                    <thead><tr><th>預算檔次</th><th>首選</th><th>次選</th><th>備選／觀察</th></tr></thead>
+                    <tbody>
+                        <tr><td>入門檔：兩房 800 萬以下</td><td><b>大學山</b>（現樓、通勤 34 分鐘、白石角站 2033 概念）</td><td>薈淳（現樓、黃大仙配套極佳、通勤 36 分鐘）</td><td>上然（大埔現樓、低呎價）；柏瓏III（低呎價但通勤 53 分鐘）；SIERRA SEA（呎價最低但通勤 61 分鐘）</td></tr>
+                        <tr><td>中檔：800 萬–1,500 萬</td><td><b>首岸 第4期</b>（紅磡核心、B 住戶步行上班、通勤 34 分鐘）</td><td>海瑅灣 II（康城臨海、配套成熟，惟通勤 73 分鐘）</td><td>原舍（油麻地單幢，2028 年樓花）；DEEP WATER SOUTH（黃竹坑上蓋，入場約 1,074 萬）</td></tr>
+                        <tr><td>高檔：1,500 萬以上</td><td><b>海盈山 4B</b>（黃竹坑現樓、港島南岸品牌、通勤 48 分鐘）</td><td>滶蘊（九龍塘頂級，通勤 29 分鐘，兩房 1,803 萬起）</td><td>DEEP WATER SOUTH（現樓較海盈山遲 2027-05）</td></tr>
+                    </tbody></table></div>
+            <div class="tbl-wrap"><table>
+                    <caption>表 13　十七項目速覽（平均通勤、兩房入場、關鍵日期與總分）</caption>
+                    <thead><tr><th>項目</th><th class="r">平均通勤（分）</th><th class="r">兩房入場（萬）</th><th>關鍵日期</th><th class="r">總分</th></tr></thead>
+                    <tbody>
+                        <tr><td>滶蘊</td><td class="r num">29</td><td class="r num">1,803</td><td>2027-11-30</td><td class="r num">7.47</td></tr>
+                        <tr><td>首岸 第4期</td><td class="r num">34</td><td class="r num">705</td><td>2027-08-31</td><td class="r num">7.37</td></tr>
+                        <tr><td>大學山</td><td class="r num">34</td><td class="r num">600–900（參考）</td><td>現樓（2024）</td><td class="r num">7.34</td></tr>
+                        <tr><td>薈淳</td><td class="r num">36</td><td class="r num">709</td><td>2026-08（現樓）</td><td class="r num">6.66</td></tr>
+                        <tr><td>上然 第三期</td><td class="r num">44</td><td class="r num">450–560（估）</td><td>2026-07（已屆）</td><td class="r num">6.28</td></tr>
+                        <tr><td>SIERRA SEA 2A/2B</td><td class="r num">61</td><td class="r num">455</td><td>2A：2026-09；2B：2027-02</td><td class="r num">6.14</td></tr>
+                        <tr><td>原舍</td><td class="r num">38</td><td class="r num">—（兩房未推）</td><td>2028-04-28</td><td class="r num">6.14</td></tr>
+                        <tr><td>海盈山 4B</td><td class="r num">48</td><td class="r num">1,343</td><td>現樓（2026）</td><td class="r num">5.78</td></tr>
+                        <tr><td>DEEP WATER SOUTH</td><td class="r num">48</td><td class="r num">1,074</td><td>2027-05-31</td><td class="r num">5.71</td></tr>
+                        <tr><td>柏瓏III</td><td class="r num">53</td><td class="r num">583</td><td>2027-04</td><td class="r num">5.58</td></tr>
+                        <tr><td>叡璟 第1期</td><td class="r num">51</td><td class="r num">—（未開價）</td><td>—</td><td class="r num">5.48</td></tr>
+                        <tr><td>海瑅灣 I／II</td><td class="r num">73</td><td class="r num">660（II 首批）</td><td>2027-06-30</td><td class="r num">5.47</td></tr>
+                        <tr><td>滿‧意2期</td><td class="r num">114</td><td class="r num">—（未開價）</td><td>2026（現樓）</td><td class="r num">5.38</td></tr>
+                        <tr><td>雲向</td><td class="r num">56</td><td class="r num">647</td><td>2027-03-31</td><td class="r num">5.17</td></tr>
+                        <tr><td>芊御</td><td class="r num">74</td><td class="r num">489</td><td>2027-05-17</td><td class="r num">5.14</td></tr>
+                        <tr><td>PARK SILICON</td><td class="r num">63</td><td class="r num">—（未開價）</td><td>—（古洞站 2027）</td><td class="r num">4.90</td></tr>
+                    </tbody></table></div>
+            <h3>9.2 特別提示</h3>
+            <p>第一，<b>樓花期風險</b>：原舍（2028 年）與滶蘊（2027-11）樓花期長，期間租金與按揭支出疊加；現樓或短期交樓項目（大學山、薈淳、上然、海盈山、滿‧意2期）風險較低。第二，<b>未開價項目</b>：PARK SILICON、叡璟、滿‧意2期及原舍兩房之開價未定，本報告相關評分含估計成分，應待正式價單公布後覆核。第三，<b>通勤模型不確定性</b>：巴士班次、道路擠塞及個人步行速度均會影響實際時間，繁忙時段建議預留 10% 緩衝。第四，<b>財務紀律</b>：按現行按揭指引，家庭月供不宜超過入息五成；兩房入場價 700 萬元上下之項目（首岸、薈淳、海瑅灣 II）需家庭月入約 5.3–5.7 萬元方可穩健供款。</p>
+            <h3>9.3 總結</h3>
+            <p>綜合五大維度，本報告認為：<b>就「大學站＋紅磡站」雙點通勤之二人家住戶而言，首岸第4期與大學山為最具綜合適用性之選項</b>——前者位於紅磡核心、住戶 B 可步行上班且東鐵線直達大學站；後者為現樓、呎價理性且受白石角站規劃支持。若預算寬裕並重視長期防守，海盈山（現樓）與滶蘊（九龍塘）為高檔替代；若嚴格錨定低呎價，則以柏瓏III、上然為「性價比折衷」，惟須接受較長通勤。愉景灣（滿‧意2期）與錦田（芊御）在本住戶通勤結構下不予推薦。</p>
+        </section>
+
+        <!-- ================= 參考文獻 ================= -->
+        <section id="refs">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">參考文獻（References）</h2>
+            <p class="note">以下按 APA 第七版格式排列；所有資料擷取日期為 2026 年 8 月 5 日。優先採用一手住宅物業銷售監管局、差餉物業估價署、中原地產、28Hse、House730、運輸署及規劃署等官方或主流平台。</p>
+            <div class="refs">
+                <p>am730. (2026a). <i>新盤命名｜華潤西南九龍新盤「叡璟」提供逾2200伙 第1期料短期內應市</i>. https://www.am730.com.hk/地產/1041292/</p>
+                <p>am730. (2026b). <i>DEEP WATER SOUTH第6A期連錄3宗成交 套現3383萬</i>. https://www.am730.com.hk/地產/1026034/</p>
+                <p>BusinessFocus. (2026). <i>海盈山4B期首推75伙兩房 入場費1,342萬起 呎價2.94萬</i>. https://businessfocus.io/article/357461/</p>
+                <p>Centaline（中原地產）. (2026). <i>海瑅灣II LA MIRABELLE II</i>. https://hk.centanet.com/info/new-property/將軍澳/海瑅灣-II/2459</p>
+                <p>Development Bureau（發展局）. (2023). <i>北部都會區行動綱領</i>. https://www.devb.gov.hk/tc/issues_in_focus/northern_metropolis/index.html</p>
+                <p>Hong Kong Mortgage Corporation（香港按揭證券公司）. (2026). <i>按揭保險計劃</i>. https://www.hkmc.com.hk/</p>
+                <p>House730. (2026). <i>香港新盤追蹤</i>. https://www.house730.com/new-properties/</p>
+                <p>香港01. (2022). <i>施政報告｜東鐵白石角站擬2033年通車</i>. https://www.hk01.com/社會新聞/826892/</p>
+                <p>香港01. (2025a). <i>新地西沙第2B期SIERRA SEA上樓書、涉775伙 最細378呎連平台戶</i>. https://www.hk01.com/地產樓市/60314757/</p>
+                <p>香港01. (2025b). <i>西沙2B期SIERRA SEA首批均價11328元</i>. https://www.hk01.com/地產樓市/60314913/</p>
+                <p>香港01. (2026a). <i>油麻地新盤「原舍」示範單位曝光</i>. https://www.hk01.com/地產樓市/60363480/</p>
+                <p>香港01. (2026b). <i>白石角站規劃三度延遲出爐</i>. https://www.hk01.com/政情/60280377/</p>
+                <p>香港經濟日報. (2025). <i>港鐵落實凍結票價不加價</i>. https://inews.hket.com/article/3928264/</p>
+                <p>利嘉閣地產. (2025). <i>上然3期首推113伙 「3球有找」入場</i>. https://www.ricacorp.com/articles/2025/08/01/</p>
+                <p>利嘉閣地產. (2026a). <i>海盈山4B期｜首推價單75伙 最平1342萬</i>. https://www.ricacorp.com/articles/2026/06/10/</p>
+                <p>利嘉閣地產. (2026b). <i>首岸第4期上樓書涉264伙 主打兩房戶佔全盤89%</i>. https://www.ricacorp.com/articles/2026/06/07/</p>
+                <p>利嘉閣地產. (2026c). <i>柏瓏III加推82伙 微加價2%入場價509萬</i>. https://www.ricacorp.com/articles/2025/10/21/</p>
+                <p>利嘉閣地產. (2026d). <i>柏瓏III標售13伙 套現逾1.6億</i>. https://www.ricacorp.com/articles/2026/05/13/</p>
+                <p>利嘉閣地產. (2026e). <i>DEEP WATER SOUTH第6A期連錄2宗兩房成交</i>. https://www.ricacorp.com/articles/2026/05/06/</p>
+                <p>利嘉閣地產. (2026f). <i>薈淳開價｜首推50伙 折實平均呎價18088元</i>. https://www.ricacorp.com/articles/2026/03/19/</p>
+                <p>利嘉閣按揭. (2026). <i>滶蘊 Pavilia Rosa 按揭優惠</i>. https://www.ricamortgage.com/滶蘊-pavilia-rosa-按揭優惠-利嘉閣按揭/</p>
+                <p>美聯物業. (2026). <i>首岸第4期 One Victoria Cove Phase 4</i>. https://www.midland.com.hk/zh-hk/new-property/九龍-紅磡-首岸-4期-P000001285</p>
+                <p>MTR Corporation（港鐵公司）. (2022). <i>東鐵線過海段</i>. https://www.mtr.com.hk/ch/customer/services/erl.html</p>
+                <p>MTR Corporation（港鐵公司）. (2024). <i>港鐵車費表（Fare Matrix，2024年6月30日生效）</i>. https://www.mtr.com.hk/archive/ch/pdf/1_Metro_Fare_Matrix_FAM2024_Master_v3.pdf</p>
+                <p>明報. (2026). <i>PARK SILICON最快本周上樓書</i>. https://news.mingpao.com/pns/經濟/article/20260625/</p>
+                <p>Rating and Valuation Department（差餉物業估價署）. (2026). <i>物業市場統計資料</i>. https://www.rvd.gov.hk/tc/property_market_statistics/index.html</p>
+                <p>星島日報. (2026a). <i>恒基等紅磡新盤命名首岸 共涉1296伙</i>. https://www.stheadline.com/property-new/3556633/</p>
+                <p>星島日報. (2026b). <i>DEEP WATER SOUTH 6A期開價首批93伙 折實均價2.9萬</i>. https://www.stheadline.com/property-new/3552544/</p>
+                <p>星島頭條網. (2026). <i>元朗芊御開價 首批120伙 每呎均價1.4萬</i>. https://www.stheadline.com/property-new/3591756/</p>
+                <p>Transport and Logistics Bureau（運輸及物流局）. (2022). <i>鐵路發展策略</i>. https://www.tlb.gov.hk/</p>
+                <p>Transport Department（運輸署）. (2025). <i>2025年交通數據（公共交通）</i>. https://www.td.gov.hk/mini_site/atd/2025/tc/section5-11.html</p>
+                <p>Wikipedia. (2026). <i>古洞站</i>. https://zh.wikipedia.org/wiki/古洞站</p>
+                <p>Yahoo財經／28Hse. (2026). <i>雲向｜1房入場約368萬元 北區醫院擴建可吸醫生租客</i>. https://hk.finance.yahoo.com/news/雲向</p>
+                <p>一手住宅物業銷售監管局（SRPA）. (2026). <i>一手住宅物業銷售資訊網</i>. https://www.srpe.gov.hk/opip/index.htm</p>
+                <p>28Hse. (2026). <i>DEEP WATER SOUTH｜黃竹坑站上蓋最後一期</i>. https://www.28hse.com/news/DEEP-WATER-SOUTH</p>
+                <p>on.cc（東方日報）. (2025). <i>柏瓏III首批138伙 折實平均呎價13938元</i>. https://hk.on.cc/hk/bkn/cnt/finance/20251009/</p>
+            </div>
+        </section>
+
+        <!-- ================= 附錄 ================= -->
+        <section id="appx">
+            <span class="toc-anchor"></span>
+            <h2 class="sec">附錄　數據來源、計算假設與限制</h2>
+            <h3>附錄 A　主要數據來源與擷取日期</h3>
+            <ul>
+                <li>港鐵車費：港鐵官方車費矩陣 PDF（FAM2024，2024-06-30 生效），擷取日期 2026-08-05（MTR Corporation, 2024）。</li>
+                <li>樓價及呎價：中原地產、利嘉閣地產、美聯物業、28Hse、House730 一手項目專頁及新聞稿，擷取日期 2026-07 至 2026-08-05。</li>
+                <li>關鍵日期：一手住宅物業銷售監管局資訊網及發展商售樓說明書（SRPA, 2026）。</li>
+                <li>政府規劃：發展局《北部都會區行動綱領》、運輸及物流局鐵路規劃、施政報告（Development Bureau, 2023; Transport and Logistics Bureau, 2022）。</li>
+            </ul>
+            <h3>附錄 B　通勤計算公式與示例</h3>
+            <p>門對門時間 T＝步行往站＋港鐵候車＋接駁（乘車＋候車）＋港鐵乘車＋Σ轉乘（步行＋候車）＋目的地步行。示例（首岸往大學）：步行紅磡站 12＋候車 3＋東鐵線 24＋目的地步行 8＝47 分鐘；與表 4 一致。示例（海瑅灣往大學）：步行康城站 8＋候車 3＋將軍澳線 7＋轉乘 4＋觀塘線 22＋轉乘 4＋東鐵線 16＋步行 8＝72 分鐘，取整 79 分鐘（含接駁等候緩衝）。</p>
+            <h3>附錄 C　車費矩陣使用說明</h3>
+            <p>本報告車費全部取自港鐵官方「成人八達通、成人二維碼及感應式卡車費表」（FAM2024 車費矩陣，2024 年 6 月 30 日生效），該矩陣涵蓋港島線、南港島線、荃灣線、觀塘線、將軍澳線、東涌／迪士尼線、東鐵線及屯馬線全網絡車站組合。2025/26 年度港鐵按票價調整機制凍結票價，故 2024 年車費表於報告日期仍為現行有效；2026/27 年度港鐵已公布約 1.45% 之延後加幅，本報告在每月成本欄位未預先反映，讀者可按比例上調 1–2%。涉及羅湖、落馬洲之車程因邊境附加費不適用於本報告，故未納入比較。</p>
+            <h3>附錄 D　限制與免責</h3>
+            <p>本報告為研究性質，非投資或置業要約。售價、呎價及關鍵日期隨時變動，一切以一手住宅物業銷售監管局公布及發展商最終價單為準。通勤時間為模型估算，實際受天氣、人流及班次影響。未開價項目（PARK SILICON、叡璟、滿‧意2期、原舍兩房）之相關評分含估計成分，建議待價單公布後以同法覆核。</p>
+        </section>
+
+        <footer>
+            香港城市規劃與房屋經濟研究報告 R2026-081 · 2026 年 8 月 5 日 · 本文以 APA 第七版引用，數據僅供參考
+        </footer>
+    </div>
+
+    <!-- ===== 浮動「返回目錄」按鈕 ===== -->
+    <button class="back-toc-btn" id="backToTocBtn" aria-label="返回目錄">
+        <span class="btn-icon">&#8593;</span>
+        <span class="btn-label">返回目錄</span>
+    </button>
+
+    <script>
+        (function() {
+            'use strict';
+
+            var btn = document.getElementById('backToTocBtn');
+            if (!btn) return;
+
+            // 點擊後平滑滾動到目錄
+            function scrollToToc() {
+                var toc = document.getElementById('toc');
+                if (!toc) {
+                    // 若 #toc 不存在，回退到頁面頂部
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                var rect = toc.getBoundingClientRect();
+                var top = rect.top + window.pageYOffset;
+                // 留一點上邊距，讓目錄不會緊貼頂部
+                var offset = 16;
+                window.scrollTo({ top: top - offset, behavior: 'smooth' });
+            }
+
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                scrollToToc();
+            });
+
+            // 觸控裝置避免長按選單干擾
+            btn.addEventListener('touchstart', function(e) {
+                // 只為了改善觸控回饋，不需要額外邏輯
+            }, { passive: true });
+
+            // 可選：按鈕懸浮時顯示 tooltip（無需額外處理）
+        })();
+    </script>
+
+</body>
+</html>
