@@ -73,7 +73,10 @@
               durations: "存款期限 (月)",
               chartTitle: "利息收益比較",
               scenarioRate: "方案 (年利率)",
-              preset: "快速點選"
+              preset: "快速點選",
+              rateLabel: "利率",
+              month: "個月",
+              months: "個月"
             },
             purifier: {
               label: "貼上原始網址 (可多行)",
@@ -157,7 +160,10 @@
               durations: "Durations (Months)",
               chartTitle: "Interest Earned Comparison",
               scenarioRate: "Scenario (Rate)",
-              preset: "Quick Amount"
+              preset: "Quick Amount",
+              rateLabel: "Rate",
+              month: "Month",
+              months: "Months"
             },
             purifier: {
               label: "Paste Raw URLs (Multi-line)",
@@ -800,8 +806,8 @@
 
         const TimeDepositCalc = ({ t }) => {
           const [principal, setPrincipal] = useState('50000');
-          const [rates, setRates] = useState(['2.2', '2.6', '2.85']);
-          const [durations, setDurations] = useState(['1', '3', '6']);
+          const [rates, setRates] = useState(['1.5', '2.5', '3']);
+          const [durations, setDurations] = useState(['1', '2', '3']);
           const [hoveredIdx, setHoveredIdx] = useState(null);
 
           const updateRate = (idx, val) => {
@@ -954,7 +960,7 @@
                               className="w-3.5 h-3.5 rounded-full border-2 bg-white" 
                               style={{ borderColor: lineColors[rIdx].line }}
                             />
-                            <span>{r}% Rate</span>
+                            <span>{r}% {t.depositCalc.rateLabel}</span>
                           </div>
                         ))}
                       </div>
@@ -990,7 +996,7 @@
                             <g key={dIdx}>
                               <line x1={x} y1={padT} x2={x} y2={padT + plotH} stroke="#E8E8E8" strokeWidth="1" strokeDasharray="3 3" />
                               <text x={x} y={svgHeight - 12} textAnchor="middle" className="text-[12px] fill-gray-700 font-extrabold font-sans">
-                                {d} Months
+                                {d} {d === 1 ? t.depositCalc.month : t.depositCalc.months}
                               </text>
                             </g>
                           );
@@ -1104,7 +1110,7 @@
                                   y={rectY + 18}
                                   className="text-[12px] font-bold fill-white font-sans"
                                 >
-                                  {dVal} Months
+                                  {dVal} {dVal === 1 ? t.depositCalc.month : t.depositCalc.months}
                                 </text>
                                 {/* Rate Rows with Color Legend Square */}
                                 {parsedRates.map((r, rIdx) => {
@@ -1125,7 +1131,7 @@
                                         y={rowY}
                                         className="text-[11px] font-semibold fill-gray-200 font-sans"
                                       >
-                                        {r}% Rate: ${val.toLocaleString()}
+                                        {r}% {t.depositCalc.rateLabel}: ${val.toLocaleString()}
                                       </text>
                                     </g>
                                   );
@@ -1145,13 +1151,12 @@
                         <tr className="text-gray-400 border-b border-[#F0EBE3] text-xs">
                           <th className="pb-3 font-bold uppercase tracking-wider">{t.depositCalc.scenarioRate}</th>
                           {parsedDurations.map((d, dIdx) => (
-                            <th key={dIdx} className="pb-3 font-bold text-right uppercase tracking-wider">{d} Months</th>
+                            <th key={dIdx} className="pb-3 font-bold text-right uppercase tracking-wider">{d} {d === 1 ? t.depositCalc.month : t.depositCalc.months}</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[#F8F6F0]">
                         {parsedRates.map((r, rIdx) => {
-                          const maxRowVal = Math.max(...matrix[rIdx]);
                           return (
                             <tr key={rIdx} className="hover:bg-gray-50/80 transition-colors">
                               <td className="py-3.5 font-bold text-sm text-[#4A4A4A] flex items-center gap-2">
@@ -1159,10 +1164,10 @@
                                 <span>{String.fromCharCode(65 + rIdx)} ({r}%)</span>
                               </td>
                               {matrix[rIdx].map((earned, dIdx) => {
-                                const isHighestOverall = earned === maxEarned && earned > 0;
+                                const isTargetHighlight = rIdx === dIdx && earned > 0;
                                 return (
                                   <td key={dIdx} className="py-3.5 font-extrabold text-right text-sm sm:text-base text-gray-800">
-                                    <span className={isHighestOverall ? 'text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200' : ''}>
+                                    <span className={isTargetHighlight ? 'text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200' : ''}>
                                       ${earned.toLocaleString()}
                                     </span>
                                   </td>
