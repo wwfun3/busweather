@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>香港樓市發展動態摘要報告 | Hong Kong Real Estate Market Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .font-article { font-family: 'Noto Serif TC', serif; }
+        .font-ui { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 font-ui transition-colors duration-300 min-h-screen flex flex-col justify-between">
+
+    <div id="progress-bar" class="fixed top-0 left-0 h-1.5 bg-emerald-600 z-50 transition-all duration-150" style="width: 0%;"></div>
+
+    <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-600/20">
+                    <i class="fa-solid fa-chart-line text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold tracking-tight line-clamp-1" data-i18n="navTitle">香港樓市發展動態摘要報告</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium" data-i18n="navSubtitle">Professional Market Intelligence & Research</p>
+                </div>
+            </div>
+
+            <!-- Toolbar / Interactive Controls -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Language Toggle Button -->
+                <button id="lang-toggle-btn" onclick="toggleLanguage()" class="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs sm:text-sm font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-globe"></i>
+                    <span id="lang-label">English</span>
+                </button>
+
+                <!-- Font Size Adjuster -->
+                <div class="hidden sm:flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
+                    <button onclick="adjustFontSize(-1)" title="Decrease font size" class="px-2 py-1 text-xs text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 rounded transition font-bold">A-</button>
+                    <button onclick="adjustFontSize(1)" title="Increase font size" class="px-2 py-1 text-xs text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 rounded transition font-bold">A+</button>
+                </div>
+
+                <!-- Copy Article Button -->
+                <button onclick="copyArticle()" title="Copy Report" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                    <i class="fa-regular fa-copy text-sm"></i>
+                </button>
+
+                <!-- Dark Mode Toggle -->
+                <button onclick="toggleDarkMode()" title="Toggle Theme" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                    <i class="fa-solid fa-moon dark:hidden text-sm"></i>
+                    <i class="fa-solid fa-sun hidden dark:block text-sm text-amber-400"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Sidebar / Table of Contents -->
+        <aside class="hidden lg:block lg:col-span-3 space-y-6">
+            <div class="sticky top-24 bg-white dark:bg-slate-800/80 backdrop-blur rounded-2xl p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-4 flex items-center space-x-2">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                    <span data-i18n="tocTitle">目錄導航 / Contents</span>
+                </h3>
+                <nav class="space-y-1.5 text-sm">
+                    <a href="#sec-intro" class="block px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition" data-i18n="toc1">1. 報告引言概述</a>
+                    <a href="#sec-public" class="block px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition" data-i18n="toc2">2. 公營房屋與私營市場互動</a>
+                    <a href="#sec-rental" class="block px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition" data-i18n="toc3">3. 租賃市場結構性升溫</a>
+                    <a href="#sec-invest" class="block px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition" data-i18n="toc4">4. 投資收租核心與回報機制</a>
+                    <a href="#sec-price" class="block px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition" data-i18n="toc5">5. 價格走勢與宏觀風險</a>
+                    <a href="#sec-conclusion" class="block px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition" data-i18n="toc6">6. 綜合總結與展望</a>
+                </nav>
+
+                <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700">
+                    <div class="bg-emerald-50 dark:bg-emerald-950/40 rounded-xl p-3.5 border border-emerald-100 dark:border-emerald-900/50">
+                        <span class="text-xs font-semibold text-emerald-800 dark:text-emerald-300 block mb-1" data-i18n="quickNoteTitle">💡 核心觀點速覽</span>
+                        <p class="text-xs text-emerald-700/90 dark:text-emerald-400/90 leading-relaxed" data-i18n="quickNoteText">2026年樓市溫和向上約一成，租賃受學生潮推動持續旺熱，土地與公營房屋政策保持動態平衡。</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Article Content Area -->
+        <section class="col-span-1 lg:col-span-9 space-y-8">
+            
+            <!-- Article Header & Meta -->
+            <div class="bg-white dark:bg-slate-800/80 rounded-3xl p-6 sm:p-10 border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="flex items-center space-x-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-3">
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800" data-i18n="tagResearch">市場研究報告</span>
+                    <span>•</span>
+                    <span data-i18n="datePublished">2026年第二季</span>
+                </div>
+                
+                <h2 id="main-title" class="text-2xl sm:text-3xl lg:text-4xl font-bold font-article tracking-tight text-slate-900 dark:text-white mb-6 leading-tight" data-i18n="mainTitle">
+                    香港樓市發展動態摘要報告
+                </h2>
+
+                <!-- Key Metrics Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-100 dark:border-slate-700/80">
+                    <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block mb-1" data-i18n="stat1Label">預期樓價走勢 (2026)</span>
+                        <span class="text-lg sm:text-xl font-bold text-emerald-600 dark:text-emerald-400" data-i18n="stat1Val">+10% 溫和上升</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block mb-1" data-i18n="stat2Label">內地學生規模 (28-29)</span>
+                        <span class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white" data-i18n="stat2Val">約 13 萬人</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block mb-1" data-i18n="stat3Label">租金回報率 (當前)</span>
+                        <span class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white" data-i18n="stat3Val">3.2% - 3.6%</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block mb-1" data-i18n="stat4Label">樓價收入比中位數</span>
+                        <span class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white" data-i18n="stat4Val">15.5 倍</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="article-body-container" class="bg-white dark:bg-slate-800/80 rounded-3xl p-6 sm:p-10 border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-10 font-article text-base sm:text-lg leading-relaxed text-slate-700 dark:text-slate-300">
+                
+                <!-- Section 1 -->
+                <section id="sec-intro" class="space-y-4 scroll-mt-24">
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center space-x-3 font-ui border-b border-slate-100 dark:border-slate-700 pb-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold">1</span>
+                        <span data-i18n="sec1Title">引言概述與報告範疇</span>
+                    </h3>
+                    <p id="p1" class="text-justify" data-i18n="p1">
+                        本報告旨在客觀分析當前香港住宅物業市場的核心動態，聚焦公營房屋政策的執行差異、租賃市場結構轉變、投資回報機制以及短期價格走勢。報告範圍涵蓋土地供應邏輯、需求驅動因素、回報結構變化及宏觀政策取向，力求以精準數據與邏輯推演呈現市場內在運行規律，供專業人士參考。
+                    </p>
+                </section>
+
+                <!-- Section 2 -->
+                <section id="sec-public" class="space-y-4 scroll-mt-24">
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center space-x-3 font-ui border-b border-slate-100 dark:border-slate-700 pb-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold">2</span>
+                        <span data-i18n="sec2Title">公營房屋規劃與私營市場互動</span>
+                    </h3>
+                    <p id="p2" class="text-justify" data-i18n="p2">
+                        公營房屋規劃與私營市場的互動構成當前土地政策的重要觀察點。白石角與啟德兩地發展路徑的差異，清楚反映財政約束與空間匹配的優先次序。白石角周邊屬高密度豪宅區，港鐵財務回收壓力較大，加入公營房屋將與既有設施及土地價值產生明顯錯配，因此相關車站公屋計劃被取消。相比之下，啟德地區面積較廣、過往規劃已預留公屋成分，政府可透過土地交換機制維持財政平衡，發展方向相對穩定。整體而言，公營房屋政策並無根本轉向。北部都會區規劃總單位約五十萬個，其中約四成屬公營或相關用途，顯示政府仍以增加基層供應為目標，同時鼓勵私人發展商參與。此安排背後的邏輯在於：資本主義制度下，資源應優先投放於能創造最大價值的用途，政府角色在於減輕痛苦而非直接創造幸福。過度依賴公屋並非理想狀態，私樓擁有率的提升更能反映經濟增長與收入進步。公屋供應增加必然壓縮私樓土地份額，在土地總量有限的前提下，將間接支撐私樓價格。混合發展若規劃得宜，對周邊私樓的負面影響可控；反之，則可能因供應結構改變而推高私營市場門檻。香港樓價長期高企，主因在於土地成本與高收入群體的購買力，而非單純平均收入水平。過去「辣招」曾扭曲市場機制，現時已逐步撤銷，短期內再收緊的可能性偏低，除非出現極端失衡。
+                    </p>
+                </section>
+
+                <!-- Section 3 -->
+                <section id="sec-rental" class="space-y-4 scroll-mt-24">
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center space-x-3 font-ui border-b border-slate-100 dark:border-slate-700 pb-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold">3</span>
+                        <span data-i18n="sec3Title">租賃市場結構性升溫與驅動力</span>
+                    </h3>
+                    <p id="p3" class="text-justify" data-i18n="p3">
+                        租賃市場正經歷結構性升溫，成為市場另一關鍵特徵。本年度租賃旺季已連續第三年呈現上升趨勢，主要動力來自內地學生人數增長及相關家庭需求。預計二○二八至二○二九學年內地學生規模可達約十三萬人，當中不少中學及大學學生的家人選擇陪讀，傾向租用獨立單位而非宿舍。學校周邊中小型單位需求尤其殷切，租金水平明顯上調，部分地區由每平方呎約四十元升至五十至八十元區間。供應未能同步擴張，導致競爭加劇，租金上升主要源於市場競價而非租客主動調升。此現象對投資者有利，中小型單位因回報相對吸引而受追捧；對本地租客則構成壓力，部分業主更傾向持有物業以收租，而非出售。租住本身並非負面現象，它反映市場多元需求。內地市場較少強調自住偏好，香港則需在用家需求與投資功能之間取得平衡。短期一至兩年內，學生相關需求仍將維持強勁，租賃市場供需缺口難望迅速收窄。
+                    </p>
+                </section>
+
+                <!-- Section 4 -->
+                <section id="sec-invest" class="space-y-4 scroll-mt-24">
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center space-x-3 font-ui border-b border-slate-100 dark:border-slate-700 pb-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold">4</span>
+                        <span data-i18n="sec4Title">投資收租核心考量與回報機制</span>
+                    </h3>
+                    <p id="p4" class="text-justify" data-i18n="p4">
+                        投資收租的核心考量已從單純收益率轉向雙重因素的綜合評估。過去六個月樓價累升約百分之十，租金回報率由約百分之三點六回落至百分之三點二左右。回報率下降並非租金疲弱，而是樓價上升速度快於租金調整所致。淨回報在扣除管理費等開支後約為百分之二，表面偏低，但在資本增值潛力與按揭還款能力的支持下，仍具吸引力。低回報環境往往吸引追求穩定的資金流入，反映市場對未來增值的信心。投資決策的兩大關鍵因素因此確立：一為當期租金回報，二為資本增值空間。當回報率處於相對低位時，通常意味著市場處於上升周期，後續租金有機會隨之調整。投資者不應僅以短期收益率作為唯一標準，而需同時評估物業在利率環境與資金流向變化下的抗壓能力。
+                    </p>
+                </section>
+
+                <!-- Section 5 -->
+                <section id="sec-price" class="space-y-4 scroll-mt-24">
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center space-x-3 font-ui border-b border-slate-100 dark:border-slate-700 pb-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold">5</span>
+                        <span data-i18n="sec5Title">價格走勢預期與宏觀風險評估</span>
+                    </h3>
+                    <p id="p5" class="text-justify" data-i18n="p5">
+                        價格走勢方面，二零二六年整體樓價預期上升約百分之十。上半年已錄得約百分之七至八甚至接近百分之十的升幅，下半年升勢料將放緩，以便市場消化前期漲幅。支持因素包括成交活躍及中心區指數表現，但阻力亦逐步浮現，負資產比例雖有改善，成交阻力與訂單壓力開始增加。主要風險來自利率走向的不確定性、地緣政治張力以及內地資金流出管制的潛在影響。上半年升勢部分受內地資金支持，後續若資金流動受限，反彈力度可能減弱。整體判斷並無大幅回調基礎，但需時間進行階段性調整。香港連續十六年位列全球最難負擔城市之列，中位數樓價約為收入十五點五倍，此一比率本身存在計算基礎的爭議，因其未充分區分公屋與私樓群體。政府當前重點在於透過北部發展擴大供應，並為發展商創造有利環境，而非再度以行政手段壓抑價格。除非出現明顯市場扭曲，否則政策方向將維持穩健。
+                    </p>
+                </section>
+
+                <!-- Section 6 -->
+                <section id="sec-conclusion" class="space-y-4 scroll-mt-24">
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center space-x-3 font-ui border-b border-slate-100 dark:border-slate-700 pb-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold">6</span>
+                        <span data-i18n="sec6Title">綜合總結與長期展望</span>
+                    </h3>
+                    <p id="p6" class="text-justify" data-i18n="p6">
+                        綜合而言，香港樓市正處於政策平衡、需求結構轉變與價格溫和上升的交匯點。公營房屋供應的增加並未改變私營市場的基本邏輯，租賃市場受學生需求驅動而呈現強勁勢頭，投資回報則強調收益率與增值的雙重考量。二零二六年價格預期溫和上升約一成，惟外部不確定性仍需審慎觀察。市場參與者應聚焦土地供應效率、需求結構演變及回報機制的內在聯繫，以客觀數據為基礎作出評斷。長期而言，提升私樓擁有率與優化土地運用效率，仍是維持市場健康發展的關鍵方向。
+                    </p>
+                </section>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-16 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+        <div class="max-w-6xl mx-auto px-4 space-y-2">
+            <p data-i18n="footerText">香港樓市發展動態摘要報告 © 2026 Professional Market Intelligence. All rights reserved.</p>
+            <p class="text-slate-400 dark:text-slate-500" data-i18n="footerSub">本報告基於客觀數據與宏觀邏輯推演，僅供專業研究與決策參考。</p>
+        </div>
+    </footer>
+
+    <script>
+        // Translation Dictionary (Traditional Chinese and English)
+        const translations = {
+            zh: {
+                navTitle: "香港樓市發展動態摘要報告",
+                navSubtitle: "Professional Market Intelligence & Research",
+                tocTitle: "目錄導航 / Contents",
+                toc1: "1. 報告引言概述",
+                toc2: "2. 公營房屋與私營市場互動",
+                toc3: "3. 租賃市場結構性升溫",
+                toc4: "4. 投資收租核心與回報機制",
+                toc5: "5. 價格走勢與宏觀風險",
+                toc6: "6. 綜合總結與展望",
+                quickNoteTitle: "💡 核心觀點速覽",
+                quickNoteText: "2026年樓市溫和向上約一成，租賃受學生潮推動持續旺熱，土地與公營房屋政策保持動態平衡。",
+                tagResearch: "市場研究報告",
+                datePublished: "2026年第二季",
+                mainTitle: "香港樓市發展動態摘要報告",
+                stat1Label: "預期樓價走勢 (2026)",
+                stat1Val: "+10% 溫和上升",
+                stat2Label: "內地學生規模 (28-29)",
+                stat2Val: "約 13 萬人",
+                stat3Label: "租金回報率 (當前)",
+                stat3Val: "3.2% - 3.6%",
+                stat4Label: "樓價收入比中位數",
+                stat4Val: "15.5 倍",
+                sec1Title: "引言概述與報告範疇",
+                sec2Title: "公營房屋規劃與私營市場互動",
+                sec3Title: "租賃市場結構性升溫與驅動力",
+                sec4Title: "投資收租核心考量與回報機制",
+                sec5Title: "價格走勢預期與宏觀風險評估",
+                sec6Title: "綜合總結與長期展望",
+                p1: "本報告旨在客觀分析當前香港住宅物業市場的核心動態，聚焦公營房屋政策的執行差異、租賃市場結構轉變、投資回報機制以及短期價格走勢。報告範圍涵蓋土地供應邏輯、需求驅動因素、回報結構變化及宏觀政策取向，力求以精準數據與邏輯推演呈現市場內在運行規律，供專業人士參考。",
+                p2: "公營房屋規劃與私營市場的互動構成當前土地政策的重要觀察點。白石角與啟德兩地發展路徑的差異，清楚反映財政約束與空間匹配的優先次序。白石角周邊屬高密度豪宅區，港鐵財務回收壓力較大，加入公營房屋將與既有設施及土地價值產生明顯錯配，因此相關車站公屋計劃被取消。相比之下，啟德地區面積較廣、過往規劃已預留公屋成分，政府可透過土地交換機制維持財政平衡，發展方向相對穩定。整體而言，公營房屋政策並無根本轉向。北部都會區規劃總單位約五十萬個，其中約四成屬公營或相關用途，顯示政府仍以增加基層供應為目標，同時鼓勵私人發展商參與。此安排背後的邏輯在於：資本主義制度下，資源應優先投放於能創造最大價值的用途，政府角色在於減輕痛苦而非直接創造幸福。過度依賴公屋並非理想狀態，私樓擁有率的提升更能反映經濟增長與收入進步。公屋供應增加必然壓縮私樓土地份額，在土地總量有限的前提下，將間接支撐私樓價格。混合發展若規劃得宜，對周邊私樓的負面影響可控；反之，則可能因供應結構改變而推高私營市場門檻。香港樓價長期高企，主因在於土地成本與高收入群體的購買力，而非單純平均收入水平。過去「辣招」曾扭曲市場機制，現時已逐步撤銷，短期內再收緊的可能性偏低，除非出現極端失衡。",
+                p3: "租賃市場正經歷結構性升溫，成為市場另一關鍵特徵。本年度租賃旺季已連續第三年呈現上升趨勢，主要動力來自內地學生人數增長及相關家庭需求。預計二○二八至二○二九學年內地學生規模可達約十三萬人，當中不少中學及大學學生的家人選擇陪讀，傾向租用獨立單位而非宿舍。學校周邊中小型單位需求尤其殷切，租金水平明顯上調，部分地區由每平方呎約四十元升至五十至八十元區間。供應未能同步擴張，導致競爭加劇，租金上升主要源於市場競價而非租客主動調升。此現象對投資者有利，中小型單位因回報相對吸引而受追捧；對本地租客則構成壓力，部分業主更傾向持有物業以收租，而非出售。租住本身並非負面現象，它反映市場多元需求。內地市場較少強調自住偏好，香港則需在用家需求與投資功能之間取得平衡。短期一至兩年內，學生相關需求仍將維持強勁，租賃市場供需缺口難望迅速收窄。",
+                p4: "投資收租的核心考量已從單純收益率轉向雙重因素的綜合評估。過去六個月樓價累升約百分之十，租金回報率由約百分之三點六回落至百分之三點二左右。回報率下降並非租金疲弱，而是樓價上升速度快於租金調整所致。淨回報在扣除管理費等開支後約為百分之二，表面偏低，但在資本增值潛力與按揭還款能力的支持下，仍具吸引力。低回報環境往往吸引追求穩定的資金流入，反映市場對未來增值的信心。投資決策的兩大關鍵因素因此確立：一為當期租金回報，二為資本增值空間。當回報率處於相對低位時，通常意味著市場處於上升周期，後續租金有機會隨之調整。投資者不應僅以短期收益率作為唯一標準，而需同時評估物業在利率環境與資金流向變化下的抗壓能力。",
+                p5: "價格走勢方面，二零二六年整體樓價預期上升約百分之十。上半年已錄得約百分之七至八甚至接近百分之十的升幅，下半年升勢料將放緩，以便市場消化前期漲幅。支持因素包括成交活躍及中心區指數表現，但阻力亦逐步浮現，負資產比例雖有改善，成交阻力與訂單壓力開始增加。主要風險來自利率走向的不確定性、地緣政治張力以及內地資金流出管制的潛在影響。上半年升勢部分受內地資金支持，後續若資金流動受限，反彈力度可能減弱。整體判斷並無大幅回調基礎，但需時間進行階段性調整。香港連續十六年位列全球最難負擔城市之列，中位數樓價約為收入十五點五倍，此一比率本身存在計算基礎的爭議，因其未充分區分公屋與私樓群體。政府當前重點在於透過北部發展擴大供應，並為發展商創造有利環境，而非再度以行政手段壓抑價格。除非出現明顯市場扭曲，否則政策方向將維持穩健。",
+                p6: "綜合而言，香港樓市正處於政策平衡、需求結構轉變與價格溫和上升的交匯點。公營房屋供應的增加並未改變私營市場的基本邏輯，租賃市場受學生需求驅動而呈現強勁勢頭，投資回報則強調收益率與增值的雙重考量。二零二六年價格預期溫和上升約一成，惟外部不確定性仍需審慎觀察。市場參與者應聚焦土地供應效率、需求結構演變及回報機制的內在聯繫，以客觀數據為基礎作出評斷。長期而言，提升私樓擁有率與優化土地運用效率，仍是維持市場健康發展的關鍵方向。",
+                footerText: "香港樓市發展動態摘要報告 © 2026 Professional Market Intelligence. All rights reserved.",
+                footerSub: "本報告基於客觀數據與宏觀邏輯推演，僅供專業研究與決策參考。"
+            },
+            en: {
+                navTitle: "Hong Kong Real Estate Market Dynamics",
+                navSubtitle: "Professional Market Intelligence & Research",
+                tocTitle: "Table of Contents",
+                toc1: "1. Introduction & Overview",
+                toc2: "2. Public Housing & Private Market",
+                toc3: "3. Rental Market Structural Heating",
+                toc4: "4. Investment & Return Mechanisms",
+                toc5: "5. Price Trends & Macro Risks",
+                toc6: "6. Conclusion & Long-Term Outlook",
+                quickNoteTitle: "💡 Key Insights Quick View",
+                quickNoteText: "2026 prices are projected to rise moderately by ~10%, rental demand remains robust driven by student inflows, and land/public housing policies maintain dynamic balance.",
+                tagResearch: "Market Research Report",
+                datePublished: "Q2 2026",
+                mainTitle: "Hong Kong Real Estate Market Development Dynamics Summary Report",
+                stat1Label: "Expected Price Trend (2026)",
+                stat1Val: "+10% Moderate Rise",
+                stat2Label: "Mainland Students (28-29)",
+                stat2Val: "Approx. 130K",
+                stat3Label: "Rental Yield (Current)",
+                stat3Val: "3.2% - 3.6%",
+                stat4Label: "Median Price-to-Income",
+                stat4Val: "15.5x",
+                sec1Title: "Introduction & Scope",
+                sec2Title: "Public Housing Planning & Private Market Interaction",
+                sec3Title: "Rental Market Structural Heating & Drivers",
+                sec4Title: "Core Investment Considerations & Return Mechanisms",
+                sec5Title: "Price Trend Expectations & Macro Risk Assessment",
+                sec6Title: "Comprehensive Conclusion & Outlook",
+                p1: "This report aims to objectively analyze the core dynamics of the current residential property market in Hong Kong, focusing on the implementation differences of public housing policies, structural shifts in the rental market, investment return mechanisms, and short-term price trends. The scope covers land supply logic, demand-driving factors, return structure changes, and macroeconomic policy orientations, striving to present the market's internal operating laws through precise data and logical deduction for professional reference.",
+                p2: "The interaction between public housing planning and the private market constitutes a key observation point of current land policy. The differences in development paths between Pak Shek Kok and Kai Tak clearly reflect the priorities of financial constraints and spatial matching. Pak Shek Kok is surrounded by high-density luxury residential areas with relatively heavy MTR financial recovery pressures; introducing public housing would create a noticeable mismatch with existing facilities and land values, leading to the cancellation of the station's public housing plan. In contrast, Kai Tak has a larger area and pre-reserved public housing components in past plans, allowing the government to maintain financial balance through land exchange mechanisms, resulting in a relatively stable development direction. Overall, public housing policy has not undergone a fundamental shift. The Northern Metropolis plan totals about 500,000 units, of which roughly 40% are public or related uses, showing that the government still aims to increase supplies for grassroots populations while encouraging private developer participation. The logic behind this arrangement is that under a capitalist system, resources should be prioritized for uses that create maximum value, and the government's role is to alleviate distress rather than directly create happiness. Excessive reliance on public housing is not ideal; an increase in homeownership rates better reflects economic growth and income progress. Increased public housing supply inevitably compresses private land shares, which under limited total land supply will indirectly support private housing prices. If mixed development is well-planned, the negative impact on surrounding private properties is controllable; otherwise, it may raise private market thresholds due to changes in supply structure. Long-term high housing prices in Hong Kong are mainly due to land costs and the purchasing power of high-income groups rather than simply average income levels. Past cooling measures distorted market mechanisms, have now been gradually rescinded, and the likelihood of re-tightening in the short term remains low unless extreme imbalances occur.",
+                p3: "The rental market is experiencing a structural heating up, becoming another key characteristic of the market. This year's leasing peak season has shown an upward trend for the third consecutive year, driven primarily by the growth of mainland student numbers and related family demand. It is projected that by the 2028-2029 academic year, the scale of mainland students could reach about 130,000, with many family members of middle and university students opting to accompany them and preferring to rent independent units rather than dormitories. Demand for small and medium-sized units around schools is particularly urgent, with rental levels rising noticeably, pushing some areas from around HK$40 per square foot to the HK$50–$80 range. Failure of supply to expand simultaneously leads to intensified competition, and rent increases stem primarily from market bidding rather than active tenant hikes. This phenomenon benefits investors, as small and medium units are sought after for attractive returns; for local tenants, it creates pressure, and some owners prefer holding properties for rent rather than selling. Renting itself is not a negative phenomenon; it reflects diversified market demands. The mainland market places less emphasis on homeownership preference, whereas Hong Kong needs to balance end-user demand and investment functions. In the short term of 1 to 2 years, student-related demand will remain strong, and the supply-demand gap in the rental market is unlikely to narrow rapidly.",
+                p4: "Core considerations for investment rentals have shifted from simple yields to a comprehensive evaluation of dual factors. Over the past six months, housing prices have accumulated an increase of about 10%, while rental yields have fallen from around 3.6% back to about 3.2%. The decline in yield is not due to weak rents, but rather because price growth has outpaced rent adjustments. Net returns after deducting expenses like management fees are around 2%, which appears superficially low, yet remains attractive backed by capital appreciation potential and mortgage repayment capacity. Low-yield environments often attract capital seeking stability, reflecting market confidence in future appreciation. Two key factors for investment decisions are thus established: current rental return and capital appreciation space. When yields are relatively low, it typically signifies an upward market cycle, with subsequent rents likely adjusting accordingly. Investors should not rely solely on short-term yields as the sole standard, but should also assess properties' resilience under changing interest rate environments and capital flows.",
+                p5: "Regarding price trends, overall housing prices in 2026 are expected to rise by about 10%. The first half already recorded an increase of about 7% to 8% or even close to 10%, and momentum is expected to slow in the second half to allow the market to digest prior gains. Supporting factors include active transactions and central district index performance, though resistance is gradually emerging; while the proportion of negative equity has improved, transaction resistance and order pressure are mounting. Key risks stem from uncertainties in interest rate trajectories, geopolitical tensions, and potential impacts of mainland capital outflow controls. First-half gains were partly supported by mainland capital; if capital flows become restricted hereafter, rebound strength may weaken. The overall assessment lacks a basis for sharp correction, but time is required for phased adjustments. Hong Kong has ranked as the world's least affordable city for 16 consecutive years, with median house prices around 15.5 times income. This ratio itself has controversy in calculation basis because it does not fully distinguish between public and private housing groups. The government's current focus is expanding supply through Northern Metropolis development and creating a favorable environment for developers, rather than suppressing prices again via administrative means. Unless obvious market distortions occur, the policy direction will remain steady.",
+                p6: "In summary, Hong Kong's property market stands at the intersection of policy balance, demand structure transformation, and moderate price appreciation. Increased public housing supply has not altered the fundamental logic of the private market, the rental market shows strong momentum driven by student demand, and investment returns emphasize the dual consideration of yields and appreciation. Prices are expected to rise moderately by about 10% in 2026, though external uncertainties require prudent observation. Market participants should focus on land supply efficiency, demand structure evolution, and the intrinsic links of return mechanisms, making judgments based on objective data. Long term, raising private homeownership rates and optimizing land utilization efficiency remain key directions for maintaining healthy market development.",
+                footerText: "Hong Kong Real Estate Market Development Dynamics Summary Report © 2026 Professional Market Intelligence. All rights reserved.",
+                footerSub: "This report is based on objective data and macroeconomic logical deduction for professional research and decision-making reference only."
+            }
+        };
+
+        let currentLang = 'zh';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            document.getElementById('lang-label').innerText = currentLang === 'zh' ? 'English' : '繁體中文';
+            document.documentElement.lang = currentLang === 'zh' ? 'zh-Hant' : 'en';
+
+            const t = translations[currentLang];
+            for (const key in t) {
+                const el = document.querySelector(`[data-i18n="${key}"]`);
+                if (el) {
+                    el.innerText = t[key];
+                }
+            }
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        let currentFontSizeLevel = 0; // 0: normal, 1: large, 2: extra large
+        const fontSizes = ['text-base sm:text-lg', 'text-lg sm:text-xl', 'text-xl sm:text-2xl'];
+        
+        function adjustFontSize(direction) {
+            currentFontSizeLevel = Math.max(0, Math.min(fontSizes.length - 1, currentFontSizeLevel + direction));
+            const container = document.getElementById('article-body-container');
+            fontSizes.forEach(cls => {
+                cls.split(' ').forEach(c => container.classList.remove(c));
+            });
+            fontSizes[currentFontSizeLevel].split(' ').forEach(c => container.classList.add(c));
+        }
+
+        function copyArticle() {
+            const t = translations[currentLang];
+            const textToCopy = `${t.mainTitle}\n\n1. ${t.sec1Title}\n${t.p1}\n\n2. ${t.sec2Title}\n${t.p2}\n\n3. ${t.sec3Title}\n${t.p3}\n\n4. ${t.sec4Title}\n${t.p4}\n\n5. ${t.sec5Title}\n${t.p5}\n\n6. ${t.sec6Title}\n${t.p6}`;
+            
+            const textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alertBox(currentLang === 'zh' ? '報告內容已成功複製到剪貼簿！' : 'Report copied to clipboard successfully!');
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function alertBox(message) {
+            const div = document.createElement('div');
+            div.className = "fixed bottom-6 right-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-xl shadow-2xl z-50 text-sm font-semibold transition-all duration-300 animate-bounce";
+            div.innerText = message;
+            document.body.appendChild(div);
+            setTimeout(() => {
+                div.style.opacity = '0';
+                setTimeout(() => div.remove(), 300);
+            }, 3000);
+        }
+
+        // Reading Progress Bar tracker
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+        });
+    </script>
+</body>
+</html>
