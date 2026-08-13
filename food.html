@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="九龍灣及觀塘晚餐指南：用地區、菜式與預算找出合適的晚餐。" />
+  <title>晚餐指南｜九龍灣・觀塘</title>
+  <style>
+    :root { --ink:#27322e; --green:#1c6b5a; --red:#d35d42; --paper:#f6f2e9; --panel:#fffdf8; --line:#dcd2c0; --muted:#70685c; --softgreen:#e6f0ea; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif; }
+    button,input,a { font:inherit; }
+    button,a { -webkit-tap-highlight-color:transparent; }
+    button { cursor:pointer; }
+    a { color:inherit; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .shell { max-width:1540px; margin:0 auto; padding:0 40px; }
+    .topbar { min-height:62px; display:flex; align-items:center; justify-content:space-between; gap:18px; border-bottom:1px solid var(--line); background:#fffdf8; }
+    .brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .brand-mark { width:32px; height:32px; flex:0 0 32px; }
+    .brand-title { margin:0; font-family:Georgia,"Noto Serif TC",serif; font-weight:900; font-size:18px; line-height:1; letter-spacing:.06em; }
+    .brand-sub { margin:4px 0 0; font-size:8px; letter-spacing:.18em; font-weight:800; color:#746c60; }
+    .header-meta { display:flex; align-items:center; gap:20px; color:#625b50; font-size:10px; letter-spacing:.08em; font-weight:900; }
+    .header-meta span + span { padding-left:20px; border-left:1px solid #d8cebf; }
+    .single-badge { padding:7px 12px; background:var(--green); color:#fff; border-radius:999px; font-size:10px; letter-spacing:.06em; font-weight:900; }
+    .page { padding:28px 0 38px; }
+    .hero { position:relative; overflow:hidden; min-height:262px; padding:32px; border-top:2px solid var(--green); border-bottom:2px solid var(--green); background:#f0ecdf; isolation:isolate; }
+    .hero:before { content:""; position:absolute; inset:0; z-index:-2; opacity:.6; background-image:linear-gradient(#1c6b5a16 1px,transparent 1px),linear-gradient(90deg,#1c6b5a16 1px,transparent 1px); background-size:28px 28px; }
+    .hero:after { content:""; position:absolute; z-index:-1; width:780px; height:780px; right:-250px; top:-430px; border:1px solid #1c6b5a2e; border-radius:50%; box-shadow:0 0 0 34px #1c6b5a08,0 0 0 68px #1c6b5a06; }
+    .hero-grid { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(230px,.8fr) 170px; gap:28px; align-items:end; }
+    .eyebrow { display:flex; align-items:center; gap:8px; margin:0; color:var(--green); font-size:10px; font-weight:900; letter-spacing:.16em; }
+    .eyebrow:before { content:""; width:8px; height:8px; border-radius:50%; background:var(--red); }
+    h1,h2,h3,p { margin-top:0; }
+    h1 { max-width:620px; margin:12px 0 0; font-family:Georgia,"Noto Serif TC",serif; font-size:clamp(38px,4.6vw,65px); line-height:1.04; letter-spacing:-.04em; }
+    h1 strong { color:var(--green); }
+    .hero-copy { max-width:620px; margin:18px 0 0; font-size:14px; line-height:1.8; color:#5d574d; }
+    .route-status { padding-left:22px; border-left:2px solid var(--green); }
+    .route-status h2 { margin:0; font-size:9px; letter-spacing:.16em; color:#817768; }
+    .station { display:flex; align-items:center; gap:9px; margin-top:14px; color:#29352f; font-size:12px; font-weight:900; }
+    .station:before { content:""; width:12px; height:12px; border:3px solid var(--green); background:var(--paper); border-radius:50%; }
+    .match-number { padding-left:23px; border-left:1px solid #cfc4b2; }
+    .match-number b { display:block; color:var(--red); font:900 28px/1 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .match-number span { display:block; margin-top:5px; font-size:9px; letter-spacing:.13em; font-weight:900; color:#71695d; }
+    .dual-route { position:relative; height:19px; margin-top:27px; }
+    .dual-route:before,.dual-route:after { content:""; position:absolute; left:0; right:0; height:2px; border-radius:999px; background:var(--green); }
+    .dual-route:before { top:4px; } .dual-route:after { top:12px; }
+    .dual-route i { position:absolute; top:2px; height:12px; width:12px; border:3px solid var(--green); border-radius:50%; background:#f0ecdf; }
+    .dual-route i:nth-child(1){left:9%}.dual-route i:nth-child(2){left:51%}.dual-route i:nth-child(3){left:87%}
+    .workbench { display:grid; grid-template-columns:262px minmax(0,1fr); gap:22px; margin-top:20px; align-items:start; }
+    .filters { position:sticky; top:18px; padding:18px; border-top:2px solid var(--green); border-bottom:2px solid var(--green); background:var(--panel); box-shadow:0 13px 30px #312b1d0b; }
+    .filter-title { display:flex; align-items:center; gap:8px; margin:0; font-size:14px; font-weight:900; }
+    .filter-title svg { width:16px; height:16px; color:var(--green); }
+    .reset { margin-left:auto; padding:0; border:0; background:none; color:#aa654f; font-size:10px; font-weight:900; }
+    .searchbox { position:relative; margin-top:17px; }
+    .searchbox svg { position:absolute; left:11px; top:50%; width:15px; height:15px; transform:translateY(-50%); color:#82796c; }
+    .searchbox input { width:100%; height:41px; padding:0 32px 0 34px; border:1px solid #ddd3c2; border-radius:8px; outline:none; color:var(--ink); background:#fcfaf4; font-size:12px; }
+    .searchbox input:focus { border-color:var(--green); box-shadow:0 0 0 3px #1c6b5a18; }
+    .clear-query { position:absolute; right:7px; top:50%; display:none; padding:4px; transform:translateY(-50%); border:0; color:#7b7467; background:none; }
+    .filter-group { margin-top:21px; }
+    .filter-group legend { padding:0; font-size:9px; letter-spacing:.16em; color:#82796c; font-weight:900; }
+    .chip-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; }
+    .chip { padding:7px 12px; border:0; border-radius:999px; color:#645d51; background:#f1ede3; font-size:11px; font-weight:900; transition:.16s ease; }
+    .chip:hover { background:#e4eee9; color:var(--green); }
+    .chip.active { color:#fff; background:var(--green); }
+    .cuisine-grid,.budget-grid { display:grid; gap:6px; margin-top:8px; }
+    .cuisine-grid { grid-template-columns:1fr 1fr; }
+    .budget-grid { grid-template-columns:1fr 1fr; gap:8px; }
+    .option { padding:9px; border:0; color:#625c51; background:#f7f4ec; text-align:left; font-size:10px; font-weight:900; transition:.16s ease; }
+    .option:hover { background:#ede7da; }.option.active { color:var(--green); outline:1px solid var(--green); background:var(--softgreen); }
+    .budget { text-align:center; font-size:12px; }.budget.active { color:#fff; background:var(--red); outline:0; }
+    .saved-note { margin:20px 0 0; padding-top:15px; border-top:1px dashed #dbd1c1; color:#736b5f; font-size:10px; line-height:1.7; }
+    .directory-head { display:flex; align-items:end; justify-content:space-between; gap:20px; padding-bottom:14px; border-bottom:1px solid #d9d0c0; }
+    .directory-head .eyebrow { font-size:9px; }.directory-head .eyebrow:before{display:none}.directory-head h2 { margin:5px 0 0; font:900 34px/1 Georgia,"Noto Serif TC",serif; letter-spacing:-.03em; }
+    .directory-head > p { margin:0; text-align:right; color:#70685c; font-size:10px; font-weight:800; line-height:1.55; }
+    .cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-top:14px; }
+    .card { position:relative; overflow:hidden; padding:16px; border:1px solid var(--line); background:var(--panel); box-shadow:0 13px 27px #312b1d0a; animation:reveal .42s both; }
+    .card:before { content:""; position:absolute; top:0; right:0; left:0; height:5px; background:var(--accent); }
+    .card-top { display:flex; justify-content:space-between; gap:8px; padding-top:1px; }
+    .station-id { display:flex; gap:10px; }.number { display:grid; width:32px; height:32px; flex:0 0 32px; place-items:center; border:2px solid var(--green); border-radius:50%; color:var(--green); background:#f8f5ed; font:900 10px ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .micro { margin:0; color:var(--green); font-size:8px; font-weight:900; letter-spacing:.12em; }.restaurant-name { margin:5px 0 0; color:#27312e; font:900 21px/.98 Georgia,"Noto Serif TC",serif; }.english { margin:5px 0 0; color:#857c70; font-size:8px; font-weight:900; letter-spacing:.12em; }
+    .save { padding:4px; border:0; color:#6b6458; background:transparent; }.save:hover { color:var(--red); background:#f0eadf; }.save[data-saved="true"] { color:var(--red); }
+    .desc { min-height:42px; margin:16px 0 0; color:#625d54; font-size:11px; line-height:1.75; }
+    .price-line { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:14px; padding:10px 0; border-top:1px dashed #ded6c7; border-bottom:1px dashed #ded6c7; }
+    .price-label { display:block; color:#8c8375; font-size:8px; font-weight:900; letter-spacing:.12em; }.price { display:block; margin-top:3px; color:#b7473b; font:900 13px ui-monospace,SFMono-Regular,Menlo,monospace; }.note { padding:5px 8px; border-radius:999px; color:var(--green); background:var(--softgreen); font-size:9px; font-weight:900; white-space:nowrap; }
+    .details { margin:12px 0 0; color:#615b50; font-size:10px; line-height:1.65; }.detail { display:flex; gap:5px; align-items:flex-start; margin-top:4px; }.detail svg { width:12px; height:12px; flex:0 0 12px; margin-top:2px; color:var(--green); }.contact { display:flex; flex-wrap:wrap; gap:10px; margin-top:4px; }.phone { text-decoration:none; }.phone:hover { color:var(--green); }
+    .actions { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:14px; }.action { display:flex; align-items:center; justify-content:center; gap:4px; min-height:31px; padding:7px; border:1px solid #d8cebd; border-radius:7px; text-decoration:none; background:#fff; color:#595348; font-size:9px; font-weight:900; transition:.16s ease; }.action:hover{border-color:var(--green);color:var(--green)}.action.primary{border-color:var(--green);color:#fff;background:var(--green)}.action.primary:hover{background:#145245;color:#fff}
+    .empty { padding:64px 20px; border-top:2px dashed var(--green); border-bottom:2px dashed var(--green); background:var(--panel); text-align:center; }.empty h3{margin:0;font:900 25px Georgia,"Noto Serif TC",serif}.empty p{margin:10px 0 0;color:var(--muted);font-size:13px}.empty button{margin-top:18px;padding:10px 16px;border:1px solid var(--green);border-radius:999px;color:var(--green);background:#fff;font-size:12px;font-weight:900}
+    footer { margin-top:38px; color:#c9dbd2; background:#1d332e; }.footer-inner{display:flex;justify-content:space-between;gap:20px;padding:20px 0;font-size:10px;line-height:1.7}.footer-inner p{margin:0}.footer-inner p:first-child{font-weight:900;letter-spacing:.12em}
+    @keyframes reveal { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    @media (max-width:1180px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-grid{grid-template-columns:minmax(0,1.3fr) 230px}.match-number{display:none}}
+    @media (max-width:760px){.shell{padding:0 16px}.topbar{min-height:56px}.header-meta{display:none}.single-badge{font-size:8px;padding:6px 9px}.page{padding:14px 0 22px}.hero{min-height:auto;padding:22px 18px}.hero-grid{grid-template-columns:1fr;gap:19px}.route-status{padding-top:2px}.dual-route{margin-top:20px}.workbench{grid-template-columns:1fr;gap:17px;margin-top:16px}.filters{position:static}.cards{grid-template-columns:1fr}.directory-head h2{font-size:29px}.directory-head > p{font-size:9px}.footer-inner{flex-direction:column;padding:17px 0}.card{padding:15px}.hero-copy{font-size:12px}.station{margin-top:10px}}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card{animation:none}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar">
+      <a class="brand" href="#top" aria-label="回到晚餐指南首頁">
+        <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M12 3v19c0 4 3 7 7 7" stroke="#1C6B5A" stroke-width="3" stroke-linecap="round"/><path d="M19 3v10c0 3-2 5-5 5" stroke="#1C6B5A" stroke-width="3" stroke-linecap="round"/><circle cx="19" cy="25" r="3.5" fill="#D35D42"/><circle cx="12" cy="7" r="2.5" fill="#F6F2E9" stroke="#1C6B5A" stroke-width="2"/></svg>
+        <span><strong class="brand-title">晚餐指南</strong><span class="brand-sub">KOWLOON EAST / 2026</span></span>
+      </a>
+      <div class="header-meta"><span>10 DINNER STATIONS</span><span>HK$30–100 / PERSON</span></div>
+      <a class="single-badge" href="https://www.hkemobility.gov.hk/tc/route-search/pt" target="_blank" rel="noreferrer" style="text-decoration:none;">Transportation ↗</a>
+    </div>
+  </header>
+  <main id="top" class="shell page">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-grid">
+        <div><p class="eyebrow">DINNER ROUTE / EAST KOWLOON</p><h1 id="page-title">今晚食乜？<br /><strong>由一條路線開始。</strong></h1><p class="hero-copy">一次搜尋 10 間九龍灣及觀塘晚餐選擇。資料包含預算、地址、營業時間、電話與外部查詢入口。</p></div>
+        <div class="route-status"><h2>ROUTE STATUS</h2><p class="station">STATION 01／九龍灣・5 間</p><p class="station">STATION 02／觀塘・5 間</p></div>
+        <div class="match-number"><b id="hero-count">10</b><span>MATCHED STATIONS</span></div>
+      </div>
+      <div class="dual-route" aria-hidden="true"><i></i><i></i><i></i></div>
+    </section>
+    <section class="workbench" aria-label="餐廳搜尋工作台">
+      <aside class="filters" aria-label="篩選餐廳">
+        <div style="display:flex;align-items:center"><p class="filter-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 17h16M8 3v8M16 13v8"/></svg>尋找你的晚餐</p><button class="reset" id="reset" type="button">重設</button></div>
+        <div class="searchbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg><label class="sr-only" for="query">搜尋餐廳、菜式或地址</label><input id="query" type="search" placeholder="餐廳、菜式、地址" autocomplete="off" /><button class="clear-query" id="clear-query" aria-label="清除搜尋" type="button">×</button></div>
+        <fieldset class="filter-group"><legend>地區</legend><div class="chip-row" id="area-filters"><button class="chip active" data-area="全部" type="button">全部</button><button class="chip" data-area="九龍灣" type="button">九龍灣</button><button class="chip" data-area="觀塘" type="button">觀塘</button></div></fieldset>
+        <fieldset class="filter-group"><legend>菜式</legend><div class="cuisine-grid" id="cuisine-filters"><button class="option active" data-cuisine="全部" type="button">全部</button><button class="option" data-cuisine="亞洲風味" type="button">亞洲風味</button><button class="option" data-cuisine="日式" type="button">日式</button><button class="option" data-cuisine="港式" type="button">港式</button><button class="option" data-cuisine="中菜" type="button">中菜</button><button class="option" data-cuisine="西式" type="button">西式</button><button class="option" data-cuisine="快餐" type="button">快餐</button></div></fieldset>
+        <fieldset class="filter-group"><legend>每人預算上限</legend><div class="budget-grid" id="budget-filters"><button class="option budget" data-budget="50" type="button">HK$50</button><button class="option budget active" data-budget="100" type="button">HK$100</button></div></fieldset>
+        <p class="saved-note">已保存 <strong id="saved-count">0</strong> 間。收藏只會保留在這次瀏覽中。</p>
+      </aside>
+      <section aria-live="polite" aria-label="餐廳搜尋結果">
+        <div class="directory-head"><div><p class="eyebrow">LIVE DIRECTORY</p><h2>晚餐站點</h2></div><p>每張卡均附<br />OpenRice + Google 搜尋</p></div>
+        <div id="cards" class="cards"></div>
+        <div id="empty" class="empty" hidden><h3>暫時未有符合這條路線的站點。</h3><p>試試放寬預算，或清除目前的篩選條件。</p><button id="empty-reset" type="button">清除所有篩選</button></div>
+      </section>
+    </section>
+  </main>
+  <footer><div class="shell footer-inner"><p>晚餐指南 / KOWLOON BAY・KWUN TONG</p><p>資料整理：2026 年 8 月 13 日。營業資料或會變動，出發前請先致電確認。</p></div></footer>
+  <script>
+    const restaurants = [
+      {id:1,area:'九龍灣',name:'亞參雞飯',english:'ASAM CHICKEN RICE',cuisine:'馬來西亞風味飯餐',group:'亞洲風味',price:'HK$51–100',max:100,desc:'香料雞飯與小食的輕鬆晚餐選擇，商場地下位置方便。',address:'偉業街33號德福廣場1期地下 G102 號舖',hours:'11:00–21:30',phone:'2636 6022',openrice:'https://www.openrice.com/zh/hongkong/r-%E4%BA%9E%E5%8F%83%E9%9B%9E%E9%A3%AF-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E9%A6%AC%E4%BE%86%E8%A5%BF%E4%BA%9E%E8%8F%9C-r676591',google:'https://www.google.com/search?q=OpenRice+ASAM+CHICKEN+RICE+Kowloon+Bay',color:'#d46c3f',note:'商場地下・近港鐵'},
+      {id:2,area:'九龍灣',name:'一橋拉麵',english:'BASHI RAMEN',cuisine:'豚骨拉麵',group:'日式',price:'HK$51–100',max:100,desc:'平價拉麵與小食，適合一人或兩人快速吃一碗熱食。',address:'偉業街33號德福廣場2期5樓 528–529 號舖',hours:'11:30–21:30',phone:'2780 2533',openrice:'https://www.openrice.com/zh/hongkong/r-%E4%B8%80%E6%A9%8B%E6%8B%89%E9%BA%B5-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%97%A5%E6%9C%AC%E8%8F%9C-%E6%8B%89%E9%BA%B5-r1110606',google:'https://www.google.com/search?q=OpenRice+Bashi+Ramen+Kowloon+Bay',color:'#b6473a',note:'5樓・晚餐至21:30'},
+      {id:3,area:'九龍灣',name:'興哥清湯腩',english:'HING GOR BEEF BRISKET',cuisine:'牛腩粉麵',group:'港式',price:'約 HK$63 起',max:100,desc:'每天現場燜煮牛腩，想吃得飽足又不超支的穩妥選擇。',address:'偉業街33號德福廣場2期5樓 520–523 號舖',hours:'11:00–21:30',phone:'2780 2003',openrice:'https://www.openrice.com/zh/hongkong/r-%E8%88%88%E5%93%A5%E6%B8%85%E6%B9%AF%E8%85%A9-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%B8%AF%E5%BC%8F-%E7%B2%89%E9%BA%B5-%E7%B1%B3%E7%B7%9A-r1110592',google:'https://www.google.com/search?q=OpenRice+Hing+Gor+Beef+Brisket+Kowloon+Bay',color:'#7f5f3a',note:'5樓・完整堂食座位'},
+      {id:4,area:'九龍灣',name:'敏華冰廳',english:'MEN WAH BING TENG',cuisine:'懷舊港式冰室',group:'港式',price:'HK$51–100',max:100,desc:'黯然銷魂飯、沙茶牛肉麵等港式快餐，晚一點吃也合適。',address:'偉業街33號德福廣場1期地下 G53A 號舖',hours:'07:00–22:00',phone:'2366 2829',openrice:'https://www.openrice.com/zh/hongkong/r-%E6%95%8F%E8%8F%AF%E5%86%B0%E5%BB%B3-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%B8%AF%E5%BC%8F-r1113245',google:'https://www.google.com/search?q=OpenRice+Men+Wah+Bing+Teng+Telford+Plaza+Kowloon+Bay',color:'#a24a38',note:'地下・最晚至22:00'},
+      {id:5,area:'九龍灣',name:'METRO 豚骨BASE',english:'METRO TONKOTSU BASE',cuisine:'日式豚骨拉麵',group:'日式',price:'約 HK$62',max:100,desc:'豚骨拉麵及飯類為主，一份照燒雞扒半熟玉子飯亦在預算內。',address:'偉業街33號德福廣場1期地下 G101A 號舖',hours:'11:30–22:00',phone:'2769 6318',openrice:'https://www.openrice.com/zh/hongkong/r-metro-%E8%B1%9A%E9%AA%A8-base-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%97%A5%E6%9C%AC%E8%8F%9C-%E6%8B%89%E9%BA%B5-r729880',google:'https://www.google.com/search?q=OpenRice+METRO+TONKOTSU+BASE+Kowloon+Bay',color:'#416c8b',note:'地下・晚餐至22:00'},
+      {id:6,area:'觀塘',name:'Turfland',english:'OPERATED BY SENSORY ZERO',cuisine:'多國菜・咖啡店',group:'西式',price:'HK$51–100',max:100,desc:'落地玻璃與露營風 café，適合兩三位朋友慢慢吃一頓。',address:'開源道68號觀塘廣場1樓 116 號舖',hours:'12:00–21:30',phone:'3520 3598',openrice:'https://www.openrice.com/zh/hongkong/r-turfland-operated-by-sensory-zero-%E8%A7%80%E5%A1%98-%E8%A5%BF%E5%BC%8F-all-day-breakfast-r767983',google:'https://www.google.com/search?q=OpenRice+Turfland+Operated+by+sensory+ZERO+Kwun+Tong',color:'#517a60',note:'1樓・慢吃晚餐'},
+      {id:7,area:'觀塘',name:'上海一品香菜館',english:'SHANGHAI YAT PANG HEUNG',cuisine:'滬菜・中菜館',group:'中菜',price:'HK$51–100',max:100,desc:'小籠包、炒年糕、雞絲粉皮等可分享菜式，適合兩人以上。',address:'開源道68號觀塘廣場2樓 201–203 號舖',hours:'12:00–22:00',phone:'2344 1280',openrice:'https://www.openrice.com/zh/hongkong/r-%E4%B8%8A%E6%B5%B7%E4%B8%80%E5%93%81%E9%A6%99%E8%8F%9C%E9%A4%A8-%E8%A7%80%E5%A1%98-%E6%BB%AC%E8%8F%9C-%E4%B8%8A%E6%B5%B7-r3121',google:'https://www.google.com/search?q=OpenRice+Shanghai+Yat+Pang+Heung+Kwun+Tong',color:'#9e5650',note:'2樓・可分享中菜'},
+      {id:8,area:'觀塘',name:'阿龍家廚餃子',english:'AH LUNG DUMPLINGS',cuisine:'餃子・粉麵',group:'港式',price:'約 HK$40–80',max:100,desc:'以餃子配湯麵吃得實在，適合約 HK$50 的快捷晚餐。',address:'開源道68號觀塘廣場地下 G29 號舖',hours:'07:00–21:00',phone:'6321 5068',openrice:'https://www.openrice.com/zh/hongkong/r-%E9%98%BF%E9%BE%8D%E5%AE%B6%E5%BB%9A%E9%A4%83%E5%AD%90-%E8%A7%80%E5%A1%98-%E6%B8%AF%E5%BC%8F-%E7%B2%89%E9%BA%B5-%E7%B1%B3%E7%B7%9A-r1113280',google:'https://www.google.com/search?q=OpenRice+%E9%98%BF%E9%BE%8D%E5%AE%B6%E5%BB%9A%E9%A4%83%E5%AD%90+%E8%A7%80%E5%A1%98',color:'#c8873a',note:'地下・早段晚餐'},
+      {id:9,area:'觀塘',name:'Oliver’s Super Sandwiches',english:'OLIVER’S・APM',cuisine:'三文治・意粉・沙律',group:'西式',price:'HK$51–100',max:100,desc:'輕鬆的西式晚餐，適合一人或兩人吃三文治、意粉和沙律。',address:'觀塘道418號創紀之城五期 apm 2樓 L2-13 號舖',hours:'07:30–21:30',phone:'3148 1101',openrice:'https://www.openrice.com/zh/hongkong/r-olivers-super-sandwiches-%E8%A7%80%E5%A1%98-%E8%A5%BF%E5%BC%8F-%E7%84%A1%E8%82%89%E9%A4%90%E5%96%AE-r13708',google:'https://www.google.com/search?q=OpenRice+Oliver%27s+Super+Sandwiches+apm+Kwun+Tong',color:'#73895e',note:'apm 2樓・近觀塘站'},
+      {id:10,area:'觀塘',name:'MOS Burger',english:'APM YATA',cuisine:'日式漢堡快餐',group:'快餐',price:'約 HK$30–50',max:50,desc:'明亮便利的日式漢堡選擇，適合想在早段快速完成晚餐的人。',address:'觀塘道418號創紀之城五期 apm LG樓 LG-6c 號舖',hours:'10:00–21:00',phone:'3598 9030',openrice:'https://www.openrice.com/zh/hongkong/r-mos-burger-%E8%A7%80%E5%A1%98-%E6%97%A5%E6%9C%AC%E8%8F%9C-%E6%BC%A2%E5%A0%A1%E5%8C%85-r1143236',google:'https://www.google.com/search?q=OpenRice+MOS+Burger+apm+Kwun+Tong',color:'#418370',note:'apm LG・早段晚餐'}
+    ];
+    const state = { area:'全部', cuisine:'全部', budget:100, query:'', saved:new Set() };
+    const cards = document.getElementById('cards'); const empty = document.getElementById('empty'); const query = document.getElementById('query');
+    const esc = value => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    const icon = { pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>', clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>', phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.5v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 3.8 2 2 0 0 1 4.1 1.6h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .8 2.9a2 2 0 0 1-.5 2.1L8.1 9.6a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.4 1.9.7 2.9.8a2 2 0 0 1 1.6 1.9Z"/></svg>' };
+    function cardHTML(r) { const saved = state.saved.has(r.id); return `<article class="card" style="--accent:${r.color}"><div class="card-top"><div class="station-id"><span class="number">${String(r.id).padStart(2,'0')}</span><div><p class="micro">STATION / ${esc(r.area)} / ${esc(r.cuisine)}</p><h3 class="restaurant-name">${esc(r.name)}</h3><p class="english">${esc(r.english)}</p></div></div><button class="save" data-save="${r.id}" data-saved="${saved}" type="button" aria-label="${saved?'取消收藏':'收藏'} ${esc(r.name)}">${saved?'★':'☆'}</button></div><p class="desc">${esc(r.desc)}</p><div class="price-line"><div><span class="price-label">人均預算</span><b class="price">${esc(r.price)}</b></div><span class="note">${esc(r.note)}</span></div><div class="details"><p class="detail">${icon.pin}<span>${esc(r.address)}</span></p><div class="contact"><span class="detail">${icon.clock}<span>${esc(r.hours)}</span></span><a class="detail phone" href="tel:${r.phone.replace(/\s/g,'')}">${icon.phone}<span>${esc(r.phone)}</span></a></div></div><div class="actions"><a class="action primary" target="_blank" rel="noreferrer" href="${r.openrice}">OpenRice ↗</a><a class="action" target="_blank" rel="noreferrer" href="${r.google}">Google 搜尋 ↗</a></div></article>`; }
+    function render() { const term = state.query.trim().toLowerCase(); const results = restaurants.filter(r => (state.area==='全部'||r.area===state.area) && (state.cuisine==='全部'||r.group===state.cuisine) && r.max<=state.budget && `${r.name} ${r.english} ${r.cuisine} ${r.address} ${r.desc}`.toLowerCase().includes(term)); cards.innerHTML=results.map(cardHTML).join(''); cards.hidden=!results.length; empty.hidden=Boolean(results.length); document.getElementById('hero-count').textContent=String(results.length).padStart(2,'0'); document.getElementById('saved-count').textContent=state.saved.size; document.querySelectorAll('[data-save]').forEach(btn=>btn.addEventListener('click',()=>{const id=Number(btn.dataset.save);state.saved.has(id)?state.saved.delete(id):state.saved.add(id);render();})); document.getElementById('clear-query').style.display=state.query?'block':'none'; }
+    function setActive(selector, value, attr) { document.querySelectorAll(selector).forEach(button=>{ const active=button.dataset[attr]===String(value); button.classList.toggle('active',active); button.setAttribute('aria-pressed',active); }); }
+    document.querySelectorAll('[data-area]').forEach(button=>button.addEventListener('click',()=>{state.area=button.dataset.area;setActive('[data-area]',state.area,'area');render();}));
+    document.querySelectorAll('[data-cuisine]').forEach(button=>button.addEventListener('click',()=>{state.cuisine=button.dataset.cuisine;setActive('[data-cuisine]',state.cuisine,'cuisine');render();}));
+    document.querySelectorAll('[data-budget]').forEach(button=>button.addEventListener('click',()=>{state.budget=Number(button.dataset.budget);setActive('[data-budget]',state.budget,'budget');render();}));
+    query.addEventListener('input',event=>{state.query=event.target.value;render();}); document.getElementById('clear-query').addEventListener('click',()=>{query.value='';state.query='';render();query.focus();});
+    function reset(){state.area='全部';state.cuisine='全部';state.budget=100;state.query='';query.value='';setActive('[data-area]',state.area,'area');setActive('[data-cuisine]',state.cuisine,'cuisine');setActive('[data-budget]',state.budget,'budget');render();}
+    document.getElementById('reset').addEventListener('click',reset); document.getElementById('empty-reset').addEventListener('click',reset); render();
+  </script>
+</body>
+</html>
