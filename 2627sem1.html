@@ -96,7 +96,7 @@
 
     @media (min-width: 1100px) {
       .controls-grid {
-        grid-template-columns: 1.5fr 0.85fr 1.1fr 1.2fr 0.8fr 0.85fr auto auto;
+        grid-template-columns: 1.5fr 0.85fr 0.85fr 1fr 1.2fr 0.85fr auto auto;
         align-items: end;
       }
     }
@@ -349,14 +349,29 @@
 
     /* Pagination */
     .pagination {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      justify-content: space-between;
       gap: 1rem;
       padding: 1rem 1.25rem;
       background: #faf8ff;
       border-top: 1px solid var(--border);
+    }
+
+    .pagination-left {
+      justify-self: start;
+    }
+
+    .pagination-center {
+      justify-self: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .pagination-right {
+      justify-self: end;
     }
 
     .page-info {
@@ -468,11 +483,15 @@
 
     @media (max-width: 720px) {
       .pagination {
+        display: flex;
         flex-direction: column;
-        align-items: stretch;
+        align-items: center;
+        gap: 0.85rem;
       }
-      .page-controls {
-        justify-content: center;
+      .pagination-left,
+      .pagination-center,
+      .pagination-right {
+        justify-self: center;
       }
     }
 
@@ -488,7 +507,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>Computing Course Schedule</h1>
+      <h1>2026/27 Sem One timetable</h1>
       <p>Complete timetable of postgraduate and research subjects — filter, search and browse with ease</p>
     </header>
 
@@ -511,6 +530,12 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="startTimeFilter">Start Time</label>
+          <select id="startTimeFilter">
+            <option value="">All Start Times</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="venueFilter">Venue</label>
           <select id="venueFilter">
             <option value="">All Venues</option>
@@ -523,17 +548,9 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="pageSize">Items per page</label>
-          <select id="pageSize">
-            <option value="20" selected>20</option>
-            <option value="30">30</option>
-            <option value="all">All</option>
-          </select>
-        </div>
-        <div class="form-group">
           <label for="viewMode">Display</label>
           <select id="viewMode">
-            <option value="table">Table</option>
+            <option value="table" selected>Table</option>
             <option value="cards">Cards</option>
           </select>
         </div>
@@ -560,9 +577,9 @@
               <th data-key="subjectCode">Code <span class="sort-icon"></span></th>
               <th data-key="subjectTitle">Subject Title <span class="sort-icon"></span></th>
               <th data-key="dayOfWeek">Day <span class="sort-icon"></span></th>
+              <th data-key="venue">Venue <span class="sort-icon"></span></th>
               <th data-key="startTime">Start <span class="sort-icon"></span></th>
               <th data-key="endTime">End <span class="sort-icon"></span></th>
-              <th data-key="venue">Venue <span class="sort-icon"></span></th>
               <th data-key="teachingStaff">Teaching Staff <span class="sort-icon"></span></th>
               <th data-key="forEveryWeek">Every <span class="sort-icon"></span></th>
               <th data-key="startWeek">Start Wk <span class="sort-icon"></span></th>
@@ -577,8 +594,22 @@
       <div class="cards-view" id="cardsView"></div>
 
       <div class="pagination" id="pagination">
-        <div class="page-info" id="pageInfo"></div>
-        <div class="page-controls" id="pageControls"></div>
+        <div class="pagination-left">
+          <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+            <label for="pageSize" style="margin-bottom: 0; white-space: nowrap;">Items per page:</label>
+            <select id="pageSize" style="width: auto; padding: 0.4rem 0.6rem;">
+              <option value="20" selected>20</option>
+              <option value="30">30</option>
+              <option value="all">All</option>
+            </select>
+          </div>
+        </div>
+        <div class="pagination-center">
+          <div class="page-controls" id="pageControls"></div>
+        </div>
+        <div class="pagination-right">
+          <div class="page-info" id="pageInfo"></div>
+        </div>
       </div>
     </div>
 
@@ -674,6 +705,7 @@
     const searchInput = document.getElementById("search");
     const dayFilter = document.getElementById("dayFilter");
     const venueFilter = document.getElementById("venueFilter");
+    const startTimeFilter = document.getElementById("startTimeFilter");
     const staffFilter = document.getElementById("staffFilter");
     const pageSizeSelect = document.getElementById("pageSize");
     const viewModeSelect = document.getElementById("viewMode");
@@ -687,7 +719,7 @@
     const pageInfo = document.getElementById("pageInfo");
     const pageControls = document.getElementById("pageControls");
 
-    // Populate Venue and Teaching Staff dropdowns
+    // Populate Venue dropdown
     const uniqueVenues = [...new Set(rawData.map(r => r.venue).filter(Boolean))].sort((a, b) => a.localeCompare(b));
     uniqueVenues.forEach(v => {
       const opt = document.createElement("option");
@@ -696,6 +728,22 @@
       venueFilter.appendChild(opt);
     });
 
+    // Populate Start Time dropdown (sorted chronologically)
+    const timeToMinutes = (t) => {
+      if (!t) return 0;
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + (m || 0);
+    };
+    const uniqueStartTimes = [...new Set(rawData.map(r => r.startTime).filter(Boolean))]
+      .sort((a, b) => timeToMinutes(a) - timeToMinutes(b));
+    uniqueStartTimes.forEach(st => {
+      const opt = document.createElement("option");
+      opt.value = st;
+      opt.textContent = st;
+      startTimeFilter.appendChild(opt);
+    });
+
+    // Populate Teaching Staff dropdown
     const uniqueStaff = [...new Set(rawData.map(r => r.teachingStaff).filter(Boolean))].sort((a, b) => a.localeCompare(b));
     uniqueStaff.forEach(s => {
       const opt = document.createElement("option");
@@ -708,11 +756,13 @@
       const q = searchInput.value.trim().toLowerCase();
       const day = dayFilter.value;
       const venue = venueFilter.value;
+      const startTime = startTimeFilter.value;
       const staff = staffFilter.value;
 
       filtered = rawData.filter(row => {
         if (day && row.dayOfWeek !== day) return false;
         if (venue && row.venue !== venue) return false;
+        if (startTime && row.startTime !== startTime) return false;
         if (staff && row.teachingStaff !== staff) return false;
         if (q) {
           const hay = [
@@ -767,9 +817,9 @@
             <td class="code">${getSubjectCodeHtml(row.subjectCode)}</td>
             <td class="title">${escapeHtml(row.subjectTitle)}</td>
             <td><span class="${dayClass}">${escapeHtml(dayText)}</span></td>
+            <td class="venue">${escapeHtml(row.venue || "—")}</td>
             <td>${escapeHtml(row.startTime || "—")}</td>
             <td>${escapeHtml(row.endTime || "—")}</td>
-            <td class="venue">${escapeHtml(row.venue || "—")}</td>
             <td class="staff">${escapeHtml(row.teachingStaff || "—")}</td>
             <td class="week-info">${escapeHtml(row.forEveryWeek)}</td>
             <td class="week-info">${escapeHtml(row.startWeek)}</td>
@@ -989,7 +1039,7 @@
       } catch (e) { /* ignore storage errors */ }
     }
 
-    // Initialise view: prefer stored preference, otherwise Cards on narrow screens
+    // Initialise view: prefer stored preference, otherwise default strictly to Table view
     (function initViewMode() {
       let preferred = null;
       try {
@@ -998,8 +1048,7 @@
       if (preferred === "table" || preferred === "cards") {
         applyViewMode(preferred);
       } else {
-        // Default: Cards on mobile-sized viewports, Table otherwise
-        applyViewMode(window.innerWidth <= 720 ? "cards" : "table");
+        applyViewMode("table");
       }
     })();
 
@@ -1007,6 +1056,7 @@
     searchInput.addEventListener("input", debounce(applyFilters, 220));
     dayFilter.addEventListener("change", applyFilters);
     venueFilter.addEventListener("change", applyFilters);
+    startTimeFilter.addEventListener("change", applyFilters);
     staffFilter.addEventListener("change", applyFilters);
     pageSizeSelect.addEventListener("change", () => {
       const val = pageSizeSelect.value;
@@ -1023,13 +1073,13 @@
       searchInput.value = "";
       dayFilter.value = "";
       venueFilter.value = "";
+      startTimeFilter.value = "";
       staffFilter.value = "";
       pageSizeSelect.value = "20";
       pageSize = 20;
       sortKey = "subjectCode";
       sortDir = "asc";
       applyFilters();
-      // View mode is intentionally left unchanged so the user’s preferred display is preserved
     });
 
     exportBtn.addEventListener("click", exportToExcel);
@@ -1060,4 +1110,3 @@
   </script>
 </body>
 </html>
-
