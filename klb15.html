@@ -646,16 +646,8 @@
         .cards-view {
             display: none;
             grid-template-columns: 1fr;
-            gap: 1rem;
-            padding: 1.25rem;
-        }
-
-        @media (min-width: 768px) {
-            .cards-view { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (min-width: 1200px) {
-            .cards-view { grid-template-columns: repeat(3, 1fr); }
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
         }
 
         .table-card.view-table .table-scroll { display: block; }
@@ -667,23 +659,23 @@
             background: white;
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            padding: 1.25rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+            padding: 0.75rem 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            gap: 1rem;
+            gap: 0.35rem;
         }
 
         .restaurant-card .card-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             gap: 0.5rem;
         }
 
         .restaurant-card .card-title {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--primary-dark);
             line-height: 1.3;
