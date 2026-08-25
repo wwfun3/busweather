@@ -421,11 +421,22 @@
 
         .stats {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem 1.5rem;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
             margin-bottom: 1rem;
             font-size: 0.875rem;
             color: var(--text-muted);
+            text-align: center;
+        }
+
+        @media (min-width: 640px) {
+            .stats {
+                flex-direction: row;
+                justify-content: space-between;
+                text-align: left;
+            }
         }
 
         .stats strong {
@@ -772,7 +783,10 @@
         </div>
 
         <div class="stats" id="stats">
-            顯示第 <strong id="showingCount">0</strong> 項，共 <strong id="totalCount">0</strong> 間餐廳
+            <div>顯示第 <strong id="showingCount">0</strong> 項，共 <strong id="totalCount">0</strong> 間餐廳</div>
+            <button type="button" class="btn btn-secondary" id="expandAllBtn" style="display: none; font-size: 0.8rem; padding: 0.35rem 0.75rem;">
+                ▼ 展開全部細節
+            </button>
         </div>
 
         <div class="table-card view-table" id="tableCard">
@@ -1052,6 +1066,7 @@
         const cardsView = document.getElementById("cardsView");
         const showingCount = document.getElementById("showingCount");
         const totalCount = document.getElementById("totalCount");
+        const expandAllBtn = document.getElementById("expandAllBtn");
         const pageInfo = document.getElementById("pageInfo");
         const pageControls = document.getElementById("pageControls");
 
@@ -1158,6 +1173,14 @@
 
             showingCount.textContent = total === 0 ? "0" : `${startIdx}–${endIdx}`;
             totalCount.textContent = total;
+
+            // Update Expand/Collapse All Button state
+            if (expandAllBtn) {
+                const isCardsView = viewModeSelect.value === "cards";
+                expandAllBtn.style.display = isCardsView ? "inline-flex" : "none";
+                const allExpanded = slice.length > 0 && slice.every(row => expandedCards.has(row.id));
+                expandAllBtn.innerHTML = allExpanded ? "▲ 收起全部細節" : "▼ 展開全部細節";
+            }
 
             // Table rows
             tableBody.innerHTML = "";
@@ -1398,9 +1421,23 @@
             tableCard.classList.remove("view-table", "view-cards");
             tableCard.classList.add(selected === "cards" ? "view-cards" : "view-table");
             viewModeSelect.value = selected === "cards" ? "cards" : "table";
+            render();
         }
 
         // Event listeners
+        if (expandAllBtn) {
+            expandAllBtn.addEventListener("click", () => {
+                const slice = getPageSlice();
+                const allExpanded = slice.length > 0 && slice.every(row => expandedCards.has(row.id));
+                if (allExpanded) {
+                    slice.forEach(row => expandedCards.delete(row.id));
+                } else {
+                    slice.forEach(row => expandedCards.add(row.id));
+                }
+                render();
+            });
+        }
+
         searchInput.addEventListener("input", debounce(applyFilters, 200));
         areaFilter.addEventListener("change", applyFilters);
         typeFilter.addEventListener("change", applyFilters);
