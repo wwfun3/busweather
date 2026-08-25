@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>香港精選美食指南 | Hong Kong Dining Guide</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #c7d2fe;
+            --primary-dark: #4f46e5;
+            --primary-bg: #eef2ff;
+            --primary-bg-soft: #e0e7ff;
+            --surface: #ffffff;
+            --text: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgb(99 102 241 / 0.08), 0 2px 4px -2px rgb(99 102 241 / 0.06);
+            --shadow-lg: 0 10px 15px -3px rgb(99 102 241 / 0.12), 0 4px 6px -4px rgb(99 102 241 / 0.08);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang HK", "Microsoft JhengHei", sans-serif;
+            background: linear-gradient(160deg, var(--primary-bg) 0%, #faf5ff 40%, #f8fafc 100%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 1.5rem 1.25rem 3rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, #818cf8 100%);
+            color: white;
+            padding: 1.75rem 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        header h1 {
+            font-size: clamp(1.5rem, 3vw, 1.85rem);
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.35rem;
+            position: relative;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.92;
+            position: relative;
+        }
+
+        .controls {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(99, 102, 241, 0.12);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 1100px) {
+            .controls-grid {
+                grid-template-columns: 1.5fr 1fr 1fr 0.9fr auto auto;
+                align-items: end;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1099px) {
+            .controls-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                align-items: end;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+
+        input[type="search"],
+        select {
+            padding: 0.6rem 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            background: #fff;
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        input[type="search"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1.1rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--primary-bg-soft);
+            color: var(--primary-dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .btn-link-openrice {
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.78rem;
+        }
+
+        .btn-link-openrice:hover {
+            background: #ea580c;
+            color: white;
+            border-color: #ea580c;
+        }
+
+        .btn-link-google {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #dbeafe;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.78rem;
+        }
+
+        .btn-link-google:hover {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .stats strong {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .table-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            overflow: hidden;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            min-width: 950px;
+        }
+
+        thead {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 0.85rem 0.9rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        th:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        th .sort-icon {
+            display: inline-block;
+            margin-left: 0.25rem;
+            opacity: 0.6;
+            font-size: 0.7rem;
+        }
+
+        th.sorted-asc .sort-icon::after {
+            content: "▲";
+            opacity: 1;
+        }
+        th.sorted-desc .sort-icon::after {
+            content: "▼";
+            opacity: 1;
+        }
+        th:not(.sorted-asc):not(.sorted-desc) .sort-icon::after {
+            content: "↕";
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        tbody tr:hover {
+            background: var(--primary-bg);
+        }
+
+        td {
+            padding: 0.75rem 0.9rem;
+            vertical-align: top;
+        }
+
+        .id-col {
+            font-weight: 600;
+            color: var(--text-muted);
+            width: 45px;
+            text-align: center;
+        }
+
+        .area-col {
+            width: 75px;
+            white-space: nowrap;
+        }
+
+        .type-col {
+            width: 95px;
+        }
+
+        .name-col {
+            font-weight: 700;
+            color: var(--primary-dark);
+            min-width: 105px;
+            max-width: 125px;
+        }
+
+        .desc-text {
+            min-width: 280px;
+            max-width: 340px;
+            font-size: 0.825rem;
+            color: #374151;
+            line-height: 1.45;
+        }
+
+        .address-text {
+            font-size: 0.825rem;
+            color: var(--text-muted);
+            min-width: 200px;
+            max-width: 250px;
+        }
+
+        .hours-text {
+            font-size: 0.825rem;
+            white-space: pre-line;
+            min-width: 150px;
+        }
+
+        .links-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            min-width: 110px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .pagination {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            background: #fafafa;
+            border-top: 1px solid var(--border);
+        }
+
+        .pagination-left { justify-self: start; }
+        .pagination-center {
+            justify-self: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .pagination-right { justify-self: end; }
+
+        .page-info {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .page-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            min-width: 2.25rem;
+            height: 2.25rem;
+            padding: 0 0.5rem;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--text);
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            background: var(--primary-bg);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .cards-view {
+            display: none;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            padding: 1.25rem;
+        }
+
+        @media (min-width: 768px) {
+            .cards-view { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (min-width: 1200px) {
+            .cards-view { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .table-card.view-table .table-scroll { display: block; }
+        .table-card.view-table .cards-view { display: none; }
+        .table-card.view-cards .table-scroll { display: none; }
+        .table-card.view-cards .cards-view { display: grid; }
+
+        .restaurant-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .restaurant-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .restaurant-card .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            line-height: 1.3;
+        }
+
+        .restaurant-card .card-tags {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-top: 0.4rem;
+        }
+
+        .restaurant-card .card-desc {
+            font-size: 0.875rem;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        .restaurant-card .card-info {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .restaurant-card .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 720px) {
+            .pagination {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.85rem;
+            }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>香港精選美食指南 &amp; 地道餐廳目錄</h1>
+            <p>九龍灣優選餐廳、工廈小店及商場美食列表 — 支援地區、菜式篩選、搜尋及匯出 Excel</p>
+        </header>
+
+        <div class="controls">
+            <div class="controls-grid">
+                <div class="form-group">
+                    <label for="search">關鍵字搜尋</label>
+                    <input type="search" id="search" placeholder="搜尋餐廳名稱、簡介、地址或電話…" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label for="areaFilter">地區</label>
+                    <select id="areaFilter">
+                        <option value="">全部地區</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="typeFilter">菜式 / 類型</label>
+                    <select id="typeFilter">
+                        <option value="">全部菜式</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="viewMode">顯示方式</label>
+                    <select id="viewMode">
+                        <option value="table" selected>表格檢視</option>
+                        <option value="cards">卡片檢視</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-secondary" id="resetBtn">重設條件</button>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-primary" id="exportBtn" title="匯出目前篩選結果至 Excel (CSV)">匯出至 Excel</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats" id="stats">
+            顯示第 <strong id="showingCount">0</strong> 項，共 <strong id="totalCount">0</strong> 間餐廳
+        </div>
+
+        <div class="table-card view-table" id="tableCard">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-key="id" style="text-align: center; width: 45px;">編號 <span class="sort-icon"></span></th>
+                            <th data-key="area" style="width: 75px;">地區 <span class="sort-icon"></span></th>
+                            <th data-key="type" style="width: 95px;">菜式／類型 <span class="sort-icon"></span></th>
+                            <th data-key="name" style="min-width: 105px; max-width: 125px;">餐廳名稱 <span class="sort-icon"></span></th>
+                            <th data-key="desc" style="min-width: 280px; max-width: 340px;">簡介</th>
+                            <th data-key="address" style="min-width: 200px; max-width: 250px;">地址</th>
+                            <th data-key="hoursPhone" style="min-width: 150px;">營業時間與電話</th>
+                            <th style="min-width: 110px;">對外連結</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Card View -->
+            <div class="cards-view" id="cardsView"></div>
+
+            <div class="pagination" id="pagination">
+                <div class="pagination-left">
+                    <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+                        <label for="pageSize" style="margin-bottom: 0; white-space: nowrap;">每頁顯示：</label>
+                        <select id="pageSize" style="width: auto; padding: 0.4rem 0.6rem;">
+                            <option value="10">10</option>
+                            <option value="20" selected>20</option>
+                            <option value="all">全部</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="pagination-center">
+                    <div class="page-controls" id="pageControls"></div>
+                </div>
+                <div class="pagination-right">
+                    <div class="page-info" id="pageInfo"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            資料僅供參考，營業時間與選單請以各餐廳 OpenRice 或現場公佈為準。
+        </footer>
+    </div>
+
+    <script>
+        const rawData = [
+            {
+                id: 1,
+                area: "九龍灣",
+                type: "滬菜／粢飯／包點",
+                name: "豆漿大王",
+                desc: "招牌是粢飯、小籠包及現磨豆漿；可選原味粢飯 **$20**、上海排骨上海麵 **$45**。淘大商場內座位明亮，適合慢吃或行街後歇腳。",
+                address: "九龍灣牛頭角道77號淘大商場2期地下G208–209號舖",
+                hoursPhone: "每日 08:30–22:00（最後落單21:30）；2328 5556",
+                openrice: "https://www.openrice.com/zh/hongkong/r-%E8%B1%86%E6%BC%BF%E5%A4%A7%E7%8E%8B-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%BB%AC%E8%8F%9C-%E4%B8%8A%E6%B5%B7-%E4%B8%AD%E5%BC%8F%E5%8C%85%E9%BB%9E-r573306 ",
+                google: "https://www.google.com/search?q=openrice+%E8%B1%86%E6%BC%BF%E5%A4%A7%E7%8E%8B+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 2,
+                area: "九龍灣",
+                type: "雲南米線／冰室",
+                name: "臻味冰室豬扒酸辣米線",
+                desc: "秘製豬扒麻酸辣米線 **$48**、爽滑魚肉麻酸辣米線 **$42** 是實惠選擇。地舖堂食樸實整潔，較適合舒服地吃一頓快速午飯，而非長時間工作式久坐。",
+                address: "九龍灣常悅道13號瑞興中心地下A號舖",
+                hoursPhone: "週一至六 07:00–20:30；週日及公眾假期休息；2388 5168／2388 5216",
+                openrice: "https://www.openrice.com/zh/hongkong/r-%E8%87%BB%E5%91%B3%E5%86%B0%E5%AE%A4%E8%B1%AC%E6%89%92%E9%85%B8%E8%BE%A3%E7%B1%B3%E7%B7%9A-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%BB%87%E8%8F%9C-%E9%9B%B2%E5%8D%97-%E7%B2%89%E9%BA%B5-%E7%B1%B3%E7%B7%9A-r717566 ",
+                google: "https://www.google.com/search?q=openrice+%E8%87%BB%E5%91%B3%E5%86%B0%E5%AE%A4%E8%B1%AC%E6%89%92%E9%85%B8%E8%BE%A3%E7%B1%B3%E7%B7%9A+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 3,
+                area: "九龍灣",
+                type: "四川酸辣粉／涼皮",
+                name: "酸辣姐",
+                desc: "酸辣粉、涼皮和涼拌小食為主，可按辣度調整；一人午餐約 **$50–80**，符合其 OpenRice **$51–100** 價帶。工廈小店有 Wi‑Fi、堂食及戶外座位，午市後段相對適合放鬆聊天。",
+                address: "九龍灣宏冠道6號鴻力工業中心B座2樓26號舖",
+                hoursPhone: "週一至五 11:00–20:00；週末休息；5740 1128",
+                openrice: "https://www.openrice.com/zh/hongkong/r-%E9%85%B8%E8%BE%A3%E5%A7%90-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E5%B7%9D%E8%8F%9C-%E5%9B%9B%E5%B7%9D-%E7%B2%89%E9%BA%B5-%E7%B1%B3%E7%B7%9A-r749921 ",
+                google: "https://www.google.com/search?q=openrice+%E9%85%B8%E8%BE%A3%E5%A7%90+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 4,
+                area: "九龍灣",
+                type: "港式番茄湯麵／飯",
+                name: "蕃茄仔",
+                desc: "濃蕃茄湯是主角，豬軟骨蕃茄湯刀削麵 **$78**；近期食評仍稱湯底濃郁。Eastmark商場店明亮、座位舒適，適合想食得飽又想坐一會的午餐。",
+                address: "九龍灣常悅道21號Eastmark 1樓7號舖",
+                hoursPhone: "每日 11:30–21:00（最後落單20:45）；2677 7338",
+                openrice: "https://www.openrice.com/zh/hongkong/r-%E8%95%83%E8%8C%84%E4%BB%94-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%B8%AF%E5%BC%8F-%E7%B2%89%E9%BA%B5-%E7%B1%B3%E7%B7%9A-r711651 ",
+                google: "https://www.google.com/search?q=openrice+%E8%95%83%E8%8C%84%E4%BB%94+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 5,
+                area: "九龍灣",
+                type: "日式豚骨拉麵／丼飯",
+                name: "METRO 豚骨 BASE",
+                desc: "不只拉麵，照燒雞扒半熟玉子飯 **$62** 已在預算內；想吃濃湯拉麵也可先看餐牌。德福商場店採輕鬆日式格局，交通方便、適合午間短暫放空。",
+                address: "九龍灣偉業街33號德福廣場1期地下G101A號舖",
+                hoursPhone: "每日 11:30–22:00（最後落單21:30）；2769 6318",
+                openrice: "https://www.openrice.com/zh/hongkong/r-metro-%E8%B1%9A%E9%AA%A8-base-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%97%A5%E6%9C%AC%E8%8F%9C-%E6%8B%89%E9%BA%B5-r729880 ",
+                google: "https://www.google.com/search?q=openrice+METRO+%E8%B1%9A%E9%AA%A8+BASE+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 6,
+                area: "九龍灣",
+                type: "北海道豚丼／日式定食",
+                name: "豚丼のぶたはげ",
+                desc: "北海道風豚丼店；近期三重海鮮迷你丼・天婦羅餅定食 **$108**，主食與前菜一次滿足。店內日式座席配商場環境，適合想慢慢吃定食、輕鬆聊天的人。",
+                address: "九龍灣偉業街33號德福廣場1期地下G54A2號舖",
+                hoursPhone: "每日 11:30–22:00；2717 0988",
+                openrice: "https://www.openrice.com/zh/hongkong/r-%E8%B1%9A%E4%B8%BC%E3%81%AE%E3%81%B6%E3%81%9F%E3%81%AF%E3%81%92-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%97%A5%E6%9C%AC%E8%8F%9C-r717981 ",
+                google: "https://www.google.com/search?q=openrice+%E8%B1%9A%E4%B8%BC%E3%81%AE%E3%81%B6%E3%81%9F%E3%81%AF%E3%81%92+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 7,
+                area: "九龍灣",
+                type: "雞白湯拉麵／沾麵",
+                name: "Kumo Soba",
+                desc: "東京風雞白湯拉麵新店，辛辣味噌雞白湯拉麵 **$128** 為預算上緣的可選主食。店面新淨、日式簡約，適合拉麵愛好者在非尖峰時間安靜用餐。",
+                address: "九龍灣偉業街33號德福廣場1期1樓F28號舖",
+                hoursPhone: "週一至五 11:30–22:00；週末及公眾假期 11:00–22:00；3628 3022",
+                openrice: "https://www.openrice.com/zh/hongkong/r-kumo-soba-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%97%A5%E6%9C%AC%E8%8F%9C-r1124419 ",
+                google: "https://www.google.com/search?q=openrice+Kumo+Soba+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 8,
+                area: "九龍灣",
+                type: "西式Cafe／All-day breakfast／扒房",
+                name: "Me Time Cafe",
+                desc: "近期食評記錄大塊雞扒連餐湯及飲品 **$68**；室內空間寬敞、卡位較舒適，是本表中較適合久坐、朋友聊天的工廈區午餐店。",
+                address: "九龍灣宏開道8號其士商業中心1樓A號舖",
+                hoursPhone: "週一至五 07:30–21:00；週六 11:00–21:00；週日及公眾假期休息；9014 0042",
+                openrice: "https://www.openrice.com/zh/hongkong/r-me-time-cafe-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E8%A5%BF%E5%BC%8F-all-day-breakfast-r780727 ",
+                google: "https://www.google.com/search?q=openrice+Me+Time+Cafe+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 9,
+                area: "九龍灣",
+                type: "日式拉麵／沾麵",
+                name: "一生懸麵",
+                desc: "本地拉麵店，雞白湯拉麵 **$95**、限定粟米雪糕海老拉麵 **$98**。得寶商場店親民、有室外座位選項；午市後前往較能舒服地坐下慢吃。",
+                address: "九龍灣牛頭角道3號得寶商場地下121號舖",
+                hoursPhone: "每日 12:00–22:00（21:00截單）；3705 8766",
+                openrice: "https://www.openrice.com/zh/hongkong/r-%E4%B8%80%E7%94%9F%E6%87%B8%E9%BA%B5-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%97%A5%E6%9C%AC%E8%8F%9C-%E6%8B%89%E9%BA%B5-r526320 ",
+                google: "https://www.google.com/search?q=openrice+%E4%B8%80%E7%94%9F%E6%87%B8%E9%BA%B5+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 10,
+                area: "九龍灣",
+                type: "日式和洋食／樓上Cafe",
+                name: "Hidden 和洋食屋",
+                desc: "午市丼飯及套餐約 **$70–128**；昭和風裝潢配遊戲機、桌遊及音樂，氛圍特別放鬆，屬本表最推薦「chill住食」的選擇之一。",
+                address: "九龍灣常悅道20號環球工商大廈8樓804–805號舖",
+                hoursPhone: "週一至六 11:00–22:00；週日及公眾假期休息；9858 1737",
+                openrice: "https://www.openrice.com/zh/hongkong/r-hidden%E5%92%8C%E6%B4%8B%E9%A3%9F%E5%B1%8B-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%97%A5%E6%9C%AC%E8%8F%9C-r728971 ",
+                google: "https://www.google.com/search?q=openrice+Hidden+%E5%92%8C%E6%B4%8B%E9%A3%9F%E5%B1%8B+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 11,
+                area: "九龍灣",
+                type: "沖繩料理／烏冬／Cafe",
+                name: "沖繩二段料理（MegaBox）",
+                desc: "烏冬、飯類及輕食約 **$79–100**；鮮黃色梳化卡位、空間較寬，是帶小朋友或與朋友在MegaBox慢慢休息的好選擇。",
+                address: "九龍灣宏照道38號企業廣場5期MegaBox 10樓6號舖",
+                hoursPhone: "每日 11:45–21:00；2376 3081／WhatsApp 6379 8698",
+                openrice: "https://www.openrice.com/zh/hongkong/r-%E6%B2%96%E7%B9%A9%E4%BA%8C%E6%AE%B5%E6%96%99%E7%90%86-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%97%A5%E6%9C%AC%E8%8F%9C-%E9%BA%B5%E5%8C%85%E5%BA%97-r506320 ",
+                google: "https://www.google.com/search?q=openrice+%E6%B2%96%E7%B9%A9%E4%BA%8C%E6%AE%B5%E6%96%99%E7%90%86+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 12,
+                area: "九龍灣",
+                type: "泰國菜／咖喱／粉麵",
+                name: "泰Cool",
+                desc: "鮮蝦炒金邊粉 **$106**；主食選擇多。店內較闊落，黃椅、木枱與泰式裝飾營造輕鬆感，適合朋友午餐聊天；繁忙時宜預留時間。",
+                address: "九龍灣牛頭角道77號淘大商場4期地下F229–240號舖",
+                hoursPhone: "每日 11:30–22:00（最後落單21:30）；2382 3392／2382 3398",
+                openrice: "https://www.openrice.com/zh/hongkong/r-%E6%B3%B0cool-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%B3%B0%E5%9C%8B%E8%8F%9C-%E5%92%96%E5%96%B1-r763418 ",
+                google: "https://www.google.com/search?q=openrice+%E6%B3%B0Cool+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 13,
+                area: "九龍灣",
+                type: "港式冰室／雲吞雞／酸菜魚",
+                name: "魚川居（金漢工業大廈）",
+                desc: "工廈飯堂風格，雲吞雞、椰子雞及酸菜魚為主；近期食評顯示主食 **$50起**，包飲品及白飯任裝。氣氛家常、不擠迫時適合在午餐時段輕鬆坐下。",
+                address: "九龍灣宏冠道8號金漢工業大廈1樓5–6室",
+                hoursPhone: "週一至五 11:00–16:30；週六 11:00–16:00；週日及公眾假期休息；3709 2310／5921 2412",
+                openrice: "https://www.openrice.com/zh/hongkong/r-%E9%AD%9A%E5%B7%9D%E5%B1%85-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%B8%AF%E5%BC%8F-%E7%B2%89%E9%BA%B5-%E7%B1%B3%E7%B7%9A-r747204 ",
+                google: "https://www.google.com/search?q=openrice+%E9%AD%9A%E5%B7%9D%E5%B1%85+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 14,
+                area: "九龍灣",
+                type: "日式丼飯／烏冬／蕎麥麵",
+                name: "町町丼丼（企業廣場1期）",
+                desc: "性價比日式午餐：滑蛋吉列雞扒丼 **$50**、胡麻雞蕎麥麵 **$54**、咖喱吉列豬扒蛋蓋飯 **$62**。店內乾淨整潔、出餐快，適合上班族但不至於侷促。",
+                address: "九龍灣常悅道9號企業廣場1期1樓5A–5C號舖",
+                hoursPhone: "週一至五 11:00–21:00；週末 11:30–21:00；5343 6286",
+                openrice: "https://www.openrice.com/zh/hongkong/r-%E7%94%BA%E7%94%BA%E4%B8%BC%E4%B8%BC-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%97%A5%E6%9C%AC%E8%8F%9C-r780002 ",
+                google: "https://www.google.com/search?q=openrice+%E7%94%BA%E7%94%BA%E4%B8%BC%E4%B8%BC+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            },
+            {
+                id: 15,
+                area: "九龍灣",
+                type: "日式拉麵／寵物友善",
+                name: "Rakuraku 樂拉麵（MegaBox）",
+                desc: "辛辣豚骨湯叉燒拉麵 **$98**；OpenRice價帶為 $51–100。日式拉麵店位於MegaBox 10樓，鄰近娛樂設施且可訂座，適合睇戲或逛商場後舒服吃午餐。",
+                address: "九龍灣宏照道38號企業廣場5期MegaBox 10樓9–10號舖",
+                hoursPhone: "每日 11:30–22:00（21:30截單）；2331 3326",
+                openrice: "https://www.openrice.com/zh/hongkong/r-rakuraku-%E6%A8%82%E6%8B%89%E9%BA%B5-%E4%B9%9D%E9%BE%8D%E7%81%A3-%E6%97%A5%E6%9C%AC%E8%8F%9C-%E6%8B%89%E9%BA%B5-r620760 ",
+                google: "https://www.google.com/search?q=openrice+Rakuraku+%E6%A8%82%E6%8B%89%E9%BA%B5+%E4%B9%9D%E9%BE%8D%E7%81%A3 "
+            }
+        ];
+
+        // State
+        let filtered = [...rawData];
+        let currentPage = 1;
+        let pageSize = 20;
+        let sortKey = "id";
+        let sortDir = "asc";
+
+        // DOM Elements
+        const searchInput = document.getElementById("search");
+        const areaFilter = document.getElementById("areaFilter");
+        const typeFilter = document.getElementById("typeFilter");
+        const pageSizeSelect = document.getElementById("pageSize");
+        const viewModeSelect = document.getElementById("viewMode");
+        const resetBtn = document.getElementById("resetBtn");
+        const exportBtn = document.getElementById("exportBtn");
+        const tableCard = document.getElementById("tableCard");
+        const tableBody = document.getElementById("tableBody");
+        const cardsView = document.getElementById("cardsView");
+        const showingCount = document.getElementById("showingCount");
+        const totalCount = document.getElementById("totalCount");
+        const pageInfo = document.getElementById("pageInfo");
+        const pageControls = document.getElementById("pageControls");
+
+        // Populate Area dropdown
+        const uniqueAreas = [...new Set(rawData.map(r => r.area).filter(Boolean))];
+        uniqueAreas.forEach(a => {
+            const opt = document.createElement("option");
+            opt.value = a;
+            opt.textContent = a;
+            areaFilter.appendChild(opt);
+        });
+
+        // Populate Type dropdown
+        const uniqueTypes = [...new Set(rawData.map(r => r.type).filter(Boolean))].sort((a, b) => a.localeCompare(b, "zh-HK"));
+        uniqueTypes.forEach(t => {
+            const opt = document.createElement("option");
+            opt.value = t;
+            opt.textContent = t;
+            typeFilter.appendChild(opt);
+        });
+
+        function applyFilters() {
+            const q = searchInput.value.trim().toLowerCase();
+            const area = areaFilter.value;
+            const type = typeFilter.value;
+
+            filtered = rawData.filter(row => {
+                if (area && row.area !== area) return false;
+                if (type && row.type !== type) return false;
+                if (q) {
+                    const hay = [
+                        row.id, row.area, row.type, row.name,
+                        row.desc, row.address, row.hoursPhone
+                    ].join(" ").toLowerCase();
+                    if (!hay.includes(q)) return false;
+                }
+                return true;
+            });
+
+            // Sort
+            filtered.sort((a, b) => {
+                let va = a[sortKey];
+                let vb = b[sortKey];
+
+                if (typeof va === "number" && typeof vb === "number") {
+                    return sortDir === "asc" ? va - vb : vb - va;
+                }
+
+                va = (va || "").toString().toLowerCase();
+                vb = (vb || "").toString().toLowerCase();
+                if (va < vb) return sortDir === "asc" ? -1 : 1;
+                if (va > vb) return sortDir === "asc" ? 1 : -1;
+                return 0;
+            });
+
+            currentPage = 1;
+            render();
+        }
+
+        function getPageSlice() {
+            if (pageSize === "all") return filtered;
+            const start = (currentPage - 1) * pageSize;
+            return filtered.slice(start, start + pageSize);
+        }
+
+        function render() {
+            const slice = getPageSlice();
+            const total = filtered.length;
+            const size = pageSize === "all" ? total : pageSize;
+            const startIdx = total === 0 ? 0 : (currentPage - 1) * size + 1;
+            const endIdx = pageSize === "all" ? total : Math.min(currentPage * size, total);
+
+            showingCount.textContent = total === 0 ? "0" : `${startIdx}–${endIdx}`;
+            totalCount.textContent = total;
+
+            // Table rows
+            tableBody.innerHTML = "";
+            if (slice.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="8"><div class="empty-state">找不到符合條件的餐廳，請試試調整搜尋關鍵字或篩選器。</div></td></tr>`;
+            } else {
+                slice.forEach(row => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td class="id-col">${row.id}</td>
+                        <td class="area-col"><span class="area-badge">${escapeHtml(row.area)}</span></td>
+                        <td class="type-col"><span class="type-badge">${escapeHtml(row.type)}</span></td>
+                        <td class="name-col">
+                            <a href="${escapeHtml(row.openrice)}" target="_blank" rel="noopener noreferrer" class="restaurant-name-link">
+                                ${escapeHtml(row.name)}
+                            </a>
+                        </td>
+                        <td class="desc-text">${escapeHtml(row.desc)}</td>
+                        <td class="address-text">${escapeHtml(row.address)}</td>
+                        <td class="hours-text">${escapeHtml(row.hoursPhone)}</td>
+                        <td>
+                            <div class="links-cell">
+                                <a href="${escapeHtml(row.openrice)}" target="_blank" rel="noopener noreferrer" class="btn btn-link-openrice">OpenRice</a>
+                                <a href="${escapeHtml(row.google)}" target="_blank" rel="noopener noreferrer" class="btn btn-link-google">Google 搜尋</a>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            }
+
+            // Cards view
+            cardsView.innerHTML = "";
+            if (slice.length === 0) {
+                cardsView.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;">找不到符合條件的餐廳。</div>`;
+            } else {
+                slice.forEach(row => {
+                    const card = document.createElement("div");
+                    card.className = "restaurant-card";
+                    card.innerHTML = `
+                        <div>
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">
+                                        #${row.id} 
+                                        <a href="${escapeHtml(row.openrice)}" target="_blank" rel="noopener noreferrer" class="restaurant-name-link">
+                                            ${escapeHtml(row.name)}
+                                        </a>
+                                    </div>
+                                    <div class="card-tags">
+                                        <span class="area-badge">${escapeHtml(row.area)}</span>
+                                        <span class="type-badge">${escapeHtml(row.type)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-desc" style="margin-top: 0.75rem;">${escapeHtml(row.desc)}</div>
+                        </div>
+                        <div>
+                            <div class="card-info">
+                                <div>📍 <strong>地址：</strong>${escapeHtml(row.address)}</div>
+                                <div>🕒 <strong>營業/電話：</strong>${escapeHtml(row.hoursPhone)}</div>
+                            </div>
+                            <div class="card-actions">
+                                <a href="${escapeHtml(row.openrice)}" target="_blank" rel="noopener noreferrer" class="btn btn-link-openrice" style="flex: 1; text-align: center;">OpenRice</a>
+                                <a href="${escapeHtml(row.google)}" target="_blank" rel="noopener noreferrer" class="btn btn-link-google" style="flex: 1; text-align: center;">Google 搜尋</a>
+                            </div>
+                        </div>
+                    `;
+                    cardsView.appendChild(card);
+                });
+            }
+
+            renderPagination(total, size);
+            updateSortIndicators();
+        }
+
+        function renderPagination(total, size) {
+            pageControls.innerHTML = "";
+            if (pageSize === "all" || total === 0) {
+                pageInfo.textContent = total === 0 ? "無資料" : `共 ${total} 項`;
+                return;
+            }
+
+            const totalPages = Math.ceil(total / size);
+            pageInfo.textContent = `第 ${currentPage} 頁 / 共 ${totalPages} 頁`;
+
+            // Prev
+            const prev = document.createElement("button");
+            prev.className = "page-btn";
+            prev.textContent = "‹";
+            prev.disabled = currentPage === 1;
+            prev.addEventListener("click", () => { currentPage--; render(); });
+            pageControls.appendChild(prev);
+
+            const maxButtons = 5;
+            let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+            let end = Math.min(totalPages, start + maxButtons - 1);
+            if (end - start + 1 < maxButtons) start = Math.max(1, end - maxButtons + 1);
+
+            if (start > 1) {
+                const b = document.createElement("button");
+                b.className = "page-btn";
+                b.textContent = "1";
+                b.addEventListener("click", () => { currentPage = 1; render(); });
+                pageControls.appendChild(b);
+                if (start > 2) {
+                    const dots = document.createElement("span");
+                    dots.textContent = "…";
+                    dots.style.padding = "0 0.25rem";
+                    pageControls.appendChild(dots);
+                }
+            }
+
+            for (let i = start; i <= end; i++) {
+                const b = document.createElement("button");
+                b.className = "page-btn" + (i === currentPage ? " active" : "");
+                b.textContent = i;
+                b.addEventListener("click", () => { currentPage = i; render(); });
+                pageControls.appendChild(b);
+            }
+
+            if (end < totalPages) {
+                if (end < totalPages - 1) {
+                    const dots = document.createElement("span");
+                    dots.textContent = "…";
+                    dots.style.padding = "0 0.25rem";
+                    pageControls.appendChild(dots);
+                }
+                const b = document.createElement("button");
+                b.className = "page-btn";
+                b.textContent = totalPages;
+                b.addEventListener("click", () => { currentPage = totalPages; render(); });
+                pageControls.appendChild(b);
+            }
+
+            // Next
+            const next = document.createElement("button");
+            next.className = "page-btn";
+            next.textContent = "›";
+            next.disabled = currentPage === totalPages;
+            next.addEventListener("click", () => { currentPage++; render(); });
+            pageControls.appendChild(next);
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll("th[data-key]").forEach(th => {
+                th.classList.remove("sorted-asc", "sorted-desc");
+                if (th.dataset.key === sortKey) {
+                    th.classList.add(sortDir === "asc" ? "sorted-asc" : "sorted-desc");
+                }
+            });
+        }
+
+        function escapeHtml(str) {
+            if (str == null) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function exportToExcel() {
+            if (filtered.length === 0) {
+                alert("沒有可匯出的資料。請調整篩選條件。");
+                return;
+            }
+
+            const headers = [
+                "編號", "地區", "菜式/類型", "餐廳名稱", "簡介", "地址", "營業時間與電話", "OpenRice連結", "Google搜尋連結"
+            ];
+
+            const escapeCsv = (val) => {
+                const s = (val == null || val === "") ? "" : String(val);
+                if (/[",\n\r]/.test(s)) {
+                    return `"${s.replace(/"/g, '""')}"`;
+                }
+                return s;
+            };
+
+            const rows = filtered.map(r => [
+                escapeCsv(r.id),
+                escapeCsv(r.area),
+                escapeCsv(r.type),
+                escapeCsv(r.name),
+                escapeCsv(r.desc),
+                escapeCsv(r.address),
+                escapeCsv(r.hoursPhone),
+                escapeCsv(r.openrice),
+                escapeCsv(r.google)
+            ].join(","));
+
+            const csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const timestamp = new Date().toISOString().slice(0, 10);
+            link.href = url;
+            link.download = `kowloon-bay-dining-guide-${timestamp}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function applyViewMode(mode) {
+            const selected = mode || viewModeSelect.value || "table";
+            tableCard.classList.remove("view-table", "view-cards");
+            tableCard.classList.add(selected === "cards" ? "view-cards" : "view-table");
+            viewModeSelect.value = selected === "cards" ? "cards" : "table";
+        }
+
+        // Event listeners
+        searchInput.addEventListener("input", debounce(applyFilters, 200));
+        areaFilter.addEventListener("change", applyFilters);
+        typeFilter.addEventListener("change", applyFilters);
+        pageSizeSelect.addEventListener("change", () => {
+            const val = pageSizeSelect.value;
+            pageSize = val === "all" ? "all" : parseInt(val, 10);
+            currentPage = 1;
+            render();
+        });
+
+        viewModeSelect.addEventListener("change", () => {
+            applyViewMode(viewModeSelect.value);
+        });
+
+        resetBtn.addEventListener("click", () => {
+            searchInput.value = "";
+            areaFilter.value = "";
+            typeFilter.value = "";
+            pageSizeSelect.value = "20";
+            pageSize = 20;
+            sortKey = "id";
+            sortDir = "asc";
+            applyFilters();
+        });
+
+        exportBtn.addEventListener("click", exportToExcel);
+
+        document.querySelectorAll("th[data-key]").forEach(th => {
+            th.addEventListener("click", () => {
+                const key = th.dataset.key;
+                if (sortKey === key) {
+                    sortDir = sortDir === "asc" ? "desc" : "asc";
+                } else {
+                    sortKey = key;
+                    sortDir = "asc";
+                }
+                applyFilters();
+            });
+        });
+
+        function debounce(fn, ms) {
+            let t;
+            return (...args) => {
+                clearTimeout(t);
+                t = setTimeout(() => fn(...args), ms);
+            };
+        }
+
+        // Initial render
+        applyFilters();
+    </script>
+</body>
+</html>
