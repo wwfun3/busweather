@@ -207,6 +207,216 @@
             transform: scale(0.98);
         }
 
+        /* Column Settings Modal & iOS Switch Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            background: #ffffff;
+            width: 90%;
+            max-width: 420px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-backdrop.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+        }
+
+        .modal-header h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--primary-dark);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .modal-close-btn:hover {
+            background: var(--primary-bg);
+        }
+
+        .column-list {
+            padding: 0.5rem 1.25rem 1rem;
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+
+        .column-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .column-item:last-child {
+            border-bottom: none;
+        }
+
+        .column-label-text {
+            font-size: 0.925rem;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .column-label-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* iOS Style Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .25s ease;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .25s ease;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+
+        input:checked + .slider {
+            background-color: #059669;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Mobile Expandable Cards Visuals */
+        .badge-id {
+            background: #059669;
+            color: white;
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .chevron-btn {
+            background: var(--primary-bg);
+            color: var(--primary-dark);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.25s ease, background 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .chevron-btn.expanded {
+            transform: rotate(180deg);
+            background: var(--primary);
+            color: white;
+        }
+
+        .card-expandable-content {
+            display: none;
+            padding-top: 0.85rem;
+            margin-top: 0.85rem;
+            border-top: 1px dashed var(--border);
+            animation: expandFade 0.25s ease-out;
+        }
+
+        .card-expandable-content.show {
+            display: block;
+        }
+
+        @keyframes expandFade {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            color: #334155;
+            line-height: 1.4;
+        }
+
+        .info-item .icon {
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            margin-top: 0.05rem;
+        }
+
         .stats {
             display: flex;
             flex-wrap: wrap;
@@ -546,6 +756,10 @@
                 </div>
                 <div class="form-group">
                     <label>&nbsp;</label>
+                    <button type="button" class="btn btn-secondary" id="colToggleBtn" title="選擇表格顯示的欄位">🎛️ 欄位設定</button>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
                     <button type="button" class="btn btn-secondary" id="resetBtn">重設條件</button>
                 </div>
                 <div class="form-group">
@@ -571,7 +785,7 @@
                             <th data-key="desc" style="min-width: 280px; max-width: 340px;">簡介</th>
                             <th data-key="address" style="min-width: 200px; max-width: 250px;">地址</th>
                             <th data-key="hoursPhone" style="min-width: 150px;">營業時間與電話</th>
-                            <th style="min-width: 110px;">對外連結</th>
+                            <th data-key="links" style="min-width: 110px;">對外連結</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
@@ -604,6 +818,19 @@
         <footer>
             資料僅供參考，營業時間與選單請以各餐廳 OpenRice 或現場公佈為準。
         </footer>
+    </div>
+
+    <!-- Column Toggle Modal Window -->
+    <div class="modal-backdrop" id="columnModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>欄位顯示設定 (Columns)</h3>
+                <button type="button" class="modal-close-btn" id="modalDoneBtn">完成 (Done)</button>
+            </div>
+            <div class="column-list" id="columnList">
+                <!-- Toggle switches dynamically populated -->
+            </div>
+        </div>
     </div>
 
     <script>
@@ -781,6 +1008,30 @@
         let pageSize = 20;
         let sortKey = "id";
         let sortDir = "asc";
+        let expandedCards = new Set(); // Tracks expanded card IDs for Tap-to-Expand feature
+
+        // Column visibility configuration state
+        let columnVisibility = {
+            id: true,
+            area: true,
+            type: true,
+            name: true,
+            desc: true,
+            address: true,
+            hoursPhone: true,
+            links: true
+        };
+
+        const columnDefinitions = [
+            { key: "id", title: "編號", sub: "ID" },
+            { key: "area", title: "地區", sub: "Area" },
+            { key: "type", title: "菜式／類型", sub: "Cuisine / Type" },
+            { key: "name", title: "餐廳名稱", sub: "Restaurant Name" },
+            { key: "desc", title: "簡介", sub: "Description" },
+            { key: "address", title: "地址", sub: "Address" },
+            { key: "hoursPhone", title: "營業時間與電話", sub: "Hours / Phone" },
+            { key: "links", title: "對外連結", sub: "OpenRice & Google" }
+        ];
 
         // DOM Elements
         const searchInput = document.getElementById("search");
@@ -790,6 +1041,10 @@
         const viewModeSelect = document.getElementById("viewMode");
         const resetBtn = document.getElementById("resetBtn");
         const exportBtn = document.getElementById("exportBtn");
+        const colToggleBtn = document.getElementById("colToggleBtn");
+        const columnModal = document.getElementById("columnModal");
+        const modalDoneBtn = document.getElementById("modalDoneBtn");
+        const columnList = document.getElementById("columnList");
         const tableCard = document.getElementById("tableCard");
         const tableBody = document.getElementById("tableBody");
         const cardsView = document.getElementById("cardsView");
@@ -797,6 +1052,38 @@
         const totalCount = document.getElementById("totalCount");
         const pageInfo = document.getElementById("pageInfo");
         const pageControls = document.getElementById("pageControls");
+
+        function buildColumnModal() {
+            columnList.innerHTML = "";
+            columnDefinitions.forEach(col => {
+                const item = document.createElement("div");
+                item.className = "column-item";
+                item.innerHTML = `
+                    <div class="column-label-text">
+                        ${col.title} <span class="column-label-sub">${col.sub}</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" data-col="${col.key}" ${columnVisibility[col.key] ? "checked" : ""}>
+                        <span class="slider"></span>
+                    </label>
+                `;
+                const checkbox = item.querySelector("input");
+                checkbox.addEventListener("change", (e) => {
+                    columnVisibility[col.key] = e.target.checked;
+                    applyColumnVisibility();
+                });
+                columnList.appendChild(item);
+            });
+        }
+
+        function applyColumnVisibility() {
+            Object.keys(columnVisibility).forEach(key => {
+                const isVisible = columnVisibility[key];
+                document.querySelectorAll(`[data-key="${key}"]`).forEach(el => {
+                    el.style.display = isVisible ? "" : "none";
+                });
+            });
+        }
 
         // Populate Area dropdown
         const uniqueAreas = [...new Set(rawData.map(r => r.area).filter(Boolean))];
@@ -878,18 +1165,18 @@
                 slice.forEach(row => {
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
-                        <td class="id-col">${row.id}</td>
-                        <td class="area-col"><span class="area-badge">${escapeHtml(row.area)}</span></td>
-                        <td class="type-col"><span class="type-badge">${escapeHtml(row.type)}</span></td>
-                        <td class="name-col">
+                        <td data-key="id" class="id-col">${row.id}</td>
+                        <td data-key="area" class="area-col"><span class="area-badge">${escapeHtml(row.area)}</span></td>
+                        <td data-key="type" class="type-col"><span class="type-badge">${escapeHtml(row.type)}</span></td>
+                        <td data-key="name" class="name-col">
                             <a href="${escapeHtml(row.openrice)}" target="_blank" rel="noopener noreferrer" class="restaurant-name-link">
                                 ${escapeHtml(row.name)}
                             </a>
                         </td>
-                        <td class="desc-text">${escapeHtml(row.desc)}</td>
-                        <td class="address-text">${escapeHtml(row.address)}</td>
-                        <td class="hours-text">${escapeHtml(row.hoursPhone)}</td>
-                        <td>
+                        <td data-key="desc" class="desc-text">${escapeHtml(row.desc)}</td>
+                        <td data-key="address" class="address-text">${escapeHtml(row.address)}</td>
+                        <td data-key="hoursPhone" class="hours-text">${escapeHtml(row.hoursPhone)}</td>
+                        <td data-key="links">
                             <div class="links-cell">
                                 <a href="${escapeHtml(row.openrice)}" target="_blank" rel="noopener noreferrer" class="btn btn-link-openrice">OpenRice</a>
                                 <a href="${escapeHtml(row.google)}" target="_blank" rel="noopener noreferrer" class="btn btn-link-google">Google 搜尋</a>
@@ -900,40 +1187,51 @@
                 });
             }
 
-            // Cards view
             cardsView.innerHTML = "";
             if (slice.length === 0) {
                 cardsView.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;">找不到符合條件的餐廳。</div>`;
             } else {
                 slice.forEach(row => {
+                    const isExpanded = expandedCards.has(row.id);
+                    const formattedId = String(row.id).padStart(3, '0');
                     const card = document.createElement("div");
                     card.className = "restaurant-card";
+                    card.id = `card-${row.id}`;
                     card.innerHTML = `
-                        <div>
+                        <div style="cursor: pointer;" onclick="toggleCardExpand(${row.id})">
                             <div class="card-header">
-                                <div>
-                                    <div class="card-title">
-                                        #${row.id} 
-                                        <a href="${escapeHtml(row.openrice)}" target="_blank" rel="noopener noreferrer" class="restaurant-name-link">
-                                            ${escapeHtml(row.name)}
-                                        </a>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span class="area-badge">${escapeHtml(row.area)}</span>
-                                        <span class="type-badge">${escapeHtml(row.type)}</span>
-                                    </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                    <span class="badge-id">${formattedId}</span>
+                                    <span class="card-title">
+                                        ${escapeHtml(row.name)}
+                                    </span>
                                 </div>
+                                <button type="button" class="chevron-btn ${isExpanded ? 'expanded' : ''}" aria-label="Toggle details">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
                             </div>
-                            <div class="card-desc" style="margin-top: 0.75rem;">${escapeHtml(row.desc)}</div>
+                            <div style="font-size: 0.825rem; color: var(--text-muted); margin-top: 0.35rem; font-weight: 500;">
+                                ${escapeHtml(row.area)} &nbsp;•&nbsp; ${escapeHtml(row.type)}
+                            </div>
                         </div>
-                        <div>
-                            <div class="card-info">
-                                <div>📍 <strong>地址：</strong>${escapeHtml(row.address)}</div>
-                                <div>🕒 <strong>營業/電話：</strong>${escapeHtml(row.hoursPhone)}</div>
+
+                        <div class="card-expandable-content ${isExpanded ? 'show' : ''}">
+                            <div class="card-desc" style="margin-bottom: 0.75rem;">${escapeHtml(row.desc)}</div>
+                            
+                            <div class="info-item">
+                                <span class="icon">📍</span>
+                                <div><strong>地址：</strong>${escapeHtml(row.address)}</div>
                             </div>
+                            <div class="info-item">
+                                <span class="icon">🕒</span>
+                                <div><strong>營業時間與電話：</strong>${escapeHtml(row.hoursPhone)}</div>
+                            </div>
+
                             <div class="card-actions">
-                                <a href="${escapeHtml(row.openrice)}" target="_blank" rel="noopener noreferrer" class="btn btn-link-openrice" style="flex: 1; text-align: center;">OpenRice</a>
-                                <a href="${escapeHtml(row.google)}" target="_blank" rel="noopener noreferrer" class="btn btn-link-google" style="flex: 1; text-align: center;">Google 搜尋</a>
+                                <a href="${escapeHtml(row.openrice)}" target="_blank" rel="noopener noreferrer" class="btn btn-link-openrice" style="flex: 1; text-align: center;">OpenRice ↗</a>
+                                <a href="${escapeHtml(row.google)}" target="_blank" rel="noopener noreferrer" class="btn btn-link-google" style="flex: 1; text-align: center;">Google 搜尋 ↗</a>
                             </div>
                         </div>
                     `;
@@ -943,7 +1241,26 @@
 
             renderPagination(total, size);
             updateSortIndicators();
+            applyColumnVisibility();
         }
+
+        window.toggleCardExpand = function(id) {
+            if (expandedCards.has(id)) {
+                expandedCards.delete(id);
+            } else {
+                expandedCards.add(id);
+            }
+            const cardEl = document.getElementById(`card-${id}`);
+            if (cardEl) {
+                const content = cardEl.querySelector('.card-expandable-content');
+                const btn = cardEl.querySelector('.chevron-btn');
+                if (content && btn) {
+                    const isNowExpanded = expandedCards.has(id);
+                    content.classList.toggle('show', isNowExpanded);
+                    btn.classList.toggle('expanded', isNowExpanded);
+                }
+            }
+        };
 
         function renderPagination(total, size) {
             pageControls.innerHTML = "";
@@ -1096,6 +1413,20 @@
             applyViewMode(viewModeSelect.value);
         });
 
+        colToggleBtn.addEventListener("click", () => {
+            columnModal.classList.add("active");
+        });
+
+        modalDoneBtn.addEventListener("click", () => {
+            columnModal.classList.remove("active");
+        });
+
+        columnModal.addEventListener("click", (e) => {
+            if (e.target === columnModal) {
+                columnModal.classList.remove("active");
+            }
+        });
+
         resetBtn.addEventListener("click", () => {
             searchInput.value = "";
             areaFilter.value = "";
@@ -1104,6 +1435,7 @@
             pageSize = 20;
             sortKey = "id";
             sortDir = "asc";
+            expandedCards.clear();
             applyFilters();
         });
 
@@ -1130,7 +1462,8 @@
             };
         }
 
-        // Initial render
+        // Initialize Column Modal and Initial Render
+        buildColumnModal();
         applyFilters();
     </script>
 </body>
