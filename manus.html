@@ -3,22 +3,28 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Agents & Coding Tools Explorer</title>
+    <title>AI Tools & Autonomous Coding Agents Directory</title>
     <style>
         :root {
-            --primary: #0284c7;
-            --primary-light: #bae6fd;
-            --primary-dark: #0369a1;
-            --primary-bg: #f0f9ff;
-            --primary-bg-soft: #e0f2fe;
+            --primary: #6366f1;
+            --primary-light: #a5b4fc;
+            --primary-dark: #4338ca;
+            --primary-bg: #f5f3ff;
+            --primary-bg-soft: #eef2ff;
             --surface: #ffffff;
             --text: #0f172a;
             --text-muted: #64748b;
             --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgb(2 132 199 / 0.08), 0 2px 4px -2px rgb(2 132 199 / 0.06);
-            --shadow-lg: 0 10px 15px -3px rgb(2 132 199 / 0.1), 0 4px 6px -4px rgb(2 132 199 / 0.08);
+            --shadow: 0 4px 6px -1px rgb(99 102 241 / 0.08), 0 2px 4px -2px rgb(99 102 241 / 0.06);
+            --shadow-lg: 0 10px 15px -3px rgb(99 102 241 / 0.12), 0 4px 6px -4px rgb(99 102 241 / 0.08);
             --radius: 12px;
             --radius-sm: 8px;
+            --badge-green-bg: #dcfce7;
+            --badge-green-text: #15803d;
+            --badge-amber-bg: #fef3c7;
+            --badge-amber-text: #b45309;
+            --badge-purple-bg: #f3e8ff;
+            --badge-purple-text: #7e22ce;
         }
 
         * {
@@ -29,21 +35,21 @@
 
         body {
             font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Roboto", sans-serif;
-            background: linear-gradient(160deg, var(--primary-bg) 0%, #e0f2fe 40%, #f8fafc 100%);
+            background: linear-gradient(160deg, var(--primary-bg) 0%, #f8fafc 40%, #f1f5f9 100%);
             color: var(--text);
             min-height: 100vh;
             line-height: 1.5;
         }
 
         .container {
-            max-width: 1500px;
+            max-width: 1440px;
             margin: 0 auto;
             padding: 1.5rem 1.25rem 3rem;
         }
 
         /* Header */
         header {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, #38bdf8 100%);
+            background: linear-gradient(135deg, #1e1b4b 0%, var(--primary-dark) 50%, var(--primary) 100%);
             color: white;
             padding: 1.75rem 1.5rem;
             border-radius: var(--radius);
@@ -58,15 +64,15 @@
             position: absolute;
             top: -50%;
             right: -10%;
-            width: 280px;
-            height: 280px;
+            width: 320px;
+            height: 320px;
             background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
             border-radius: 50%;
         }
 
         header h1 {
-            font-size: clamp(1.5rem, 3vw, 1.85rem);
-            font-weight: 700;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 800;
             letter-spacing: -0.025em;
             margin-bottom: 0.35rem;
             position: relative;
@@ -76,6 +82,7 @@
             font-size: 0.95rem;
             opacity: 0.92;
             position: relative;
+            max-width: 800px;
         }
 
         /* Controls card */
@@ -85,7 +92,7 @@
             padding: 1.25rem 1.5rem;
             box-shadow: var(--shadow);
             margin-bottom: 1.5rem;
-            border: 1px solid rgba(2, 132, 199, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.12);
         }
 
         .controls-grid {
@@ -94,9 +101,16 @@
             gap: 1rem;
         }
 
-        @media (min-width: 1000px) {
+        @media (min-width: 1100px) {
             .controls-grid {
-                grid-template-columns: 1.5fr 1fr 1fr 1fr auto auto auto;
+                grid-template-columns: 1.5fr 1fr 1fr 0.8fr auto auto auto auto;
+                align-items: end;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1099px) {
+            .controls-grid {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
                 align-items: end;
             }
         }
@@ -109,7 +123,7 @@
 
         .form-group label {
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.04em;
             color: var(--text-muted);
@@ -131,7 +145,7 @@
         select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
         }
 
         .btn {
@@ -139,7 +153,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.4rem;
-            padding: 0.6rem 1.1rem;
+            padding: 0.65rem 1.1rem;
             border: none;
             border-radius: var(--radius-sm);
             font-size: 0.875rem;
@@ -156,7 +170,7 @@
 
         .btn-primary:hover {
             background: var(--primary-dark);
-            box-shadow: 0 4px 12px rgba(3, 105, 161, 0.3);
+            box-shadow: 0 4px 12px rgba(67, 56, 202, 0.3);
         }
 
         .btn-secondary {
@@ -166,7 +180,7 @@
 
         .btn-secondary:hover {
             background: var(--primary-light);
-            color: var(--primary-dark);
+            color: white;
         }
 
         .btn:active {
@@ -185,7 +199,7 @@
 
         .stats strong {
             color: var(--primary-dark);
-            font-weight: 600;
+            font-weight: 700;
         }
 
         /* Table wrapper */
@@ -193,7 +207,7 @@
             background: var(--surface);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            border: 1px solid rgba(2, 132, 199, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.1);
             overflow: hidden;
         }
 
@@ -206,12 +220,11 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.875rem;
-            min-width: 1100px;
-            table-layout: fixed;
+            min-width: 1000px;
         }
 
         thead {
-            background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+            background: linear-gradient(90deg, #1e1b4b, var(--primary-dark));
             color: white;
             position: sticky;
             top: 0;
@@ -219,19 +232,25 @@
         }
 
         th {
-            padding: 0.85rem 0.9rem;
+            padding: 0.9rem 1rem;
             text-align: left;
             font-weight: 600;
             font-size: 0.78rem;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.04em;
             cursor: pointer;
             user-select: none;
             position: relative;
         }
 
+        th.col-tool, th.col-price {
+            white-space: normal;
+            min-width: 120px;
+            max-width: 140px;
+        }
+
         th:hover {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.12);
         }
 
         th .sort-icon {
@@ -259,7 +278,7 @@
         }
 
         tbody tr:nth-child(even) {
-            background: #f8fbff;
+            background: #fafafa;
         }
 
         tbody tr:hover {
@@ -267,72 +286,94 @@
         }
 
         td {
-            padding: 0.75rem 0.9rem;
+            padding: 0.85rem 1rem;
             vertical-align: top;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-
-        /* Column specific widths */
-        th:nth-child(1), td:nth-child(1) { width: 50px; }  /* # */
-        th:nth-child(2), td:nth-child(2) { width: 160px; } /* Tool */
-        th:nth-child(3), td:nth-child(3) { width: 260px; } /* Best For */
-        th:nth-child(4), td:nth-child(4) { width: 180px; } /* Type */
-        th:nth-child(5), td:nth-child(5) { width: 140px; } /* Entry Price */
-        th:nth-child(6), td:nth-child(6) { width: 150px; } /* Free Tier */
-        th:nth-child(7), td:nth-child(7) { width: 280px; } /* Standout */
-        th:nth-child(8), td:nth-child(8) { width: 260px; } /* Watch-out */
-
-        .id-cell {
-            font-weight: 700;
-            color: var(--text-muted);
-            text-align: center;
         }
 
         .tool-name {
             font-weight: 700;
             color: var(--primary-dark);
+            font-size: 0.95rem;
+            max-width: 140px;
             word-wrap: break-word;
             overflow-wrap: break-word;
+            white-space: normal;
+        }
+
+        .tool-id {
+            font-weight: 600;
+            color: var(--text-muted);
+            width: 40px;
         }
 
         .type-badge {
             display: inline-block;
-            padding: 0.2rem 0.5rem;
+            padding: 0.25rem 0.6rem;
             border-radius: 999px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            background: var(--primary-bg-soft);
-            color: var(--primary-dark);
-            white-space: normal;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            max-width: 100%;
-            vertical-align: middle;
-            line-height: 1.3;
+            background: var(--badge-purple-bg);
+            color: var(--badge-purple-text);
+            white-space: nowrap;
         }
 
-        .desc-text {
+        .free-badge {
+            display: inline-block;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .free-badge.yes {
+            background: var(--badge-green-bg);
+            color: var(--badge-green-text);
+        }
+
+        .free-badge.limited, .free-badge.trial {
+            background: var(--badge-amber-bg);
+            color: var(--badge-amber-text);
+        }
+
+        .price-text {
+            max-width: 130px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+        }
+
+        .price-text a {
+            color: var(--primary-dark);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline;
+            word-break: break-word;
+        }
+
+        .price-text a:hover {
+            text-decoration: underline;
+            color: var(--primary);
+        }
+
+        .price-text a::after {
+            content: "↗";
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-left: 2px;
+            display: inline-block;
+        }
+
+        .standout-text {
+            color: #047857;
+            font-size: 0.85rem;
             max-width: 280px;
         }
 
-        .note-text {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            max-width: 260px;
-        }
-
-        .price-link {
-            color: var(--primary-dark);
-            text-decoration: underline;
-            text-decoration-color: rgba(2, 132, 199, 0.4);
-            transition: color 0.15s, text-decoration-color 0.15s;
-            word-wrap: break-word;
-        }
-
-        .price-link:hover {
-            color: var(--primary);
-            text-decoration-color: var(--primary);
+        .watchout-text {
+            color: #b91c1c;
+            font-size: 0.85rem;
+            max-width: 280px;
         }
 
         /* Empty state */
@@ -349,7 +390,7 @@
             align-items: center;
             gap: 1rem;
             padding: 1rem 1.25rem;
-            background: #f8fbff;
+            background: #f8fafc;
             border-top: 1px solid var(--border);
         }
 
@@ -411,11 +452,11 @@
             cursor: not-allowed;
         }
 
-        /* Card view for mobile */
+        /* Cards view */
         .cards-view {
             display: none;
             flex-direction: column;
-            gap: 0.85rem;
+            gap: 1rem;
             padding: 1rem;
         }
 
@@ -436,45 +477,291 @@
             background: white;
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            padding: 1rem;
+            padding: 1.1rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .tool-card.expanded {
+            border-color: var(--primary-light);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
         }
 
         .tool-card .card-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 0.5rem;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
         }
 
         .tool-card .card-title {
+            font-size: 1.05rem;
             font-weight: 700;
             color: var(--primary-dark);
-            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .tool-card .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 0.5rem 0.75rem;
-            font-size: 0.825rem;
-            margin-top: 0.5rem;
-            padding-top: 0.5rem;
+        .card-expand-trigger {
+            background: var(--primary-bg-soft);
+            border: none;
+            color: var(--primary-dark);
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: transform 0.25s ease, background-color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .tool-card.expanded .card-expand-trigger {
+            transform: rotate(180deg);
+            background: var(--primary);
+            color: white;
+        }
+
+        .card-best-for {
+            font-size: 0.88rem;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .card-summary-bar {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Expandable Details Body */
+        .card-details {
+            display: none;
+            margin-top: 0.85rem;
+            padding-top: 0.85rem;
             border-top: 1px dashed var(--border);
+            animation: fadeIn 0.25s ease-in-out;
         }
 
-        .card-label {
-            color: var(--text-muted);
-            font-size: 0.7rem;
+        .tool-card.expanded .card-details {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        @media (min-width: 600px) {
+            .card-meta-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .meta-block {
+            background: #f8fafc;
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid #f1f5f9;
+        }
+
+        .meta-block-title {
+            font-weight: 700;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
-            margin-bottom: 0.1rem;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.35rem;
         }
 
+        .meta-block.standout .meta-block-title {
+            color: #047857;
+        }
+
+        .meta-block.watchout .meta-block-title {
+            color: #b91c1c;
+        }
+
+        /* Column Toggle Modal Styles */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: modalFade 0.2s ease;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 440px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+        }
+
+        .modal-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
+        }
+
+        .modal-done-btn {
+            color: var(--primary-dark);
+            font-weight: 700;
+            font-size: 0.95rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.35rem 0.65rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .modal-done-btn:hover {
+            background: var(--primary-bg-soft);
+        }
+
+        .modal-body {
+            padding: 0.75rem 1.25rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .column-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .column-toggle-row:last-child {
+            border-bottom: none;
+        }
+
+        .column-toggle-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        /* iOS-style toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .25s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .25s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Column hidden helper */
+        .col-hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 720px) {
+            .pagination {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.85rem;
+            }
+            .pagination-left,
+            .pagination-center,
+            .pagination-right {
+                justify-self: center;
+            }
+        }
+
+        /* Footer */
         footer {
             text-align: center;
             margin-top: 2rem;
-            font-size: 0.8rem;
+            font-size: 0.825rem;
             color: var(--text-muted);
         }
     </style>
@@ -482,27 +769,27 @@
 <body>
     <div class="container">
         <header>
-            <h1>AI Agents & Coding Tools Matrix</h1>
-            <p>Comprehensive comparison of autonomous agents, cloud IDEs, and prompt-to-app platforms</p>
+            <h1>AI Coding Tools & Autonomous Agents (2026 Directory)</h1>
+            <p>Comprehensive comparison of next-gen autonomous coding platforms, super-agent orchestrators, AI-first IDEs, and prompt-to-app builders.</p>
         </header>
 
         <div class="controls">
             <div class="controls-grid">
                 <div class="form-group">
-                    <label for="search">Search</label>
-                    <input type="search" id="search" placeholder="Filter by name, best for, type, or pricing…" autocomplete="off" />
+                    <label for="search">Search Tools</label>
+                    <input type="search" id="search" placeholder="Search tool name, capabilities, pricing, tags…" autocomplete="off" />
                 </div>
                 <div class="form-group">
-                    <label for="typeFilter">Agent / Tool Type</label>
+                    <label for="typeFilter">Agent Type</label>
                     <select id="typeFilter">
                         <option value="">All Types</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="freeTierFilter">Free Tier</label>
-                    <select id="freeTierFilter">
-                        <option value="">All Tiers</option>
-                        <option value="yes">Has Free Tier</option>
+                    <label for="freeFilter">Free Tier</label>
+                    <select id="freeFilter">
+                        <option value="">All Options</option>
+                        <option value="yes">Free Tier Available</option>
                         <option value="limited">Limited / Trial</option>
                     </select>
                 </div>
@@ -515,11 +802,25 @@
                 </div>
                 <div class="form-group">
                     <label>&nbsp;</label>
+                    <button type="button" class="btn btn-secondary" id="expandAllBtn" title="Expand or collapse all cards">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+                        Expand All
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-secondary" id="colToggleBtn" title="Select columns to show or hide">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                        Columns
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
                     <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
                 </div>
                 <div class="form-group">
                     <label>&nbsp;</label>
-                    <button type="button" class="btn btn-primary" id="exportBtn" title="Export currently filtered list to CSV">Export to Excel</button>
+                    <button type="button" class="btn btn-primary" id="exportBtn" title="Export currently filtered results to Excel (CSV)">Export CSV</button>
                 </div>
             </div>
         </div>
@@ -534,25 +835,26 @@
                     <thead>
                         <tr>
                             <th data-key="id"># <span class="sort-icon"></span></th>
-                            <th data-key="tool">Tool <span class="sort-icon"></span></th>
+                            <th data-key="tool" class="col-tool">Tool <span class="sort-icon"></span></th>
                             <th data-key="bestFor">Best For <span class="sort-icon"></span></th>
                             <th data-key="type">Type <span class="sort-icon"></span></th>
-                            <th data-key="entryPrice">Entry Price <span class="sort-icon"></span></th>
+                            <th data-key="entryPrice" class="col-price">Entry Price <span class="sort-icon"></span></th>
                             <th data-key="freeTier">Free Tier <span class="sort-icon"></span></th>
-                            <th data-key="standout">Standout <span class="sort-icon"></span></th>
-                            <th data-key="watchOut">Watch-out <span class="sort-icon"></span></th>
+                            <th data-key="standout">Standout Features <span class="sort-icon"></span></th>
+                            <th data-key="watchOut">Watch-outs <span class="sort-icon"></span></th>
                         </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
                 </table>
             </div>
 
+            <!-- Mobile / Cards view -->
             <div class="cards-view" id="cardsView"></div>
 
             <div class="pagination" id="pagination">
                 <div class="pagination-left">
                     <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
-                        <label for="pageSize" style="margin-bottom: 0; white-space: nowrap;">Per page:</label>
+                        <label for="pageSize" style="margin-bottom: 0; white-space: nowrap;">Items per page:</label>
                         <select id="pageSize" style="width: auto; padding: 0.4rem 0.6rem;">
                             <option value="10">10</option>
                             <option value="20" selected>20</option>
@@ -570,33 +872,79 @@
         </div>
 
         <footer>
-            AI Agents & Coding Tools Benchmark Reference Dataset. Updated regularly.
+            Information synthesized for reference. Pricing, credits, and model capabilities are subject to changes by respective providers.
         </footer>
     </div>
 
+    <!-- Column Toggle Modal Overlay -->
+    <div class="modal-backdrop" id="colModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Select Columns</h3>
+                <button type="button" class="modal-done-btn" id="modalDoneBtn">Done</button>
+            </div>
+            <div class="modal-body" id="colModalBody"></div>
+        </div>
+    </div>
+
     <script>
+        // RAW DATASET WITH EMBEDDED PRICING LINKS
         const rawData = [
-            { id: 1, tool: "Manus", bestFor: "Hands-off autonomous multi-step tasks", type: "Autonomous agent (cloud VM)", entryPrice: "$20/mo (Standard)", url: "https://manus.im/pricing", freeTier: "Yes (300 daily credits)", standout: "Finishes research, slides, and full web apps with DB/Stripe on its own VM", watchOut: "Opaque credit burn; a single app build can cost 500–1,000+ credits" },
-            { id: 2, tool: "Genspark", bestFor: "All-in-one 'Super Agent' workspace", type: "Multi-agent orchestrator", entryPrice: "$19.99–24.99/mo (Plus)", url: "https://www.genspark.ai/pricing", freeTier: "Yes (~100–200 credits/day)", standout: "Routes tasks across 9+ LLMs; builds sites, slides, sheets, and makes real phone calls", watchOut: "Credit-hungry video/voice features; Pro jumps to ~$200–250/mo" },
-            { id: 3, tool: "Skywork", bestFor: "Document/deck-heavy research-to-build", type: "Super agent", entryPrice: "$16.99–19.99/mo", url: "https://skywork.ai/pricing", freeTier: "Yes (500 credits/day, month 1)", standout: "Strong DeepResearch engine plus PPTX/DOCX/PDF export and site generation", watchOut: "Pricing/credit caps hidden behind login wall; billing complaints" },
-            { id: 4, tool: "Replit Agent", bestFor: "Beginners building & deploying apps in-browser", type: "Cloud IDE + agent", entryPrice: "$20–25/mo (Core)", url: "https://replit.com/pricing", freeTier: "Yes (limited)", standout: "Instant hosting baked into the same workspace as the build", watchOut: "Deploy locked to Replit's own hosting" },
-            { id: 5, tool: "Lovable", bestFor: "Non-developers making Supabase-backed MVPs", type: "Browser prompt-to-app", entryPrice: "$20–25/mo", url: "https://lovable.dev/pricing", freeTier: "Yes (5 msgs/day)", standout: "Polished UI output with database wired in automatically", watchOut: "Credit-based; scaling past Starter gets pricey fast" },
-            { id: 6, tool: "Bolt.new", bestFor: "Rapid frontend/full-stack prototyping", type: "Browser prompt-to-app", entryPrice: "$20–25/mo", url: "https://bolt.new/pricing", freeTier: "Yes (1M tokens/day)", standout: "Flexible stack choice, fast iteration loop", watchOut: "Token overages billed aggressively at scale" },
-            { id: 7, tool: "Devin (Cognition)", bestFor: "Delegating full engineering tickets", type: "Cloud VM coding agent", entryPrice: "$20/mo + usage", url: "https://devin.ai/pricing", freeTier: "Yes (limited)", standout: "Very high autonomy—codes, tests, and opens PRs unsupervised", watchOut: "Usage-based ACU charges can spike; less predictable cost" },
-            { id: 8, tool: "Claude Code", bestFor: "Hardest technical/agentic coding work", type: "CLI + IDE agent", entryPrice: "$20/mo (Pro)", url: "https://www.anthropic.com/pricing", freeTier: "Limited", standout: "Leads Terminal-Bench (~89%), deep repo-wide reasoning", watchOut: "Terminal-first; steeper learning curve for non-coders" },
-            { id: 9, tool: "OpenAI Codex / ChatGPT Agent", bestFor: "Cross-surface autonomy inside ChatGPT stack", type: "Cloud + CLI agent", entryPrice: "$20/mo (Plus)", url: "https://chatgpt.com/pricing", freeTier: "Limited", standout: "Bundled into ChatGPT ecosystem; Codex Cloud + PR review", watchOut: "Complex pricing across API/Plus/Pro tiers" },
-            { id: 10, tool: "Z.ai (GLM Coding Plan / ZCode)", bestFor: "Budget agentic coding at scale", type: "Open harness + hosted plan", entryPrice: "$18/mo (Lite)", url: "https://z.ai/subscribe", freeTier: "5-day trial only", standout: "Very cheap per-token GLM-5.2 access; works inside Claude Code/Cursor/Cline", watchOut: "No real free tier; quota gaps between tiers are steep (Lite→Max is 20x)" },
-            { id: 11, tool: "MiniMax Agent", bestFor: "Multimodal builds (text/video/audio/code)", type: "Multi-agent platform", entryPrice: "$20/mo (Plus token plan)", url: "https://www.minimax.io/price", freeTier: "Trial only", standout: "1M-context repo ingestion; native multimodal understanding", watchOut: "Shared token quota across all modalities can drain fast" },
-            { id: 12, tool: "Cursor", bestFor: "Editor-bound professional coding", type: "AI-first IDE", entryPrice: "$20/mo (Pro)", url: "https://cursor.com/pricing", freeTier: "Yes (2K completions)", standout: "Near-frontier Composer agent inside familiar VS Code fork", watchOut: "Not a hosted deploy tool—still needs your own infra" },
-            { id: 13, tool: "Windsurf (Cognition)", bestFor: "Aggressive in-editor batch refactors/greenfield builds", type: "AI-first IDE + cloud", entryPrice: "$15/mo (Pro)", url: "https://windsurf.com/pricing", freeTier: "Yes", standout: "Ranked #1 in some 2026 dev-tool power rankings", watchOut: "Acquired by Cognition; roadmap overlap with Devin creates redundancy" },
-            { id: 14, tool: "v0 (Vercel)", bestFor: "Frontend component/UI generation", type: "Prompt-to-UI generator", entryPrice: "$20/mo", url: "https://v0.dev/pricing", freeTier: "Limited generations", standout: "Tight integration with Vercel deploy pipeline", watchOut: "Weighted toward UI, thinner on backend/data logic" },
-            { id: 15, tool: "GitHub Copilot (Agent mode)", bestFor: "GitHub-native teams", type: "IDE + cloud agent", entryPrice: "$10/mo (Pro)", url: "https://github.com/features/copilot/plans", freeTier: "Yes", standout: "Cheapest entry point; issue-to-PR cloud agent", watchOut: "Medium autonomy vs. dedicated full-stack agents" },
-            { id: 16, tool: "Kiro", bestFor: "Spec-guided structured builds", type: "IDE agent", entryPrice: "Free / $20 Pro", url: "https://kiro.dev/pricing", freeTier: "Yes", standout: "Enforces specs before coding, reducing scope drift", watchOut: "Newer, smaller ecosystem/plugin support" },
-            { id: 17, tool: "Base44", bestFor: "Quick internal tools/MVPs", type: "Browser prompt-to-app", entryPrice: "$29/mo", url: "https://base44.com/pricing", freeTier: "Yes (limited)", standout: "Simple, fast no-code-style app generation", watchOut: "Less powerful for complex, data-heavy apps" },
-            { id: 18, tool: "Playcode Agent", bestFor: "Fully autonomous website builds", type: "Browser agent", entryPrice: "$9.99/mo", url: "https://playcode.io/pricing", freeTier: "Limited", standout: "Cheapest fully-autonomous website builder", watchOut: "Narrower scope than Manus/Genspark-style general agents" },
-            { id: 19, tool: "Google Jules", bestFor: "Google-stack async coding tasks", type: "Cloud coding agent", entryPrice: "Free / $19.99 Pro", url: "https://jules.google/pricing", freeTier: "Yes", standout: "Backed by Gemini frontier models, generous free tier", watchOut: "Still maturing vs. Devin/Claude Code on complex tasks" },
-            { id: 20, tool: "Kimi Agent (OK Computer, Moonshot AI)", bestFor: "Long-horizon coding + massive parallel agent swarms", type: "Autonomous agent (web/desktop)", entryPrice: "~$8–19/mo intl. (49 CNY/mo in China)", url: "https://www.kimi.ai/resources/kimi-k3-pricing", freeTier: "Yes", standout: "Runs on K2.6/K3: codes continuously up to 13 hours, up to 4,000+ lines changed in one run, turns prompts/mockups straight into production interfaces", watchOut: "Agent Swarm scales to 300 sub-agents but coordination overhead and English-language docs lag behind the Chinese product exp" }
+            { id: 1, tool: "Manus", bestFor: "Hands-off autonomous multi-step tasks", type: "Autonomous agent (cloud VM)", entryPriceText: "$20/mo (Standard)", entryPriceUrl: "https://manus.im/pricing", freeTier: "Yes (300 daily credits)", standout: "Finishes research, slides, and full web apps with DB/Stripe on its own VM", watchOut: "Opaque credit burn; a single app build can cost 500–1,000+ credits" },
+            { id: 2, tool: "Genspark", bestFor: "All-in-one 'Super Agent' workspace", type: "Multi-agent orchestrator", entryPriceText: "$19.99–24.99/mo (Plus)", entryPriceUrl: "https://www.genspark.ai/pricing", freeTier: "Yes (~100–200 credits/day)", standout: "Routes tasks across 9+ LLMs; builds sites, slides, sheets, and makes real phone calls", watchOut: "Credit-hungry video/voice features; Pro jumps to ~$200–250/mo" },
+            { id: 3, tool: "Skywork", bestFor: "Document/deck-heavy research-to-build", type: "Super agent", entryPriceText: "$16.99–19.99/mo", entryPriceUrl: "https://skywork.ai/pricing", freeTier: "Yes (500 credits/day, month 1)", standout: "Strong DeepResearch engine plus PPTX/DOCX/PDF export and site generation", watchOut: "Pricing/credit caps hidden behind login wall; billing complaints" },
+            { id: 4, tool: "Replit Agent", bestFor: "Beginners building & deploying apps in-browser", type: "Cloud IDE + agent", entryPriceText: "$20–25/mo (Core)", entryPriceUrl: "https://replit.com/pricing", freeTier: "Yes (limited)", standout: "Instant hosting baked into the same workspace as the build", watchOut: "Deploy locked to Replit's own hosting" },
+            { id: 5, tool: "Lovable", bestFor: "Non-developers making Supabase-backed MVPs", type: "Browser prompt-to-app", entryPriceText: "$20–25/mo", entryPriceUrl: "https://lovable.dev/pricing", freeTier: "Yes (5 msgs/day)", standout: "Polished UI output with database wired in automatically", watchOut: "Credit-based; scaling past Starter gets pricey fast" },
+            { id: 6, tool: "Bolt.new", bestFor: "Rapid frontend/full-stack prototyping", type: "Browser prompt-to-app", entryPriceText: "$20–25/mo", entryPriceUrl: "https://bolt.new/pricing", freeTier: "Yes (1M tokens/day)", standout: "Flexible stack choice, fast iteration loop", watchOut: "Token overages billed aggressively at scale" },
+            { id: 7, tool: "Devin (Cognition)", bestFor: "Delegating full engineering tickets", type: "Cloud VM coding agent", entryPriceText: "$20/mo + usage", entryPriceUrl: "https://devin.ai/pricing", freeTier: "Yes (limited)", standout: "Very high autonomy—codes, tests, and opens PRs unsupervised", watchOut: "Usage-based ACU charges can spike; less predictable cost" },
+            { id: 8, tool: "Claude Code", bestFor: "Hardest technical/agentic coding work", type: "CLI + IDE agent", entryPriceText: "$20/mo (Pro)", entryPriceUrl: "https://www.anthropic.com/pricing", freeTier: "Limited", standout: "Leads Terminal-Bench (~89%), deep repo-wide reasoning", watchOut: "Terminal-first; steeper learning curve for non-coders" },
+            { id: 9, tool: "OpenAI Codex / ChatGPT Agent", bestFor: "Cross-surface autonomy inside ChatGPT stack", type: "Cloud + CLI agent", entryPriceText: "$20/mo (Plus)", entryPriceUrl: "https://chatgpt.com/pricing", freeTier: "Limited", standout: "Bundled into ChatGPT ecosystem; Codex Cloud + PR review", watchOut: "Complex pricing across API/Plus/Pro tiers" },
+            { id: 10, tool: "Z.ai (GLM Coding Plan / ZCode)", bestFor: "Budget agentic coding at scale", type: "Open harness + hosted plan", entryPriceText: "$18/mo (Lite)", entryPriceUrl: "https://z.ai/subscribe", freeTier: "5-day trial only", standout: "Very cheap per-token GLM-5.2 access; works inside Claude Code/Cursor/Cline", watchOut: "No real free tier; quota gaps between tiers are steep (Lite→Max is 20x)" },
+            { id: 11, tool: "MiniMax Agent", bestFor: "Multimodal builds (text/video/audio/code)", type: "Multi-agent platform", entryPriceText: "$20/mo (Plus token plan)", entryPriceUrl: "https://www.minimax.io/price", freeTier: "Trial only", standout: "1M-context repo ingestion; native multimodal understanding", watchOut: "Shared token quota across all modalities can drain fast" },
+            { id: 12, tool: "Cursor", bestFor: "Editor-bound professional coding", type: "AI-first IDE", entryPriceText: "$20/mo (Pro)", entryPriceUrl: "https://cursor.com/pricing", freeTier: "Yes (2K completions)", standout: "Near-frontier Composer agent inside familiar VS Code fork", watchOut: "Not a hosted deploy tool—still needs your own infra" },
+            { id: 13, tool: "Windsurf (Cognition)", bestFor: "Aggressive in-editor batch refactors/greenfield builds", type: "AI-first IDE + cloud", entryPriceText: "$15/mo (Pro)", entryPriceUrl: "https://windsurf.com/pricing", freeTier: "Yes", standout: "Ranked #1 in some 2026 dev-tool power rankings", watchOut: "Acquired by Cognition; roadmap overlap with Devin creates redundancy" },
+            { id: 14, tool: "v0 (Vercel)", bestFor: "Frontend component/UI generation", type: "Prompt-to-UI generator", entryPriceText: "$20/mo", entryPriceUrl: "https://v0.dev/pricing", freeTier: "Limited generations", standout: "Tight integration with Vercel deploy pipeline", watchOut: "Weighted toward UI, thinner on backend/data logic" },
+            { id: 15, tool: "GitHub Copilot (Agent mode)", bestFor: "GitHub-native teams", type: "IDE + cloud agent", entryPriceText: "$10/mo (Pro)", entryPriceUrl: "https://github.com/features/copilot/plans", freeTier: "Yes", standout: "Cheapest entry point; issue-to-PR cloud agent", watchOut: "Medium autonomy vs. dedicated full-stack agents" },
+            { id: 16, tool: "Kiro", bestFor: "Spec-guided structured builds", type: "IDE agent", entryPriceText: "Free / $20 Pro", entryPriceUrl: "https://kiro.dev/pricing", freeTier: "Yes", standout: "Enforces specs before coding, reducing scope drift", watchOut: "Newer, smaller ecosystem/plugin support" },
+            { id: 17, tool: "Base44", bestFor: "Quick internal tools/MVPs", type: "Browser prompt-to-app", entryPriceText: "$29/mo", entryPriceUrl: "https://base44.com/pricing", freeTier: "Yes (limited)", standout: "Simple, fast no-code-style app generation", watchOut: "Less powerful for complex, data-heavy apps" },
+            { id: 18, tool: "Playcode Agent", bestFor: "Fully autonomous website builds", type: "Browser agent", entryPriceText: "$9.99/mo", entryPriceUrl: "https://playcode.io/pricing", freeTier: "Limited", standout: "Cheapest fully-autonomous website builder", watchOut: "Narrower scope than Manus/Genspark-style general agents" },
+            { id: 19, tool: "Google Jules", bestFor: "Google-stack async coding tasks", type: "Cloud coding agent", entryPriceText: "Free / $19.99 Pro", entryPriceUrl: "https://jules.google/pricing", freeTier: "Yes", standout: "Backed by Gemini frontier models, generous free tier", watchOut: "Still maturing vs. Devin/Claude Code on complex tasks" },
+            { id: 20, tool: "Kimi Agent (OK Computer, Moonshot AI)", bestFor: "Long-horizon coding + massive parallel agent swarms", type: "Autonomous agent (web/desktop)", entryPriceText: "~$8–19/mo intl. (49 CNY/mo in China)", entryPriceUrl: "https://www.kimi.ai/resources/kimi-k3-pricing", freeTier: "Yes", standout: "Runs on K2.6/K3: codes continuously up to 13 hours, up to 4,000+ lines changed in one run, turns prompts/mockups straight into production interfaces", watchOut: "Agent Swarm scales to 300 sub-agents but coordination overhead and English-language docs lag behind the Chinese product exp" }
         ];
+
+        // Column Definitions
+        const columnDefs = [
+            { key: "id", label: "#" },
+            { key: "tool", label: "Tool Name" },
+            { key: "bestFor", label: "Best For" },
+            { key: "type", label: "Agent Type" },
+            { key: "entryPrice", label: "Entry Price" },
+            { key: "freeTier", label: "Free Tier" },
+            { key: "standout", label: "Standout Features" },
+            { key: "watchOut", label: "Watch-outs" }
+        ];
+
+        const defaultColVisibility = {
+            id: true,
+            tool: true,
+            bestFor: true,
+            type: true,
+            entryPrice: true,
+            freeTier: true,
+            standout: true,
+            watchOut: true
+        };
+
+        let colVisibility = { ...defaultColVisibility };
+
+        try {
+            const savedCols = localStorage.getItem("aiToolsColVis");
+            if (savedCols) {
+                colVisibility = { ...colVisibility, ...JSON.parse(savedCols) };
+            }
+        } catch (e) {}
+
+        const expandedCardIds = new Set();
 
         let filtered = [...rawData];
         let currentPage = 1;
@@ -604,13 +952,19 @@
         let sortKey = "id";
         let sortDir = "asc";
 
+        // DOM elements
         const searchInput = document.getElementById("search");
         const typeFilter = document.getElementById("typeFilter");
-        const freeTierFilter = document.getElementById("freeTierFilter");
+        const freeFilter = document.getElementById("freeFilter");
         const pageSizeSelect = document.getElementById("pageSize");
         const viewModeSelect = document.getElementById("viewMode");
+        const expandAllBtn = document.getElementById("expandAllBtn");
         const resetBtn = document.getElementById("resetBtn");
         const exportBtn = document.getElementById("exportBtn");
+        const colToggleBtn = document.getElementById("colToggleBtn");
+        const colModal = document.getElementById("colModal");
+        const colModalBody = document.getElementById("colModalBody");
+        const modalDoneBtn = document.getElementById("modalDoneBtn");
         const tableCard = document.getElementById("tableCard");
         const tableBody = document.getElementById("tableBody");
         const cardsView = document.getElementById("cardsView");
@@ -628,32 +982,86 @@
             typeFilter.appendChild(opt);
         });
 
+        // Build Column Toggle Modal
+        function buildColumnModal() {
+            colModalBody.innerHTML = "";
+            columnDefs.forEach(col => {
+                const row = document.createElement("div");
+                row.className = "column-toggle-row";
+
+                const label = document.createElement("span");
+                label.className = "column-toggle-label";
+                label.textContent = col.label;
+
+                const switchLabel = document.createElement("label");
+                switchLabel.className = "switch";
+
+                const input = document.createElement("input");
+                input.type = "checkbox";
+                input.checked = colVisibility[col.key] !== false;
+                input.addEventListener("change", (e) => {
+                    colVisibility[col.key] = e.target.checked;
+                    try {
+                        localStorage.setItem("aiToolsColVis", JSON.stringify(colVisibility));
+                    } catch (err) {}
+                    render();
+                });
+
+                const slider = document.createElement("span");
+                slider.className = "slider";
+
+                switchLabel.appendChild(input);
+                switchLabel.appendChild(slider);
+                row.appendChild(label);
+                row.appendChild(switchLabel);
+                colModalBody.appendChild(row);
+            });
+        }
+
+        colToggleBtn.addEventListener("click", () => {
+            buildColumnModal();
+            colModal.classList.add("open");
+        });
+
+        modalDoneBtn.addEventListener("click", () => {
+            colModal.classList.remove("open");
+        });
+
+        colModal.addEventListener("click", (e) => {
+            if (e.target === colModal) colModal.classList.remove("open");
+        });
+
         function applyFilters() {
             const q = searchInput.value.trim().toLowerCase();
             const typeVal = typeFilter.value;
-            const freeVal = freeTierFilter.value;
+            const freeVal = freeFilter.value;
 
             filtered = rawData.filter(row => {
                 if (typeVal && row.type !== typeVal) return false;
-                if (freeVal === "yes" && !row.freeTier.toLowerCase().includes("yes")) return false;
-                if (freeVal === "limited" && !(row.freeTier.toLowerCase().includes("limited") || row.freeTier.toLowerCase().includes("trial"))) return false;
+                if (freeVal) {
+                    const ft = row.freeTier.toLowerCase();
+                    if (freeVal === "yes" && !ft.startsWith("yes")) return false;
+                    if (freeVal === "limited" && (ft.startsWith("yes") && !ft.includes("limited"))) return false;
+                }
                 if (q) {
                     const hay = [
-                        row.tool, row.bestFor, row.type, row.entryPrice,
-                        row.freeTier, row.standout, row.watchOut
+                        row.id, row.tool, row.bestFor, row.type,
+                        row.entryPriceText, row.freeTier, row.standout, row.watchOut
                     ].join(" ").toLowerCase();
                     if (!hay.includes(q)) return false;
                 }
                 return true;
             });
 
+            // Sorting
             filtered.sort((a, b) => {
-                let va = a[sortKey];
-                let vb = b[sortKey];
-                if (typeof va === "string") {
-                    va = va.toLowerCase();
-                    vb = vb.toLowerCase();
+                let va = a[sortKey === "entryPrice" ? "entryPriceText" : sortKey];
+                let vb = b[sortKey === "entryPrice" ? "entryPriceText" : sortKey];
+                if (typeof va === "number" && typeof vb === "number") {
+                    return sortDir === "asc" ? va - vb : vb - va;
                 }
+                va = (va || "").toString().toLowerCase();
+                vb = (vb || "").toString().toLowerCase();
                 if (va < vb) return sortDir === "asc" ? -1 : 1;
                 if (va > vb) return sortDir === "asc" ? 1 : -1;
                 return 0;
@@ -669,6 +1077,14 @@
             return filtered.slice(start, start + pageSize);
         }
 
+        function getFreeBadgeClass(text) {
+            if (!text) return "limited";
+            const lower = text.toLowerCase();
+            if (lower.startsWith("yes") && !lower.includes("limited")) return "yes";
+            if (lower.includes("trial")) return "trial";
+            return "limited";
+        }
+
         function render() {
             const slice = getPageSlice();
             const total = filtered.length;
@@ -679,58 +1095,147 @@
             showingCount.textContent = total === 0 ? "0" : `${startIdx}–${endIdx}`;
             totalCount.textContent = total;
 
+            // Apply column visibility to Table Headers
+            document.querySelectorAll("th[data-key]").forEach(th => {
+                const k = th.dataset.key;
+                if (colVisibility[k] === false) {
+                    th.classList.add("col-hidden");
+                } else {
+                    th.classList.remove("col-hidden");
+                }
+            });
+
+            // Table rows
             tableBody.innerHTML = "";
             if (slice.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="8"><div class="empty-state">No matching tools found.</div></td></tr>`;
+                tableBody.innerHTML =
+                    `<tr><td colspan="8"><div class="empty-state">No matching AI tools found. Try clearing your search or filters.</div></td></tr>`;
             } else {
                 slice.forEach(row => {
                     const tr = document.createElement("tr");
+                    const freeBadgeClass = getFreeBadgeClass(row.freeTier);
+
                     tr.innerHTML = `
-                        <td class="id-cell">${row.id}</td>
-                        <td class="tool-name">${escapeHtml(row.tool)}</td>
-                        <td>${escapeHtml(row.bestFor)}</td>
-                        <td><span class="type-badge">${escapeHtml(row.type)}</span></td>
-                        <td><a href="${row.url}" target="_blank" rel="noopener" class="price-link">${escapeHtml(row.entryPrice)}</a></td>
-                        <td>${escapeHtml(row.freeTier)}</td>
-                        <td class="desc-text">${escapeHtml(row.standout)}</td>
-                        <td class="note-text">${escapeHtml(row.watchOut)}</td>
+                        <td class="tool-id ${colVisibility.id === false ? 'col-hidden' : ''}">${row.id}</td>
+                        <td class="${colVisibility.tool === false ? 'col-hidden' : ''}"><div class="tool-name">${escapeHtml(row.tool)}</div></td>
+                        <td class="${colVisibility.bestFor === false ? 'col-hidden' : ''}">${escapeHtml(row.bestFor)}</td>
+                        <td class="${colVisibility.type === false ? 'col-hidden' : ''}"><span class="type-badge">${escapeHtml(row.type)}</span></td>
+                        <td class="${colVisibility.entryPrice === false ? 'col-hidden' : ''}"><div class="price-text"><a href="${row.entryPriceUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(row.entryPriceText)}</a></div></td>
+                        <td class="${colVisibility.freeTier === false ? 'col-hidden' : ''}"><span class="free-badge ${freeBadgeClass}">${escapeHtml(row.freeTier)}</span></td>
+                        <td class="standout-text ${colVisibility.standout === false ? 'col-hidden' : ''}">${escapeHtml(row.standout)}</td>
+                        <td class="watchout-text ${colVisibility.watchOut === false ? 'col-hidden' : ''}">${escapeHtml(row.watchOut)}</td>
                     `;
                     tableBody.appendChild(tr);
                 });
             }
 
+            // Cards view
             cardsView.innerHTML = "";
             if (slice.length === 0) {
-                cardsView.innerHTML = `<div class="empty-state">No matching tools found.</div>`;
+                cardsView.innerHTML = `<div class="empty-state">No matching AI tools found.</div>`;
             } else {
                 slice.forEach(row => {
+                    const isExpanded = expandedCardIds.has(row.id);
                     const card = document.createElement("div");
-                    card.className = "tool-card";
+                    card.className = `tool-card ${isExpanded ? 'expanded' : ''}`;
+                    card.dataset.id = row.id;
+
+                    const freeBadgeClass = getFreeBadgeClass(row.freeTier);
+
                     card.innerHTML = `
                         <div class="card-header">
-                            <span class="card-title">${row.id}. ${escapeHtml(row.tool)}</span>
-                            <span class="type-badge">${escapeHtml(row.type)}</span>
+                            <div class="card-title">
+                                <span>#${row.id}</span> ${escapeHtml(row.tool)}
+                            </div>
+                            <button class="card-expand-trigger" type="button" aria-label="Toggle details">▼</button>
                         </div>
-                        <div style="font-size: 0.875rem; margin-bottom: 0.5rem;"><strong>Best For:</strong> ${escapeHtml(row.bestFor)}</div>
-                        <div class="card-grid">
-                            <div><div class="card-label">Entry Price</div><a href="${row.url}" target="_blank" rel="noopener" class="price-link">${escapeHtml(row.entryPrice)}</a></div>
-                            <div><div class="card-label">Free Tier</div>${escapeHtml(row.freeTier)}</div>
+
+                        ${colVisibility.bestFor !== false ? `<div class="card-best-for"><strong>Best for:</strong> ${escapeHtml(row.bestFor)}</div>` : ''}
+
+                        <div class="card-summary-bar">
+                            ${colVisibility.type !== false ? `<span class="type-badge">${escapeHtml(row.type)}</span>` : ''}
+                            ${colVisibility.freeTier !== false ? `<span class="free-badge ${freeBadgeClass}">${escapeHtml(row.freeTier)}</span>` : ''}
+                            ${colVisibility.entryPrice !== false ? `<span class="price-text" style="font-size:0.8rem; margin-left:auto;"><a href="${row.entryPriceUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(row.entryPriceText)}</a></span>` : ''}
                         </div>
-                        <div style="margin-top: 0.5rem; font-size: 0.85rem;"><strong>Standout:</strong> ${escapeHtml(row.standout)}</div>
-                        <div style="margin-top: 0.35rem; font-size: 0.85rem; color: var(--text-muted);"><strong>Watch-out:</strong> ${escapeHtml(row.watchOut)}</div>
+
+                        <div class="card-details">
+                            <div class="card-meta-grid">
+                                ${colVisibility.standout !== false ? `
+                                    <div class="meta-block standout">
+                                        <div class="meta-block-title">✨ Standout Feature</div>
+                                        <div>${escapeHtml(row.standout)}</div>
+                                    </div>
+                                ` : ''}
+                                ${colVisibility.watchOut !== false ? `
+                                    <div class="meta-block watchout">
+                                        <div class="meta-block-title">⚠️ Watch-out</div>
+                                        <div>${escapeHtml(row.watchOut)}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
                     `;
+
+                    const headerEl = card.querySelector(".card-header");
+                    const triggerBtn = card.querySelector(".card-expand-trigger");
+
+                    function toggleCard() {
+                        if (expandedCardIds.has(row.id)) {
+                            expandedCardIds.delete(row.id);
+                            card.classList.remove("expanded");
+                        } else {
+                            expandedCardIds.add(row.id);
+                            card.classList.add("expanded");
+                        }
+                        updateExpandAllBtnState(slice);
+                    }
+
+                    headerEl.addEventListener("click", (e) => {
+                        if (e.target.closest(".card-expand-trigger")) return;
+                        toggleCard();
+                    });
+
+                    triggerBtn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        toggleCard();
+                    });
+
                     cardsView.appendChild(card);
                 });
             }
 
+            updateExpandAllBtnState(slice);
             renderPagination(total, size);
             updateSortIndicators();
+        }
+
+        function updateExpandAllBtnState(slice) {
+            if (!expandAllBtn) return;
+            if (!slice || slice.length === 0) {
+                expandAllBtn.disabled = true;
+                return;
+            }
+            expandAllBtn.disabled = false;
+
+            const allExpanded = slice.every(row => expandedCardIds.has(row.id));
+
+            if (allExpanded) {
+                expandAllBtn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+                    Collapse All
+                `;
+            } else {
+                expandAllBtn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+                    Expand All
+                `;
+            }
         }
 
         function renderPagination(total, size) {
             pageControls.innerHTML = "";
             if (pageSize === "all" || total === 0) {
-                pageInfo.textContent = total === 0 ? "No entries" : `All ${total} entries`;
+                pageInfo.textContent = total === 0 ? "No tools" : `All ${total} tools`;
                 return;
             }
 
@@ -744,12 +1249,7 @@
             prev.addEventListener("click", () => { currentPage--; render(); });
             pageControls.appendChild(prev);
 
-            const maxButtons = 5;
-            let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
-            let end = Math.min(totalPages, start + maxButtons - 1);
-            if (end - start + 1 < maxButtons) start = Math.max(1, end - maxButtons + 1);
-
-            for (let i = start; i <= end; i++) {
+            for (let i = 1; i <= totalPages; i++) {
                 const b = document.createElement("button");
                 b.className = "page-btn" + (i === currentPage ? " active" : "");
                 b.textContent = i;
@@ -766,7 +1266,7 @@
         }
 
         function updateSortIndicators() {
-            document.querySelectorAll("th[data-key]").forEach(th => {
+            document.querySelectorAll("th").forEach(th => {
                 th.classList.remove("sorted-asc", "sorted-desc");
                 if (th.dataset.key === sortKey) {
                     th.classList.add(sortDir === "asc" ? "sorted-asc" : "sorted-desc");
@@ -783,25 +1283,40 @@
                 .replace(/"/g, "&quot;");
         }
 
-        function exportToCsv() {
-            if (filtered.length === 0) return;
+        function exportToExcel() {
+            if (filtered.length === 0) {
+                alert("No data available to export. Please adjust the filters.");
+                return;
+            }
+
             const headers = ["#", "Tool", "Best For", "Type", "Entry Price", "Free Tier", "Standout", "Watch-out"];
+
             const escapeCsv = (val) => {
                 const s = (val == null || val === "") ? "" : String(val);
-                if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+                if (/[",\n\r]/.test(s)) {
+                    return `"${s.replace(/"/g, '""')}"`;
+                }
                 return s;
             };
+
             const rows = filtered.map(r => [
-                r.id, escapeCsv(r.tool), escapeCsv(r.bestFor), escapeCsv(r.type),
-                escapeCsv(r.entryPrice), escapeCsv(r.freeTier), escapeCsv(r.standout), escapeCsv(r.watchOut)
+                escapeCsv(r.id),
+                escapeCsv(r.tool),
+                escapeCsv(r.bestFor),
+                escapeCsv(r.type),
+                escapeCsv(r.entryPriceText),
+                escapeCsv(r.freeTier),
+                escapeCsv(r.standout),
+                escapeCsv(r.watchOut)
             ].join(","));
 
             const csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.join("\n");
             const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
+            const timestamp = new Date().toISOString().slice(0, 10);
             link.href = url;
-            link.download = `ai-agents-tools-export.csv`;
+            link.download = `ai-tools-directory-${timestamp}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -813,29 +1328,67 @@
             tableCard.classList.remove("view-table", "view-cards");
             tableCard.classList.add(selected === "cards" ? "view-cards" : "view-table");
             viewModeSelect.value = selected === "cards" ? "cards" : "table";
+            try {
+                localStorage.setItem("aiToolsViewMode", selected);
+            } catch (e) {}
         }
 
+        (function initViewMode() {
+            let preferred = null;
+            try {
+                preferred = localStorage.getItem("aiToolsViewMode");
+            } catch (e) {}
+            applyViewMode(preferred === "cards" ? "cards" : "table");
+        })();
+
+        // Event listeners
         searchInput.addEventListener("input", debounce(applyFilters, 200));
         typeFilter.addEventListener("change", applyFilters);
-        freeTierFilter.addEventListener("change", applyFilters);
+        freeFilter.addEventListener("change", applyFilters);
         pageSizeSelect.addEventListener("change", () => {
             const val = pageSizeSelect.value;
             pageSize = val === "all" ? "all" : parseInt(val, 10);
             currentPage = 1;
             render();
         });
-        viewModeSelect.addEventListener("change", () => applyViewMode(viewModeSelect.value));
+
+        viewModeSelect.addEventListener("change", () => {
+            applyViewMode(viewModeSelect.value);
+        });
+
+        expandAllBtn.addEventListener("click", () => {
+            const slice = getPageSlice();
+            if (slice.length === 0) return;
+
+            const allExpanded = slice.every(row => expandedCardIds.has(row.id));
+
+            if (allExpanded) {
+                slice.forEach(row => expandedCardIds.delete(row.id));
+            } else {
+                slice.forEach(row => expandedCardIds.add(row.id));
+            }
+            render();
+        });
+
         resetBtn.addEventListener("click", () => {
             searchInput.value = "";
             typeFilter.value = "";
-            freeTierFilter.value = "";
+            freeFilter.value = "";
             pageSizeSelect.value = "20";
             pageSize = 20;
             sortKey = "id";
             sortDir = "asc";
+            expandedCardIds.clear();
+
+            colVisibility = { ...defaultColVisibility };
+            try {
+                localStorage.removeItem("aiToolsColVis");
+            } catch (e) {}
+
             applyFilters();
         });
-        exportBtn.addEventListener("click", exportToCsv);
+
+        exportBtn.addEventListener("click", exportToExcel);
 
         document.querySelectorAll("th[data-key]").forEach(th => {
             th.addEventListener("click", () => {
@@ -858,6 +1411,7 @@
             };
         }
 
+        // Initial render
         applyFilters();
     </script>
 </body>
