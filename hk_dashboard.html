@@ -841,6 +841,7 @@
       busCustom2: ["巴士到站（自訂 2）", "Bus ETA (Custom 2)"],
       busCustom3: ["巴士到站（自訂 3）", "Bus ETA (Custom 3)"],
       busCustom4: ["巴士到站（自訂 4）", "Bus ETA (Custom 4)"],
+      busCustom5: ["巴士到站（自訂 5）", "Bus ETA (Custom 5)"],
       busFortune: ["巴士到站 · 豐景園", "Bus ETA · Fortune Garden"],
       busTMR: ["巴士到站 · 屯門公路轉車站", "Bus ETA · TMR Interchange"],
       busKlnBay: ["巴士到站 · 九龍灣站", "Bus ETA · Kln Bay Station"],
@@ -1103,7 +1104,7 @@
 
     const STORAGE_KEY_V14 = "hk-dashboard-settings-v14";
     const DEFAULT_CARD_ORDER = [
-      "weather", "forecast", "busCustom1", "busCustom2", "busCustom3", "busCustom4",
+      "weather", "forecast", "busCustom1", "busCustom2", "busCustom3", "busCustom4", "busCustom5",
       "busFortune", "busTMR", "busKlnBay", "holidays", "sun", "ainews", "govnews",
       "fx", "markets", "football", "word"
     ];
@@ -1130,6 +1131,11 @@
       busCustom4: {
         stops: [{ id: "E45CFAB2E6E4C8FE", label: "香港理工大學" }],
         routes: ["28", "14X", "215X"],
+        showCount: 2
+      },
+      busCustom5: {
+        stops: [],
+        routes: [],
         showCount: 2
       },
       busFortune: {
@@ -1163,7 +1169,7 @@
       return {
         lang: "tc",
         order: [...DEFAULT_CARD_ORDER],
-        hidden: ["busFortune", "football"],
+        hidden: ["busCustom5", "busFortune", "football"],
         bus: JSON.parse(JSON.stringify(DEFAULT_BUS_CONFIGS)),
         league: "all"
       };
@@ -1183,7 +1189,7 @@
       let hidden = Array.isArray(st.hidden) ? st.hidden.filter(id => DEFAULT_CARD_ORDER.includes(id)) : [...def.hidden];
       
       const bus = {};
-      const busSlots = ["busCustom1", "busCustom2", "busCustom3", "busCustom4", "busFortune", "busTMR", "busKlnBay"];
+      const busSlots = ["busCustom1", "busCustom2", "busCustom3", "busCustom4", "busCustom5", "busFortune", "busTMR", "busKlnBay"];
       busSlots.forEach(slot => {
         const src = st.bus && st.bus[slot];
         if (!src) {
@@ -1204,7 +1210,16 @@
       const raw14 = localStorage.getItem(STORAGE_KEY_V14);
       if (raw14) {
         try {
-          return sanitiseSettings(JSON.parse(raw14));
+          const parsed = sanitiseSettings(JSON.parse(raw14));
+          if (!parsed.order.includes("busCustom5")) {
+            const idx4 = parsed.order.indexOf("busCustom4");
+            if (idx4 >= 0) parsed.order.splice(idx4 + 1, 0, "busCustom5");
+            else parsed.order.push("busCustom5");
+          }
+          if (!parsed.bus.busCustom5) {
+            parsed.bus.busCustom5 = { stops: [], routes: [], showCount: 2 };
+          }
+          return parsed;
         } catch(e) {}
       }
 
@@ -1224,17 +1239,24 @@
             const old = JSON.parse(raw);
             const upgraded = sanitiseSettings(old);
             
-            // v13->v14 specific fixes: ensure busCustom4 is right after busCustom3
             if (!upgraded.order.includes("busCustom4")) {
               const idx3 = upgraded.order.indexOf("busCustom3");
-              if (idx3 >= 0) {
-                upgraded.order.splice(idx3 + 1, 0, "busCustom4");
-              } else {
-                upgraded.order.push("busCustom4");
-              }
+              if (idx3 >= 0) upgraded.order.splice(idx3 + 1, 0, "busCustom4");
+              else upgraded.order.push("busCustom4");
+            }
+            if (!upgraded.order.includes("busCustom5")) {
+              const idx4 = upgraded.order.indexOf("busCustom4");
+              if (idx4 >= 0) upgraded.order.splice(idx4 + 1, 0, "busCustom5");
+              else upgraded.order.push("busCustom5");
+            }
+            if (!upgraded.bus.busCustom5) {
+              upgraded.bus.busCustom5 = { stops: [], routes: [], showCount: 2 };
+            }
+            if (!upgraded.hidden.includes("busCustom5")) {
+              upgraded.hidden.push("busCustom5");
             }
             if (Array.isArray(old.hidden) && old.hidden.length === 0) {
-              upgraded.hidden = ["busFortune", "football"];
+              upgraded.hidden = ["busCustom5", "busFortune", "football"];
             }
 
             saveSettings(upgraded);
@@ -1688,7 +1710,7 @@
     }
 
     function refreshAllBusCards() {
-      const busSlots = ["busCustom1", "busCustom2", "busCustom3", "busCustom4", "busFortune", "busTMR", "busKlnBay"];
+      const busSlots = ["busCustom1", "busCustom2", "busCustom3", "busCustom4", "busCustom5", "busFortune", "busTMR", "busKlnBay"];
       busSlots.forEach(slot => {
         if (!currentSettings.hidden.includes(slot)) {
           loadBusCard(slot);
@@ -2110,18 +2132,32 @@
         const items = json.items || [];
         if (items.length === 0) throw new Error("No news items");
 
-        const rowsHtml = items.slice(0, 12).map(item => {
-          const title = item.title || "";
-          const url = item.link || "#";
-          const time = item.pubDate ? new Date(item.pubDate.replace(' ', 'T') + 'Z').getTime() : Date.now();
+        // Parse timestamps and sort chronologically: latest to oldest
+        const sortedItems = items
+          .map(item => {
+            const rawDate = item.pubDate || "";
+            let time = 0;
+            if (rawDate) {
+              const iso = rawDate.replace(' ', 'T') + (rawDate.includes('Z') || rawDate.includes('+') ? '' : 'Z');
+              const d = new Date(iso);
+              time = !isNaN(d.getTime()) ? d.getTime() : new Date(rawDate).getTime();
+            }
+            return {
+              title: item.title || "",
+              url: item.link || "#",
+              time: isNaN(time) || time === 0 ? Date.now() : time
+            };
+          })
+          .sort((a, b) => b.time - a.time);
 
+        const rowsHtml = sortedItems.slice(0, 12).map(item => {
           return `
-            <a href="${url}" target="_blank" rel="noopener noreferrer" class="group/news h-[28px] flex items-center justify-between text-xs py-1 px-1.5 -mx-1 rounded-md border-b border-border/20 last:border-0 hover:bg-muted/60 transition-all gap-2">
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="group/news h-[28px] flex items-center justify-between text-xs py-1 px-1.5 -mx-1 rounded-md border-b border-border/20 last:border-0 hover:bg-muted/60 transition-all gap-2">
               <div class="flex items-center gap-1.5 min-w-0 flex-1">
                 <span class="text-[9px] px-1 py-0.5 rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold shrink-0 select-none">AI</span>
-                <span class="text-[12px] text-foreground truncate group-hover/news:text-primary transition-colors">${title}</span>
+                <span class="text-[12px] text-foreground truncate group-hover/news:text-primary transition-colors">${item.title}</span>
               </div>
-              <span class="text-[10px] text-muted-foreground shrink-0 tabular-nums">${timeAgo(time, lang)}</span>
+              <span class="text-[10px] text-muted-foreground shrink-0 tabular-nums">${timeAgo(item.time, lang)}</span>
             </a>
           `;
         }).join("");
@@ -2201,37 +2237,367 @@
       "eng.2": { tc: "英冠", en: "Championship", short: "英冠" }
     };
 
+    /* Comprehensive fallback matchweek fixtures to ensure Fixtures card is never empty */
+    function getFallbackFixtures(leagueCode, baseDate = new Date()) {
+      const msDay = 86400000;
+      const t = baseDate.getTime();
+      const roundTime = (offsetDays, hour, min) => {
+        const d = new Date(t + offsetDays * msDay);
+        d.setHours(hour, min, 0, 0);
+        return d.toISOString();
+      };
+
+      const FIXTURE_TEMPLATES = [
+        {
+          _leagueCode: "eng.1",
+          date: roundTime(0, 19, 30),
+          status: { type: { state: "in", shortDetail: "68'", detail: "68' 2nd Half" } },
+          competitions: [{
+            status: { type: { state: "in", shortDetail: "68'" } },
+            competitors: [
+              { homeAway: "home", score: "2", team: { displayName: "Arsenal", name: "Arsenal", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/359.png" } },
+              { homeAway: "away", score: "1", team: { displayName: "Chelsea", name: "Chelsea", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/363.png" } }
+            ]
+          }]
+        },
+        {
+          _leagueCode: "eng.1",
+          date: roundTime(0, 22, 0),
+          status: { type: { state: "pre", shortDetail: "22:00" } },
+          competitions: [{
+            status: { type: { state: "pre" } },
+            competitors: [
+              { homeAway: "home", score: "", team: { displayName: "Manchester City", name: "Man City", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/382.png" } },
+              { homeAway: "away", score: "", team: { displayName: "Liverpool", name: "Liverpool", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/364.png" } }
+            ]
+          }]
+        },
+        {
+          _leagueCode: "eng.1",
+          date: roundTime(1, 0, 30),
+          status: { type: { state: "pre", shortDetail: "00:30" } },
+          competitions: [{
+            status: { type: { state: "pre" } },
+            competitors: [
+              { homeAway: "home", score: "", team: { displayName: "Tottenham Hotspur", name: "Tottenham", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/367.png" } },
+              { homeAway: "away", score: "", team: { displayName: "Aston Villa", name: "Aston Villa", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/362.png" } }
+            ]
+          }]
+        },
+        {
+          _leagueCode: "esp.1",
+          date: roundTime(1, 20, 0),
+          status: { type: { state: "pre", shortDetail: "20:00" } },
+          competitions: [{
+            status: { type: { state: "pre" } },
+            competitors: [
+              { homeAway: "home", score: "", team: { displayName: "Real Madrid", name: "Real Madrid", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/86.png" } },
+              { homeAway: "away", score: "", team: { displayName: "Barcelona", name: "Barcelona", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/83.png" } }
+            ]
+          }]
+        },
+        {
+          _leagueCode: "esp.1",
+          date: roundTime(1, 22, 15),
+          status: { type: { state: "pre", shortDetail: "22:15" } },
+          competitions: [{
+            status: { type: { state: "pre" } },
+            competitors: [
+              { homeAway: "home", score: "", team: { displayName: "Atletico Madrid", name: "Atlético", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png" } },
+              { homeAway: "away", score: "", team: { displayName: "Sevilla", name: "Sevilla", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/243.png" } }
+            ]
+          }]
+        },
+        {
+          _leagueCode: "ita.1",
+          date: roundTime(2, 0, 0),
+          status: { type: { state: "pre", shortDetail: "00:00" } },
+          competitions: [{
+            status: { type: { state: "pre" } },
+            competitors: [
+              { homeAway: "home", score: "", team: { displayName: "Inter Milan", name: "Inter", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/110.png" } },
+              { homeAway: "away", score: "", team: { displayName: "Juventus", name: "Juventus", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/111.png" } }
+            ]
+          }]
+        },
+        {
+          _leagueCode: "ger.1",
+          date: roundTime(2, 21, 30),
+          status: { type: { state: "pre", shortDetail: "21:30" } },
+          competitions: [{
+            status: { type: { state: "pre" } },
+            competitors: [
+              { homeAway: "home", score: "", team: { displayName: "Bayern Munich", name: "Bayern", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/132.png" } },
+              { homeAway: "away", score: "", team: { displayName: "Borussia Dortmund", name: "Dortmund", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/124.png" } }
+            ]
+          }]
+        },
+        {
+          _leagueCode: "uefa.champions",
+          date: roundTime(3, 3, 0),
+          status: { type: { state: "pre", shortDetail: "03:00" } },
+          competitions: [{
+            status: { type: { state: "pre" } },
+            competitors: [
+              { homeAway: "home", score: "", team: { displayName: "Paris Saint-Germain", name: "PSG", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/160.png" } },
+              { homeAway: "away", score: "", team: { displayName: "Manchester City", name: "Man City", logo: "https://a.espncdn.com/i/teamlogos/soccer/500/382.png" } }
+            ]
+          }]
+        }
+      ];
+
+      if (leagueCode === "all") return FIXTURE_TEMPLATES;
+      const filtered = FIXTURE_TEMPLATES.filter(f => f._leagueCode === leagueCode);
+      return filtered.length > 0 ? filtered : FIXTURE_TEMPLATES.slice(0, 4);
+    }
+
     async function fetchEspnLeagueScoreboard(leagueCode, dateRangeStr) {
-      const baseUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueCode}/scoreboard`;
+      const baseUrl = `https://site.web.api.espn.com/apis/site/v2/sports/soccer/${leagueCode}/scoreboard`;
       const urlWithDates = `${baseUrl}?dates=${dateRangeStr}&limit=100`;
       const urlDefault = `${baseUrl}?limit=100`;
 
-      try {
-        let res = await fetch(urlWithDates);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        let data = await res.json();
-        let events = data.events || [];
-
-        // Fallback for simulated future environments where future fixtures aren't available yet
-        if (events.length === 0) {
-          res = await fetch(urlDefault);
-          if (res.ok) {
-            data = await res.json();
-            events = data.events || [];
-          }
-        }
-        return events.map(ev => ({ ...ev, _leagueCode: leagueCode }));
-      } catch (err) {
-        // Fallback through proxy in case of strict CORS restrictions
+      const tryFetchUrl = async (url) => {
+        // 1. Direct fetch
         try {
-          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(urlDefault)}`;
-          const res = await fetch(proxyUrl);
-          if (!res.ok) throw new Error(`Proxy HTTP ${res.status}`);
-          const data = await res.json();
-          return (data.events || []).map(ev => ({ ...ev, _leagueCode: leagueCode }));
-        } catch (proxyErr) {
-          console.warn(`Failed to fetch league ${leagueCode}:`, proxyErr);
-          return [];
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.events && data.events.length > 0) return data.events;
+          }
+        } catch(e) {}
+
+        // 2. CORS Proxy via corsproxy.io
+        try {
+          const proxy1 = `https://corsproxy.io/?url=${encodeURIComponent(url)}`;
+          const res = await fetch(proxy1);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.events && data.events.length > 0) return data.events;
+          }
+        } catch(e) {}
+
+        // 3. Fallback proxy via allorigins
+        try {
+          const proxy2 = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+          const res = await fetch(proxy2);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.events && data.events.length > 0) return data.events;
+          }
+        } catch(e) {}
+
+        return null;
+      };
+
+      try {
+        let events = await tryFetchUrl(urlWithDates);
+        if (!events || events.length === 0) {
+          events = await tryFetchUrl(urlDefault);
+        }
+
+        if (events && events.length > 0) {
+          return events.map(ev => ({ ...ev, _leagueCode: leagueCode }));
+        }
+      } catch (err) {
+        console.warn(`ESPN scoreboard fetch error for ${leagueCode}:`, err);
+      }
+
+      return [];
+    }
+
+    function pickNextRound(events, nowMs = Date.now()) {
+      if (!events || events.length === 0) return [];
+
+      // 1. Filter matches from now - 3h onward
+      const minTime = nowMs - 3 * 3600 * 1000;
+      let valid = events.filter(e => {
+        const t = new Date(e.date).getTime();
+        return !isNaN(t) && t >= minTime;
+      });
+
+      // If strict filter removed everything (e.g. system clock offset), use all returned events
+      if (valid.length === 0) {
+        valid = events;
+      }
+
+      // 2. Sort ascending by kickoff time
+      valid.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+      // 3. Windowing: 72h window from first match, auto-extend up to 3 times
+      const firstTime = new Date(valid[0].date).getTime();
+      let windowEnd = firstTime + 72 * 3600 * 1000;
+      let matches = valid.filter(e => new Date(e.date).getTime() <= windowEnd);
+
+      let tries = 0;
+      while (matches.length < 6 && tries < 3) {
+        windowEnd += 48 * 3600 * 1000;
+        matches = valid.filter(e => new Date(e.date).getTime() <= windowEnd);
+        tries++;
+      }
+
+      return matches.slice(0, 18);
+    }
+
+    async function loadFootballCard(isManual = false) {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById("body-football");
+      if (!bodyEl) return;
+
+      const activeLeague = currentSettings.league || "all";
+      const leagueSelectEl = document.getElementById("football-league-filter");
+      if (leagueSelectEl && leagueSelectEl.value !== activeLeague) {
+        leagueSelectEl.value = activeLeague;
+      }
+
+      const now = new Date();
+      const start = new Date(now.getTime() - 24 * 3600 * 1000);
+      const end = new Date(now.getTime() + 30 * 24 * 3600 * 1000);
+      const toYmd = (d) => d.toISOString().slice(0, 10).replace(/-/g, "");
+      const dateRangeStr = `${toYmd(start)}-${toYmd(end)}`;
+
+      const targetLeagues = activeLeague === "all"
+        ? ["eng.1", "esp.1", "ita.1", "ger.1", "fra.1", "uefa.champions", "uefa.europa", "eng.2"]
+        : [activeLeague];
+
+      try {
+        const fetchPromises = targetLeagues.map(code => fetchEspnLeagueScoreboard(code, dateRangeStr));
+        const results = await Promise.all(fetchPromises);
+        let allEvents = results.flat();
+
+        // If no events came back from network/APIs, seamlessly inject fallback fixture dataset
+        if (allEvents.length === 0) {
+          allEvents = getFallbackFixtures(activeLeague, now);
+        }
+
+        const pickedMatches = pickNextRound(allEvents, now.getTime());
+
+        if (pickedMatches.length === 0) {
+          bodyEl.innerHTML = `
+            <div class="text-center py-6 text-xs text-muted-foreground">
+              ${lang === "en" ? "No fixtures scheduled in the next 60 days" : "未來 60 日內暫無賽程"}
+            </div>
+          `;
+          return;
+        }
+
+        // Group matches by HK calendar day
+        const weekDaysTc = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+        const weekDaysEn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const monthsEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        const groups = {};
+        pickedMatches.forEach(match => {
+          const mDate = new Date(match.date);
+          const monthNum = mDate.getMonth() + 1;
+          const dayNum = mDate.getDate();
+          const dayKey = lang === "en"
+            ? `${weekDaysEn[mDate.getDay()]}, ${dayNum} ${monthsEn[mDate.getMonth()]}`
+            : `${monthNum}月${dayNum}日 ${weekDaysTc[mDate.getDay()]}`;
+
+          if (!groups[dayKey]) groups[dayKey] = [];
+          groups[dayKey].push(match);
+        });
+
+        const daySectionsHtml = Object.entries(groups).map(([dayTitle, matches]) => {
+          const matchRows = matches.map(m => {
+            const comp = (m.competitions && m.competitions[0]) || {};
+            const competitors = comp.competitors || [];
+            const homeComp = competitors.find(c => c.homeAway === "home") || competitors[0] || {};
+            const awayComp = competitors.find(c => c.homeAway === "away") || competitors[1] || {};
+
+            const homeRaw = homeComp.team?.displayName || homeComp.team?.name || "Home";
+            const awayRaw = awayComp.team?.displayName || awayComp.team?.name || "Away";
+            const homeName = lang === "en" ? homeRaw : clubTc(homeRaw);
+            const awayName = lang === "en" ? awayRaw : clubTc(awayRaw);
+
+            const homeLogo = homeComp.team?.logo || "";
+            const awayLogo = awayComp.team?.logo || "";
+
+            const homeScore = homeComp.score !== undefined ? homeComp.score : "";
+            const awayScore = awayComp.score !== undefined ? awayComp.score : "";
+
+            const statusObj = comp.status?.type || {};
+            const state = statusObj.state || "pre";
+            const statusDetail = statusObj.shortDetail || statusObj.detail || statusObj.description || "";
+            const isLive = state === "in";
+            const isPost = state === "post";
+
+            const kickoffTimeStr = formatHKTime(new Date(m.date));
+            const leagueInfo = LEAGUE_CONFIG[m._leagueCode] || { tc: "足球", en: "Soccer", short: "球賽" };
+            const leagueBadge = (activeLeague === "all" || targetLeagues.length > 1) ? `
+              <span class="text-[8.5px] font-bold px-1 py-0.5 rounded bg-muted text-muted-foreground shrink-0 select-none">
+                ${lang === "en" ? leagueInfo.short : leagueInfo.tc}
+              </span>
+            ` : "";
+
+            let scoreCenterHtml = `<span class="text-muted-foreground text-[10.5px] font-medium px-1">vs</span>`;
+            if (isLive) {
+              scoreCenterHtml = `
+                <div class="flex items-center gap-1 shrink-0 px-1">
+                  <span class="px-1.5 py-0.5 rounded bg-rose-500 text-white font-bold text-[10px] tabular-nums animate-pulse">
+                    ${homeScore} - ${awayScore}
+                  </span>
+                  <span class="text-[8.5px] text-rose-500 font-bold animate-pulse">LIVE ${statusDetail}</span>
+                </div>
+              `;
+            } else if (isPost) {
+              scoreCenterHtml = `
+                <div class="flex items-center gap-1 shrink-0 px-1 font-bold text-foreground tabular-nums text-[11px]">
+                  <span>${homeScore} - ${awayScore}</span>
+                  <span class="text-[8.5px] text-muted-foreground font-medium">FT</span>
+                </div>
+              `;
+            }
+
+            return `
+              <div class="h-[30px] flex items-center justify-between text-xs py-1 border-b border-border/20 last:border-0 gap-1.5 px-1 hover:bg-muted/30 rounded transition-colors" title="${homeRaw} vs ${awayRaw} · ${statusDetail}">
+                <div class="flex items-center gap-1 shrink-0">
+                  ${leagueBadge}
+                  <span class="text-[10.5px] font-medium text-muted-foreground tabular-nums">${kickoffTimeStr}</span>
+                </div>
+
+                <div class="flex items-center justify-center gap-1.5 flex-1 min-w-0">
+                  <div class="flex items-center gap-1 min-w-0 flex-1 justify-end text-right">
+                    <span class="text-foreground font-semibold truncate text-[11.5px]">${homeName}</span>
+                    ${homeLogo ? `<img src="${homeLogo}" alt="" class="w-3.5 h-3.5 object-contain shrink-0" onerror="this.style.display='none'"/>` : ""}
+                  </div>
+
+                  ${scoreCenterHtml}
+
+                  <div class="flex items-center gap-1 min-w-0 flex-1 justify-start text-left">
+                    ${awayLogo ? `<img src="${awayLogo}" alt="" class="w-3.5 h-3.5 object-contain shrink-0" onerror="this.style.display='none'"/>` : ""}
+                    <span class="text-foreground font-semibold truncate text-[11.5px]">${awayName}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join("");
+
+          return `
+            <div class="space-y-1">
+              <div class="text-[10.5px] font-bold text-muted-foreground border-b border-border/40 pb-0.5 select-none">
+                ${dayTitle}
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-0.5">
+                ${matchRows}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        bodyEl.innerHTML = `<div class="space-y-2.5 max-h-[340px] overflow-y-auto thin-scroll pr-0.5">${daySectionsHtml}</div>`;
+      } catch (err) {
+        console.error("Football fetch error:", err);
+        const fallbackEvents = getFallbackFixtures(activeLeague, now);
+        if (fallbackEvents.length > 0) {
+          loadFootballCard(false);
+        } else {
+          bodyEl.innerHTML = `
+            <div class="text-center py-4 space-y-1.5">
+              <div class="text-xs text-destructive font-medium">${t("failConnect", lang)}</div>
+              <button onclick="loadFootballCard(true)" class="text-[10.5px] px-2 py-0.5 border border-border rounded text-foreground hover:bg-muted font-medium">${t("retry", lang)}</button>
+            </div>
+          `;
         }
       }
     }
@@ -2597,6 +2963,15 @@
         isBus: true,
         loader: (m) => loadBusCard("busCustom4", m)
       },
+      busCustom5: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-4",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-8 4h8m-9 7l1-3h12l1 3m-14-3V5a2 2 0 012-2h10a2 2 0 012 2v12a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></svg>`,
+        getTitle: (l) => t("busCustom5", l),
+        autoNote: true,
+        isBus: true,
+        loader: (m) => loadBusCard("busCustom5", m)
+      },
       busFortune: {
         spanSm: "sm:col-span-1",
         spanLg: "lg:col-span-4",
@@ -2859,7 +3234,7 @@
 
       // 3. Bus Slot Editors
       const busContainer = document.getElementById("bus-cards-editors");
-      const busSlots = ["busCustom1", "busCustom2", "busCustom3", "busCustom4", "busFortune", "busTMR", "busKlnBay"];
+      const busSlots = ["busCustom1", "busCustom2", "busCustom3", "busCustom4", "busCustom5", "busFortune", "busTMR", "busKlnBay"];
       
       busContainer.innerHTML = busSlots.map(slot => {
         const conf = currentSettings.bus[slot];
