@@ -1345,7 +1345,7 @@
       const updatedTimeStr = formatHKTime(new Date());
 
       return `
-        <div id="card-${id}" class="h-full flex-1 group relative flex flex-col p-3 gap-2 rounded-xl bg-card text-card-foreground border border-border/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-none break-inside-avoid transition-all duration-200">
+        <div id="card-${id}" class="h-full flex-1 relative flex flex-col p-3 gap-2 rounded-xl bg-card text-card-foreground border border-border/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-none break-inside-avoid transition-all duration-200">
           <!-- Card Header -->
           <div class="flex items-center justify-between gap-1.5 leading-none">
             <div class="flex items-center gap-1.5 min-w-0 flex-1">
@@ -2095,39 +2095,43 @@
       const bodyEl = document.getElementById("body-ainews");
       if (!bodyEl) return;
 
-      const fallbackAiNews = [
-        { source: "HN", title: "Show HN: Open source local reasoning model with sub-second latency", time: Date.now() - 1000 * 60 * 25, url: "https://news.ycombinator.com" },
-        { source: "TC", title: "Anthropic introduces autonomous computer use capabilities in Claude 3.5 Sonnet", time: Date.now() - 1000 * 60 * 75, url: "https://techcrunch.com" },
-        { source: "VRG", title: "Google DeepMind unveils watermarking tool for AI-generated text and code", time: Date.now() - 1000 * 60 * 140, url: "https://theverge.com" },
-        { source: "HN", title: "Evaluating context window limits in modern frontier LLMs: benchmark study", time: Date.now() - 1000 * 60 * 210, url: "https://news.ycombinator.com" },
-        { source: "TC", title: "OpenAI expands enterprise customization API for proprietary enterprise databases", time: Date.now() - 1000 * 60 * 300, url: "https://techcrunch.com" },
-        { source: "VRG", title: "Meta releases open weights for multilingual speech synthesis model", time: Date.now() - 1000 * 60 * 420, url: "https://theverge.com" },
-        { source: "HN", title: "DSPy 2.5: Programming foundation models with systematic assertions", time: Date.now() - 1000 * 60 * 540, url: "https://news.ycombinator.com" },
-        { source: "TC", title: "Mistral announces new embedding and edge models optimized for devices", time: Date.now() - 1000 * 60 * 720, url: "https://techcrunch.com" }
-      ];
+      try {
+        const res = await fetch("https://hn.algolia.com/api/v1/search_by_date?tags=story&query=AI&hitsPerPage=12");
+        if (!res.ok) throw new Error("HN API error");
+        const json = await res.json();
+        
+        const hits = json.hits || [];
+        if (hits.length === 0) throw new Error("No results");
 
-      const rowsHtml = fallbackAiNews.map(item => {
-        let badgeColor = "bg-muted text-muted-foreground";
-        if (item.source === "HN") badgeColor = "bg-orange-500/10 text-orange-600 dark:text-orange-400 font-bold";
-        else if (item.source === "TC") badgeColor = "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold";
-        else if (item.source === "VRG") badgeColor = "bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold";
+        const rowsHtml = hits.map(item => {
+          const title = item.title || item.story_title;
+          const url = item.url || item.story_url || `https://news.ycombinator.com/item?id=${item.objectID}`;
+          const time = item.created_at_i * 1000;
 
-        return `
-          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="h-[27px] flex items-center justify-between text-xs py-1 border-b border-border/30 last:border-0 hover:text-primary transition-colors gap-2 group">
-            <div class="flex items-center gap-1.5 min-w-0 flex-1">
-              <span class="text-[9px] px-1 py-0.5 rounded ${badgeColor} shrink-0 select-none">${item.source}</span>
-              <span class="text-[12px] text-foreground truncate group-hover:text-primary">${item.title}</span>
-            </div>
-            <span class="text-[10px] text-muted-foreground shrink-0 tabular-nums">${timeAgo(item.time, lang)}</span>
-          </a>
+          return `
+            <a href="${url}" target="_blank" rel="noopener noreferrer" class="group/news h-[28px] flex items-center justify-between text-xs py-1 px-1.5 -mx-1 rounded-md border-b border-border/20 last:border-0 hover:bg-muted/60 transition-all gap-2">
+              <div class="flex items-center gap-1.5 min-w-0 flex-1">
+                <span class="text-[9px] px-1 py-0.5 rounded bg-orange-500/10 text-orange-600 dark:text-orange-400 font-bold shrink-0 select-none">HN</span>
+                <span class="text-[12px] text-foreground truncate group-hover/news:text-primary transition-colors">${title}</span>
+              </div>
+              <span class="text-[10px] text-muted-foreground shrink-0 tabular-nums">${timeAgo(time, lang)}</span>
+            </a>
+          `;
+        }).join("");
+
+        bodyEl.innerHTML = `
+          <div class="max-h-[260px] overflow-y-auto thin-scroll space-y-0.5 pr-0.5">
+            ${rowsHtml}
+          </div>
         `;
-      }).join("");
-
-      bodyEl.innerHTML = `
-        <div class="max-h-[260px] overflow-y-auto thin-scroll space-y-0.5">
-          ${rowsHtml}
-        </div>
-      `;
+      } catch (err) {
+        bodyEl.innerHTML = `
+          <div class="text-center py-4 space-y-1.5">
+            <div class="text-xs text-destructive font-medium">${t("failConnect", lang)}</div>
+            <button onclick="loadAiNewsCard(true)" class="text-[10.5px] px-2 py-0.5 border border-border rounded text-foreground hover:bg-muted font-medium">${t("retry", lang)}</button>
+          </div>
+        `;
+      }
     }
 
     async function loadGovNewsCard(isManual = false) {
@@ -2135,35 +2139,47 @@
       const bodyEl = document.getElementById("body-govnews");
       if (!bodyEl) return;
 
-      const fallbackGovNews = lang === "en" ? [
-        { title: "Transport Department enhances real-time passenger data integration on key cross-harbour corridors", time: Date.now() - 1000 * 60 * 45 },
-        { title: "Hong Kong Observatory introduces updated rainfall and coastal storm surge monitoring display", time: Date.now() - 1000 * 60 * 110 },
-        { title: "Health Bureau reminds public of seasonal influenza vaccination arrangements for high-risk groups", time: Date.now() - 1000 * 60 * 240 },
-        { title: "Inland Revenue Department issues notice on electronic tax filing services and rebate procedures", time: Date.now() - 1000 * 60 * 420 },
-        { title: "Highways Department completes safety inspection and smart sensor deployment on major flyovers", time: Date.now() - 1000 * 60 * 680 }
-      ] : [
-        { title: "運輸署優化過海主要巴士走廊實時到站數據與客量推算系統", time: Date.now() - 1000 * 60 * 45 },
-        { title: "天文台加強雷暴及風暴潮電腦預報模擬展示，提升市民防災意識", time: Date.now() - 1000 * 60 * 110 },
-        { title: "醫務衛生局提醒合資格高風險群組儘早接種季節性流感疫苗", time: Date.now() - 1000 * 60 * 240 },
-        { title: "稅務局公布最新電子稅務申報流程及數碼憑證驗證便民指引", time: Date.now() - 1000 * 60 * 420 },
-        { title: "路政署完成主要行車天橋結構安全檢測並加裝智能震動監測儀器", time: Date.now() - 1000 * 60 * 680 }
-      ];
+      try {
+        const feedUrl = lang === "en" 
+          ? "https://www.info.gov.hk/gia/rss/general_en.xml"
+          : "https://www.info.gov.hk/gia/rss/general_zh.xml";
+          
+        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+        const res = await fetch(proxyUrl);
+        if (!res.ok) throw new Error("Gov News error");
+        const json = await res.json();
+        
+        const items = json.items || [];
+        if (items.length === 0) throw new Error("No news");
 
-      const rowsHtml = fallbackGovNews.map(item => `
-        <div class="h-[27px] flex items-center justify-between text-xs py-1 border-b border-border/30 last:border-0 gap-2">
-          <div class="flex items-center gap-1.5 min-w-0 flex-1">
-            <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-primary/10 text-primary shrink-0 select-none">GOV</span>
-            <span class="text-[12px] text-foreground truncate">${item.title}</span>
+        const rowsHtml = items.slice(0, 12).map(item => {
+          // RSS2Json converts pubDate to UTC format "YYYY-MM-DD HH:mm:ss"
+          const time = new Date(item.pubDate.replace(' ', 'T') + 'Z').getTime();
+          
+          return `
+            <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="group/news h-[28px] flex items-center justify-between text-xs py-1 px-1.5 -mx-1 rounded-md border-b border-border/20 last:border-0 hover:bg-muted/60 transition-all gap-2">
+              <div class="flex items-center gap-1.5 min-w-0 flex-1">
+                <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-primary/10 text-primary shrink-0 select-none">GOV</span>
+                <span class="text-[12px] text-foreground truncate group-hover/news:text-primary transition-colors">${item.title}</span>
+              </div>
+              <span class="text-[10px] text-muted-foreground shrink-0 tabular-nums">${timeAgo(time, lang)}</span>
+            </a>
+          `;
+        }).join("");
+
+        bodyEl.innerHTML = `
+          <div class="max-h-[260px] overflow-y-auto thin-scroll space-y-0.5 pr-0.5">
+            ${rowsHtml}
           </div>
-          <span class="text-[10px] text-muted-foreground shrink-0 tabular-nums">${timeAgo(item.time, lang)}</span>
-        </div>
-      `).join("");
-
-      bodyEl.innerHTML = `
-        <div class="max-h-[260px] overflow-y-auto thin-scroll space-y-0.5">
-          ${rowsHtml}
-        </div>
-      `;
+        `;
+      } catch (err) {
+        bodyEl.innerHTML = `
+          <div class="text-center py-4 space-y-1.5">
+            <div class="text-xs text-destructive font-medium">${t("failConnect", lang)}</div>
+            <button onclick="loadGovNewsCard(true)" class="text-[10.5px] px-2 py-0.5 border border-border rounded text-foreground hover:bg-muted font-medium">${t("retry", lang)}</button>
+          </div>
+        `;
+      }
     }
 
     const LEAGUE_CONFIG = {
