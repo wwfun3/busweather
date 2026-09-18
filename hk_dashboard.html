@@ -1,0 +1,3133 @@
+<!DOCTYPE html>
+<html lang="zh-HK" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的儀表板 · HK Dashboard</title>
+  <meta name="description" content="香港生活即時儀表板：天氣預報、九巴到站時間、匯率指數、新聞及公眾假期 · Real-time Hong Kong dashboard">
+  <meta name="theme-color" content="#F5F5F7" id="theme-color-meta">
+  
+  <!-- Inline FOUC-guard script BEFORE styles/render -->
+  <script>
+    try {
+      var p = localStorage.getItem("hk-dashboard-accent");
+      if (p === "purple") document.documentElement.setAttribute("data-accent", "purple");
+      var d = localStorage.getItem("hk-dashboard-theme");
+      if (d === "dark" || (!d && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+    } catch(e) {}
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: 'var(--background)',
+            foreground: 'var(--foreground)',
+            card: 'var(--card)',
+            popover: 'var(--popover)',
+            primary: 'var(--primary)',
+            secondary: 'var(--secondary)',
+            muted: 'var(--muted)',
+            'muted-foreground': 'var(--muted-foreground)',
+            destructive: 'var(--destructive)',
+            border: 'var(--border)',
+            ring: 'var(--ring)',
+            kmb: '#C8262F',
+            up: '#16A34A',
+            down: '#DC2626'
+          },
+          borderRadius: {
+            xl: 'var(--radius)',
+            '2xl': 'calc(var(--radius) + 4px)'
+          },
+          fontFamily: {
+            sans: [
+              '-apple-system',
+              'BlinkMacSystemFont',
+              '"SF Pro Text"',
+              '"SF Pro Display"',
+              '"Segoe UI"',
+              '"PingFang TC"',
+              '"Microsoft JhengHei"',
+              '"Noto Sans TC"',
+              'sans-serif'
+            ]
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --background: #F5F5F7;
+      --foreground: #1D1D1F;
+      --card: #FFFFFF;
+      --popover: #FFFFFF;
+      --primary: #007AFF;
+      --secondary: #E8E8ED;
+      --muted: #ECECF0;
+      --muted-foreground: #86868B;
+      --destructive: #FF3B30;
+      --border: rgba(0, 0, 0, 0.08);
+      --ring: #007AFF;
+      --radius: 0.875rem;
+    }
+
+    html.dark {
+      --background: #000000;
+      --foreground: #F5F5F7;
+      --card: #1C1C1E;
+      --popover: #2C2C2E;
+      --primary: #0A84FF;
+      --secondary: #2C2C2E;
+      --muted: #2C2C2E;
+      --muted-foreground: #98989D;
+      --destructive: #FF453A;
+      --border: rgba(255, 255, 255, 0.12);
+      --ring: #0A84FF;
+    }
+
+    html[data-accent="purple"] {
+      --background: #F3EEFB;
+      --foreground: #1F1B2E;
+      --card: #FFFFFF;
+      --popover: #FFFFFF;
+      --primary: #AF52DE;
+      --secondary: #ECE4F7;
+      --muted: #F0EAF8;
+      --muted-foreground: #857E96;
+      --destructive: #FF3B30;
+      --border: rgba(88, 28, 135, 0.10);
+      --ring: #AF52DE;
+    }
+
+    html.dark[data-accent="purple"] {
+      --background: #0E0A16;
+      --foreground: #F3EEFB;
+      --card: #171221;
+      --popover: #221A30;
+      --primary: #BF5AF2;
+      --secondary: #221A30;
+      --muted: #221A30;
+      --muted-foreground: #9B93AD;
+      --destructive: #FF453A;
+      --border: rgba(191, 90, 242, 0.16);
+      --ring: #BF5AF2;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .thin-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .thin-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .thin-scroll::-webkit-scrollbar-thumb {
+      background: color-mix(in srgb, var(--muted-foreground) 35%, transparent);
+      border-radius: 9999px;
+    }
+
+    @keyframes spin-fast {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spin-active {
+      animation: spin-fast 0.8s linear infinite;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans selection:bg-primary/20">
+
+  <header class="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-md border-b border-border/60 transition-colors duration-200">
+    <div class="max-w-[1440px] mx-auto px-3 sm:px-4 py-2 flex items-center justify-between">
+      <!-- Live Hong Kong Time & Date -->
+      <div class="flex flex-col select-none">
+        <div id="hk-clock" class="text-xl sm:text-2xl font-semibold tracking-tight tabular-nums text-foreground leading-none">
+          --:--
+        </div>
+        <div id="hk-date" class="text-[10.5px] font-medium text-muted-foreground mt-0.5 tabular-nums leading-none">
+          香港時間
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- Update All Button -->
+        <button id="btn-update-all" class="h-8 px-2.5 sm:px-3 text-xs font-medium rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+          <svg id="icon-update-all" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span class="hidden sm:inline" id="txt-update-all">全部更新</span>
+        </button>
+
+        <!-- Language toggle button -->
+        <button id="btn-lang" class="h-8 px-2.5 sm:px-3 text-xs font-medium rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground transition-all flex items-center gap-1 shadow-sm active:scale-95" title="切換語言 / Switch Language">
+          <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span id="txt-lang-badge" class="font-semibold">EN</span>
+        </button>
+
+        <!-- Accent Purple Palette Button -->
+        <button id="btn-palette" class="h-8 w-8 flex items-center justify-center rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground transition-all shadow-sm active:scale-95" aria-label="Toggle Purple Accent" title="主題色彩 / Theme Accent">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="8" cy="8" r="5.5" class="opacity-85 text-primary" fill="currentColor" fill-opacity="0.2"/>
+            <circle cx="16" cy="16" r="5.5" class="opacity-85 text-foreground" stroke="currentColor"/>
+          </svg>
+        </button>
+
+        <!-- Dark/Light Theme Toggle -->
+        <button id="btn-theme" class="h-8 w-8 flex items-center justify-center rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground transition-all shadow-sm active:scale-95" aria-label="Toggle Dark Mode" title="深色模式 / Dark Mode">
+          <svg id="icon-theme-sun" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"></circle>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+          <svg id="icon-theme-moon" class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+
+        <!-- Settings Gear Button -->
+        <button id="btn-settings" class="h-8 w-8 flex items-center justify-center rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground transition-all shadow-sm active:scale-95" aria-label="Settings" title="儀表板設定 / Settings">
+          <svg class="w-4 h-4 opacity-80" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-[1440px] w-full mx-auto px-2.5 sm:px-4 py-3">
+    <!-- Initial Skeleton Loading Gate -->
+    <div id="skeleton-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5">
+      <div class="h-32 rounded-xl bg-muted/60 animate-pulse col-span-1 sm:col-span-2 lg:col-span-3"></div>
+      <div class="h-32 rounded-xl bg-muted/60 animate-pulse col-span-1 sm:col-span-2 lg:col-span-6"></div>
+      <div class="h-32 rounded-xl bg-muted/60 animate-pulse col-span-1 sm:col-span-1 lg:col-span-3"></div>
+      <div class="h-32 rounded-xl bg-muted/60 animate-pulse col-span-1 sm:col-span-1 lg:col-span-4"></div>
+      <div class="h-32 rounded-xl bg-muted/60 animate-pulse col-span-1 sm:col-span-1 lg:col-span-4"></div>
+      <div class="h-32 rounded-xl bg-muted/60 animate-pulse col-span-1 sm:col-span-1 lg:col-span-4"></div>
+      <div class="h-32 rounded-xl bg-muted/60 animate-pulse col-span-1 sm:col-span-2 lg:col-span-12"></div>
+    </div>
+
+    <!-- Active Card Grid -->
+    <div id="cards-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 grid-flow-row-dense auto-rows-auto">
+      <!-- 17 Cards will be mounted dynamically here in order -->
+    </div>
+  </main>
+
+  <footer class="mt-auto py-4 border-t border-border/40 text-center text-[10px] text-muted-foreground select-none">
+    <div class="max-w-[1440px] mx-auto px-4">
+      HK Dashboard · <span id="footer-year">2026</span> · 香港天文台 / 九巴 / Yahoo Finance / ESPN / ER-API
+    </div>
+  </footer>
+
+  <!-- Settings Modal Backdrop -->
+  <div id="settings-dialog" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-card text-card-foreground border border-border w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="px-4 py-3 border-b border-border/80 flex items-center justify-between">
+        <h3 id="settings-title" class="text-sm font-semibold text-foreground flex items-center gap-2">
+          <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+          </svg>
+          儀表板設定 / Dashboard Settings
+        </h3>
+        <button id="btn-close-settings" class="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-4 space-y-5 overflow-y-auto thin-scroll text-xs">
+        
+        <!-- Section 1: Interface Language -->
+        <div>
+          <label id="lbl-setting-lang" class="block font-semibold mb-1.5 text-foreground">介面語言 / Interface Language</label>
+          <div class="grid grid-cols-2 gap-1.5 p-1 bg-muted rounded-xl">
+            <button type="button" data-lang="tc" class="lang-opt-btn py-1.5 font-medium rounded-lg text-center transition-all bg-card text-foreground shadow-sm">繁體中文</button>
+            <button type="button" data-lang="en" class="lang-opt-btn py-1.5 font-medium rounded-lg text-center transition-all text-muted-foreground hover:text-foreground">English</button>
+          </div>
+        </div>
+
+        <!-- Section 2: Card Display and Ordering -->
+        <div>
+          <label id="lbl-setting-cards" class="block font-semibold mb-1.5 text-foreground">卡片顯示及排序 / Cards & Order</label>
+          <div id="settings-cards-list" class="space-y-1.5 max-h-56 overflow-y-auto thin-scroll p-1 border border-border/60 rounded-xl bg-background/50">
+            <!-- Dynamically populated card rows -->
+          </div>
+        </div>
+
+        <!-- Section 3: Bus Cards Configuration -->
+        <div id="bus-settings-section">
+          <div class="flex items-center justify-between mb-1.5">
+            <label id="lbl-setting-bus" class="font-semibold text-foreground">巴士卡設定 / Bus Cards Setup</label>
+            <span class="text-[10px] text-muted-foreground">支援九巴／龍運路線</span>
+          </div>
+          
+          <div id="bus-cards-editors" class="space-y-3">
+            <!-- 7 Bus Slot Editors will be generated dynamically -->
+          </div>
+        </div>
+
+        <!-- Section 4: Football League Selection -->
+        <div>
+          <label id="lbl-setting-league" class="block font-semibold mb-1.5 text-foreground">足球聯賽 / Football League</label>
+          <select id="settings-league-select" class="w-full bg-background border border-border text-foreground rounded-lg px-2.5 py-1.5 text-xs outline-none focus:ring-1 focus:ring-primary">
+            <option value="all">全部聯賽 · Show All</option>
+            <option value="eng.1">英超 · Premier League</option>
+            <option value="esp.1">西甲 · La Liga</option>
+            <option value="ita.1">意甲 · Serie A</option>
+            <option value="ger.1">德甲 · Bundesliga</option>
+            <option value="fra.1">法甲 · Ligue 1</option>
+            <option value="uefa.champions">歐聯 · UEFA Champions League</option>
+            <option value="uefa.europa">歐霸 · UEFA Europa League</option>
+            <option value="eng.2">英冠 · Championship</option>
+          </select>
+        </div>
+
+        <!-- Section 5: Reset All Settings -->
+        <div class="pt-2 border-t border-border/80">
+          <button id="btn-open-reset-confirm" class="w-full py-2 px-3 text-xs font-semibold text-destructive hover:bg-destructive/10 border border-destructive/30 rounded-xl transition-all flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <span id="txt-reset-all">重設全部設定 / Reset all settings</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Confirmation Modal (Strictly avoids window.alert / confirm) -->
+  <div id="confirm-dialog" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-card text-card-foreground border border-border w-full max-w-xs rounded-2xl p-4 shadow-2xl text-center space-y-3">
+      <div class="w-10 h-10 mx-auto rounded-full bg-destructive/10 text-destructive flex items-center justify-center">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h4 class="text-sm font-semibold text-foreground" id="confirm-title">確認重設設定？</h4>
+      <p class="text-xs text-muted-foreground" id="confirm-desc">所有自訂巴士路線、卡片順序及選項將回復原廠預設值。</p>
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button id="btn-confirm-cancel" class="py-1.5 text-xs font-medium rounded-lg bg-muted text-foreground hover:bg-muted/80">取消</button>
+        <button id="btn-confirm-ok" class="py-1.5 text-xs font-medium rounded-lg bg-destructive text-white hover:bg-destructive/90">確認重設</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const WORDS_DATASET = [
+      {
+        word: "discrepancy",
+        ipa: "/dɪˈskrep.ən.si/",
+        pos: "n.",
+        tcDef: "差異；不符合；不一致",
+        enDef: "a difference between two things that should be the same",
+        col: "significant / marked discrepancy",
+        syn: "difference, divergence, variance",
+        ant: "similarity, accord, consistency",
+        family: "discrepant (adj.)",
+        exEn: "There is a considerable discrepancy between the two accounts of the incident.",
+        exTc: "兩份事故陳述有頗大出入。"
+      },
+      {
+        word: "scrutinise",
+        ipa: "/ˈskruː.tɪ.naɪz/",
+        pos: "v.",
+        tcDef: "細看；仔細審查",
+        enDef: "to examine something very carefully in order to discover information",
+        col: "closely / carefully scrutinise",
+        syn: "inspect, examine, probe",
+        ant: "glance, ignore, overlook",
+        family: "scrutiny (n.), scrutinizer (n.)",
+        exEn: "The auditor carefully scrutinised every transaction record.",
+        exTc: "審計員仔細審核每一項交易記錄。"
+      },
+      {
+        word: "comprehensive",
+        ipa: "/ˌkɒm.prɪˈhen.sɪv/",
+        pos: "adj.",
+        tcDef: "全面的；詳盡的",
+        enDef: "complete and including everything that is necessary",
+        col: "comprehensive review / survey",
+        syn: "exhaustive, inclusive, thorough",
+        ant: "partial, incomplete, limited",
+        family: "comprehend (v.), comprehension (n.)",
+        exEn: "We offer a comprehensive training program for all new recruits.",
+        exTc: "我們為所有新員工提供全面的培訓計劃。"
+      },
+      {
+        word: "phenomenon",
+        ipa: "/fəˈnɒm.ɪ.nən/",
+        pos: "n.",
+        tcDef: "現象；奇蹟",
+        enDef: "something that exists and can be seen, especially something unusual",
+        col: "natural / cultural phenomenon",
+        syn: "occurrence, event, marvel",
+        ant: "regularity, normality",
+        family: "phenomenal (adj.)",
+        exEn: "Climate change is a global phenomenon affecting millions.",
+        exTc: "氣候變化是一項影響數百萬人的全球現象。"
+      },
+      {
+        word: "deteriorate",
+        ipa: "/dɪˈtɪə.ri.ə.reɪt/",
+        pos: "v.",
+        tcDef: "惡化；變壞",
+        enDef: "to become worse in quality, condition, or value",
+        col: "rapidly deteriorate",
+        syn: "degrade, degenerate, worsen",
+        ant: "improve, enhance, ameliorate",
+        family: "deterioration (n.)",
+        exEn: "The patient's condition began to deteriorate late last night.",
+        exTc: "病人的情況昨夜深夜開始惡化。"
+      },
+      {
+        word: "ambiguous",
+        ipa: "/æmˈbɪɡ.ju.əs/",
+        pos: "adj.",
+        tcDef: "含糊的；模棱兩可的",
+        enDef: "having or expressing more than one possible meaning",
+        col: "highly ambiguous statement",
+        syn: "equivocal, vague, obscure",
+        ant: "lucid, explicit, clear",
+        family: "ambiguity (n.), ambiguously (adv.)",
+        exEn: "His response was intentionally ambiguous to avoid taking sides.",
+        exTc: "他的回答有意模棱兩可，以避免表態。"
+      },
+      {
+        word: "coherent",
+        ipa: "/kəʊˈhɪə.rənt/",
+        pos: "adj.",
+        tcDef: "連貫的；有條理的",
+        enDef: "clear and carefully considered, with parts that fit well together",
+        col: "coherent strategy / argument",
+        syn: "articulate, logical, consistent",
+        ant: "incoherent, disjointed, chaotic",
+        family: "cohesion (n.), coherently (adv.)",
+        exEn: "The report presents a coherent vision for sustainable urban mobility.",
+        exTc: "該報告為可持續城市交通提出了一個條理清晰的願景。"
+      },
+      {
+        word: "meticulous",
+        ipa: "/məˈtɪk.jə.ləs/",
+        pos: "adj.",
+        tcDef: "嚴謹的；一絲不苟的",
+        enDef: "very careful and with great attention to every detail",
+        col: "meticulous research / planning",
+        syn: "painstaking, scrupulous, punctilious",
+        ant: "careless, sloppy, negligent",
+        family: "meticulously (adv.), meticulousness (n.)",
+        exEn: "Her meticulous preparation ensured the event ran without any hitch.",
+        exTc: "她一絲不苟的準備確保活動順利無阻地進行。"
+      },
+      {
+        word: "inevitable",
+        ipa: "/ɪnˈev.ɪ.tə.bəl/",
+        pos: "adj.",
+        tcDef: "不可避免的；必然發生的",
+        enDef: "certain to happen and impossible to prevent",
+        col: "inevitable consequence / outcome",
+        syn: "unavoidable, inescapable, destined",
+        ant: "preventable, avoidable, doubtful",
+        family: "inevitably (adv.), inevitability (n.)",
+        exEn: "With technological advancement, automated workflows are inevitable.",
+        exTc: "隨著科技進步，自動化工作流程勢在必行。"
+      },
+      {
+        word: "profound",
+        ipa: "/prəˈfaʊnd/",
+        pos: "adj.",
+        tcDef: "深遠的；深刻的",
+        enDef: "felt or experienced very strongly or in an extreme way",
+        col: "profound impact / influence",
+        syn: "deep, intense, insightful",
+        ant: "superficial, shallow, trivial",
+        family: "profoundly (adv.), profundity (n.)",
+        exEn: "Artificial intelligence will have a profound impact on the job market.",
+        exTc: "人工智能將對就業市場產生深遠的影響。"
+      },
+      {
+        word: "resilient",
+        ipa: "/rɪˈzɪl.jənt/",
+        pos: "adj.",
+        tcDef: "適應力強的；有韌性的",
+        enDef: "able to quickly return to a usual shape or recover from difficulty",
+        col: "resilient economy / community",
+        syn: "adaptable, robust, tough",
+        ant: "fragile, vulnerable, brittle",
+        family: "resilience (n.), resiliently (adv.)",
+        exEn: "Local financial institutions proved resilient during the global crisis.",
+        exTc: "本地金融機構在全球危機中表現出極佳的韌性。"
+      },
+      {
+        word: "substantiate",
+        ipa: "/səbˈstæn.ʃi.eɪt/",
+        pos: "v.",
+        tcDef: "證實；證明",
+        enDef: "to show something to be true, or to support with facts",
+        col: "substantiate claims / findings",
+        syn: "corroborate, verify, validate",
+        ant: "disprove, refute, contradict",
+        family: "substantiation (n.), substantial (adj.)",
+        exEn: "No concrete evidence has been provided to substantiate the allegations.",
+        exTc: "尚未有任何實質證據能證實這些指控。"
+      },
+      {
+        word: "ubiquitous",
+        ipa: "/juːˈbɪk.wɪ.təs/",
+        pos: "adj.",
+        tcDef: "無處不在的；普及的",
+        enDef: "seeming to be everywhere simultaneously",
+        col: "ubiquitous presence / computing",
+        syn: "omnipresent, pervasive, universal",
+        ant: "rare, scarce, isolated",
+        family: "ubiquity (n.)",
+        exEn: "Smartphones have become ubiquitous across all age demographics in HK.",
+        exTc: "智能手機在香港所有年齡層中已變得無處不在。"
+      },
+      {
+        word: "pragmatic",
+        ipa: "/præɡˈmæt.ɪk/",
+        pos: "adj.",
+        tcDef: "務實的；實事求是的",
+        enDef: "solving problems in a sensible way that suits the conditions",
+        col: "pragmatic approach / solution",
+        syn: "practical, realistic, utilitarian",
+        ant: "idealistic, theoretical, utopian",
+        family: "pragmatism (n.), pragmatically (adv.)",
+        exEn: "We need a pragmatic strategy that balances cost with efficiency.",
+        exTc: "我們需要一個平衡成本與效率的務實策略。"
+      },
+      {
+        word: "paradox",
+        ipa: "/ˈpær.ə.dɒks/",
+        pos: "n.",
+        tcDef: "自相矛盾的事；悖論",
+        enDef: "a situation or statement that seems impossible because of two opposing facts",
+        col: "apparent / striking paradox",
+        syn: "contradiction, anomaly, enigma",
+        ant: "consistency, axiom",
+        family: "paradoxical (adj.), paradoxically (adv.)",
+        exEn: "It is a paradox that having more choices often makes decision-making harder.",
+        exTc: "選擇更多反而使決策更困難，這著實是一個悖論。"
+      },
+      {
+        word: "mitigate",
+        ipa: "/ˈmɪt.ɪ.ɡeɪt/",
+        pos: "v.",
+        tcDef: "減輕；緩和",
+        enDef: "to make something less harmful, unpleasant, or bad",
+        col: "mitigate risk / damage",
+        syn: "alleviate, ease, diminish",
+        ant: "exacerbate, aggravate, intensify",
+        family: "mitigation (n.), mitigating (adj.)",
+        exEn: "Effective drainage systems help mitigate flooding risks during typhoons.",
+        exTc: "完善的排水系統有助減低颱風期間的水浸風險。"
+      },
+      {
+        word: "lucid",
+        ipa: "/ˈluː.sɪd/",
+        pos: "adj.",
+        tcDef: "清晰易懂的；神智清醒的",
+        enDef: "clearly expressed and easy to understand",
+        col: "lucid explanation / account",
+        syn: "intelligible, transparent, articulate",
+        ant: "confusing, obscure, murky",
+        family: "lucidity (n.), lucidly (adv.)",
+        exEn: "The professor gave a remarkably lucid overview of quantum physics.",
+        exTc: "教授對量子物理學作出了極其清晰易懂的闡述。"
+      },
+      {
+        word: "juxtapose",
+        ipa: "/ˌdʒʌk.stəˈpəʊz/",
+        pos: "v.",
+        tcDef: "把…並列；並置比較",
+        enDef: "to put things together in order to show a contrast or new relationship",
+        col: "juxtapose past and present",
+        syn: "compare, contrast, collocate",
+        ant: "isolate, segregate",
+        family: "juxtaposition (n.)",
+        exEn: "The exhibition juxtaposes traditional ink painting with digital media.",
+        exTc: "展覽將傳統水墨畫與數碼媒體並置展出。"
+      },
+      {
+        word: "ephemeral",
+        ipa: "/ɪˈfem.ər.əl/",
+        pos: "adj.",
+        tcDef: "短暫的；轉瞬即逝的",
+        enDef: "lasting for only a short time",
+        col: "ephemeral nature / fame",
+        syn: "transient, fleeting, brief",
+        ant: "permanent, enduring, eternal",
+        family: "ephemera (n.), ephemerality (n.)",
+        exEn: "Online fame is often ephemeral, fading within a few months.",
+        exTc: "網絡名氣往往稍縱即逝，數月間便會消散。"
+      },
+      {
+        word: "catalyst",
+        ipa: "/ˈkæt.əl.ɪst/",
+        pos: "n.",
+        tcDef: "催化劑；促進因素",
+        enDef: "an event or person that causes great change",
+        col: "serve as a catalyst for change",
+        syn: "stimulus, trigger, spark",
+        ant: "inhibitor, deterrent",
+        family: "catalyse (v.), catalytic (adj.)",
+        exEn: "The subway extension acted as a catalyst for local urban renewal.",
+        exTc: "地鐵延伸段成為推動該區市區重建的催化劑。"
+      },
+      {
+        word: "conundrum",
+        ipa: "/kəˈnʌn.drəm/",
+        pos: "n.",
+        tcDef: "難題；令人費解的問題",
+        enDef: "a problem that is difficult to deal with",
+        col: "resolve an ethical conundrum",
+        syn: "dilemma, puzzle, quandary",
+        ant: "solution, resolution",
+        family: "conundrums (pl.)",
+        exEn: "Balancing energy needs with emission targets is a modern conundrum.",
+        exTc: "平衡能源需求與減排目標是現代社會的一大難題。"
+      },
+      {
+        word: "aesthetic",
+        ipa: "/esˈθet.ɪk/",
+        pos: "adj.",
+        tcDef: "美學的；美觀的",
+        enDef: "relating to the enjoyment or study of beauty",
+        col: "aesthetic appeal / value",
+        syn: "artistic, visual, tasteful",
+        ant: "unsightly, crude",
+        family: "aesthetically (adv.), aesthetics (n.)",
+        exEn: "The building combines functional engineering with modern aesthetic design.",
+        exTc: "該建築將實用工程與現代美學設計完美結合。"
+      },
+      {
+        word: "complacent",
+        ipa: "/kəmˈpleɪ.sənt/",
+        pos: "adj.",
+        tcDef: "自滿的；盲目樂觀的",
+        enDef: "feeling so satisfied with your own abilities that you feel you do not need to try harder",
+        col: "become complacent about safety",
+        syn: "smug, self-satisfied, careless",
+        ant: "vigilant, proactive, ambitious",
+        family: "complacency (n.), complacently (adv.)",
+        exEn: "We cannot afford to become complacent despite our recent market success.",
+        exTc: "儘管我們近期取得市場成功，仍絕不可掉以輕心自滿。"
+      },
+      {
+        word: "paradigm",
+        ipa: "/ˈpær.ə.daɪm/",
+        pos: "n.",
+        tcDef: "典範；思維架構",
+        enDef: "a typical example or model of something",
+        col: "paradigm shift / model",
+        syn: "prototype, archetype, benchmark",
+        ant: "anomaly, deviation",
+        family: "paradigmatic (adj.)",
+        exEn: "Cloud computing created a major paradigm shift in enterprise software.",
+        exTc: "雲端運算在企業軟件架構中帶來了巨大的範式轉移。"
+      },
+      {
+        word: "salient",
+        ipa: "/ˈseɪ.li.ənt/",
+        pos: "adj.",
+        tcDef: "顯著的；突出的",
+        enDef: "most noticeable or important",
+        col: "salient points / features",
+        syn: "prominent, conspicuous, key",
+        ant: "insignificant, subtle, minor",
+        family: "salience (n.)",
+        exEn: "The executive summary highlights the most salient conclusions of the inquiry.",
+        exTc: "執行摘要重點列出了調查中最顯著的幾項結論。"
+      },
+      {
+        word: "tenacious",
+        ipa: "/təˈneɪ.ʃəs/",
+        pos: "adj.",
+        tcDef: "頑強的；執著的",
+        enDef: "holding tightly onto something, or keeping an opinion in a determined way",
+        col: "tenacious effort / spirit",
+        syn: "persistent, dogged, resolute",
+        ant: "yielding, wavering, lax",
+        family: "tenacity (n.), tenaciously (adv.)",
+        exEn: "Her tenacious pursuit of the truth finally brought justice to the victims.",
+        exTc: "她對真相的執著追查最終為受害者伸張了正義。"
+      },
+      {
+        word: "anomalous",
+        ipa: "/əˈnɒm.ə.ləs/",
+        pos: "adj.",
+        tcDef: "反常的；異常的",
+        enDef: "different from what is usual, expected, or standard",
+        col: "anomalous data / result",
+        syn: "abnormal, irregular, atypical",
+        ant: "standard, normal, orthodox",
+        family: "anomaly (n.)",
+        exEn: "Scientists detected an anomalous temperature rise in deep ocean waters.",
+        exTc: "科學家在深海海域探測到異常的溫度上升。"
+      },
+      {
+        word: "bolster",
+        ipa: "/ˈbəʊl.stər/",
+        pos: "v.",
+        tcDef: "加強；鞏固",
+        enDef: "to support or improve something or make it stronger",
+        col: "bolster confidence / reserve",
+        syn: "reinforce, strengthen, fortify",
+        ant: "undermine, weaken, impair",
+        family: "bolstered (adj.)",
+        exEn: "The central bank acted decisively to bolster investor confidence.",
+        exTc: "央行果斷採取行動以增強投資者信心。"
+      },
+      {
+        word: "concur",
+        ipa: "/kənˈkɜːr/",
+        pos: "v.",
+        tcDef: "同意；意見一致",
+        enDef: "to agree with someone or have the same opinion",
+        col: "concur with the verdict",
+        syn: "agree, accede, assent",
+        ant: "dissent, disagree, object",
+        family: "concurrence (n.), concurrent (adj.)",
+        exEn: "All medical specialists concurred with the initial diagnosis.",
+        exTc: "所有醫學專家的意見皆與最初的診斷一致。"
+      },
+      {
+        word: "divergent",
+        ipa: "/daɪˈvɜː.dʒənt/",
+        pos: "adj.",
+        tcDef: "分歧的；相異的",
+        enDef: "different or becoming different from each other",
+        col: "divergent views / paths",
+        syn: "differing, conflicting, disparate",
+        ant: "convergent, uniform, identical",
+        family: "diverge (v.), divergence (n.)",
+        exEn: "The committee heard divergent opinions regarding the new transit fare policy.",
+        exTc: "委員會聽取了對於新交通收費政策的各方分歧意見。"
+      },
+      {
+        word: "exacerbate",
+        ipa: "/ɪɡˈzæs.ə.beɪt/",
+        pos: "v.",
+        tcDef: "使惡化；加劇",
+        enDef: "to make something that is already bad even worse",
+        col: "exacerbate existing tensions",
+        syn: "worsen, aggravate, inflame",
+        ant: "alleviate, soothe, appease",
+        family: "exacerbation (n.)",
+        exEn: "High interest rates will exacerbate financial stress for small enterprises.",
+        exTc: "高息環境將進一步加劇中小企的財務壓力。"
+      },
+      {
+        word: "foster",
+        ipa: "/ˈfɒs.tər/",
+        pos: "v.",
+        tcDef: "促進；培養",
+        enDef: "to encourage the development or growth of ideas or feelings",
+        col: "foster innovation / growth",
+        syn: "cultivate, nurture, promote",
+        ant: "stifle, suppress, hinder",
+        family: "fostering (n.)",
+        exEn: "The incubation scheme is designed to foster home-grown technological talent.",
+        exTc: "該孵化計劃旨在培育本地科技人才。"
+      },
+      {
+        word: "gratuitous",
+        ipa: "/ɡrəˈtʃuː.ɪ.təs/",
+        pos: "adj.",
+        tcDef: "不必要的；無端的",
+        enDef: "not necessary, or with no cause",
+        col: "gratuitous violence / expense",
+        syn: "unwarranted, needless, unjustified",
+        ant: "essential, necessary, justified",
+        family: "gratuitously (adv.)",
+        exEn: "The movie was criticized for including scenes of gratuitous violence.",
+        exTc: "該電影因包含不必要的暴力場面而遭到批評。"
+      },
+      {
+        word: "hierarchy",
+        ipa: "/ˈhaɪə.rɑː.ki/",
+        pos: "n.",
+        tcDef: "階層制度；等級",
+        enDef: "a system in which people or things are arranged according to their importance",
+        col: "corporate / rigid hierarchy",
+        syn: "pecking order, stratification, ranking",
+        ant: "egalitarianism",
+        family: "hierarchical (adj.)",
+        exEn: "Modern tech startups often promote a flat structure rather than a strict hierarchy.",
+        exTc: "現代科技初創企業往往提倡扁平結構，而非嚴格的等級制度。"
+      },
+      {
+        word: "indigenous",
+        ipa: "/ɪnˈdɪdʒ.ɪ.nəs/",
+        pos: "adj.",
+        tcDef: "本土的；原產的",
+        enDef: "naturally existing in a place or country rather than arriving from another",
+        col: "indigenous species / people",
+        syn: "native, endemic, aboriginal",
+        ant: "exotic, alien, foreign",
+        family: "indigene (n.)",
+        exEn: "The botanical garden preserves hundreds of plant species indigenous to Hong Kong.",
+        exTc: "該植物園保育了數百種香港本土原生物種。"
+      },
+      {
+        word: "judicious",
+        ipa: "/dʒuːˈdɪʃ.əs/",
+        pos: "adj.",
+        tcDef: "明智的；審慎的",
+        enDef: "having or showing reason and good judgment in making decisions",
+        col: "judicious use of resources",
+        syn: "prudent, wise, discerning",
+        ant: "reckless, rash, foolish",
+        family: "judiciously (adv.)",
+        exEn: "A judicious mix of bonds and stocks can reduce overall investment volatility.",
+        exTc: "審慎配置債券與股票組合有助降低整體投資波動。"
+      },
+      {
+        word: "kinship",
+        ipa: "/ˈkɪn.ʃɪp/",
+        pos: "n.",
+        tcDef: "親屬關係；親近感",
+        enDef: "the relationship between members of the same family or feelings of similarity",
+        col: "sense of kinship",
+        syn: "affinity, bond, solidarity",
+        ant: "alienation, estrangement",
+        family: "kinsman (n.)",
+        exEn: "Volunteers felt a deep sense of kinship after working together on relief projects.",
+        exTc: "義工們在共同參與救援項目後產生了深厚的親近感。"
+      },
+      {
+        word: "lethargic",
+        ipa: "/ləˈθɑː.dʒɪk/",
+        pos: "adj.",
+        tcDef: "無精打采的；昏昏欲睡的",
+        enDef: "having little energy or feeling unwilling and unable to do anything",
+        col: "feel tired and lethargic",
+        syn: "sluggish, listless, torpid",
+        ant: "energetic, vigorous, vivacious",
+        family: "lethargy (n.), lethargically (adv.)",
+        exEn: "The hot and humid summer weather often leaves commuters feeling lethargic.",
+        exTc: "炎熱潮濕的夏日天氣常常令通勤族感到精神不振。"
+      }
+    ];
+
+    const I18N = {
+      updateAll: ["全部更新", "Update All"],
+      weatherTitle: ["今日天氣", "Today's Weather"],
+      forecastTitle: ["九日天氣預報", "9-Day Forecast"],
+      busCustom1: ["巴士到站（自訂 1）", "Bus ETA (Custom 1)"],
+      busCustom2: ["巴士到站（自訂 2）", "Bus ETA (Custom 2)"],
+      busCustom3: ["巴士到站（自訂 3）", "Bus ETA (Custom 3)"],
+      busCustom4: ["巴士到站（自訂 4）", "Bus ETA (Custom 4)"],
+      busFortune: ["巴士到站 · 豐景園", "Bus ETA · Fortune Garden"],
+      busTMR: ["巴士到站 · 屯門公路轉車站", "Bus ETA · TMR Interchange"],
+      busKlnBay: ["巴士到站 · 九龍灣站", "Bus ETA · Kln Bay Station"],
+      holidaysTitle: ["公眾假期倒數", "Public Holidays"],
+      sunTitle: ["日出日落", "Sunrise & Sunset"],
+      ainewsTitle: ["AI 新聞", "AI News"],
+      govnewsTitle: ["政府消息", "Government News"],
+      fxTitle: ["港幣匯率", "HKD Exchange Rates"],
+      marketsTitle: ["環球市場指數", "Global Markets"],
+      footballTitle: ["賽程", "Fixtures"],
+      wordTitle: ["每日一字", "Daily Word"],
+      
+      // Labels
+      autoRefreshes: ["每分鐘自動更新", "Auto-refreshes every minute"],
+      updatedAt: ["更新於", "Updated"],
+      tuenMun: ["屯門", "Tuen Mun"],
+      humidity: ["相對濕度", "Humidity"],
+      uvIndex: ["紫外線", "UV"],
+      hkoSource: ["資料：香港天文台", "Source: HK Observatory"],
+      arriving: ["即將到站", "Arriving"],
+      min: ["分鐘", "min"],
+      noService: ["暫無班次", "No upcoming buses"],
+      noBusConfig: ["未有自訂路線，請至設定輸入路線號碼", "No routes configured, please add in settings"],
+      routeMayNotServe: ["此站未必有此路線", "Route may not serve these stops"],
+      daysLeft: ["日", "d"],
+      today: ["今日", "Today"],
+      sunrise: ["日出", "Sunrise"],
+      sunset: ["日落", "Sunset"],
+      daylight: ["日照時數", "Daylight"],
+      daytime: ["日間", "Daytime"],
+      nighttime: ["夜間", "Night"],
+      fxSourceNote: ["匯率更新", "Rates as of"],
+      buys: ["HK$100 可兌換", "HK$100 buys"],
+      yenHero: ["每 100 日圓", "per ¥100"],
+      marketsTenDays: ["近 10 個交易日", "Last 10 trading days"],
+      collocations: ["常用搭配", "Collocations"],
+      synonyms: ["同義詞", "Synonyms"],
+      antonyms: ["反義詞", "Antonyms"],
+      wordFamily: ["詞族", "Word family"],
+      pinToTop: ["置頂", "Pin to top"],
+      pinned: ["已置頂", "Pinned"],
+      justNow: ["剛剛", "just now"],
+      minsAgo: ["分鐘前", "m ago"],
+      hoursAgo: ["小時前", "h ago"],
+      daysAgo: ["日前", "d ago"],
+      failConnect: ["連接唔到", "Connection failed"],
+      retry: ["重試", "Retry"]
+    };
+
+    function t(key, lang) {
+      const entry = I18N[key];
+      if (!entry) return key;
+      return lang === "en" ? entry[1] : entry[0];
+    }
+
+    const FOOTBALL_TEAMS = {
+      "arsenal": "阿仙奴",
+      "aston villa": "阿士東維拉",
+      "chelsea": "車路士",
+      "liverpool": "利物浦",
+      "manchester city": "曼城",
+      "manchester united": "曼聯",
+      "tottenham hotspur": "熱刺",
+      "newcastle united": "紐卡素",
+      "brighton & hove albion": "白禮頓",
+      "brighton": "白禮頓",
+      "west ham united": "韋斯咸",
+      "west ham": "韋斯咸",
+      "fulham": "富咸",
+      "brentford": "賓福特",
+      "crystal palace": "水晶宮",
+      "wolverhampton wanderers": "狼隊",
+      "wolves": "狼隊",
+      "everton": "愛華頓",
+      "nottingham forest": "諾定咸森林",
+      "afc bournemouth": "般尼茅夫",
+      "bournemouth": "般尼茅夫",
+      "ipswich town": "葉士域治",
+      "ipswich": "葉士域治",
+      "leicester city": "李斯特城",
+      "leicester": "李斯特城",
+      "southampton": "修咸頓",
+      "real madrid": "皇家馬德里",
+      "barcelona": "巴塞隆拿",
+      "atletico madrid": "馬德里體育會",
+      "atletico de madrid": "馬德里體育會",
+      "girona": "基羅納",
+      "athletic club": "畢爾包",
+      "athletic bilbao": "畢爾包",
+      "real sociedad": "皇家蘇斯達",
+      "real betis": "皇家貝迪斯",
+      "villarreal": "維拉利爾",
+      "sevilla": "西維爾",
+      "valencia": "華倫西亞",
+      "celta vigo": "切爾達",
+      "espanyol": "愛斯賓奴",
+      "mallorca": "馬略卡",
+      "osasuna": "奧沙辛拿",
+      "getafe": "基達菲",
+      "rayo vallecano": "華歷簡奴",
+      "las palmas": "拉斯彭馬斯",
+      "alaves": "艾拉維斯",
+      "leganes": "利根尼斯",
+      "real valladolid": "華拉度列",
+      "bayern munich": "拜仁慕尼黑",
+      "bayern münchen": "拜仁慕尼黑",
+      "borussia dortmund": "多蒙特",
+      "dortmund": "多蒙特",
+      "bayer leverkusen": "利華古遜",
+      "leverkusen": "利華古遜",
+      "rb leipzig": "RB萊比錫",
+      "leipzig": "RB萊比錫",
+      "vfb stuttgart": "史特加",
+      "stuttgart": "史特加",
+      "eintracht frankfurt": "法蘭克福",
+      "frankfurt": "法蘭克福",
+      "borussia monchengladbach": "慕遜加柏",
+      "borussia mönchengladbach": "慕遜加柏",
+      "wolfsburg": "禾夫斯堡",
+      "freiburg": "弗賴堡",
+      "werder bremen": "雲達不萊梅",
+      "hoffenheim": "賀芬咸",
+      "union berlin": "柏林聯",
+      "augsburg": "奧格斯堡",
+      "mainz 05": "緬恩斯",
+      "mainz": "緬恩斯",
+      "st. pauli": "聖保利",
+      "holstein kiel": "基爾",
+      "paris saint-germain": "巴黎聖日耳門",
+      "psg": "巴黎聖日耳門",
+      "monaco": "摩納哥",
+      "marseille": "馬賽",
+      "lille": "里爾",
+      "lyon": "里昂",
+      "nice": "尼斯",
+      "lens": "朗斯",
+      "rennes": "雷恩",
+      "inter milan": "國際米蘭",
+      "inter": "國際米蘭",
+      "ac milan": "AC米蘭",
+      "milan": "AC米蘭",
+      "juventus": "祖雲達斯",
+      "napoli": "拿玻里",
+      "roma": "羅馬",
+      "as roma": "羅馬",
+      "lazio": "拉素",
+      "atalanta": "阿特蘭大",
+      "fiorentina": "費倫天拿",
+      "bologna": "博洛尼亞",
+      "torino": "拖連奴",
+      "udinese": "烏甸尼斯",
+      "monza": "蒙沙",
+      "genoa": "熱拿亞",
+      "cagliari": "卡利亞里",
+      "empoli": "恩波里",
+      "verona": "維羅納",
+      "parma": "帕爾馬",
+      "como": "高莫",
+      "venezia": "威尼斯",
+      "lecce": "萊切",
+      "sporting cp": "士砵亭",
+      "sporting lisbon": "士砵亭",
+      "benfica": "賓菲加",
+      "porto": "波圖",
+      "fc porto": "波圖",
+      "ajax": "阿積士",
+      "psv": "PSV燕豪芬",
+      "psv eindhoven": "PSV燕豪芬",
+      "feyenoord": "飛燕諾",
+      "celtic": "些路迪",
+      "rangers": "格拉斯哥流浪",
+      "leeds united": "列斯聯",
+      "leeds": "列斯聯",
+      "burnley": "般尼",
+      "sheffield united": "錫菲聯",
+      "sunderland": "新特蘭",
+      "middlesbrough": "米杜士堡",
+      "west bromwich albion": "西布朗",
+      "norwich city": "諾域治",
+      "watford": "屈福特",
+      "coventry city": "高雲地利",
+      "blackburn rovers": "布力般流浪",
+      "millwall": "米禾爾",
+      "bristol city": "布里斯托城",
+      "swansea city": "史雲斯",
+      "stoke city": "史篤城",
+      "queens park rangers": "昆士柏流浪",
+      "qpr": "昆士柏流浪",
+      "derby county": "打比郡",
+      "hull city": "侯城",
+      "portsmouth": "樸茨茅夫",
+      "preston north end": "普雷斯頓",
+      "luton town": "盧頓",
+      "cardiff city": "卡迪夫城",
+      "sheffield wednesday": "錫周三",
+      "oxford united": "牛津聯",
+      "plymouth argyle": "普利茅夫"
+    };
+
+    function clubTc(name) {
+      if (!name) return "";
+      const lower = name.toLowerCase().trim();
+      if (FOOTBALL_TEAMS[lower]) return FOOTBALL_TEAMS[lower];
+      // strip prefix/suffixes
+      const stripped = lower.replace(/\b(fc|cf|ac|afc|sc|as|vfb|rb|rcd|losc|club)\b/g, "").replace(/^1\.\s*/, "").trim();
+      if (FOOTBALL_TEAMS[stripped]) return FOOTBALL_TEAMS[stripped];
+      for (const [k, v] of Object.entries(FOOTBALL_TEAMS)) {
+        if (lower.includes(k)) return v;
+      }
+      return name;
+    }
+
+    function computeSunHK(date = new Date()) {
+      // Coordinates for Tuen Mun, Hong Kong
+      const lat = 22.3917;
+      const lng = 113.9758;
+      
+      const calcForDate = (d) => {
+        const rad = Math.PI / 180;
+        const startOfYear = new Date(Date.UTC(d.getFullYear(), 0, 1));
+        const dayOfYear = Math.floor((d.getTime() - startOfYear.getTime()) / (86400000)) + 1;
+        
+        // Solar declination
+        const b = (360 / 365) * (dayOfYear - 81) * rad;
+        const eot = 9.87 * Math.sin(2 * b) - 7.53 * Math.cos(b) - 1.5 * Math.sin(b);
+        const decl = 23.45 * Math.sin(b) * rad;
+        
+        // Hour angle
+        const latRad = lat * rad;
+        const cosH = (Math.cos(90.833 * rad) - Math.sin(latRad) * Math.sin(decl)) / (Math.cos(latRad) * Math.cos(decl));
+        const clampedCosH = Math.max(-1, Math.min(1, cosH));
+        const H = Math.acos(clampedCosH) / rad;
+        
+        // Solar noon in minutes from midnight UTC
+        const solarNoonMinutes = 720 - 4 * lng - eot;
+        const sunriseMinutes = solarNoonMinutes - H * 4;
+        const sunsetMinutes = solarNoonMinutes + H * 4;
+        
+        // Convert to HK Date objects (UTC+8)
+        const sunriseDate = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 0, sunriseMinutes));
+        const sunsetDate = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 0, sunsetMinutes));
+        const dayLengthMin = Math.round(sunsetMinutes - sunriseMinutes);
+        
+        return {
+          sunrise: sunriseDate,
+          sunset: sunsetDate,
+          dayLengthMin: dayLengthMin
+        };
+      };
+
+      const todaySun = calcForDate(date);
+      const tomorrowDate = new Date(date.getTime() + 86400000);
+      const tomorrowSun = calcForDate(tomorrowDate);
+
+      return {
+        today: todaySun,
+        tomorrow: tomorrowSun
+      };
+    }
+
+    const STORAGE_KEY_V14 = "hk-dashboard-settings-v14";
+    const DEFAULT_CARD_ORDER = [
+      "weather", "forecast", "busCustom1", "busCustom2", "busCustom3", "busCustom4",
+      "busFortune", "busTMR", "busKlnBay", "holidays", "sun", "ainews", "govnews",
+      "fx", "markets", "football", "word"
+    ];
+
+    const DEFAULT_BUS_CONFIGS = {
+      busCustom1: {
+        stops: [{ id: "0E9F8B5A3734D9CE", label: "油麻地寧波街" }],
+        routes: ["60X"],
+        showCount: 2
+      },
+      busCustom2: {
+        stops: [{ id: "13A191322410A410", label: "紅磡站總站" }],
+        routes: ["260X"],
+        showCount: 2
+      },
+      busCustom3: {
+        stops: [
+          { id: "376C4835851621D4", label: "屯門公路轉車站" },
+          { id: "0CF05B00D82FECB2", label: "屯門公路轉車站" }
+        ],
+        routes: ["260X", "57M", "58M", "67M", "61M"],
+        showCount: 2
+      },
+      busCustom4: {
+        stops: [{ id: "E45CFAB2E6E4C8FE", label: "香港理工大學" }],
+        routes: ["28", "14X", "215X"],
+        showCount: 2
+      },
+      busFortune: {
+        stops: [
+          { id: "4D777935A801201A", label: "豐景園" },
+          { id: "913F2DF20E573CEA", label: "豐景園" },
+          { id: "123A364D76B2CE5D", label: "豐景園" }
+        ],
+        routes: ["60M", "60X", "61X", "263", "62X", "961"],
+        showCount: 2
+      },
+      busTMR: {
+        stops: [
+          { id: "0269A1F9D98C737E", label: "屯門公路轉車站" },
+          { id: "DFE346B2C7332BC0", label: "屯門公路轉車站" }
+        ],
+        routes: ["60M", "60X", "61X", "263", "62X", "961", "259D", "59M"],
+        showCount: 2
+      },
+      busKlnBay: {
+        stops: [
+          { id: "6BB5645D03BE78E7", label: "九龍灣站" },
+          { id: "F727B37E25DC4C88", label: "九龍灣站" }
+        ],
+        routes: ["62X", "259D", "258D"],
+        showCount: 2
+      }
+    };
+
+    function getDefaultSettings() {
+      return {
+        lang: "tc",
+        order: [...DEFAULT_CARD_ORDER],
+        hidden: ["busFortune", "football"],
+        bus: JSON.parse(JSON.stringify(DEFAULT_BUS_CONFIGS)),
+        league: "all"
+      };
+    }
+
+    function sanitiseSettings(st) {
+      if (!st || typeof st !== "object") return getDefaultSettings();
+      const def = getDefaultSettings();
+      const lang = st.lang === "en" ? "en" : "tc";
+      const league = typeof st.league === "string" ? st.league : "all";
+      
+      let order = Array.isArray(st.order) ? st.order.filter(id => DEFAULT_CARD_ORDER.includes(id)) : [];
+      DEFAULT_CARD_ORDER.forEach(id => {
+        if (!order.includes(id)) order.push(id);
+      });
+
+      let hidden = Array.isArray(st.hidden) ? st.hidden.filter(id => DEFAULT_CARD_ORDER.includes(id)) : [...def.hidden];
+      
+      const bus = {};
+      const busSlots = ["busCustom1", "busCustom2", "busCustom3", "busCustom4", "busFortune", "busTMR", "busKlnBay"];
+      busSlots.forEach(slot => {
+        const src = st.bus && st.bus[slot];
+        if (!src) {
+          bus[slot] = JSON.parse(JSON.stringify(DEFAULT_BUS_CONFIGS[slot]));
+        } else {
+          const stops = Array.isArray(src.stops) ? src.stops.slice(0, 6) : DEFAULT_BUS_CONFIGS[slot].stops;
+          const routes = Array.isArray(src.routes) ? src.routes.slice(0, 12) : DEFAULT_BUS_CONFIGS[slot].routes;
+          const showCount = [1, 2, 3].includes(src.showCount) ? src.showCount : 2;
+          bus[slot] = { stops, routes, showCount };
+        }
+      });
+
+      return { lang, order, hidden, bus, league };
+    }
+
+    function loadSettings() {
+      // 1. Try v14
+      const raw14 = localStorage.getItem(STORAGE_KEY_V14);
+      if (raw14) {
+        try {
+          return sanitiseSettings(JSON.parse(raw14));
+        } catch(e) {}
+      }
+
+      // 2. Migration chain from legacy keys
+      const legacyKeys = [
+        "hk-dashboard-settings-v13",
+        "hk-dashboard-settings-v12",
+        "hk-dashboard-settings-v11",
+        "hk-dashboard-settings-v10",
+        "hk-dashboard-settings-v1"
+      ];
+
+      for (const k of legacyKeys) {
+        const raw = localStorage.getItem(k);
+        if (raw) {
+          try {
+            const old = JSON.parse(raw);
+            const upgraded = sanitiseSettings(old);
+            
+            // v13->v14 specific fixes: ensure busCustom4 is right after busCustom3
+            if (!upgraded.order.includes("busCustom4")) {
+              const idx3 = upgraded.order.indexOf("busCustom3");
+              if (idx3 >= 0) {
+                upgraded.order.splice(idx3 + 1, 0, "busCustom4");
+              } else {
+                upgraded.order.push("busCustom4");
+              }
+            }
+            if (Array.isArray(old.hidden) && old.hidden.length === 0) {
+              upgraded.hidden = ["busFortune", "football"];
+            }
+
+            saveSettings(upgraded);
+            localStorage.removeItem(k);
+            return upgraded;
+          } catch(e) {}
+        }
+      }
+
+      const fresh = getDefaultSettings();
+      saveSettings(fresh);
+      return fresh;
+    }
+
+    function saveSettings(st) {
+      try {
+        localStorage.setItem(STORAGE_KEY_V14, JSON.stringify(st));
+      } catch(e) {}
+    }
+
+    let currentSettings = getDefaultSettings();
+    let globalTick = Date.now();
+    let busTick = Date.now();
+    let lastActiveTime = Date.now();
+    let wordIndexOffset = 0;
+    let stopSearchDebounceTimer = null;
+    let cachedKmbStops = null;
+
+    /* Card data caches */
+    const cardDataCache = {
+      weather: null,
+      forecast: null,
+      holidays: null,
+      ainews: null,
+      govnews: null,
+      fx: null,
+      markets: null,
+      football: null,
+      bus: {}
+    };
+
+    function formatHKTime(date = new Date()) {
+      return new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Hong_Kong",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).format(date);
+    }
+
+    function formatHKDate(date = new Date(), lang = "tc") {
+      return new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "zh-HK", {
+        timeZone: "Asia/Hong_Kong",
+        weekday: "short",
+        year: "numeric",
+        month: "numeric",
+        day: "numeric"
+      }).format(date);
+    }
+
+    function timeAgo(timestamp, lang = "tc") {
+      const diffSec = Math.floor((Date.now() - timestamp) / 1000);
+      if (diffSec < 60) return t("justNow", lang);
+      const mins = Math.floor(diffSec / 60);
+      if (mins < 60) return `${mins}${t("minsAgo", lang)}`;
+      const hours = Math.floor(mins / 60);
+      if (hours < 24) return `${hours}${t("hoursAgo", lang)}`;
+      const days = Math.floor(hours / 24);
+      return `${days}${t("daysAgo", lang)}`;
+    }
+
+    function startClockTicker() {
+      const update = () => {
+        const now = new Date();
+        const clockEl = document.getElementById("hk-clock");
+        const dateEl = document.getElementById("hk-date");
+        if (clockEl) clockEl.textContent = formatHKTime(now);
+        if (dateEl) dateEl.textContent = formatHKDate(now, currentSettings.lang);
+      };
+      update();
+      setInterval(update, 1000);
+    }
+
+    function setupRefreshTimers() {
+      // 60s bus tick when visible
+      setInterval(() => {
+        if (!document.hidden) {
+          busTick = Date.now();
+          refreshAllBusCards();
+        }
+      }, 60000);
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+          const elapsed = (Date.now() - lastActiveTime) / 1000;
+          if (elapsed > 55) {
+            busTick = Date.now();
+            refreshAllBusCards();
+          }
+        } else {
+          lastActiveTime = Date.now();
+        }
+      });
+    }
+
+    function createCardFrame({ id, title, iconSvg, headerExtra = "", headerEnd = "", onGear = null, autoNote = false, sourceNote = "" }) {
+      const lang = currentSettings.lang;
+      const updatedTimeStr = formatHKTime(new Date());
+
+      return `
+        <div id="card-${id}" class="h-full flex-1 group relative flex flex-col p-3 gap-2 rounded-xl bg-card text-card-foreground border border-border/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-none break-inside-avoid transition-all duration-200">
+          <!-- Card Header -->
+          <div class="flex items-center justify-between gap-1.5 leading-none">
+            <div class="flex items-center gap-1.5 min-w-0 flex-1">
+              <span class="text-muted-foreground w-4 h-4 flex items-center justify-center shrink-0">${iconSvg}</span>
+              <div class="text-[12.5px] font-semibold text-foreground truncate select-none flex items-center gap-1">
+                ${title}
+              </div>
+              ${headerExtra}
+            </div>
+            
+            <div class="flex items-center gap-1 shrink-0">
+              ${headerEnd}
+              ${onGear ? `
+                <button type="button" onclick="${onGear}" class="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title="設定路線 / Configure bus">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  </svg>
+                </button>
+              ` : ""}
+              <button type="button" onclick="refreshSingleCard('${id}')" class="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors active:scale-90" title="更新此卡片 / Refresh">
+                <svg id="refresh-icon-${id}" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card Dynamic Body -->
+          <div id="body-${id}" class="flex-1 flex flex-col justify-start min-h-[5.5rem]">
+            <!-- Skeleton Pulse Fallback -->
+            <div class="space-y-2 py-2">
+              <div class="h-3.5 bg-muted/70 rounded w-2/3 animate-pulse"></div>
+              <div class="h-3 bg-muted/60 rounded w-1/2 animate-pulse"></div>
+              <div class="h-3 bg-muted/50 rounded w-3/5 animate-pulse"></div>
+            </div>
+          </div>
+
+          <!-- Card Footer Strip -->
+          <div class="pt-1.5 border-t border-border/40 flex items-center justify-between text-[9.5px] text-muted-foreground tabular-nums select-none">
+            <div class="flex items-center gap-1.5 truncate">
+              ${autoNote ? `
+                <span class="inline-flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>${t("autoRefreshes", lang)}</span>
+                </span>
+              ` : ""}
+              ${sourceNote ? `<span>${sourceNote}</span>` : ""}
+            </div>
+            <div id="card-updated-${id}" class="shrink-0 pl-1 text-[9px] opacity-80">
+              ${t("updatedAt", lang)} ${updatedTimeStr}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    const WEATHER_EMOJI_MAP = {
+      50: "☀️", 51: "🌤️", 52: "🌤️", 53: "🌦️", 54: "🌦️", 55: "☁️", 56: "☁️",
+      60: "🌧️", 61: "🌦️", 62: "🌦️", 63: "🌧️", 64: "⛈️", 65: "⛈️",
+      70: "☀️", 71: "🌤️", 72: "🌤️", 73: "🌧️", 74: "🌧️", 75: "🌫️", 76: "🌫️", 77: "☁️",
+      80: "💨", 81: "❄️", 82: "🌧️", 83: "🌫️", 84: "🌫️", 85: "🌫️",
+      90: "🔥", 91: "🥶", 92: "🌀"
+    };
+
+    function getWeatherEmoji(iconNum) {
+      return WEATHER_EMOJI_MAP[iconNum] || "☁️";
+    }
+
+    async function loadWeatherCard(isManual = false) {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById("body-weather");
+      if (!bodyEl) return;
+
+      try {
+        const langParam = lang === "en" ? "en" : "tc";
+        const [rhrRes, flwRes, warnRes] = await Promise.all([
+          fetch(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=${langParam}`),
+          fetch(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=flw&lang=${langParam}`),
+          fetch(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=${langParam}`)
+        ]);
+
+        const rhr = await rhrRes.json();
+        const flw = await flwRes.json();
+        const warn = await warnRes.json();
+
+        // Extract Tuen Mun temp with fallback
+        let temp = 22;
+        if (rhr.temperature && rhr.temperature.data) {
+          const tm = rhr.temperature.data.find(d => d.place.includes("屯門") || d.place.includes("Tuen Mun"));
+          if (tm) {
+            temp = tm.value;
+          } else if (rhr.temperature.data[0]) {
+            temp = rhr.temperature.data[0].value;
+          }
+        }
+
+        const humidity = (rhr.humidity && rhr.humidity.data && rhr.humidity.data[0]) ? rhr.humidity.data[0].value : 70;
+        const uv = (rhr.uvindex && rhr.uvindex.data && rhr.uvindex.data[0]) ? rhr.uvindex.data[0].value : 0;
+        const iconCode = (rhr.icon && rhr.icon[0]) ? rhr.icon[0] : 50;
+        const emoji = getWeatherEmoji(iconCode);
+
+        // Rainfall
+        let rainfall = 0;
+        if (rhr.rainfall && rhr.rainfall.data) {
+          const tmRain = rhr.rainfall.data.find(r => r.place.includes("屯門") || r.place.includes("Tuen Mun"));
+          if (tmRain && tmRain.max) rainfall = tmRain.max;
+        }
+
+        // Warnings chips
+        let warningChipsHtml = "";
+        if (warn && typeof warn === "object") {
+          const activeWarns = Object.values(warn).slice(0, 3);
+          if (activeWarns.length > 0) {
+            warningChipsHtml = `
+              <div class="flex flex-wrap gap-1 mt-1">
+                ${activeWarns.map(w => `
+                  <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                    ⚠️ ${w.name || w.type || "天氣警告"}
+                  </span>
+                `).join("")}
+              </div>
+            `;
+          }
+        }
+
+        const forecastDesc = flw.forecastDesc || "";
+
+        bodyEl.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="text-4xl select-none">${emoji}</span>
+              <div class="flex flex-col">
+                <div class="flex items-baseline gap-0.5">
+                  <span class="text-3xl font-bold tabular-nums text-foreground leading-none">${temp}</span>
+                  <span class="text-sm font-medium text-muted-foreground">°C</span>
+                </div>
+                <span class="text-[10px] font-medium text-muted-foreground">${t("tuenMun", lang)}</span>
+              </div>
+            </div>
+
+            <div class="text-right space-y-0.5 text-xs tabular-nums">
+              <div class="text-[11px] text-muted-foreground">
+                ${t("humidity", lang)}: <span class="font-semibold text-foreground">${humidity}%</span>
+              </div>
+              <div class="text-[11px] text-muted-foreground">
+                ${t("uvIndex", lang)}: <span class="font-semibold text-foreground">${uv}</span>
+              </div>
+              ${rainfall > 0 ? `
+                <div class="text-[11px] font-medium text-sky-600 dark:text-sky-400">
+                  🌧️ ${rainfall}mm
+                </div>
+              ` : ""}
+            </div>
+          </div>
+
+          ${warningChipsHtml}
+
+          ${forecastDesc ? `
+            <p class="text-[11px] text-muted-foreground line-clamp-3 leading-relaxed mt-1 border-t border-border/30 pt-1">
+              ${forecastDesc}
+            </p>
+          ` : ""}
+        `;
+      } catch (err) {
+        bodyEl.innerHTML = `
+          <div class="text-center py-2 space-y-1">
+            <div class="text-xs text-destructive font-medium">${t("failConnect", lang)}</div>
+            <button onclick="loadWeatherCard(true)" class="text-[10.5px] px-2 py-0.5 border border-border rounded text-foreground hover:bg-muted">${t("retry", lang)}</button>
+          </div>
+        `;
+      }
+    }
+
+    async function loadForecastCard(isManual = false) {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById("body-forecast");
+      if (!bodyEl) return;
+
+      try {
+        const langParam = lang === "en" ? "en" : "tc";
+        const res = await fetch(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=fnd&lang=${langParam}`);
+        const data = await res.json();
+        const list = data.weatherForecast || [];
+
+        const tilesHtml = list.slice(0, 9).map((item, idx) => {
+          const dateStr = item.forecastDate || "";
+          const month = dateStr.slice(4, 6);
+          const day = dateStr.slice(6, 8);
+          const week = item.week || "";
+          const icon = item.ForecastIcon || 50;
+          const emoji = getWeatherEmoji(icon);
+          const isToday = idx === 0;
+
+          return `
+            <div class="shrink-0 w-[62px] flex flex-col items-center justify-between p-1.5 rounded-lg border border-border/60 ${isToday ? 'bg-primary/10 ring-1 ring-primary/30 font-medium' : 'bg-muted/30'} select-none" title="${week} · ${item.forecastWeather}">
+              <div class="text-[10px] text-muted-foreground">${week.replace("星期", "週")}</div>
+              <div class="text-[9.5px] text-foreground font-medium tabular-nums">${month}/${day}</div>
+              <div class="text-lg my-0.5">${emoji}</div>
+              <div class="text-[11.5px] font-semibold text-foreground tabular-nums leading-tight">${item.forecastMaxtemp?.value || 0}°</div>
+              <div class="text-[10.5px] text-muted-foreground tabular-nums leading-tight">${item.forecastMintemp?.value || 0}°</div>
+              <div class="text-[8.5px] text-muted-foreground tabular-nums mt-0.5">${item.forecastMinrh?.value || 0}–${item.forecastMaxrh?.value || 0}%</div>
+            </div>
+          `;
+        }).join("");
+
+        bodyEl.innerHTML = `
+          <div class="flex items-center gap-1.5 overflow-x-auto thin-scroll pb-1">
+            ${tilesHtml}
+          </div>
+        `;
+      } catch(e) {
+        bodyEl.innerHTML = `
+          <div class="text-center py-2 space-y-1">
+            <div class="text-xs text-destructive font-medium">${t("failConnect", lang)}</div>
+            <button onclick="loadForecastCard(true)" class="text-[10.5px] px-2 py-0.5 border border-border rounded text-foreground hover:bg-muted">${t("retry", lang)}</button>
+          </div>
+        `;
+      }
+    }
+
+    async function fetchKmbStopEtas(stopId) {
+      const url = `https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/${stopId}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("KMB ETA error");
+      const json = await res.json();
+      return json.data || [];
+    }
+
+    async function loadBusCard(slotId, isManual = false) {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById(`body-${slotId}`);
+      if (!bodyEl) return;
+
+      const conf = currentSettings.bus[slotId];
+      if (!conf || !conf.routes || conf.routes.length === 0 || !conf.stops || conf.stops.length === 0) {
+        bodyEl.innerHTML = `
+          <div class="text-center py-4 text-xs text-muted-foreground">
+            ${t("noBusConfig", lang)}
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        // Fetch stops in parallel
+        const stopPromises = conf.stops.map(s => fetchKmbStopEtas(s.id).catch(() => []));
+        const stopResults = await Promise.all(stopPromises);
+        const allEtas = stopResults.flat();
+
+        const now = Date.now();
+        const showCount = conf.showCount || 2;
+        const isCustom = slotId.startsWith("busCustom");
+        const stopPrefix = isCustom ? `${conf.stops[0].label} → ` : "→ ";
+
+        const rowsHtml = conf.routes.map(rt => {
+          const matching = allEtas.filter(item => item.route === rt && item.service_type === 1);
+          
+          if (matching.length === 0) {
+            return `
+              <div class="h-[34px] flex items-center justify-between py-1 border-b border-border/30 last:border-0" title="${t('routeMayNotServe', lang)}">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="inline-flex items-center justify-center min-w-[38px] px-1.5 h-5 text-xs font-bold text-white bg-kmb rounded-md leading-none select-none">
+                    ${rt}
+                  </span>
+                  <span class="text-xs text-muted-foreground truncate">—</span>
+                </div>
+                <div class="text-xs text-muted-foreground font-medium">—</div>
+              </div>
+            `;
+          }
+
+          // Sort by timestamp
+          const validEtas = matching
+            .filter(item => item.eta)
+            .map(item => ({
+              ts: new Date(item.eta).getTime(),
+              rmk: lang === "en" ? (item.rmk_en || item.rmk_tc) : item.rmk_tc,
+              dest: lang === "en" ? (item.dest_en || item.dest_tc) : item.dest_tc
+            }))
+            .sort((a, b) => a.ts - b.ts);
+
+          const destName = (validEtas[0] && validEtas[0].dest) || (matching[0] && (lang === "en" ? matching[0].dest_en : matching[0].dest_tc)) || "";
+
+          // ETA pills
+          let etasHtml = "";
+          if (validEtas.length > 0) {
+            const displayList = validEtas.slice(0, showCount);
+            etasHtml = displayList.map(etaItem => {
+              const diffMinutes = Math.round((etaItem.ts - now) / 60000);
+              let label = `${diffMinutes} ${t('min', lang)}`;
+              let colorClass = "text-foreground";
+              
+              if (diffMinutes <= 0) {
+                label = t("arriving", lang);
+                colorClass = "text-emerald-600 dark:text-emerald-400 font-bold";
+              } else if (diffMinutes <= 3) {
+                colorClass = "text-emerald-600 dark:text-emerald-400 font-semibold";
+              }
+
+              const timeStr = formatHKTime(new Date(etaItem.ts));
+
+              return `
+                <div class="flex flex-col items-end leading-tight tabular-nums">
+                  <span class="text-[12.5px] font-semibold ${colorClass}">${label}</span>
+                  <span class="text-[9.5px] text-muted-foreground">${timeStr}</span>
+                </div>
+              `;
+            }).join(`<span class="text-muted-foreground/40 self-center text-xs">|</span>`);
+          } else {
+            const fallbackRmk = matching[0] ? (lang === "en" ? (matching[0].rmk_en || matching[0].rmk_tc) : matching[0].rmk_tc) : "";
+            etasHtml = `<span class="text-[11px] text-muted-foreground font-medium">${fallbackRmk || t("noService", lang)}</span>`;
+          }
+
+          return `
+            <div class="h-[34px] flex items-center justify-between py-1 border-b border-border/30 last:border-0 gap-2">
+              <div class="flex items-center gap-1.5 min-w-0 flex-1">
+                <span class="inline-flex items-center justify-center min-w-[38px] px-1.5 h-5 text-xs font-bold text-white bg-kmb rounded-md leading-none select-none shrink-0 shadow-sm">
+                  ${rt}
+                </span>
+                <span class="text-xs text-foreground truncate" title="${destName}">
+                  <span class="text-muted-foreground text-[11px]">${stopPrefix}</span>${destName}
+                </span>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                ${etasHtml}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        bodyEl.innerHTML = `<div class="space-y-0.5">${rowsHtml}</div>`;
+      } catch (err) {
+        bodyEl.innerHTML = `
+          <div class="text-center py-2 space-y-1">
+            <div class="text-xs text-destructive font-medium">${t("failConnect", lang)}</div>
+            <button onclick="loadBusCard('${slotId}', true)" class="text-[10.5px] px-2 py-0.5 border border-border rounded text-foreground hover:bg-muted">${t("retry", lang)}</button>
+          </div>
+        `;
+      }
+    }
+
+    function refreshAllBusCards() {
+      const busSlots = ["busCustom1", "busCustom2", "busCustom3", "busCustom4", "busFortune", "busTMR", "busKlnBay"];
+      busSlots.forEach(slot => {
+        if (!currentSettings.hidden.includes(slot)) {
+          loadBusCard(slot);
+        }
+      });
+    }
+
+    const FALLBACK_HK_HOLIDAYS = [
+      { date: "2026-01-01", localName: "元旦", name: "New Year's Day" },
+      { date: "2026-02-17", localName: "農曆年初一", name: "Lunar New Year's Day" },
+      { date: "2026-02-18", localName: "農曆年初二", name: "Second day of Lunar New Year" },
+      { date: "2026-02-19", localName: "農曆年初三", name: "Third day of Lunar New Year" },
+      { date: "2026-04-03", localName: "耶穌受難節", name: "Good Friday" },
+      { date: "2026-04-04", localName: "耶穌受難節翌日", name: "The day following Good Friday" },
+      { date: "2026-04-05", localName: "清明節", name: "Ching Ming Festival" },
+      { date: "2026-04-06", localName: "復活節星期一", name: "Easter Monday" },
+      { date: "2026-05-01", localName: "勞動節", name: "Labour Day" },
+      { date: "2026-05-24", localName: "佛誕", name: "Birthday of the Buddha" },
+      { date: "2026-06-19", localName: "端午節", name: "Tuen Ng Festival" },
+      { date: "2026-07-01", localName: "香港特別行政區成立紀念日", name: "HKSAR Establishment Day" },
+      { date: "2026-09-26", localName: "中秋節翌日", name: "The day following the Chinese Mid-Autumn Festival" },
+      { date: "2026-10-01", localName: "國慶日", name: "National Day" },
+      { date: "2026-10-19", localName: "重陽節", name: "Chung Yeung Festival" },
+      { date: "2026-12-25", localName: "聖誕節", name: "Christmas Day" },
+      { date: "2026-12-26", localName: "聖誕節後第一個周日", name: "Boxing Day" },
+      { date: "2027-01-01", localName: "元旦", name: "New Year's Day" }
+    ];
+
+    async function loadHolidaysCard(isManual = false) {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById("body-holidays");
+      if (!bodyEl) return;
+
+      try {
+        let holidays = [];
+        try {
+          const res = await fetch("https://date.nager.at/api/v3/publicholidays/2026/HK");
+          if (res.ok) {
+            holidays = await res.json();
+          }
+        } catch(e) {}
+
+        if (!holidays || holidays.length < 5) {
+          holidays = FALLBACK_HK_HOLIDAYS;
+        }
+
+        const now = new Date();
+        const todayZero = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+        const upcoming = holidays
+          .map(h => {
+            const hDate = new Date(h.date + "T00:00:00+08:00");
+            const diffDays = Math.ceil((hDate.getTime() - todayZero) / (86400000));
+            return { ...h, diffDays, hDate };
+          })
+          .filter(h => h.diffDays >= 0)
+          .sort((a, b) => a.diffDays - b.diffDays);
+
+        if (upcoming.length === 0) {
+          bodyEl.innerHTML = `<div class="text-xs text-muted-foreground py-2 text-center">暫無即將到來的公眾假期</div>`;
+          return;
+        }
+
+        const first = upcoming[0];
+        const firstName = lang === "en" ? first.name : (first.localName || first.name);
+        const rest = upcoming.slice(1, 4);
+
+        const restHtml = rest.map(h => {
+          const name = lang === "en" ? h.name : (h.localName || h.name);
+          const dateLabel = `${h.hDate.getMonth() + 1}/${h.hDate.getDate()}`;
+          return `
+            <div class="flex items-center justify-between text-xs py-1 border-b border-border/30 last:border-0 tabular-nums">
+              <span class="w-14 text-muted-foreground text-[11px] font-medium">${dateLabel}</span>
+              <span class="flex-1 text-foreground truncate px-1">${name}</span>
+              <span class="text-muted-foreground font-semibold text-[11px]">${h.diffDays}${t("daysLeft", lang)}</span>
+            </div>
+          `;
+        }).join("");
+
+        bodyEl.innerHTML = `
+          <!-- Hero Holiday -->
+          <div class="p-2 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-between mb-2">
+            <div class="flex flex-col min-w-0">
+              <span class="text-xs font-semibold text-foreground truncate">${firstName}</span>
+              <span class="text-[10px] text-muted-foreground tabular-nums">${first.date}</span>
+            </div>
+            <div class="flex items-baseline gap-0.5 shrink-0 tabular-nums text-primary font-bold">
+              <span class="text-2xl leading-none">${first.diffDays === 0 ? t("today", lang) : first.diffDays}</span>
+              ${first.diffDays > 0 ? `<span class="text-xs font-semibold">${t("daysLeft", lang)}</span>` : ""}
+            </div>
+          </div>
+
+          <!-- Compact next holidays -->
+          <div class="space-y-0.5">
+            ${restHtml}
+          </div>
+        `;
+      } catch(e) {
+        bodyEl.innerHTML = `
+          <div class="text-center py-2 space-y-1">
+            <div class="text-xs text-destructive font-medium">${t("failConnect", lang)}</div>
+            <button onclick="loadHolidaysCard(true)" class="text-[10.5px] px-2 py-0.5 border border-border rounded text-foreground hover:bg-muted">${t("retry", lang)}</button>
+          </div>
+        `;
+      }
+    }
+
+    function loadSunCard() {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById("body-sun");
+      if (!bodyEl) return;
+
+      const now = new Date();
+      const sunData = computeSunHK(now);
+      
+      let displaySunrise = sunData.today.sunrise;
+      let displaySunset = sunData.today.sunset;
+      let isTomorrow = false;
+
+      if (now.getTime() > displaySunset.getTime()) {
+        displaySunrise = sunData.tomorrow.sunrise;
+        displaySunset = sunData.tomorrow.sunset;
+        isTomorrow = true;
+      }
+
+      const sunriseStr = formatHKTime(displaySunrise);
+      const sunsetStr = formatHKTime(displaySunset);
+
+      // Daylight duration calculation
+      const dayLenMin = sunData.today.dayLengthMin;
+      const hours = Math.floor(dayLenMin / 60);
+      const mins = dayLenMin % 60;
+
+      // Progress bar (2% to 98%)
+      const todaySunriseMs = sunData.today.sunrise.getTime();
+      const todaySunsetMs = sunData.today.sunset.getTime();
+      const nowMs = now.getTime();
+      let pct = 2;
+      let isDay = false;
+
+      if (nowMs < todaySunriseMs) {
+        pct = 2;
+        isDay = false;
+      } else if (nowMs > todaySunsetMs) {
+        pct = 98;
+        isDay = false;
+      } else {
+        isDay = true;
+        pct = 2 + Math.round(((nowMs - todaySunriseMs) / (todaySunsetMs - todaySunriseMs)) * 96);
+      }
+
+      bodyEl.innerHTML = `
+        <div class="grid grid-cols-2 gap-2">
+          <!-- Sunrise Tile -->
+          <div class="p-2 rounded-xl bg-muted/50 border border-border/50 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] text-muted-foreground flex items-center gap-1">🌅 ${t("sunrise", lang)}</span>
+              ${isTomorrow ? `<span class="text-[9px] font-bold px-1 rounded bg-primary/20 text-primary">+1</span>` : ""}
+            </div>
+            <span class="text-lg font-bold text-foreground tabular-nums mt-1">${sunriseStr}</span>
+          </div>
+
+          <!-- Sunset Tile -->
+          <div class="p-2 rounded-xl bg-muted/50 border border-border/50 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] text-muted-foreground flex items-center gap-1">🌇 ${t("sunset", lang)}</span>
+              ${isTomorrow ? `<span class="text-[9px] font-bold px-1 rounded bg-primary/20 text-primary">+1</span>` : ""}
+            </div>
+            <span class="text-lg font-bold text-foreground tabular-nums mt-1">${sunsetStr}</span>
+          </div>
+        </div>
+
+        <!-- Daylight length row -->
+        <div class="flex items-center justify-between text-xs py-1 border-t border-border/30 mt-1 tabular-nums">
+          <span class="text-muted-foreground text-[11px]">${t("daylight", lang)}</span>
+          <div class="flex items-center gap-1.5 font-semibold text-foreground">
+            <span>${hours}h ${mins}m</span>
+            <span class="text-[10px] px-1 rounded ${isDay ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-500/10 text-slate-500'}">
+              ${isDay ? t("daytime", lang) : t("nighttime", lang)}
+            </span>
+          </div>
+        </div>
+
+        <!-- Solar progress bar -->
+        <div class="relative w-full h-1.5 rounded-full bg-gradient-to-r from-amber-400/60 via-amber-300 to-slate-500/40 mt-1">
+          <div class="absolute -top-[3px] w-2.5 h-2.5 rounded-full bg-foreground border-2 border-background shadow" style="left: ${pct}%; transform: translateX(-50%);"></div>
+        </div>
+      `;
+    }
+
+    async function loadForexCard(isManual = false) {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById("body-fx");
+      if (!bodyEl) return;
+
+      try {
+        const res = await fetch("https://open.er-api.com/v6/latest/HKD");
+        const json = await res.json();
+        const rates = json.rates || {};
+        const updateDate = json.time_last_update_utc ? json.time_last_update_utc.slice(0, 16) : "";
+
+        // JPY Hero: HKD per 100 JPY
+        // Rate from API is 1 HKD = X JPY -> 100 JPY = 100 / X HKD
+        const jpyRate = rates["JPY"] || 19.5;
+        const per100JpyHkd = (100 / jpyRate).toFixed(2);
+
+        // 10 Currencies: amount of foreign currency per 100 HKD
+        const currs = [
+          { code: "USD", flag: "🇺🇸", symbol: "US$", name: lang === "en" ? "US Dollar" : "美元" },
+          { code: "CNY", flag: "🇨🇳", symbol: "CN¥", name: lang === "en" ? "Chinese Yuan" : "人民幣" },
+          { code: "EUR", flag: "🇪🇺", symbol: "€", name: lang === "en" ? "Euro" : "歐元" },
+          { code: "GBP", flag: "🇬🇧", symbol: "£", name: lang === "en" ? "British Pound" : "英鎊" },
+          { code: "TWD", flag: "🇹🇼", symbol: "NT$", name: lang === "en" ? "New Taiwan Dollar" : "新台幣" },
+          { code: "SGD", flag: "🇸🇬", symbol: "S$", name: lang === "en" ? "Singapore Dollar" : "新加坡元" },
+          { code: "AUD", flag: "🇦🇺", symbol: "A$", name: lang === "en" ? "Australian Dollar" : "澳元" },
+          { code: "KRW", flag: "🇰🇷", symbol: "₩", name: lang === "en" ? "South Korean Won" : "韓圓" },
+          { code: "THB", flag: "🇹🇭", symbol: "฿", name: lang === "en" ? "Thai Baht" : "泰銖" },
+          { code: "MOP", flag: "🇲🇴", symbol: "MOP$", name: lang === "en" ? "Macanese Pataca" : "澳門元" }
+        ];
+
+        const rowsHtml = currs.map(c => {
+          const rateVal = rates[c.code] || 1;
+          const per100Hkd = rateVal * 100;
+          let formattedVal = per100Hkd >= 100 ? per100Hkd.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : per100Hkd.toFixed(2);
+          
+          return `
+            <div class="h-6 flex items-center justify-between text-xs py-0.5 border-b border-border/30 last:border-0 tabular-nums">
+              <div class="flex items-center gap-1.5 truncate">
+                <span class="select-none">${c.flag}</span>
+                <span class="text-foreground font-medium truncate">${c.name}</span>
+              </div>
+              <div class="font-semibold text-foreground shrink-0">
+                ${c.symbol} ${formattedVal}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        bodyEl.innerHTML = `
+          <!-- Hero JPY Banner -->
+          <div class="p-2 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="text-lg">🇯🇵</span>
+              <div class="flex flex-col">
+                <span class="text-xs font-semibold text-foreground">${lang === 'en' ? 'Japanese Yen' : '日圓'}</span>
+                <span class="text-[9.5px] text-muted-foreground">${t("yenHero", lang)}</span>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-base font-bold text-rose-600 dark:text-rose-400 tabular-nums">HK$${per100JpyHkd}</span>
+            </div>
+          </div>
+
+          <!-- Currency Rows -->
+          <div class="space-y-0.5">
+            ${rowsHtml}
+          </div>
+
+          <div class="text-[9.5px] text-muted-foreground text-center pt-1 border-t border-border/30">
+            ${t("buys", lang)} · ${t("fxSourceNote", lang)}: ${updateDate}
+          </div>
+        `;
+      } catch (err) {
+        bodyEl.innerHTML = `
+          <div class="text-center py-2 space-y-1">
+            <div class="text-xs text-destructive font-medium">${t("failConnect", lang)}</div>
+            <button onclick="loadForexCard(true)" class="text-[10.5px] px-2 py-0.5 border border-border rounded text-foreground hover:bg-muted">${t("retry", lang)}</button>
+          </div>
+        `;
+      }
+    }
+
+    function renderSparklineSvg(points, isUp) {
+      if (!points || points.length < 2) return "";
+      
+      const min = Math.min(...points);
+      const max = Math.max(...points);
+      const range = (max - min) || (max * 0.01) || 1;
+      const padding = range * 0.1;
+      const adjMin = min - padding;
+      const adjMax = max + padding;
+      const adjRange = adjMax - adjMin;
+
+      const w = 100;
+      const h = 34;
+      const coords = points.map((val, idx) => {
+        const x = (idx / (points.length - 1)) * w;
+        const y = h - ((val - adjMin) / adjRange) * h;
+        return [x, y];
+      });
+
+      const pathData = coords.reduce((acc, [x, y], idx) => {
+        return idx === 0 ? `M ${x.toFixed(1)} ${y.toFixed(1)}` : `${acc} L ${x.toFixed(1)} ${y.toFixed(1)}`;
+      }, "");
+
+      const areaData = `${pathData} L ${w} ${h} L 0 ${h} Z`;
+      const color = isUp ? "#16A34A" : "#DC2626";
+      const lastCoord = coords[coords.length - 1];
+
+      return `
+        <div class="relative w-full h-[34px] overflow-hidden my-1">
+          <svg viewBox="0 0 100 34" preserveAspectRatio="none" class="w-full h-full">
+            <!-- 2 Dashed Gridlines -->
+            <line x1="0" y1="11.3" x2="100" y2="11.3" stroke="currentColor" stroke-dasharray="2,2" class="opacity-15"/>
+            <line x1="0" y1="22.6" x2="100" y2="22.6" stroke="currentColor" stroke-dasharray="2,2" class="opacity-15"/>
+            <!-- Area fill -->
+            <path d="${areaData}" fill="${color}" fill-opacity="0.08"/>
+            <!-- Sparkline Stroke -->
+            <path d="${pathData}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+          </svg>
+          <!-- Endpoint Dot -->
+          <div class="absolute w-1.5 h-1.5 rounded-full" style="left: calc(${lastCoord[0]}% - 3px); top: calc(${lastCoord[1]}px - 3px); background-color: ${color};"></div>
+        </div>
+      `;
+    }
+
+    async function loadMarketsCard(isManual = false) {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById("body-markets");
+      if (!bodyEl) return;
+
+      const mockMarkets = [
+        {
+          nameTc: "恒生指數",
+          nameEn: "Hang Seng Index",
+          code: "^HSI",
+          currency: "HKD",
+          price: 20738.45,
+          changePct: +1.28,
+          history: [20350, 20410, 20380, 20500, 20490, 20610, 20580, 20650, 20710, 20738.45]
+        },
+        {
+          nameTc: "標普 500",
+          nameEn: "S&P 500",
+          code: "^GSPC",
+          currency: "USD",
+          price: 5864.67,
+          changePct: +0.42,
+          history: [5810, 5825, 5815, 5840, 5830, 5850, 5845, 5855, 5860, 5864.67]
+        },
+        {
+          nameTc: "納斯達克 100",
+          nameEn: "Nasdaq 100",
+          code: "^NDX",
+          currency: "USD",
+          price: 20412.33,
+          changePct: -0.31,
+          history: [20550, 20520, 20490, 20510, 20480, 20440, 20460, 20430, 20420, 20412.33]
+        },
+        {
+          nameTc: "黃金（美元／盎司）",
+          nameEn: "Gold (USD/oz)",
+          code: "GC=F",
+          currency: "USD",
+          price: 2721.4,
+          changePct: +0.65,
+          history: [2680, 2692, 2685, 2700, 2712, 2705, 2715, 2718, 2720, 2721.4]
+        }
+      ];
+
+      const tilesHtml = mockMarkets.map(m => {
+        const isUp = m.changePct >= 0;
+        const sign = isUp ? "+" : "";
+        const changeBadgeClass = isUp ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400";
+        const sparkline = renderSparklineSvg(m.history, isUp);
+        const name = lang === "en" ? m.nameEn : m.nameTc;
+
+        return `
+          <div class="p-2.5 rounded-xl border border-border/70 bg-card flex flex-col justify-between select-none">
+            <div class="flex items-start justify-between gap-1">
+              <span class="text-[11px] font-medium text-muted-foreground truncate">${name}</span>
+              <span class="text-[9px] text-muted-foreground/60 tabular-nums">${m.currency}</span>
+            </div>
+
+            <div class="flex items-baseline justify-between mt-1">
+              <span class="text-base font-bold text-foreground tabular-nums leading-none">
+                ${m.code === "GC=F" ? m.price.toFixed(1) : m.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+              <span class="text-[10.5px] font-semibold px-1.5 py-0.5 rounded ${changeBadgeClass} tabular-nums">
+                ${sign}${m.changePct.toFixed(2)}%
+              </span>
+            </div>
+
+            ${sparkline}
+
+            <div class="flex justify-between text-[8px] text-muted-foreground tabular-nums opacity-70">
+              <span>-10d</span>
+              <span>-5d</span>
+              <span>Live</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      bodyEl.innerHTML = `
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2">
+          ${tilesHtml}
+        </div>
+      `;
+    }
+
+    async function loadAiNewsCard(isManual = false) {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById("body-ainews");
+      if (!bodyEl) return;
+
+      const fallbackAiNews = [
+        { source: "HN", title: "Show HN: Open source local reasoning model with sub-second latency", time: Date.now() - 1000 * 60 * 25, url: "https://news.ycombinator.com" },
+        { source: "TC", title: "Anthropic introduces autonomous computer use capabilities in Claude 3.5 Sonnet", time: Date.now() - 1000 * 60 * 75, url: "https://techcrunch.com" },
+        { source: "VRG", title: "Google DeepMind unveils watermarking tool for AI-generated text and code", time: Date.now() - 1000 * 60 * 140, url: "https://theverge.com" },
+        { source: "HN", title: "Evaluating context window limits in modern frontier LLMs: benchmark study", time: Date.now() - 1000 * 60 * 210, url: "https://news.ycombinator.com" },
+        { source: "TC", title: "OpenAI expands enterprise customization API for proprietary enterprise databases", time: Date.now() - 1000 * 60 * 300, url: "https://techcrunch.com" },
+        { source: "VRG", title: "Meta releases open weights for multilingual speech synthesis model", time: Date.now() - 1000 * 60 * 420, url: "https://theverge.com" },
+        { source: "HN", title: "DSPy 2.5: Programming foundation models with systematic assertions", time: Date.now() - 1000 * 60 * 540, url: "https://news.ycombinator.com" },
+        { source: "TC", title: "Mistral announces new embedding and edge models optimized for devices", time: Date.now() - 1000 * 60 * 720, url: "https://techcrunch.com" }
+      ];
+
+      const rowsHtml = fallbackAiNews.map(item => {
+        let badgeColor = "bg-muted text-muted-foreground";
+        if (item.source === "HN") badgeColor = "bg-orange-500/10 text-orange-600 dark:text-orange-400 font-bold";
+        else if (item.source === "TC") badgeColor = "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold";
+        else if (item.source === "VRG") badgeColor = "bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold";
+
+        return `
+          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="h-[27px] flex items-center justify-between text-xs py-1 border-b border-border/30 last:border-0 hover:text-primary transition-colors gap-2 group">
+            <div class="flex items-center gap-1.5 min-w-0 flex-1">
+              <span class="text-[9px] px-1 py-0.5 rounded ${badgeColor} shrink-0 select-none">${item.source}</span>
+              <span class="text-[12px] text-foreground truncate group-hover:text-primary">${item.title}</span>
+            </div>
+            <span class="text-[10px] text-muted-foreground shrink-0 tabular-nums">${timeAgo(item.time, lang)}</span>
+          </a>
+        `;
+      }).join("");
+
+      bodyEl.innerHTML = `
+        <div class="max-h-[260px] overflow-y-auto thin-scroll space-y-0.5">
+          ${rowsHtml}
+        </div>
+      `;
+    }
+
+    async function loadGovNewsCard(isManual = false) {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById("body-govnews");
+      if (!bodyEl) return;
+
+      const fallbackGovNews = lang === "en" ? [
+        { title: "Transport Department enhances real-time passenger data integration on key cross-harbour corridors", time: Date.now() - 1000 * 60 * 45 },
+        { title: "Hong Kong Observatory introduces updated rainfall and coastal storm surge monitoring display", time: Date.now() - 1000 * 60 * 110 },
+        { title: "Health Bureau reminds public of seasonal influenza vaccination arrangements for high-risk groups", time: Date.now() - 1000 * 60 * 240 },
+        { title: "Inland Revenue Department issues notice on electronic tax filing services and rebate procedures", time: Date.now() - 1000 * 60 * 420 },
+        { title: "Highways Department completes safety inspection and smart sensor deployment on major flyovers", time: Date.now() - 1000 * 60 * 680 }
+      ] : [
+        { title: "運輸署優化過海主要巴士走廊實時到站數據與客量推算系統", time: Date.now() - 1000 * 60 * 45 },
+        { title: "天文台加強雷暴及風暴潮電腦預報模擬展示，提升市民防災意識", time: Date.now() - 1000 * 60 * 110 },
+        { title: "醫務衛生局提醒合資格高風險群組儘早接種季節性流感疫苗", time: Date.now() - 1000 * 60 * 240 },
+        { title: "稅務局公布最新電子稅務申報流程及數碼憑證驗證便民指引", time: Date.now() - 1000 * 60 * 420 },
+        { title: "路政署完成主要行車天橋結構安全檢測並加裝智能震動監測儀器", time: Date.now() - 1000 * 60 * 680 }
+      ];
+
+      const rowsHtml = fallbackGovNews.map(item => `
+        <div class="h-[27px] flex items-center justify-between text-xs py-1 border-b border-border/30 last:border-0 gap-2">
+          <div class="flex items-center gap-1.5 min-w-0 flex-1">
+            <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-primary/10 text-primary shrink-0 select-none">GOV</span>
+            <span class="text-[12px] text-foreground truncate">${item.title}</span>
+          </div>
+          <span class="text-[10px] text-muted-foreground shrink-0 tabular-nums">${timeAgo(item.time, lang)}</span>
+        </div>
+      `).join("");
+
+      bodyEl.innerHTML = `
+        <div class="max-h-[260px] overflow-y-auto thin-scroll space-y-0.5">
+          ${rowsHtml}
+        </div>
+      `;
+    }
+
+    const LEAGUE_CONFIG = {
+      "all": { tc: "全部聯賽", en: "Show All", short: "全部" },
+      "eng.1": { tc: "英超", en: "Premier League", short: "英超" },
+      "esp.1": { tc: "西甲", en: "La Liga", short: "西甲" },
+      "ita.1": { tc: "意甲", en: "Serie A", short: "意甲" },
+      "ger.1": { tc: "德甲", en: "Bundesliga", short: "德甲" },
+      "fra.1": { tc: "法甲", en: "Ligue 1", short: "法甲" },
+      "uefa.champions": { tc: "歐聯", en: "Champions League", short: "歐聯" },
+      "uefa.europa": { tc: "歐霸", en: "Europa League", short: "歐霸" },
+      "eng.2": { tc: "英冠", en: "Championship", short: "英冠" }
+    };
+
+    async function fetchEspnLeagueScoreboard(leagueCode, dateRangeStr) {
+      const baseUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueCode}/scoreboard`;
+      const urlWithDates = `${baseUrl}?dates=${dateRangeStr}&limit=100`;
+      const urlDefault = `${baseUrl}?limit=100`;
+
+      try {
+        let res = await fetch(urlWithDates);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        let data = await res.json();
+        let events = data.events || [];
+
+        // Fallback for simulated future environments where future fixtures aren't available yet
+        if (events.length === 0) {
+          res = await fetch(urlDefault);
+          if (res.ok) {
+            data = await res.json();
+            events = data.events || [];
+          }
+        }
+        return events.map(ev => ({ ...ev, _leagueCode: leagueCode }));
+      } catch (err) {
+        // Fallback through proxy in case of strict CORS restrictions
+        try {
+          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(urlDefault)}`;
+          const res = await fetch(proxyUrl);
+          if (!res.ok) throw new Error(`Proxy HTTP ${res.status}`);
+          const data = await res.json();
+          return (data.events || []).map(ev => ({ ...ev, _leagueCode: leagueCode }));
+        } catch (proxyErr) {
+          console.warn(`Failed to fetch league ${leagueCode}:`, proxyErr);
+          return [];
+        }
+      }
+    }
+
+    function pickNextRound(events, nowMs = Date.now()) {
+      // 1. Keep fixtures from now - 3h onward
+      const minTime = nowMs - 3 * 3600 * 1000;
+      let valid = events.filter(e => {
+        const t = new Date(e.date).getTime();
+        return !isNaN(t) && t >= minTime;
+      });
+
+      // API vs System Clock mismatch fallback (Simulated environment)
+      if (valid.length === 0 && events.length > 0) {
+        const pending = events.filter(e => e.status?.type?.state === 'pre' || e.status?.type?.state === 'in');
+        valid = pending.length > 0 ? pending : events;
+      }
+
+      if (valid.length === 0) return [];
+
+      // 2. Sort ascending
+      valid.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+      // 3. Take a window of 72h from the first match
+      const firstTime = new Date(valid[0].date).getTime();
+      let windowEnd = firstTime + 72 * 3600 * 1000;
+      let matches = valid.filter(e => new Date(e.date).getTime() <= windowEnd);
+
+      // 4. Extend by 48h (<=3 tries) until >= 6 matches
+      let tries = 0;
+      while (matches.length < 6 && tries < 3) {
+        windowEnd += 48 * 3600 * 1000;
+        matches = valid.filter(e => new Date(e.date).getTime() <= windowEnd);
+        tries++;
+      }
+
+      // 5. Cap to 18 matches max
+      return matches.slice(0, 18);
+    }
+
+    async function loadFootballCard(isManual = false) {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById("body-football");
+      if (!bodyEl) return;
+
+      const activeLeague = currentSettings.league || "all";
+      const leagueSelectEl = document.getElementById("football-league-filter");
+      if (leagueSelectEl && leagueSelectEl.value !== activeLeague) {
+        leagueSelectEl.value = activeLeague;
+      }
+
+      // Date range: 1 day ago through 30 days ahead
+      const now = new Date();
+      const start = new Date(now.getTime() - 24 * 3600 * 1000);
+      const end = new Date(now.getTime() + 30 * 24 * 3600 * 1000);
+      const toYmd = (d) => d.toISOString().slice(0, 10).replace(/-/g, "");
+      const dateRangeStr = `${toYmd(start)}-${toYmd(end)}`;
+
+      const targetLeagues = activeLeague === "all"
+        ? ["eng.1", "esp.1", "ita.1", "ger.1", "fra.1", "uefa.champions", "uefa.europa", "eng.2"]
+        : [activeLeague];
+
+      try {
+        const fetchPromises = targetLeagues.map(code => fetchEspnLeagueScoreboard(code, dateRangeStr));
+        const results = await Promise.all(fetchPromises);
+        const allEvents = results.flat();
+
+        const pickedMatches = pickNextRound(allEvents, now.getTime());
+
+        if (pickedMatches.length === 0) {
+          bodyEl.innerHTML = `
+            <div class="text-center py-6 text-xs text-muted-foreground">
+              ${lang === "en" ? "No fixtures scheduled in the next 60 days" : "未來 60 日內暫無賽程"}
+            </div>
+          `;
+          return;
+        }
+
+        // Group matches by HK calendar day
+        const weekDaysTc = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+        const weekDaysEn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const monthsEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        const groups = {};
+        pickedMatches.forEach(match => {
+          const mDate = new Date(match.date);
+          const monthNum = mDate.getMonth() + 1;
+          const dayNum = mDate.getDate();
+          const dayKey = lang === "en"
+            ? `${weekDaysEn[mDate.getDay()]}, ${dayNum} ${monthsEn[mDate.getMonth()]}`
+            : `${monthNum}月${dayNum}日 ${weekDaysTc[mDate.getDay()]}`;
+
+          if (!groups[dayKey]) groups[dayKey] = [];
+          groups[dayKey].push(match);
+        });
+
+        const daySectionsHtml = Object.entries(groups).map(([dayTitle, matches]) => {
+          const matchRows = matches.map(m => {
+            const comp = (m.competitions && m.competitions[0]) || {};
+            const competitors = comp.competitors || [];
+            const homeComp = competitors.find(c => c.homeAway === "home") || competitors[0] || {};
+            const awayComp = competitors.find(c => c.homeAway === "away") || competitors[1] || {};
+
+            const homeRaw = homeComp.team?.displayName || homeComp.team?.name || "Home";
+            const awayRaw = awayComp.team?.displayName || awayComp.team?.name || "Away";
+            const homeName = lang === "en" ? homeRaw : clubTc(homeRaw);
+            const awayName = lang === "en" ? awayRaw : clubTc(awayRaw);
+
+            const homeLogo = homeComp.team?.logo || "";
+            const awayLogo = awayComp.team?.logo || "";
+
+            const homeScore = homeComp.score !== undefined ? homeComp.score : "";
+            const awayScore = awayComp.score !== undefined ? awayComp.score : "";
+
+            const statusObj = comp.status?.type || {};
+            const state = statusObj.state || "pre"; // pre, in, post
+            const statusDetail = statusObj.shortDetail || statusObj.detail || statusObj.description || "";
+            const isLive = state === "in";
+            const isPost = state === "post";
+
+            const kickoffTimeStr = formatHKTime(new Date(m.date));
+            const leagueInfo = LEAGUE_CONFIG[m._leagueCode] || { tc: "足球", en: "Soccer", short: "球賽" };
+            const leagueBadge = (activeLeague === "all" || targetLeagues.length > 1) ? `
+              <span class="text-[8.5px] font-bold px-1 py-0.5 rounded bg-muted text-muted-foreground shrink-0 select-none">
+                ${lang === "en" ? leagueInfo.short : leagueInfo.tc}
+              </span>
+            ` : "";
+
+            // Status or score center block
+            let scoreCenterHtml = `<span class="text-muted-foreground text-[10.5px] font-medium px-1">vs</span>`;
+            if (isLive) {
+              scoreCenterHtml = `
+                <div class="flex items-center gap-1 shrink-0 px-1">
+                  <span class="px-1.5 py-0.2 rounded bg-rose-500 text-white font-bold text-[10px] tabular-nums animate-pulse">
+                    ${homeScore} - ${awayScore}
+                  </span>
+                  <span class="text-[8.5px] text-rose-500 font-bold animate-pulse">LIVE ${statusDetail}</span>
+                </div>
+              `;
+            } else if (isPost) {
+              scoreCenterHtml = `
+                <div class="flex items-center gap-1 shrink-0 px-1 font-bold text-foreground tabular-nums text-[11px]">
+                  <span>${homeScore} - ${awayScore}</span>
+                  <span class="text-[8.5px] text-muted-foreground font-medium">FT</span>
+                </div>
+              `;
+            }
+
+            return `
+              <div class="h-[30px] flex items-center justify-between text-xs py-1 border-b border-border/20 last:border-0 gap-1.5 px-1 hover:bg-muted/30 rounded transition-colors" title="${homeRaw} vs ${awayRaw} · ${statusDetail}">
+                <div class="flex items-center gap-1 shrink-0">
+                  ${leagueBadge}
+                  <span class="text-[10.5px] font-medium text-muted-foreground tabular-nums">${kickoffTimeStr}</span>
+                </div>
+
+                <div class="flex items-center justify-center gap-1.5 flex-1 min-w-0">
+                  <div class="flex items-center gap-1 min-w-0 flex-1 justify-end text-right">
+                    <span class="text-foreground font-semibold truncate text-[11.5px]">${homeName}</span>
+                    ${homeLogo ? `<img src="${homeLogo}" alt="" class="w-3.5 h-3.5 object-contain shrink-0" onerror="this.style.display='none'"/>` : ""}
+                  </div>
+
+                  ${scoreCenterHtml}
+
+                  <div class="flex items-center gap-1 min-w-0 flex-1 justify-start text-left">
+                    ${awayLogo ? `<img src="${awayLogo}" alt="" class="w-3.5 h-3.5 object-contain shrink-0" onerror="this.style.display='none'"/>` : ""}
+                    <span class="text-foreground font-semibold truncate text-[11.5px]">${awayName}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join("");
+
+          return `
+            <div class="space-y-1">
+              <div class="text-[10.5px] font-bold text-muted-foreground border-b border-border/40 pb-0.5 select-none">
+                ${dayTitle}
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-0.5">
+                ${matchRows}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        bodyEl.innerHTML = `<div class="space-y-2.5 max-h-[340px] overflow-y-auto thin-scroll pr-0.5">${daySectionsHtml}</div>`;
+      } catch (err) {
+        console.error("Football fetch error:", err);
+        bodyEl.innerHTML = `
+          <div class="text-center py-4 space-y-1.5">
+            <div class="text-xs text-destructive font-medium">${t("failConnect", lang)}</div>
+            <button onclick="loadFootballCard(true)" class="text-[10.5px] px-2 py-0.5 border border-border rounded text-foreground hover:bg-muted font-medium">${t("retry", lang)}</button>
+          </div>
+        `;
+      }
+    }
+
+    function onFootballLeagueChange(val) {
+      currentSettings.league = val;
+      saveSettings(currentSettings);
+      const settingsSelect = document.getElementById("settings-league-select");
+      if (settingsSelect) settingsSelect.value = val;
+      loadFootballCard(true);
+    }
+
+    function getTodayWordIndex() {
+      const now = new Date();
+      // HK timezone start of year
+      const startOfYear = new Date(Date.UTC(now.getFullYear(), 0, 1));
+      const dayOfYear = Math.floor((now.getTime() - startOfYear.getTime()) / 86400000) + 1;
+      return (dayOfYear - 1) % WORDS_DATASET.length;
+    }
+
+    function renderDailyWordCard() {
+      const lang = currentSettings.lang;
+      const bodyEl = document.getElementById("body-word");
+      if (!bodyEl) return;
+
+      const baseIdx = getTodayWordIndex();
+      let activeIdx = (baseIdx + wordIndexOffset) % WORDS_DATASET.length;
+      if (activeIdx < 0) activeIdx += WORDS_DATASET.length;
+
+      const item = WORDS_DATASET[activeIdx];
+      const isOffset = wordIndexOffset !== 0;
+      const isPinned = currentSettings.order[0] === "word";
+
+      bodyEl.innerHTML = `
+        <!-- Word Header and Navigation -->
+        <div class="flex items-baseline justify-between border-b border-border/40 pb-2">
+          <div class="flex items-baseline gap-2 flex-wrap">
+            <h2 class="text-2xl font-bold tracking-tight text-foreground">${item.word}</h2>
+            <a href="https://dictionary.cambridge.org/dictionary/english-chinese-traditional/${item.word}" target="_blank" rel="noopener noreferrer" class="text-xs text-primary hover:underline tabular-nums" title="劍橋詞典（英中）/ Cambridge Dictionary">
+              ${item.ipa}
+            </a>
+            <span class="text-[9.5px] font-semibold px-1 rounded bg-muted text-muted-foreground">${item.pos}</span>
+          </div>
+
+          <div class="flex items-center gap-1 shrink-0">
+            ${isOffset ? `<span class="text-[10px] text-muted-foreground tabular-nums mr-1">第 ${activeIdx + 1}／${WORDS_DATASET.length} 字</span>` : ""}
+            <button onclick="navigateDailyWord(-1)" class="w-6 h-6 rounded flex items-center justify-center border border-border text-foreground hover:bg-muted" title="上一個 / Previous">‹</button>
+            <button onclick="navigateDailyWord(0)" class="px-2 h-6 text-xs font-medium rounded border border-border text-foreground hover:bg-muted ${!isOffset ? 'opacity-40 pointer-events-none' : ''}">
+              ${t("today", lang)}
+            </button>
+            <button onclick="navigateDailyWord(1)" class="w-6 h-6 rounded flex items-center justify-center border border-border text-foreground hover:bg-muted" title="下一個 / Next">›</button>
+            <button onclick="togglePinWordCard()" class="p-1 h-6 rounded border border-border hover:bg-muted transition-colors ${isPinned ? 'text-primary bg-primary/10' : 'text-muted-foreground'}" title="${isPinned ? t('pinned', lang) : t('pinToTop', lang)}">
+              <svg class="w-3.5 h-3.5" fill="${isPinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Definition line -->
+        <div class="text-xs text-foreground font-medium my-1.5 leading-relaxed">
+          <span class="font-bold text-primary">${item.tcDef}</span> — <span class="text-muted-foreground">${item.enDef}</span>
+        </div>
+
+        <!-- 4-column breakdown grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 my-2 text-xs">
+          <div class="p-2 rounded-lg bg-muted/40 border border-border/40">
+            <span class="text-[10px] font-semibold text-muted-foreground block mb-0.5">${t("collocations", lang)}</span>
+            <span class="text-[11.5px] text-foreground font-medium">${item.col}</span>
+          </div>
+          <div class="p-2 rounded-lg bg-muted/40 border border-border/40">
+            <span class="text-[10px] font-semibold text-muted-foreground block mb-0.5">${t("synonyms", lang)}</span>
+            <span class="text-[11.5px] text-foreground font-medium">${item.syn}</span>
+          </div>
+          <div class="p-2 rounded-lg bg-muted/40 border border-border/40">
+            <span class="text-[10px] font-semibold text-muted-foreground block mb-0.5">${t("antonyms", lang)}</span>
+            <span class="text-[11.5px] text-foreground font-medium">${item.ant}</span>
+          </div>
+          <div class="p-2 rounded-lg bg-muted/40 border border-border/40">
+            <span class="text-[10px] font-semibold text-muted-foreground block mb-0.5">${t("wordFamily", lang)}</span>
+            <span class="text-[11.5px] text-foreground font-medium">${item.family}</span>
+          </div>
+        </div>
+
+        <!-- Example blockquote -->
+        <blockquote class="border-l-[3px] border-primary/60 bg-muted/30 p-2.5 rounded-r-lg text-xs italic text-foreground leading-relaxed">
+          "${item.exEn}"
+          <span class="not-italic block text-muted-foreground text-[11px] mt-0.5">${item.exTc}</span>
+        </blockquote>
+      `;
+    }
+
+    function navigateDailyWord(direction) {
+      if (direction === 0) wordIndexOffset = 0;
+      else wordIndexOffset += direction;
+      renderDailyWordCard();
+    }
+
+    function togglePinWordCard() {
+      const idx = currentSettings.order.indexOf("word");
+      if (idx > 0) {
+        currentSettings.order.splice(idx, 1);
+        currentSettings.order.unshift("word");
+      } else if (idx === 0) {
+        // Unpin to end or standard spot
+        currentSettings.order.splice(idx, 1);
+        currentSettings.order.push("word");
+      }
+      saveSettings(currentSettings);
+      renderAllCards();
+    }
+
+    const CARD_METADATA = {
+      weather: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-3",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>`,
+        getTitle: (l) => t("weatherTitle", l),
+        source: "資料：香港天文台",
+        loader: loadWeatherCard
+      },
+      forecast: {
+        spanSm: "sm:col-span-2",
+        spanLg: "lg:col-span-6",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`,
+        getTitle: (l) => t("forecastTitle", l),
+        source: "HK Observatory",
+        loader: loadForecastCard
+      },
+      busCustom1: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-4",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-8 4h8m-9 7l1-3h12l1 3m-14-3V5a2 2 0 012-2h10a2 2 0 012 2v12a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></svg>`,
+        getTitle: (l) => {
+          return `
+            <a href="https://loohpjames.com/hkkmbcal/" target="_blank" class="hover:underline text-foreground" title="九巴路線月曆 / KMB route calendar">巴士</a>到站（<a href="https://gemini.google.com/share/6cf11d273805" target="_blank" class="hover:underline text-primary" title="路線規劃分享 / Route plan shared">自訂</a> 1）
+          `;
+        },
+        autoNote: true,
+        isBus: true,
+        loader: (m) => loadBusCard("busCustom1", m)
+      },
+      busCustom2: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-4",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-8 4h8m-9 7l1-3h12l1 3m-14-3V5a2 2 0 012-2h10a2 2 0 012 2v12a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></svg>`,
+        getTitle: (l) => {
+          return `
+            巴士到站（<a href="https://hkbus.app/zh" target="_blank" class="hover:underline text-primary" title="巴士 App / HK Bus App">自訂 2</a>）
+          `;
+        },
+        autoNote: true,
+        isBus: true,
+        loader: (m) => loadBusCard("busCustom2", m)
+      },
+      busCustom3: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-4",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-8 4h8m-9 7l1-3h12l1 3m-14-3V5a2 2 0 012-2h10a2 2 0 012 2v12a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></svg>`,
+        getTitle: (l) => t("busCustom3", l),
+        autoNote: true,
+        isBus: true,
+        loader: (m) => loadBusCard("busCustom3", m)
+      },
+      busCustom4: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-4",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-8 4h8m-9 7l1-3h12l1 3m-14-3V5a2 2 0 012-2h10a2 2 0 012 2v12a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></svg>`,
+        getTitle: (l) => t("busCustom4", l),
+        autoNote: true,
+        isBus: true,
+        loader: (m) => loadBusCard("busCustom4", m)
+      },
+      busFortune: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-4",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-8 4h8m-9 7l1-3h12l1 3m-14-3V5a2 2 0 012-2h10a2 2 0 012 2v12a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></svg>`,
+        getTitle: (l) => t("busFortune", l),
+        autoNote: true,
+        isBus: true,
+        loader: (m) => loadBusCard("busFortune", m)
+      },
+      busTMR: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-4",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-8 4h8m-9 7l1-3h12l1 3m-14-3V5a2 2 0 012-2h10a2 2 0 012 2v12a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></svg>`,
+        getTitle: (l) => t("busTMR", l),
+        autoNote: true,
+        isBus: true,
+        loader: (m) => loadBusCard("busTMR", m)
+      },
+      busKlnBay: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-4",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-8 4h8m-9 7l1-3h12l1 3m-14-3V5a2 2 0 012-2h10a2 2 0 012 2v12a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></svg>`,
+        getTitle: (l) => t("busKlnBay", l),
+        autoNote: true,
+        isBus: true,
+        loader: (m) => loadBusCard("busKlnBay", m)
+      },
+      holidays: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-3",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`,
+        getTitle: (l) => t("holidaysTitle", l),
+        source: "date.nager.at",
+        loader: loadHolidaysCard
+      },
+      sun: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-4",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>`,
+        getTitle: (l) => t("sunTitle", l),
+        source: "NOAA Algorithm",
+        loader: loadSunCard
+      },
+      ainews: {
+        spanSm: "sm:col-span-2",
+        spanLg: "lg:col-span-8",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m16-6h2m-2 6h2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>`,
+        getTitle: (l) => t("ainewsTitle", l),
+        source: "HN · TC · Verge",
+        loader: loadAiNewsCard
+      },
+      govnews: {
+        spanSm: "sm:col-span-2",
+        spanLg: "lg:col-span-8",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>`,
+        getTitle: (l) => t("govnewsTitle", l),
+        source: "info.gov.hk",
+        loader: loadGovNewsCard
+      },
+      fx: {
+        spanSm: "sm:col-span-1",
+        spanLg: "lg:col-span-4",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>`,
+        getTitle: (l) => t("fxTitle", l),
+        source: "ER-API",
+        loader: loadForexCard
+      },
+      markets: {
+        spanSm: "sm:col-span-2",
+        spanLg: "lg:col-span-12",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>`,
+        getTitle: (l) => t("marketsTitle", l),
+        source: (l) => t("marketsTenDays", l),
+        loader: loadMarketsCard
+      },
+      football: {
+        spanSm: "sm:col-span-2",
+        spanLg: "lg:col-span-12",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>`,
+        getTitle: (l) => {
+          return `
+            <a href="https://m.footylogic.com/zh" target="_blank" class="hover:underline text-foreground" title="賽程網站 / Fixtures site">${t('footballTitle', l)}</a>
+          `;
+        },
+        headerEnd: `
+          <select id="football-league-filter" onchange="onFootballLeagueChange(this.value)" class="h-6 text-[10.5px] px-1 py-0 bg-muted/70 hover:bg-muted border border-border/80 rounded-md text-foreground outline-none cursor-pointer">
+            <option value="all">全部 · Show All</option>
+            <option value="eng.1">英超 · Premier League</option>
+            <option value="esp.1">西甲 · La Liga</option>
+            <option value="ita.1">意甲 · Serie A</option>
+            <option value="ger.1">德甲 · Bundesliga</option>
+            <option value="fra.1">法甲 · Ligue 1</option>
+            <option value="uefa.champions">歐聯 · Champions League</option>
+            <option value="uefa.europa">歐霸 · Europa League</option>
+            <option value="eng.2">英冠 · Championship</option>
+          </select>
+        `,
+        source: "ESPN API",
+        loader: loadFootballCard
+      },
+      word: {
+        spanSm: "sm:col-span-2",
+        spanLg: "lg:col-span-12",
+        icon: `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>`,
+        getTitle: (l) => t("wordTitle", l),
+        source: "Cambridge Dictionary",
+        loader: renderDailyWordCard
+      }
+    };
+
+    function renderAllCards() {
+      const grid = document.getElementById("cards-grid");
+      if (!grid) return;
+
+      const lang = currentSettings.lang;
+      let html = "";
+
+      currentSettings.order.forEach(cardId => {
+        if (currentSettings.hidden.includes(cardId)) return;
+        const meta = CARD_METADATA[cardId];
+        if (!meta) return;
+
+        let headerExtra = "";
+        if (meta.isBus) {
+          const cfg = currentSettings.bus[cardId];
+          if (cfg && cfg.routes) {
+            headerExtra = `
+              <div class="flex items-center gap-1 shrink-0 ml-1">
+                ${cfg.routes.slice(0, 3).map(r => `
+                  <span class="text-[9px] font-semibold px-1 py-0.5 rounded bg-muted text-muted-foreground">${r}</span>
+                `).join("")}
+              </div>
+            `;
+          }
+        }
+
+        const onGearCall = meta.isBus ? `openSettingsForBus('${cardId}')` : null;
+        const sourceNoteStr = typeof meta.source === "function" ? meta.source(lang) : (meta.source || "");
+
+        html += `
+          <div class="col-span-1 ${meta.spanSm} ${meta.spanLg} flex flex-col h-full">
+            ${createCardFrame({
+              id: cardId,
+              title: typeof meta.getTitle === "function" ? meta.getTitle(lang) : meta.getTitle,
+              iconSvg: meta.icon,
+              headerExtra: headerExtra,
+              headerEnd: meta.headerEnd || "",
+              onGear: onGearCall,
+              autoNote: meta.autoNote,
+              sourceNote: sourceNoteStr
+            })}
+          </div>
+        `;
+      });
+
+      grid.innerHTML = html;
+
+      // Trigger asynchronous data loaders
+      currentSettings.order.forEach(cardId => {
+        if (!currentSettings.hidden.includes(cardId)) {
+          const meta = CARD_METADATA[cardId];
+          if (meta && typeof meta.loader === "function") {
+            meta.loader();
+          }
+        }
+      });
+    }
+
+    function refreshSingleCard(cardId) {
+      const icon = document.getElementById(`refresh-icon-${cardId}`);
+      if (icon) icon.classList.add("spin-active");
+      
+      const meta = CARD_METADATA[cardId];
+      if (meta && typeof meta.loader === "function") {
+        Promise.resolve(meta.loader(true)).finally(() => {
+          setTimeout(() => {
+            if (icon) icon.classList.remove("spin-active");
+            const updatedEl = document.getElementById(`card-updated-${cardId}`);
+            if (updatedEl) {
+              updatedEl.textContent = `${t("updatedAt", currentSettings.lang)} ${formatHKTime(new Date())}`;
+            }
+          }, 800);
+        });
+      }
+    }
+
+    function updateAllCards() {
+      const icon = document.getElementById("icon-update-all");
+      if (icon) icon.classList.add("spin-active");
+
+      const promises = currentSettings.order.map(cardId => {
+        if (!currentSettings.hidden.includes(cardId)) {
+          const meta = CARD_METADATA[cardId];
+          if (meta && typeof meta.loader === "function") {
+            return Promise.resolve(meta.loader(true));
+          }
+        }
+        return Promise.resolve();
+      });
+
+      Promise.all(promises).finally(() => {
+        setTimeout(() => {
+          if (icon) icon.classList.remove("spin-active");
+        }, 1200);
+      });
+    }
+
+    function populateSettingsModal() {
+      const lang = currentSettings.lang;
+      
+      // Update modal text labels
+      document.getElementById("settings-title").innerHTML = `
+        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+        </svg>
+        ${lang === "en" ? "Dashboard Settings" : "儀表板設定"}
+      `;
+      document.getElementById("lbl-setting-lang").textContent = lang === "en" ? "Interface Language" : "介面語言";
+      document.getElementById("lbl-setting-cards").textContent = lang === "en" ? "Cards & Order" : "卡片顯示及排序";
+      document.getElementById("lbl-setting-bus").textContent = lang === "en" ? "Bus Cards Setup" : "巴士卡設定";
+      document.getElementById("lbl-setting-league").textContent = lang === "en" ? "Football League" : "足球聯賽";
+      document.getElementById("txt-reset-all").textContent = lang === "en" ? "Reset all settings" : "重設全部設定";
+
+      // 1. Language buttons
+      document.querySelectorAll(".lang-opt-btn").forEach(btn => {
+        const opt = btn.getAttribute("data-lang");
+        if (opt === lang) {
+          btn.className = "lang-opt-btn py-1.5 font-medium rounded-lg text-center transition-all bg-card text-foreground shadow-sm";
+        } else {
+          btn.className = "lang-opt-btn py-1.5 font-medium rounded-lg text-center transition-all text-muted-foreground hover:text-foreground";
+        }
+      });
+
+      // 2. Card Ordering and Visibility rows
+      const cardsListEl = document.getElementById("settings-cards-list");
+      cardsListEl.innerHTML = currentSettings.order.map((cardId, index) => {
+        const meta = CARD_METADATA[cardId];
+        const isHidden = currentSettings.hidden.includes(cardId);
+        const cardTitle = typeof meta.getTitle === "function" ? meta.getTitle(lang) : meta.getTitle;
+        // strip HTML tags for clean label
+        const plainTitle = cardTitle.replace(/<[^>]*>?/gm, "").trim();
+
+        return `
+          <div class="flex items-center justify-between p-1.5 rounded-lg border border-border/40 bg-card text-xs">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-4 text-center font-semibold text-muted-foreground text-[10px] tabular-nums">${index + 1}</span>
+              <span class="font-medium text-foreground truncate">${plainTitle}</span>
+            </div>
+            
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="moveCardOrder(${index}, -1)" ${index === 0 ? 'disabled class="opacity-20"' : 'class="p-1 rounded hover:bg-muted text-foreground"'} title="向上移 / Move up">↑</button>
+              <button onclick="moveCardOrder(${index}, 1)" ${index === currentSettings.order.length - 1 ? 'disabled class="opacity-20"' : 'class="p-1 rounded hover:bg-muted text-foreground"'} title="向下移 / Move down">↓</button>
+              <button onclick="toggleCardVisibility('${cardId}')" class="px-2 py-0.5 text-[10px] font-semibold rounded-md border ${isHidden ? 'bg-muted text-muted-foreground border-border' : 'bg-primary/10 text-primary border-primary/30'}">
+                ${isHidden ? (lang === 'en' ? 'Hidden' : '隱藏') : (lang === 'en' ? 'Visible' : '顯示')}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // 3. Bus Slot Editors
+      const busContainer = document.getElementById("bus-cards-editors");
+      const busSlots = ["busCustom1", "busCustom2", "busCustom3", "busCustom4", "busFortune", "busTMR", "busKlnBay"];
+      
+      busContainer.innerHTML = busSlots.map(slot => {
+        const conf = currentSettings.bus[slot];
+        const plainSlotName = CARD_METADATA[slot].getTitle(lang).replace(/<[^>]*>?/gm, "").trim();
+        const routesStr = conf.routes.join(", ");
+
+        const stopsHtml = conf.stops.map(s => `
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-muted text-foreground border border-border/60" title="${s.id}">
+            <span>${s.label}</span>
+            <button type="button" onclick="removeStopFromBusSlot('${slot}', '${s.id}')" class="text-muted-foreground hover:text-destructive text-[11px] leading-none">×</button>
+          </span>
+        `).join("");
+
+        return `
+          <div id="bus-editor-${slot}" class="p-2.5 rounded-xl border border-border/70 bg-card space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-foreground text-xs">${plainSlotName}</span>
+              <div class="flex items-center gap-1">
+                <span class="text-[10px] text-muted-foreground">顯示班次:</span>
+                <select onchange="updateBusShowCount('${slot}', this.value)" class="bg-background border border-border text-foreground rounded text-[11px] px-1 py-0.5 outline-none">
+                  <option value="1" ${conf.showCount === 1 ? 'selected' : ''}>1</option>
+                  <option value="2" ${conf.showCount === 2 ? 'selected' : ''}>2</option>
+                  <option value="3" ${conf.showCount === 3 ? 'selected' : ''}>3</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Route Input -->
+            <div class="flex items-center gap-1.5">
+              <input type="text" id="input-routes-${slot}" value="${routesStr}" placeholder="60M, 60X, 61X..." class="flex-1 bg-background border border-border text-foreground rounded-lg px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-primary" onkeydown="if(event.key==='Enter') commitBusRoutes('${slot}')" onblur="commitBusRoutes('${slot}')"/>
+              <button onclick="commitBusRoutes('${slot}')" class="px-2 py-1 bg-primary text-white font-medium rounded-lg text-xs hover:bg-primary/90">確定</button>
+            </div>
+
+            <!-- Stop Search Input -->
+            <div class="relative">
+              <input type="text" id="search-stop-${slot}" placeholder="搜尋九巴站名添加（例如：屯門、紅磡...）" class="w-full bg-background border border-border text-foreground rounded-lg px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-primary" oninput="handleStopSearchInput('${slot}', this.value)"/>
+              <div id="dropdown-stop-${slot}" class="absolute left-0 right-0 top-full mt-1 bg-popover border border-border rounded-lg shadow-xl z-20 hidden max-h-36 overflow-y-auto thin-scroll"></div>
+            </div>
+
+            <!-- Selected Stops Chips -->
+            <div class="flex flex-wrap gap-1 pt-0.5">
+              ${stopsHtml}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // 4. League selector
+      const leagueSelect = document.getElementById("settings-league-select");
+      if (leagueSelect) leagueSelect.value = currentSettings.league || "all";
+    }
+
+    function moveCardOrder(index, delta) {
+      const target = index + delta;
+      if (target < 0 || target >= currentSettings.order.length) return;
+      const tmp = currentSettings.order[index];
+      currentSettings.order[index] = currentSettings.order[target];
+      currentSettings.order[target] = tmp;
+      saveSettings(currentSettings);
+      populateSettingsModal();
+      renderAllCards();
+    }
+
+    function toggleCardVisibility(cardId) {
+      if (currentSettings.hidden.includes(cardId)) {
+        currentSettings.hidden = currentSettings.hidden.filter(id => id !== cardId);
+      } else {
+        currentSettings.hidden.push(cardId);
+      }
+      saveSettings(currentSettings);
+      populateSettingsModal();
+      renderAllCards();
+    }
+
+    function updateBusShowCount(slot, val) {
+      const num = parseInt(val, 10);
+      if ([1, 2, 3].includes(num)) {
+        currentSettings.bus[slot].showCount = num;
+        saveSettings(currentSettings);
+        loadBusCard(slot);
+      }
+    }
+
+    function commitBusRoutes(slot) {
+      const input = document.getElementById(`input-routes-${slot}`);
+      if (!input) return;
+      const raw = input.value;
+      const split = raw.split(/[，,、\s]+/).filter(Boolean).map(r => r.toUpperCase());
+      const dedupe = [...new Set(split)].slice(0, 12);
+      currentSettings.bus[slot].routes = dedupe;
+      saveSettings(currentSettings);
+      loadBusCard(slot);
+    }
+
+    function removeStopFromBusSlot(slot, stopId) {
+      currentSettings.bus[slot].stops = currentSettings.bus[slot].stops.filter(s => s.id !== stopId);
+      saveSettings(currentSettings);
+      populateSettingsModal();
+      loadBusCard(slot);
+    }
+
+    async function handleStopSearchInput(slot, query) {
+      const dropdown = document.getElementById(`dropdown-stop-${slot}`);
+      if (!dropdown) return;
+      if (!query || query.trim().length === 0) {
+        dropdown.classList.add("hidden");
+        return;
+      }
+
+      clearTimeout(stopSearchDebounceTimer);
+      stopSearchDebounceTimer = setTimeout(async () => {
+        try {
+          if (!cachedKmbStops) {
+            const res = await fetch("https://data.etabus.gov.hk/v1/transport/kmb/stop");
+            const json = await res.json();
+            cachedKmbStops = json.data || [];
+          }
+
+          const q = query.toLowerCase().trim();
+          const hits = cachedKmbStops.filter(s => {
+            const nameTc = (s.name_tc || "").toLowerCase();
+            const nameEn = (s.name_en || "").toLowerCase();
+            return nameTc.includes(q) || nameEn.includes(q);
+          }).slice(0, 12);
+
+          if (hits.length === 0) {
+            dropdown.innerHTML = `<div class="p-2 text-muted-foreground text-center">找不到相符車站</div>`;
+            dropdown.classList.remove("hidden");
+            return;
+          }
+
+          dropdown.innerHTML = hits.map(hit => {
+            const cleanLabel = (hit.name_tc || "").split("(")[0].split("（")[0].trim() || hit.name_en;
+            return `
+              <div onclick="addStopToBusSlot('${slot}', '${hit.stop}', '${cleanLabel.replace(/'/g, "\\'")}')" class="p-2 hover:bg-muted cursor-pointer flex items-center justify-between border-b border-border/40 last:border-0">
+                <span class="text-foreground font-medium">${hit.name_tc} <span class="text-muted-foreground text-[10px]">(${hit.name_en})</span></span>
+                <span class="text-[9px] text-muted-foreground tabular-nums">${hit.stop.slice(0, 6)}...</span>
+              </div>
+            `;
+          }).join("");
+
+          dropdown.classList.remove("hidden");
+        } catch(e) {
+          dropdown.classList.add("hidden");
+        }
+      }, 350);
+    }
+
+    function addStopToBusSlot(slot, stopId, label) {
+      const conf = currentSettings.bus[slot];
+      if (conf.stops.length >= 6) {
+        return;
+      }
+      if (conf.stops.some(s => s.id === stopId)) {
+        return;
+      }
+      conf.stops.push({ id: stopId, label: label });
+      saveSettings(currentSettings);
+      
+      const dropdown = document.getElementById(`dropdown-stop-${slot}`);
+      if (dropdown) dropdown.classList.add("hidden");
+      const searchInput = document.getElementById(`search-stop-${slot}`);
+      if (searchInput) searchInput.value = "";
+
+      populateSettingsModal();
+      loadBusCard(slot);
+    }
+
+    function openSettingsForBus(slot) {
+      populateSettingsModal();
+      const modal = document.getElementById("settings-dialog");
+      if (modal) modal.classList.remove("hidden");
+      
+      setTimeout(() => {
+        const el = document.getElementById(`bus-editor-${slot}`);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      // 1. Load settings and setup clock
+      currentSettings = loadSettings();
+      startClockTicker();
+      setupRefreshTimers();
+
+      // Update lang text badge
+      const langBadge = document.getElementById("txt-lang-badge");
+      if (langBadge) langBadge.textContent = currentSettings.lang === "en" ? "中" : "EN";
+
+      // 2. Hide initial skeleton and show real cards grid
+      setTimeout(() => {
+        const skeleton = document.getElementById("skeleton-grid");
+        const grid = document.getElementById("cards-grid");
+        if (skeleton) skeleton.classList.add("hidden");
+        if (grid) grid.classList.remove("hidden");
+        renderAllCards();
+      }, 50);
+
+      // 3. Header Action Buttons
+      document.getElementById("btn-update-all")?.addEventListener("click", updateAllCards);
+
+      document.getElementById("btn-lang")?.addEventListener("click", () => {
+        currentSettings.lang = currentSettings.lang === "tc" ? "en" : "tc";
+        saveSettings(currentSettings);
+        if (langBadge) langBadge.textContent = currentSettings.lang === "en" ? "中" : "EN";
+        const updateAllTxt = document.getElementById("txt-update-all");
+        if (updateAllTxt) updateAllTxt.textContent = t("updateAll", currentSettings.lang);
+        document.getElementById("hk-date").textContent = formatHKDate(new Date(), currentSettings.lang);
+        renderAllCards();
+      });
+
+      document.getElementById("btn-palette")?.addEventListener("click", () => {
+        const currentAccent = document.documentElement.getAttribute("data-accent");
+        const next = currentAccent === "purple" ? "default" : "purple";
+        if (next === "purple") {
+          document.documentElement.setAttribute("data-accent", "purple");
+          localStorage.setItem("hk-dashboard-accent", "purple");
+        } else {
+          document.documentElement.removeAttribute("data-accent");
+          localStorage.setItem("hk-dashboard-accent", "default");
+        }
+      });
+
+      document.getElementById("btn-theme")?.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("hk-dashboard-theme", isDark ? "dark" : "light");
+      });
+
+      document.getElementById("btn-settings")?.addEventListener("click", () => {
+        populateSettingsModal();
+        document.getElementById("settings-dialog")?.classList.remove("hidden");
+      });
+
+      document.getElementById("btn-close-settings")?.addEventListener("click", () => {
+        document.getElementById("settings-dialog")?.classList.add("hidden");
+      });
+
+      // Close dropdowns on outside click
+      document.addEventListener("mousedown", (e) => {
+        const modal = document.getElementById("settings-dialog");
+        if (modal && e.target === modal) {
+          modal.classList.add("hidden");
+        }
+        document.querySelectorAll("[id^='dropdown-stop-']").forEach(dd => {
+          if (!dd.contains(e.target) && !e.target.closest("input")) {
+            dd.classList.add("hidden");
+          }
+        });
+      });
+
+      // Settings Modal Language Switch
+      document.querySelectorAll(".lang-opt-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const l = btn.getAttribute("data-lang");
+          if (l && l !== currentSettings.lang) {
+            currentSettings.lang = l;
+            saveSettings(currentSettings);
+            if (langBadge) langBadge.textContent = currentSettings.lang === "en" ? "中" : "EN";
+            populateSettingsModal();
+            renderAllCards();
+          }
+        });
+      });
+
+      // Football League selection change
+      document.getElementById("settings-league-select")?.addEventListener("change", (e) => {
+        currentSettings.league = e.target.value;
+        saveSettings(currentSettings);
+        const inCardSelect = document.getElementById("football-league-filter");
+        if (inCardSelect) inCardSelect.value = e.target.value;
+        loadFootballCard(true);
+      });
+
+      // Custom Confirmation Reset Dialog
+      document.getElementById("btn-open-reset-confirm")?.addEventListener("click", () => {
+        document.getElementById("confirm-dialog")?.classList.remove("hidden");
+      });
+
+      document.getElementById("btn-confirm-cancel")?.addEventListener("click", () => {
+        document.getElementById("confirm-dialog")?.classList.add("hidden");
+      });
+
+      document.getElementById("btn-confirm-ok")?.addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY_V14);
+        currentSettings = getDefaultSettings();
+        saveSettings(currentSettings);
+        document.getElementById("confirm-dialog")?.classList.add("hidden");
+        document.getElementById("settings-dialog")?.classList.add("hidden");
+        renderAllCards();
+      });
+    });
+  </script>
+</body>
+</html>
