@@ -881,8 +881,8 @@
       synonyms: ["同義詞", "Synonyms"],
       antonyms: ["反義詞", "Antonyms"],
       wordFamily: ["詞族", "Word family"],
-      pinToTop: ["置頂", "Pin to top"],
-      pinned: ["已置頂", "Pinned"],
+      pinToTop: ["一鍵置頂", "Pin to top"],
+      pinned: ["已置頂（點擊取消）", "Pinned (click to unpin)"],
       justNow: ["剛剛", "just now"],
       minsAgo: ["分鐘前", "m ago"],
       hoursAgo: ["小時前", "h ago"],
@@ -1285,7 +1285,8 @@
     let stopSearchDebounceTimer = null;
     let cachedKmbStops = null;
 
-    /* Card data caches */
+    /* Card data and DOM content caches */
+    const cardBodyCache = {};
     const cardDataCache = {
       weather: null,
       forecast: null,
@@ -1297,6 +1298,46 @@
       football: null,
       bus: {}
     };
+
+    function preserveCardBodies() {
+      currentSettings.order.forEach(id => {
+        const el = document.getElementById(`body-${id}`);
+        if (el && !el.querySelector(".animate-pulse")) {
+          cardBodyCache[id] = el.innerHTML;
+        }
+      });
+    }
+
+    function pinCardToTop(cardId) {
+      preserveCardBodies();
+      const idx = currentSettings.order.indexOf(cardId);
+      if (idx > 0) {
+        // Shift target card to position 0 (the top)
+        currentSettings.order.splice(idx, 1);
+        currentSettings.order.unshift(cardId);
+      } else if (idx === 0) {
+        // Card is already at top: toggle unpin back to default position
+        const defaultIdx = DEFAULT_CARD_ORDER.indexOf(cardId);
+        currentSettings.order.splice(0, 1);
+        const targetIdx = defaultIdx !== -1 ? Math.min(defaultIdx, currentSettings.order.length) : currentSettings.order.length;
+        currentSettings.order.splice(targetIdx, 0, cardId);
+      }
+      saveSettings(currentSettings);
+      renderAllCards();
+      populateSettingsModal();
+
+      // Smooth scroll to top of dashboard and highlight card
+      setTimeout(() => {
+        const el = document.getElementById(`card-${cardId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          el.classList.add('ring-2', 'ring-primary', 'shadow-lg');
+          setTimeout(() => {
+            el.classList.remove('ring-2', 'ring-primary', 'shadow-lg');
+          }, 1200);
+        }
+      }, 30);
+    }
 
     function formatHKTime(date = new Date()) {
       return new Intl.DateTimeFormat("en-GB", {
@@ -1365,9 +1406,12 @@
     function createCardFrame({ id, title, iconSvg, headerExtra = "", headerEnd = "", onGear = null, autoNote = false, sourceNote = "" }) {
       const lang = currentSettings.lang;
       const updatedTimeStr = formatHKTime(new Date());
+      const isTop = currentSettings.order[0] === id;
+      const pinTitleText = isTop ? t("pinned", lang) : t("pinToTop", lang);
+      const cachedBody = cardBodyCache[id] || "";
 
       return `
-        <div id="card-${id}" class="h-full flex-1 relative flex flex-col p-3 gap-2 rounded-xl bg-card text-card-foreground border border-border/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-none break-inside-avoid transition-all duration-200">
+        <div id="card-${id}" class="h-full flex-1 relative flex flex-col p-3 gap-2 rounded-xl bg-card text-card-foreground border border-border/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-none break-inside-avoid transition-all duration-200 ${isTop ? 'ring-1 ring-primary/40 shadow-sm' : ''}">
           <!-- Card Header -->
           <div class="flex items-center justify-between gap-1.5 leading-none">
             <div class="flex items-center gap-1.5 min-w-0 flex-1">
@@ -1387,6 +1431,13 @@
                   </svg>
                 </button>
               ` : ""}
+              <!-- 1-Click Pin to Top Button for all cards -->
+              <button type="button" onclick="pinCardToTop('${id}')" class="p-1 rounded-md transition-all active:scale-90 ${isTop ? 'text-primary bg-primary/10 hover:bg-primary/20' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}" title="${pinTitleText}">
+                <svg class="w-3.5 h-3.5" fill="${isTop ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                </svg>
+              </button>
+              <!-- Refresh button -->
               <button type="button" onclick="refreshSingleCard('${id}')" class="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors active:scale-90" title="更新此卡片 / Refresh">
                 <svg id="refresh-icon-${id}" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -1397,12 +1448,14 @@
 
           <!-- Card Dynamic Body -->
           <div id="body-${id}" class="flex-1 flex flex-col justify-start min-h-[5.5rem]">
-            <!-- Skeleton Pulse Fallback -->
-            <div class="space-y-2 py-2">
-              <div class="h-3.5 bg-muted/70 rounded w-2/3 animate-pulse"></div>
-              <div class="h-3 bg-muted/60 rounded w-1/2 animate-pulse"></div>
-              <div class="h-3 bg-muted/50 rounded w-3/5 animate-pulse"></div>
-            </div>
+            ${cachedBody ? cachedBody : `
+              <!-- Skeleton Pulse Fallback -->
+              <div class="space-y-2 py-2">
+                <div class="h-3.5 bg-muted/70 rounded w-2/3 animate-pulse"></div>
+                <div class="h-3 bg-muted/60 rounded w-1/2 animate-pulse"></div>
+                <div class="h-3 bg-muted/50 rounded w-3/5 animate-pulse"></div>
+              </div>
+            `}
           </div>
 
           <!-- Card Footer Strip -->
@@ -2800,17 +2853,7 @@
     }
 
     function togglePinWordCard() {
-      const idx = currentSettings.order.indexOf("word");
-      if (idx > 0) {
-        currentSettings.order.splice(idx, 1);
-        currentSettings.order.unshift("word");
-      } else if (idx === 0) {
-        // Unpin to end or standard spot
-        currentSettings.order.splice(idx, 1);
-        currentSettings.order.push("word");
-      }
-      saveSettings(currentSettings);
-      renderAllCards();
+      pinCardToTop("word");
     }
 
     const CARD_METADATA = {
@@ -3134,6 +3177,7 @@
             </div>
             
             <div class="flex items-center gap-1 shrink-0">
+              <button onclick="pinCardToTop('${cardId}')" ${index === 0 ? 'disabled class="opacity-20 p-1 text-muted-foreground"' : 'class="p-1 rounded hover:bg-muted text-primary font-bold"'} title="${lang === 'en' ? 'Move to top' : '一鍵置頂'}">⤒</button>
               <button onclick="moveCardOrder(${index}, -1)" ${index === 0 ? 'disabled class="opacity-20"' : 'class="p-1 rounded hover:bg-muted text-foreground"'} title="向上移 / Move up">↑</button>
               <button onclick="moveCardOrder(${index}, 1)" ${index === currentSettings.order.length - 1 ? 'disabled class="opacity-20"' : 'class="p-1 rounded hover:bg-muted text-foreground"'} title="向下移 / Move down">↓</button>
               <button onclick="toggleCardVisibility('${cardId}')" class="px-2 py-0.5 text-[10px] font-semibold rounded-md border ${isHidden ? 'bg-muted text-muted-foreground border-border' : 'bg-primary/10 text-primary border-primary/30'}">
