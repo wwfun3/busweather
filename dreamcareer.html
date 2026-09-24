@@ -1,0 +1,2656 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>香港公務員及紀律部隊薪酬與職涯晉升一覽</title>
+    <!-- Chart.js for data visualization insights -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-dark: #172554;
+            --primary-bg: #eff6ff;
+            --primary-bg-soft: #dbeafe;
+            --accent: #0284c7;
+            --accent-green: #059669;
+            --accent-green-bg: #ecfdf5;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(30 58 138 / 0.08), 0 2px 4px -2px rgb(30 58 138 / 0.05);
+            --shadow-lg: 0 10px 18px -3px rgb(30 58 138 / 0.12), 0 4px 6px -4px rgb(30 58 138 / 0.06);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang HK", "Microsoft JhengHei", sans-serif;
+            background: linear-gradient(165deg, #f0f4f8 0%, #e2e8f0 100%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1540px;
+            margin: 0 auto;
+            padding: 1.5rem 1.25rem 3rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #1e40af 55%, #2563eb 100%);
+            color: white;
+            padding: 1.75rem 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.14) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        header h1 {
+            font-size: clamp(1.4rem, 2.8vw, 1.85rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.35rem;
+            position: relative;
+        }
+
+        header p {
+            font-size: 0.92rem;
+            opacity: 0.92;
+            position: relative;
+            max-width: 960px;
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1.25rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        .controls {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.25rem;
+            border: 1px solid rgba(30, 58, 138, 0.1);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.9rem;
+        }
+
+        @media (min-width: 1200px) {
+            .controls-grid {
+                grid-template-columns: 1.5fr 0.9fr 1.1fr 0.9fr auto auto auto auto;
+                align-items: end;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1199px) {
+            .controls-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                align-items: end;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .form-group label {
+            font-size: 0.76rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+
+        input[type="search"],
+        select {
+            padding: 0.58rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            background: #fff;
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        input[type="search"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.58rem 1rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(23, 37, 84, 0.25);
+        }
+
+        .btn-secondary {
+            background: var(--primary-bg-soft);
+            color: var(--primary-dark);
+        }
+
+        .btn-secondary:hover {
+            background: #bfdbfe;
+            color: #1e3a8a;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 0.85rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .stats-bar strong {
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        .badge-legend {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.78rem;
+        }
+
+        .table-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            overflow: hidden;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.86rem;
+            min-width: 1200px;
+        }
+
+        thead {
+            background: linear-gradient(90deg, var(--primary-dark), #1e40af);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 0.85rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.78rem;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+
+        th:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        th .sort-icon {
+            display: inline-block;
+            margin-left: 0.25rem;
+            opacity: 0.6;
+            font-size: 0.7rem;
+        }
+
+        th.sorted-asc .sort-icon::after {
+            content: "▲";
+            opacity: 1;
+        }
+        th.sorted-desc .sort-icon::after {
+            content: "▼";
+            opacity: 1;
+        }
+        th:not(.sorted-asc):not(.sorted-desc) .sort-icon::after {
+            content: "↕";
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background: var(--primary-bg-soft);
+        }
+
+        td {
+            padding: 0.75rem 0.8rem;
+            vertical-align: top;
+        }
+
+        .cat-badge {
+            display: inline-block;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .cat-civil {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .cat-force {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .pay-highlight {
+            font-weight: 700;
+            color: #047857;
+            white-space: nowrap;
+        }
+
+        .pay-max {
+            font-weight: 700;
+            color: #b45309;
+            white-space: nowrap;
+        }
+
+        .scale-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        .link-portal {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .link-portal:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .cards-view {
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0.6rem;
+        }
+
+        .table-card.view-table .table-scroll {
+            display: block;
+        }
+        .table-card.view-table .cards-view {
+            display: none;
+        }
+        .table-card.view-cards .table-scroll {
+            display: none;
+        }
+        .table-card.view-cards .cards-view {
+            display: flex;
+        }
+
+        .job-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.6rem 0.75rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            transition: all 0.15s ease;
+        }
+
+        .job-card.expanded {
+            border-color: var(--primary-light);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.1);
+        }
+
+        .job-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card-meta-line {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-bottom: 0.2rem;
+            flex-wrap: wrap;
+        }
+
+        .card-id-pill {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: #f1f5f9;
+            padding: 0.08rem 0.35rem;
+            border-radius: 4px;
+            font-family: ui-monospace, monospace;
+        }
+
+        .job-card .card-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.28;
+            margin: 0;
+        }
+
+        .job-card .card-dept {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+            line-height: 1.25;
+        }
+
+        .card-expand-trigger {
+            background: var(--primary-bg-soft);
+            border: none;
+            color: var(--primary-dark);
+            width: 1.65rem;
+            height: 1.65rem;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: transform 0.2s ease, background-color 0.15s;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .job-card.expanded .card-expand-trigger {
+            transform: rotate(180deg);
+            background: var(--primary);
+            color: white;
+        }
+
+        .card-metrics-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.4rem;
+            margin-top: 0.4rem;
+            padding: 0.32rem 0.55rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #edf2f7;
+        }
+
+        .metric-item {
+            display: flex;
+            align-items: baseline;
+            gap: 0.3rem;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .metric-sep {
+            width: 1px;
+            height: 14px;
+            background: #cbd5e1;
+            flex-shrink: 0;
+        }
+
+        .metric-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .metric-val {
+            font-size: 0.84rem;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-details {
+            display: none;
+            margin-top: 0.6rem;
+            padding-top: 0.6rem;
+            border-top: 1px dashed var(--border);
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .job-card.expanded .card-details {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-3px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .detail-section {
+            margin-bottom: 0.55rem;
+        }
+
+        .detail-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.15rem;
+            letter-spacing: 0.02em;
+        }
+
+        .detail-section-content {
+            font-size: 0.8rem;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.25rem;
+            margin-top: 0.25rem;
+        }
+
+        .history-node {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.2rem 0.15rem;
+            text-align: center;
+        }
+
+        .history-node .year {
+            font-size: 0.62rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            line-height: 1.1;
+        }
+
+        .history-node .salary {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            white-space: nowrap;
+            line-height: 1.2;
+        }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: modalFade 0.2s ease;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 480px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+        }
+
+        .modal-header h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .modal-done-btn {
+            color: var(--primary-light);
+            font-weight: 700;
+            font-size: 0.9rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.35rem 0.65rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .modal-done-btn:hover {
+            background: var(--primary-bg-soft);
+        }
+
+        .modal-body {
+            padding: 0.75rem 1.25rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .column-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .column-toggle-row:last-child {
+            border-bottom: none;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 42px;
+            height: 23px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .25s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 17px;
+            width: 17px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .25s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-light);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(19px);
+        }
+
+        .col-hidden {
+            display: none !important;
+        }
+
+        .pagination {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 1.25rem;
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+        }
+
+        .pagination-left { justify-self: start; }
+        .pagination-center { justify-self: center; }
+        .pagination-right { justify-self: end; }
+
+        .page-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .page-btn {
+            min-width: 2.1rem;
+            height: 2.1rem;
+            padding: 0 0.5rem;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--primary-light);
+            color: var(--primary);
+            background: var(--primary-bg);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 900px) {
+            .insight-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.75rem 0.6rem 2rem;
+            }
+            header {
+                padding: 1rem 0.9rem;
+                margin-bottom: 0.75rem;
+            }
+            header h1 {
+                font-size: 1.2rem;
+                margin-bottom: 0.2rem;
+            }
+            header p {
+                font-size: 0.82rem;
+                line-height: 1.35;
+            }
+            .controls {
+                padding: 0.8rem 0.85rem;
+                margin-bottom: 0.75rem;
+            }
+            .controls-grid {
+                gap: 0.5rem;
+            }
+            .stats-bar {
+                margin-bottom: 0.5rem;
+                font-size: 0.8rem;
+            }
+            .pagination {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 0.65rem 0.85rem;
+            }
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.6rem 1.15rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary-light);
+            color: var(--primary);
+            background: #f8fafc;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .tab-badge-year {
+            font-size: 0.72rem;
+            background: rgba(0, 0, 0, 0.07);
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            margin-left: 0.15rem;
+            font-weight: 700;
+        }
+
+        .tab-btn.active .tab-badge-year {
+            background: rgba(255, 255, 255, 0.24);
+            color: #ffffff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: tabFadeIn 0.25s ease-in-out;
+        }
+
+        @media (max-width: 768px) {
+            .tabs-nav {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.45rem;
+                overflow-x: visible;
+                border-bottom: 1px solid var(--border);
+                padding-bottom: 0.65rem;
+                margin-bottom: 0.85rem;
+            }
+
+            .tab-btn {
+                padding: 0.45rem 0.35rem;
+                font-size: 0.76rem;
+                min-height: 42px;
+                white-space: normal;
+                line-height: 1.25;
+                border-radius: 6px;
+                gap: 0.25rem;
+                text-align: center;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            }
+
+            .tab-btn .tab-icon {
+                font-size: 0.85rem;
+            }
+
+            .tab-badge-year {
+                font-size: 0.65rem;
+                padding: 0.05rem 0.25rem;
+            }
+        }
+
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .kpi-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.2rem 1.25rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary-light);
+        }
+
+        .kpi-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 0.35rem;
+        }
+
+        .kpi-value {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .kpi-sub {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        .insight-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        @media (min-width: 1024px) {
+            .insight-grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .chart-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.35rem 1.4rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.1rem;
+        }
+
+        .chart-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .chart-card-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            min-height: 340px;
+            flex: 1;
+        }
+
+        .chart-filter-select {
+            padding: 0.4rem 0.65rem;
+            font-size: 0.82rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>香港熱門公務員及紀律部隊薪酬與職涯晉升一覽</h1>
+            <p>彙整文職專業與各大紀律部隊 2016 至 2025 年起薪走勢、職級頂薪、職涯晉升上限、增長率排名與學歷門檻結構圖表</p>
+        </header>
+
+        <div class="tabs-nav">
+            <button type="button" class="tab-btn active" data-tab="tableTab">
+                <span class="tab-icon">📋</span>
+                <span class="tab-text">職位資料列表</span>
+            </button>
+            <button type="button" class="tab-btn" data-tab="trendTab">
+                <span class="tab-icon">📈</span>
+                <span class="tab-text">薪酬歷年走勢 <span class="tab-badge-year">16-25</span></span>
+            </button>
+            <button type="button" class="tab-btn" data-tab="payRangeTab">
+                <span class="tab-icon">⚖️</span>
+                <span class="tab-text">起薪 vs 頂薪潛力</span>
+            </button>
+            <button type="button" class="tab-btn" data-tab="tierInsightTab">
+                <span class="tab-icon">🏛️</span>
+                <span class="tab-text">學歷門檻與架構</span>
+            </button>
+        </div>
+
+        <!-- Tab 1: 職位資料列表 -->
+        <div class="tab-content active" id="tableTab">
+            <div class="controls">
+                <div class="controls-grid">
+                    <div class="form-group">
+                        <label for="search">搜尋關鍵字</label>
+                        <input type="search" id="search" placeholder="職位、部門、薪級、資格要求…" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryFilter">工作類別</label>
+                        <select id="categoryFilter">
+                            <option value="">全部類別</option>
+                            <option value="文職">文職</option>
+                            <option value="紀律部隊">紀律部隊</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="deptFilter">機構 / 部門</label>
+                        <select id="deptFilter">
+                            <option value="">全部機構 / 部門</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="viewMode">顯示模式</label>
+                        <select id="viewMode">
+                            <option value="table">表格模式 (Table)</option>
+                            <option value="cards">卡片模式 (Cards)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-secondary" id="expandAllBtn" title="展開或收合所有卡片">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+                            全部展開
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-secondary" id="colToggleBtn" title="自訂表格欄位顯示">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line></svg>
+                            顯示欄位
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-secondary" id="resetBtn">重設</button>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-primary" id="exportBtn" title="將目前篩選資料匯出為 Excel CSV">匯出 Excel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-bar">
+                <div>
+                    顯示 <strong id="showingCount">0</strong> / 共 <strong id="totalCount">0</strong> 筆職位
+                </div>
+                <div class="badge-legend">
+                    <span class="cat-badge cat-civil">文職</span>
+                    <span class="cat-badge cat-force">紀律部隊</span>
+                </div>
+            </div>
+
+            <div class="table-card" id="tableCard">
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-key="id">編號 <span class="sort-icon"></span></th>
+                                <th data-key="category">類別 <span class="sort-icon"></span></th>
+                                <th data-key="dept">機構 / 部門 <span class="sort-icon"></span></th>
+                                <th data-key="title">職位名稱 <span class="sort-icon"></span></th>
+                                <th data-key="payScale">薪級編號 <span class="sort-icon"></span></th>
+                                <th data-key="pay2016">起薪 2016 <span class="sort-icon"></span></th>
+                                <th data-key="pay2017">起薪 2017 <span class="sort-icon"></span></th>
+                                <th data-key="pay2018">起薪 2018 <span class="sort-icon"></span></th>
+                                <th data-key="pay2019">起薪 2019 <span class="sort-icon"></span></th>
+                                <th data-key="pay2020">起薪 2020 <span class="sort-icon"></span></th>
+                                <th data-key="pay2021">起薪 2021 <span class="sort-icon"></span></th>
+                                <th data-key="pay2022">起薪 2022 <span class="sort-icon"></span></th>
+                                <th data-key="pay2023">起薪 2023 <span class="sort-icon"></span></th>
+                                <th data-key="pay2024">起薪 2024 <span class="sort-icon"></span></th>
+                                <th data-key="pay2025">起薪 2025 <span class="sort-icon"></span></th>
+                                <th data-key="startingPay">起薪 <span class="sort-icon"></span></th>
+                                <th data-key="maxPay">職級頂薪 (HKD/月) <span class="sort-icon"></span></th>
+                                <th data-key="careerCeiling">職涯晉升上限 <span class="sort-icon"></span></th>
+                                <th data-key="req">入職基本資格要求 <span class="sort-icon"></span></th>
+                                <th data-key="link">官方來源 <span class="sort-icon"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Card View container (default on mobile) -->
+                <div class="cards-view" id="cardsView"></div>
+
+                <div class="pagination" id="pagination">
+                    <div class="pagination-left">
+                        <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+                            <label for="pageSize" style="margin-bottom: 0;">每頁筆數：</label>
+                            <select id="pageSize" style="width: auto; padding: 0.35rem 0.6rem;">
+                                <option value="15" selected>15</option>
+                                <option value="30">30</option>
+                                <option value="all">全部</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="pagination-center">
+                        <div class="page-controls" id="pageControls"></div>
+                    </div>
+                    <div class="pagination-right">
+                        <span id="pageInfo" style="font-size: 0.85rem; color: var(--text-muted);"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: 薪酬歷年走勢與升幅分析 -->
+        <div class="tab-content" id="trendTab">
+            <div class="chart-card" style="margin-bottom: 1.25rem;">
+                <div class="chart-card-header">
+                    <div>
+                        <h3 class="chart-card-title">2016 - 2025 年起薪點走勢對比 (HKD/月)</h3>
+                        <p class="chart-card-desc">觀察十年間文職專業、各大紀律部隊或個別重點職位的歷年起薪調薪軌跡（含2021年紀律部隊職系架構檢討跳升效應）</p>
+                    </div>
+                    <div>
+                        <select id="trendJobSelect" class="chart-filter-select">
+                            <option value="all">對比組別：整體 / 文職 / 紀律部隊</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-container" style="min-height: 380px;">
+                    <canvas id="trendLineChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div>
+                        <h3 class="chart-card-title">過去十年起薪累計加薪升幅排行榜 (2016 至 2025 年)</h3>
+                        <p class="chart-card-desc">依據各職位 2016 年至 2025 年入職起薪點增長百分比排序，直觀透視各職系增薪實質表現</p>
+                    </div>
+                </div>
+                <div class="chart-container" style="min-height: 420px;">
+                    <canvas id="growthRankChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: 起薪 vs 頂薪潛力對比 -->
+        <div class="tab-content" id="payRangeTab">
+            <div class="insight-grid-2">
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div>
+                            <h3 class="chart-card-title">入職起薪 vs 職位頂薪全景對比</h3>
+                            <p class="chart-card-desc">對比各職位起始薪點與該職級可達到的最高薪額 (HKD/月)</p>
+                        </div>
+                        <div>
+                            <select id="payRangeCatFilter" class="chart-filter-select">
+                                <option value="all">全部職位</option>
+                                <option value="文職">只看 文職</option>
+                                <option value="紀律部隊">只看 紀律部隊</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="min-height: 390px;">
+                        <canvas id="payComparisonBarChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div>
+                            <h3 class="chart-card-title">職級薪酬倍增指數 (頂薪 ÷ 起薪)</h3>
+                            <p class="chart-card-desc">顯示各職位即使在不晉升更高職級前，透過本職階跳增薪點可達到的薪酬擴展倍數（數值越高代表原職級薪酬空間越廣）</p>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="min-height: 390px;">
+                        <canvas id="multiplierBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: 學歷門檻與部門透視 -->
+        <div class="tab-content" id="tierInsightTab">
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">整體職位平均起薪</div>
+                    <div class="kpi-value" id="kpiAvgPay">HK$ 33,680</div>
+                    <div class="kpi-sub">涵蓋文職及紀律部隊各級職位</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #059669;">
+                    <div class="kpi-label">學位/專業職系平均起薪</div>
+                    <div class="kpi-value" id="kpiDegreePay" style="color: #059669;">HK$ 43,150</div>
+                    <div class="kpi-sub">學士學位或同等專業資格門檻</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #b45309;">
+                    <div class="kpi-label">文憑/高中學歷平均起薪</div>
+                    <div class="kpi-value" id="kpiDsePay" style="color: #b45309;">HK$ 25,635</div>
+                    <div class="kpi-sub">中五 / DSE 5科第2級入職門檻</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #8b5cf6;">
+                    <div class="kpi-label">10年間平均起薪累積升幅</div>
+                    <div class="kpi-value" id="kpiAvgGrowth" style="color: #6366f1;">+27.4%</div>
+                    <div class="kpi-sub">2016 年至 2025 年整體複合成長</div>
+                </div>
+            </div>
+
+            <div class="insight-grid-2">
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div>
+                            <h3 class="chart-card-title">學歷入職門檻 vs 平均起始薪酬 (HKD)</h3>
+                            <p class="chart-card-desc">依學歷要求分類分析入職起薪水平，呈現學歷與專業資格對起薪點的實質影響</p>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="min-height: 340px;">
+                        <canvas id="eduTierBarChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div>
+                            <h3 class="chart-card-title">編制類別與所屬機構分佈</h3>
+                            <p class="chart-card-desc">彙整之熱門職位在公務員文職體系與各大紀律部隊的佔比分佈</p>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="min-height: 340px;">
+                        <canvas id="deptDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            註：薪酬及資格要求僅供參考，實際招聘以香港特區政府公務員事務局及各招聘機構官方最新公佈為準。
+        </footer>
+    </div>
+
+    <div class="modal-backdrop" id="colModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>自訂表格欄位</h3>
+                <button type="button" class="modal-done-btn" id="modalDoneBtn">完成</button>
+            </div>
+            <div class="modal-body" id="colModalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const salaryData = [
+            {
+                id: 1,
+                category: "文職",
+                dept: "醫管局 / 衞生署",
+                title: "註冊護士 (Registered Nurse, RN)",
+                payScale: "HGPS 15 - 25",
+                pay2016: "28,040",
+                pay2017: "28,865",
+                pay2018: "30,165",
+                pay2019: "31,750",
+                pay2020: "31,750",
+                pay2021: "31,750",
+                pay2022: "32,545",
+                pay2023: "34,060",
+                pay2024: "35,080",
+                pay2025: "35,080",
+                startingPay: "35,080 (35,780^)",
+                maxPay: "57,340",
+                careerCeiling: "顧問護士 / 高級護士長 (MPS 40 - 44)",
+                req: "香港護士管理局註冊護士證明書及有效執業證書",
+                link: "https://www.ha.org.hk"
+            },
+            {
+                id: 2,
+                category: "文職",
+                dept: "教育局 / 資助中小學",
+                title: "學位教師 (GM / APSM)",
+                payScale: "MPS 15(17) - 33",
+                pay2016: "28,040",
+                pay2017: "28,865",
+                pay2018: "30,165",
+                pay2019: "31,750",
+                pay2020: "31,750",
+                pay2021: "31,750",
+                pay2022: "32,545",
+                pay2023: "34,060",
+                pay2024: "35,080",
+                pay2025: "35,080",
+                startingPay: "35,080 (35,780^)",
+                maxPay: "81,510",
+                careerCeiling: "中學校長 (MPS 45 - 49) / 小學校長 (MPS 38 - 41)",
+                req: "本地認可學士學位 + 教師教育文憑 (PGDE)",
+                link: "https://www.edb.gov.hk"
+            },
+            {
+                id: 3,
+                category: "文職",
+                dept: "社會福利署 / NGO",
+                title: "助理社會工作主任 (ASWO)",
+                payScale: "MPS 16 - 33",
+                pay2016: "29,455",
+                pay2017: "30,320",
+                pay2018: "31,685",
+                pay2019: "33,350",
+                pay2020: "33,350",
+                pay2021: "33,350",
+                pay2022: "34,185",
+                pay2023: "35,775",
+                pay2024: "36,850",
+                pay2025: "36,850",
+                startingPay: "36,850 (37,585^)",
+                maxPay: "81,510",
+                careerCeiling: "總社會工作主任 (CSWO, MPS 45 - 49)",
+                req: "社會工作學士學位及註冊社工資格 (RSW)",
+                link: "https://www.swd.gov.hk"
+            },
+            {
+                id: 4,
+                category: "紀律部隊",
+                dept: "香港警務處 (HKPF)",
+                title: "警員 (Police Constable)",
+                payScale: "PPS 4 - 17 (最高可達22)",
+                pay2016: "22,410 (PPS 4: 23,125)",
+                pay2017: "23,070 (PPS 4: 23,805)",
+                pay2018: "24,110 (PPS 4: 24,880)",
+                pay2019: "25,380 (PPS 4: 26,190)",
+                pay2020: "25,380 (PPS 4: 26,190)",
+                pay2021: "26,190* (舊制 25,380)",
+                pay2022: "26,845",
+                pay2023: "28,095",
+                pay2024: "28,940",
+                pay2025: "28,940",
+                startingPay: "28,940 (29,520^)",
+                maxPay: "42,390 (連增薪點達 49,035/50,015^)",
+                careerCeiling: "警務處處長 (CP, PPS 59)",
+                req: "DSE 5科第2級（含中英文），通過體能及遴選測驗",
+                link: "https://www.police.gov.hk/ppp_tc/15_recruit/"
+            },
+            {
+                id: 5,
+                category: "紀律部隊",
+                dept: "香港警務處 (HKPF)",
+                title: "督察 (Inspector of Police)",
+                payScale: "PPS 24(25) - 38",
+                pay2016: "39,660 (PPS 24: 40,880)",
+                pay2017: "40,825 (PPS 24: 42,080)",
+                pay2018: "42,665 (PPS 24: 43,980)",
+                pay2019: "44,910 (PPS 24: 46,295)",
+                pay2020: "44,910 (PPS 24: 46,295)",
+                pay2021: "47,080* (舊制 44,910)",
+                pay2022: "48,255",
+                pay2023: "50,500",
+                pay2024: "52,015",
+                pay2025: "52,015",
+                startingPay: "52,015 (53,055^)",
+                maxPay: "83,840 (高級督察頂薪 95,840/97,755^)",
+                careerCeiling: "警務處處長 (CP, PPS 59)",
+                req: "預科 / 副學士 / 學士學位（按學歷起薪，持學位者高1-2個薪點起薪）",
+                link: "https://www.police.gov.hk/ppp_tc/15_recruit/"
+            },
+            {
+                id: 6,
+                category: "紀律部隊",
+                dept: "消防處 (FSD)",
+                title: "消防員 / 救護員 (行動組)",
+                payScale: "GDS(R) 4 - 17",
+                pay2016: "19,225 (Pt 4: 19,780)",
+                pay2017: "19,795 (Pt 4: 20,365)",
+                pay2018: "20,690 (Pt 4: 21,285)",
+                pay2019: "21,780 (Pt 4: 22,405)",
+                pay2020: "21,780 (Pt 4: 22,405)",
+                pay2021: "22,405* (舊制 21,780)",
+                pay2022: "22,970",
+                pay2023: "24,040",
+                pay2024: "24,765",
+                pay2025: "24,765",
+                startingPay: "24,765 (25,265^)",
+                maxPay: "37,300 (38,045^)",
+                careerCeiling: "消防處處長 (Director, GDS(C) 3)",
+                req: "DSE 5科第2級（含中英文），通過模擬實際工作測驗與體能測試",
+                link: "https://www.hkfsd.gov.hk/chi/recruitment/"
+            },
+            {
+                id: 7,
+                category: "紀律部隊",
+                dept: "消防處 (FSD)",
+                title: "消防隊長 (行動組) / 救護主任",
+                payScale: "GDS(O) 8(9) - 26",
+                pay2016: "36,540 (Pt 8: 38,630)",
+                pay2017: "37,615 (Pt 8: 39,765)",
+                pay2018: "39,310 (Pt 8: 41,560)",
+                pay2019: "41,380 (Pt 8: 43,745)",
+                pay2020: "41,380 (Pt 8: 43,745)",
+                pay2021: "43,735* (舊制 41,380)",
+                pay2022: "44,830",
+                pay2023: "46,925",
+                pay2024: "48,335",
+                pay2025: "48,335",
+                startingPay: "48,335 (49,300^)",
+                maxPay: "95,840 (97,755^)",
+                careerCeiling: "消防處處長 (Director, GDS(C) 3)",
+                req: "學士學位 / 副學位 / 預科，通過體能測驗及領導能力評估",
+                link: "https://www.hkfsd.gov.hk/chi/recruitment/"
+            },
+            {
+                id: 8,
+                category: "紀律部隊",
+                dept: "香港海關 (C&ED)",
+                title: "關員 (Customs Officer)",
+                payScale: "GDS(R) 4 - 16",
+                pay2016: "19,225 (Pt 4: 19,780)",
+                pay2017: "19,795 (Pt 4: 20,365)",
+                pay2018: "20,690 (Pt 4: 21,285)",
+                pay2019: "21,780 (Pt 4: 22,405)",
+                pay2020: "21,780 (Pt 4: 22,405)",
+                pay2021: "22,405* (舊制 21,780)",
+                pay2022: "22,970",
+                pay2023: "24,040",
+                pay2024: "24,765",
+                pay2025: "24,765",
+                startingPay: "24,765 (25,265^)",
+                maxPay: "36,270 (36,995^)",
+                careerCeiling: "海關關長 (Commissioner, GDS(C) 3)",
+                req: "DSE 5科第2級（含中英文），通過海關體能測驗（含穿梯測試）",
+                link: "https://www.customs.gov.hk/tc/recruitment/"
+            },
+            {
+                id: 9,
+                category: "紀律部隊",
+                dept: "香港海關 (C&ED)",
+                title: "海關督察 (Customs Inspector)",
+                payScale: "GDS(O) 7(9) - 22 (升職至26)",
+                pay2016: "34,480 (Pt 7: 36,540)",
+                pay2017: "35,495 (Pt 7: 37,615)",
+                pay2018: "37,095 (Pt 7: 39,310)",
+                pay2019: "39,045 (Pt 7: 41,380)",
+                pay2020: "39,045 (Pt 7: 41,380)",
+                pay2021: "41,380* (舊制 39,045)",
+                pay2022: "42,415",
+                pay2023: "44,385",
+                pay2024: "45,715",
+                pay2025: "45,715",
+                startingPay: "45,715 (46,630^)",
+                maxPay: "83,840 (升至高級督察達 95,840)",
+                careerCeiling: "海關關長 (Commissioner, GDS(C) 3)",
+                req: "學士學位 / 副學位 / 預科，通過體能、能傾向測試及督察品格審查",
+                link: "https://www.customs.gov.hk/tc/recruitment/"
+            },
+            {
+                id: 10,
+                category: "紀律部隊",
+                dept: "入境事務處 (ImmD)",
+                title: "入境事務助理員 (IA)",
+                payScale: "GDS(R) 3 - 15",
+                pay2016: "18,670 (Pt 3: 19,225)",
+                pay2017: "19,220 (Pt 3: 19,795)",
+                pay2018: "20,085 (Pt 3: 20,690)",
+                pay2019: "21,145 (Pt 3: 21,780)",
+                pay2020: "21,145 (Pt 3: 21,780)",
+                pay2021: "21,780* (舊制 21,145)",
+                pay2022: "22,325",
+                pay2023: "23,365",
+                pay2024: "24,070",
+                pay2025: "24,070",
+                startingPay: "24,070 (24,555^)",
+                maxPay: "35,255 (35,960^)",
+                careerCeiling: "入境事務處處長 (Director, GDS(C) 3)",
+                req: "DSE 5科第2級（含中英文），通過體能測驗及甄選面試",
+                link: "https://www.immd.gov.hk/hkt/recruitment/"
+            },
+            {
+                id: 11,
+                category: "紀律部隊",
+                dept: "入境事務處 (ImmD)",
+                title: "入境事務主任 (IO)",
+                payScale: "GDS(O) 7(9) - 22 (升職至26)",
+                pay2016: "34,480 (Pt 7: 36,540)",
+                pay2017: "35,495 (Pt 7: 37,615)",
+                pay2018: "37,095 (Pt 7: 39,310)",
+                pay2019: "39,045 (Pt 7: 41,380)",
+                pay2020: "39,045 (Pt 7: 41,380)",
+                pay2021: "41,380* (舊制 39,045)",
+                pay2022: "42,415",
+                pay2023: "44,385",
+                pay2024: "45,715",
+                pay2025: "45,715",
+                startingPay: "45,715 (46,630^)",
+                maxPay: "83,840 (升至高級主任達 95,840)",
+                careerCeiling: "入境事務處處長 (Director, GDS(C) 3)",
+                req: "學士學位 / 副學位 / 預科，通過體能、筆試及即席演講",
+                link: "https://www.immd.gov.hk/hkt/recruitment/"
+            },
+            {
+                id: 12,
+                category: "紀律部隊",
+                dept: "懲教署 (CSD)",
+                title: "二級懲教助理 (AO II)",
+                payScale: "GDS(R) 3 - 15",
+                pay2016: "18,670 (Pt 3: 19,225)",
+                pay2017: "19,220 (Pt 3: 19,795)",
+                pay2018: "20,085 (Pt 3: 20,690)",
+                pay2019: "21,145 (Pt 3: 21,780)",
+                pay2020: "21,145 (Pt 3: 21,780)",
+                pay2021: "21,780* (舊制 21,145)",
+                pay2022: "22,325",
+                pay2023: "23,365",
+                pay2024: "24,070",
+                pay2025: "24,070",
+                startingPay: "24,070 (24,555^)",
+                maxPay: "35,255 (35,960^)",
+                careerCeiling: "懲教署署長 (Commissioner, GDS(C) 3)",
+                req: "中五畢業 / DSE 5科第2級（按中學學歷等級由 Pt 3 或 Pt 4 起薪）",
+                link: "https://www.csd.gov.hk/tc_chi/recruit/recruit_post/aoii.html"
+            },
+            {
+                id: 13,
+                category: "紀律部隊",
+                dept: "懲教署 (CSD)",
+                title: "懲教主任 (Officer)",
+                payScale: "GDS(O) 7(9) - 22 (升職至26)",
+                pay2016: "34,480 (Pt 7: 36,540)",
+                pay2017: "35,495 (Pt 7: 37,615)",
+                pay2018: "37,095 (Pt 7: 39,310)",
+                pay2019: "39,045 (Pt 7: 41,380)",
+                pay2020: "39,045 (Pt 7: 41,380)",
+                pay2021: "41,380* (舊制 39,045)",
+                pay2022: "42,415",
+                pay2023: "44,385",
+                pay2024: "45,715",
+                pay2025: "45,715",
+                startingPay: "45,715 (46,630^)",
+                maxPay: "83,840 (升至高級主任達 95,840)",
+                careerCeiling: "懲教署署長 (Commissioner, GDS(C) 3)",
+                req: "學士學位 / 副學位 / 預科，通過體能測試、寫作測試及小組面試",
+                link: "https://www.csd.gov.hk/tc_chi/recruit/recruit_post/officer.html"
+            },
+            {
+                id: 14,
+                category: "紀律部隊",
+                dept: "政府飛行服務隊 (GFS)",
+                title: "見習機師 / 空勤主任",
+                payScale: "GDS(O) 1b-2 (見習) / 8-14",
+                pay2016: "23,545",
+                pay2017: "24,235",
+                pay2018: "24,950",
+                pay2019: "27,445",
+                pay2020: "27,445",
+                pay2021: "27,445",
+                pay2022: "28,130",
+                pay2023: "29,440",
+                pay2024: "30,325",
+                pay2025: "30,325",
+                startingPay: "30,325 (30,930^)",
+                maxPay: "34,585 (見習頂薪) / 一級機師達 132,365",
+                careerCeiling: "總監 (Controller, GFS, GDS(C) 3)",
+                req: "DSE 5科第3級（含英數理）或同等，符合民航處一級體格標準及通過機師能力測試",
+                link: "https://www.gfs.gov.hk/tc/recruitment/"
+            }
+        ];
+
+        const columnDefs = [
+            { key: "id", label: "編號", default: true },
+            { key: "category", label: "類別", default: true },
+            { key: "dept", label: "機構 / 部門", default: true },
+            { key: "title", label: "職位名稱", default: true },
+            { key: "payScale", label: "薪級編號", default: true },
+            { key: "pay2016", label: "起薪 2016", default: true },
+            { key: "pay2017", label: "起薪 2017", default: true },
+            { key: "pay2018", label: "起薪 2018", default: true },
+            { key: "pay2019", label: "起薪 2019", default: true },
+            { key: "pay2020", label: "起薪 2020", default: true },
+            { key: "pay2021", label: "起薪 2021", default: true },
+            { key: "pay2022", label: "起薪 2022", default: true },
+            { key: "pay2023", label: "起薪 2023", default: true },
+            { key: "pay2024", label: "起薪 2024", default: true },
+            { key: "pay2025", label: "起薪 2025", default: true },
+            { key: "startingPay", label: "起薪", default: true },
+            { key: "maxPay", label: "職級頂薪 (HKD/月)", default: true },
+            { key: "careerCeiling", label: "職涯晉升上限", default: true },
+            { key: "req", label: "入職基本資格要求", default: true },
+            { key: "link", label: "官方來源", default: true }
+        ];
+
+        let colVisibility = {};
+        columnDefs.forEach(c => colVisibility[c.key] = c.default);
+
+        try {
+            const saved = localStorage.getItem("hkSalaryColVis_v2");
+            if (saved) colVisibility = { ...colVisibility, ...JSON.parse(saved) };
+        } catch (e) {}
+
+        const expandedCards = new Set();
+        let filtered = [...salaryData];
+        let currentPage = 1;
+        let pageSize = 15;
+        let sortKey = "id";
+        let sortDir = "asc";
+
+        const searchInput = document.getElementById("search");
+        const categoryFilter = document.getElementById("categoryFilter");
+        const deptFilter = document.getElementById("deptFilter");
+        const viewModeSelect = document.getElementById("viewMode");
+        const pageSizeSelect = document.getElementById("pageSize");
+        const expandAllBtn = document.getElementById("expandAllBtn");
+        const resetBtn = document.getElementById("resetBtn");
+        const exportBtn = document.getElementById("exportBtn");
+        const colToggleBtn = document.getElementById("colToggleBtn");
+        const colModal = document.getElementById("colModal");
+        const colModalBody = document.getElementById("colModalBody");
+        const modalDoneBtn = document.getElementById("modalDoneBtn");
+        const tableCard = document.getElementById("tableCard");
+        const tableBody = document.getElementById("tableBody");
+        const cardsView = document.getElementById("cardsView");
+        const showingCount = document.getElementById("showingCount");
+        const totalCount = document.getElementById("totalCount");
+        const pageInfo = document.getElementById("pageInfo");
+        const pageControls = document.getElementById("pageControls");
+
+        const uniqueDepts = [...new Set(salaryData.map(d => d.dept))].sort((a, b) => a.localeCompare(b, "zh-Hant"));
+        uniqueDepts.forEach(dept => {
+            const opt = document.createElement("option");
+            opt.value = dept;
+            opt.textContent = dept;
+            deptFilter.appendChild(opt);
+        });
+
+        const tabBtns = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        let trendLineChartInstance = null;
+        let growthRankChartInstance = null;
+        let payComparisonChartInstance = null;
+        let multiplierChartInstance = null;
+        let eduTierChartInstance = null;
+        let deptDistributionChartInstance = null;
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                tabBtns.forEach(b => b.classList.remove("active"));
+                tabContents.forEach(c => c.classList.remove("active"));
+                btn.classList.add("active");
+                const targetTab = btn.dataset.tab;
+                const targetEl = document.getElementById(targetTab);
+                if (targetEl) targetEl.classList.add("active");
+
+                // Render or refresh charts corresponding to the activated tab
+                requestAnimationFrame(() => {
+                    if (targetTab === "trendTab") {
+                        renderTrendLineChart();
+                        renderGrowthRankChart();
+                    } else if (targetTab === "payRangeTab") {
+                        renderPayComparisonChart();
+                        renderMultiplierChart();
+                    } else if (targetTab === "tierInsightTab") {
+                        updateKpis();
+                        renderEduTierChart();
+                        renderDeptDistributionChart();
+                    }
+                });
+            });
+        });
+
+        function parseCleanSalary(val) {
+            if (!val) return 0;
+            const match = String(val).match(/[\d,]+/);
+            if (!match) return 0;
+            return parseInt(match[0].replace(/,/g, ""), 10) || 0;
+        }
+
+        const trendJobSelect = document.getElementById("trendJobSelect");
+        if (trendJobSelect) {
+            salaryData.forEach(item => {
+                const opt = document.createElement("option");
+                opt.value = item.id;
+                opt.textContent = `${item.title} (${item.dept})`;
+                trendJobSelect.appendChild(opt);
+            });
+            trendJobSelect.addEventListener("change", () => {
+                renderTrendLineChart();
+            });
+        }
+
+        const payRangeCatFilter = document.getElementById("payRangeCatFilter");
+        if (payRangeCatFilter) {
+            payRangeCatFilter.addEventListener("change", () => {
+                renderPayComparisonChart();
+            });
+        }
+
+        function renderTrendLineChart() {
+            const canvas = document.getElementById("trendLineChart");
+            if (!canvas) return;
+            if (trendLineChartInstance) trendLineChartInstance.destroy();
+
+            const years = ["2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"];
+            const selectedJobId = trendJobSelect ? trendJobSelect.value : "all";
+
+            const calcAvgForYear = (cat, year) => {
+                const subset = salaryData.filter(d => !cat || d.category === cat);
+                let total = 0, count = 0;
+                subset.forEach(item => {
+                    const num = parseCleanSalary(item[`pay${year}`]);
+                    if (num > 0) { total += num; count++; }
+                });
+                return count > 0 ? Math.round(total / count) : 0;
+            };
+
+            const datasets = [];
+
+            if (selectedJobId === "all") {
+                datasets.push({
+                    label: "整體平均起薪 (HKD)",
+                    data: years.map(y => calcAvgForYear(null, y)),
+                    borderColor: "#2563eb",
+                    backgroundColor: "rgba(37, 99, 235, 0.1)",
+                    borderWidth: 3,
+                    tension: 0.25,
+                    fill: true
+                });
+                datasets.push({
+                    label: "文職專業平均起薪 (HKD)",
+                    data: years.map(y => calcAvgForYear("文職", y)),
+                    borderColor: "#7c3aed",
+                    backgroundColor: "transparent",
+                    borderWidth: 2,
+                    borderDash: [5, 4],
+                    tension: 0.25
+                });
+                datasets.push({
+                    label: "紀律部隊平均起薪 (HKD)",
+                    data: years.map(y => calcAvgForYear("紀律部隊", y)),
+                    borderColor: "#dc2626",
+                    backgroundColor: "transparent",
+                    borderWidth: 2,
+                    tension: 0.25
+                });
+            } else {
+                const targetJob = salaryData.find(d => d.id === parseInt(selectedJobId, 10));
+                if (targetJob) {
+                    datasets.push({
+                        label: `${targetJob.title} 起薪 (HKD)`,
+                        data: years.map(y => parseCleanSalary(targetJob[`pay${y}`])),
+                        borderColor: "#059669",
+                        backgroundColor: "rgba(5, 150, 105, 0.12)",
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        tension: 0.2,
+                        fill: true
+                    });
+                }
+                datasets.push({
+                    label: "整體職位平均基準 (HKD)",
+                    data: years.map(y => calcAvgForYear(null, y)),
+                    borderColor: "#94a3b8",
+                    backgroundColor: "transparent",
+                    borderWidth: 2,
+                    borderDash: [4, 4],
+                    tension: 0.2
+                });
+            }
+
+            const ctx = canvas.getContext("2d");
+            trendLineChartInstance = new Chart(ctx, {
+                type: "line",
+                data: { labels: years, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: "index", intersect: false },
+                    plugins: {
+                        legend: { position: "top", labels: { boxWidth: 14, font: { size: 12 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: (c) => `${c.dataset.label}: HK$ ${c.parsed.y.toLocaleString()}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { callback: v => `HK$ ${(v/1000).toFixed(0)}k` },
+                            grid: { color: "#f1f5f9" }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderGrowthRankChart() {
+            const canvas = document.getElementById("growthRankChart");
+            if (!canvas) return;
+            if (growthRankChartInstance) growthRankChartInstance.destroy();
+
+            const itemsWithGrowth = salaryData.map(item => {
+                const p2016 = parseCleanSalary(item.pay2016);
+                const p2025 = parseCleanSalary(item.pay2025);
+                const growthPct = p2016 > 0 ? ((p2025 - p2016) / p2016) * 100 : 0;
+                return {
+                    title: item.title,
+                    dept: item.dept,
+                    growthPct: parseFloat(growthPct.toFixed(1)),
+                    category: item.category
+                };
+            }).sort((a, b) => b.growthPct - a.growthPct);
+
+            const labels = itemsWithGrowth.map(d => d.title.length > 13 ? d.title.slice(0, 13) + '…' : d.title);
+            const growthRates = itemsWithGrowth.map(d => d.growthPct);
+            const bgColors = itemsWithGrowth.map(d => d.category === "紀律部隊" ? "#ef4444" : "#3b82f6");
+
+            const ctx = canvas.getContext("2d");
+            growthRankChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "10年累計加幅 (%)",
+                        data: growthRates,
+                        backgroundColor: bgColors,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: c => `10年累計起薪加幅: +${c.parsed.x}% (${itemsWithGrowth[c.dataIndex].dept})`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { callback: v => `+${v}%` },
+                            grid: { color: "#f1f5f9" }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderPayComparisonChart() {
+            const canvas = document.getElementById("payComparisonBarChart");
+            if (!canvas) return;
+            if (payComparisonChartInstance) payComparisonChartInstance.destroy();
+
+            const filterVal = payRangeCatFilter ? payRangeCatFilter.value : "all";
+            const dataList = salaryData.filter(d => filterVal === "all" || d.category === filterVal);
+
+            const labels = dataList.map(d => d.title.length > 10 ? d.title.slice(0, 10) + '…' : d.title);
+            const starting = dataList.map(d => parseCleanSalary(d.startingPay));
+            const max = dataList.map(d => parseCleanSalary(d.maxPay));
+
+            const ctx = canvas.getContext("2d");
+            payComparisonChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: "入職起薪 (HKD)",
+                            data: starting,
+                            backgroundColor: "#059669",
+                            borderRadius: 4
+                        },
+                        {
+                            label: "職級頂薪 (HKD)",
+                            data: max,
+                            backgroundColor: "#b45309",
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: "top", labels: { boxWidth: 12 } },
+                        tooltip: {
+                            callbacks: {
+                                label: c => `${c.dataset.label}: HK$ ${c.parsed.y.toLocaleString()}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 45 },
+                            grid: { display: false }
+                        },
+                        y: {
+                            ticks: { callback: v => `HK$ ${(v/1000).toFixed(0)}k` },
+                            grid: { color: "#f1f5f9" }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderMultiplierChart() {
+            const canvas = document.getElementById("multiplierBarChart");
+            if (!canvas) return;
+            if (multiplierChartInstance) multiplierChartInstance.destroy();
+
+            const multipliers = salaryData.map(d => {
+                const s = parseCleanSalary(d.startingPay);
+                const m = parseCleanSalary(d.maxPay);
+                const ratio = s > 0 ? parseFloat((m / s).toFixed(2)) : 1;
+                return {
+                    title: d.title,
+                    ratio,
+                    category: d.category
+                };
+            }).sort((a, b) => b.ratio - a.ratio);
+
+            const labels = multipliers.map(d => d.title.length > 12 ? d.title.slice(0, 12) + '…' : d.title);
+            const values = multipliers.map(d => d.ratio);
+
+            const ctx = canvas.getContext("2d");
+            multiplierChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "頂薪相對於起薪倍數",
+                        data: values,
+                        backgroundColor: "#6366f1",
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: c => `職級頂薪擴增率: ${c.parsed.x} 倍`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { callback: v => `${v}x` },
+                            grid: { color: "#f1f5f9" },
+                            min: 1
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateKpis() {
+            const allStarting = salaryData.map(d => parseCleanSalary(d.startingPay)).filter(v => v > 0);
+            if (allStarting.length > 0) {
+                const avgStarting = Math.round(allStarting.reduce((a, b) => a + b, 0) / allStarting.length);
+                const kpiAvg = document.getElementById("kpiAvgPay");
+                if (kpiAvg) kpiAvg.textContent = `HK$ ${avgStarting.toLocaleString()}`;
+            }
+
+            const degreeJobs = salaryData.filter(d => /學士|學位|RN|RSW|註冊護士/.test(d.title + d.req));
+            const degreePays = degreeJobs.map(d => parseCleanSalary(d.startingPay));
+            if (degreePays.length > 0) {
+                const avgDegree = Math.round(degreePays.reduce((a, b) => a + b, 0) / degreePays.length);
+                const kpiDegree = document.getElementById("kpiDegreePay");
+                if (kpiDegree) kpiDegree.textContent = `HK$ ${avgDegree.toLocaleString()}`;
+            }
+
+            const dseJobs = salaryData.filter(d => /DSE|中五/.test(d.req) && !/學士|學位/.test(d.req));
+            const dsePays = dseJobs.map(d => parseCleanSalary(d.startingPay));
+            if (dsePays.length > 0) {
+                const avgDse = Math.round(dsePays.reduce((a, b) => a + b, 0) / dsePays.length);
+                const kpiDse = document.getElementById("kpiDsePay");
+                if (kpiDse) kpiDse.textContent = `HK$ ${avgDse.toLocaleString()}`;
+            }
+
+            let totalGrowth = 0;
+            salaryData.forEach(d => {
+                const p16 = parseCleanSalary(d.pay2016);
+                const p25 = parseCleanSalary(d.pay2025);
+                if (p16 > 0) totalGrowth += ((p25 - p16) / p16) * 100;
+            });
+            const avgGrowth = (totalGrowth / salaryData.length).toFixed(1);
+            const kpiGrowth = document.getElementById("kpiAvgGrowth");
+            if (kpiGrowth) kpiGrowth.textContent = `+${avgGrowth}%`;
+        }
+
+        function renderEduTierChart() {
+            const canvas = document.getElementById("eduTierBarChart");
+            if (!canvas) return;
+            if (eduTierChartInstance) eduTierChartInstance.destroy();
+
+            const tiers = [
+                {
+                    name: "中學學歷 (DSE)",
+                    filter: d => /DSE|中五/.test(d.req) && !/學士|學位/.test(d.req) && !/機師/.test(d.title)
+                },
+                {
+                    name: "副學位/技術見習",
+                    filter: d => /預科|副學位|見習|機師/.test(d.title + d.req) && !/學位教師|社會工作學士|護士/.test(d.title + d.req)
+                },
+                {
+                    name: "學士學位/專業認可",
+                    filter: d => /學位教師|社會工作學士|護士管理局|學士學位/.test(d.title + d.req)
+                }
+            ];
+
+            const tierNames = tiers.map(t => t.name);
+            const tierAvgPays = tiers.map(t => {
+                const matched = salaryData.filter(t.filter);
+                if (matched.length === 0) return 0;
+                const sum = matched.reduce((acc, curr) => acc + parseCleanSalary(curr.startingPay), 0);
+                return Math.round(sum / matched.length);
+            });
+
+            const ctx = canvas.getContext("2d");
+            eduTierChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: tierNames,
+                    datasets: [{
+                        label: "平均入職起薪點 (HKD)",
+                        data: tierAvgPays,
+                        backgroundColor: ["#f59e0b", "#3b82f6", "#059669"],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: c => `平均起薪: HK$ ${c.parsed.y.toLocaleString()}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { callback: v => `HK$ ${(v/1000).toFixed(0)}k` },
+                            grid: { color: "#f1f5f9" }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderDeptDistributionChart() {
+            const canvas = document.getElementById("deptDistributionChart");
+            if (!canvas) return;
+            if (deptDistributionChartInstance) deptDistributionChartInstance.destroy();
+
+            const civilCount = salaryData.filter(d => d.category === "文職").length;
+            const forceCount = salaryData.filter(d => d.category === "紀律部隊").length;
+
+            const ctx = canvas.getContext("2d");
+            deptDistributionChartInstance = new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    labels: [`紀律部隊 (${forceCount} 職位)`, `公務員及公營文職 (${civilCount} 職位)`],
+                    datasets: [{
+                        data: [forceCount, civilCount],
+                        backgroundColor: ["#ef4444", "#3b82f6"],
+                        borderWidth: 3,
+                        borderColor: "#ffffff"
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: "bottom", labels: { font: { size: 12 }, padding: 15 } }
+                    }
+                }
+            });
+        }
+
+        function buildColModal() {
+            colModalBody.innerHTML = "";
+            columnDefs.forEach(col => {
+                const row = document.createElement("div");
+                row.className = "column-toggle-row";
+
+                const label = document.createElement("span");
+                label.style.fontSize = "0.88rem";
+                label.style.fontWeight = "500";
+                label.textContent = col.label;
+
+                const switchLabel = document.createElement("label");
+                switchLabel.className = "switch";
+
+                const input = document.createElement("input");
+                input.type = "checkbox";
+                input.checked = colVisibility[col.key] !== false;
+                input.addEventListener("change", (e) => {
+                    colVisibility[col.key] = e.target.checked;
+                    try {
+                        localStorage.setItem("hkSalaryColVis_v2", JSON.stringify(colVisibility));
+                    } catch (err) {}
+                    render();
+                });
+
+                const slider = document.createElement("span");
+                slider.className = "slider";
+
+                switchLabel.appendChild(input);
+                switchLabel.appendChild(slider);
+                row.appendChild(label);
+                row.appendChild(switchLabel);
+                colModalBody.appendChild(row);
+            });
+        }
+
+        colToggleBtn.addEventListener("click", () => {
+            buildColModal();
+            colModal.classList.add("open");
+        });
+
+        modalDoneBtn.addEventListener("click", () => colModal.classList.remove("open"));
+        colModal.addEventListener("click", (e) => {
+            if (e.target === colModal) colModal.classList.remove("open");
+        });
+
+        function applyFilters() {
+            const query = searchInput.value.trim().toLowerCase();
+            const cat = categoryFilter.value;
+            const dept = deptFilter.value;
+
+            filtered = salaryData.filter(row => {
+                if (cat && row.category !== cat) return false;
+                if (dept && row.dept !== dept) return false;
+                if (query) {
+                    const haystack = [
+                        row.id, row.category, row.dept, row.title, row.payScale,
+                        row.startingPay, row.maxPay, row.careerCeiling, row.req
+                    ].join(" ").toLowerCase();
+                    if (!haystack.includes(query)) return false;
+                }
+                return true;
+            });
+
+            filtered.sort((a, b) => {
+                let va = a[sortKey];
+                let vb = b[sortKey];
+
+                if (sortKey === "id") {
+                    return sortDir === "asc" ? a.id - b.id : b.id - a.id;
+                }
+
+                const numA = parseInt(String(va).replace(/[^0-9]/g, ""), 10);
+                const numB = parseInt(String(vb).replace(/[^0-9]/g, ""), 10);
+                if (!isNaN(numA) && !isNaN(numB) && (sortKey.includes("pay") || sortKey.includes("Pay"))) {
+                    return sortDir === "asc" ? numA - numB : numB - numA;
+                }
+
+                va = (va || "").toString().toLowerCase();
+                vb = (vb || "").toString().toLowerCase();
+                if (va < vb) return sortDir === "asc" ? -1 : 1;
+                if (va > vb) return sortDir === "asc" ? 1 : -1;
+                return 0;
+            });
+
+            currentPage = 1;
+            render();
+        }
+
+        function getPageSlice() {
+            if (pageSize === "all") return filtered;
+            const start = (currentPage - 1) * pageSize;
+            return filtered.slice(start, start + pageSize);
+        }
+
+        function render() {
+            const slice = getPageSlice();
+            const total = filtered.length;
+            const size = pageSize === "all" ? total : pageSize;
+            const startIdx = total === 0 ? 0 : (currentPage - 1) * size + 1;
+            const endIdx = pageSize === "all" ? total : Math.min(currentPage * size, total);
+
+            showingCount.textContent = total === 0 ? "0" : `${startIdx}–${endIdx}`;
+            totalCount.textContent = total;
+
+            document.querySelectorAll("th[data-key]").forEach(th => {
+                const k = th.dataset.key;
+                if (colVisibility[k] === false) {
+                    th.classList.add("col-hidden");
+                } else {
+                    th.classList.remove("col-hidden");
+                }
+            });
+
+            tableBody.innerHTML = "";
+            if (slice.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="20" style="text-align:center; padding: 2.5rem; color: var(--text-muted);">未找到符合條件的職位資訊</td></tr>`;
+            } else {
+                slice.forEach(row => {
+                    const tr = document.createElement("tr");
+                    const catClass = row.category === "紀律部隊" ? "cat-badge cat-force" : "cat-badge cat-civil";
+
+                    tr.innerHTML = `
+                        <td class="${colVisibility.id === false ? 'col-hidden' : ''}"><strong>${row.id}</strong></td>
+                        <td class="${colVisibility.category === false ? 'col-hidden' : ''}"><span class="${catClass}">${row.category}</span></td>
+                        <td class="${colVisibility.dept === false ? 'col-hidden' : ''}">${escapeHtml(row.dept)}</td>
+                        <td class="${colVisibility.title === false ? 'col-hidden' : ''}"><strong>${escapeHtml(row.title)}</strong></td>
+                        <td class="${colVisibility.payScale === false ? 'col-hidden' : ''}"><span class="scale-badge">${escapeHtml(row.payScale)}</span></td>
+                        <td class="${colVisibility.pay2016 === false ? 'col-hidden' : ''}">${escapeHtml(row.pay2016)}</td>
+                        <td class="${colVisibility.pay2017 === false ? 'col-hidden' : ''}">${escapeHtml(row.pay2017)}</td>
+                        <td class="${colVisibility.pay2018 === false ? 'col-hidden' : ''}">${escapeHtml(row.pay2018)}</td>
+                        <td class="${colVisibility.pay2019 === false ? 'col-hidden' : ''}">${escapeHtml(row.pay2019)}</td>
+                        <td class="${colVisibility.pay2020 === false ? 'col-hidden' : ''}">${escapeHtml(row.pay2020)}</td>
+                        <td class="${colVisibility.pay2021 === false ? 'col-hidden' : ''}">${escapeHtml(row.pay2021)}</td>
+                        <td class="${colVisibility.pay2022 === false ? 'col-hidden' : ''}">${escapeHtml(row.pay2022)}</td>
+                        <td class="${colVisibility.pay2023 === false ? 'col-hidden' : ''}">${escapeHtml(row.pay2023)}</td>
+                        <td class="${colVisibility.pay2024 === false ? 'col-hidden' : ''}">${escapeHtml(row.pay2024)}</td>
+                        <td class="${colVisibility.pay2025 === false ? 'col-hidden' : ''}">${escapeHtml(row.pay2025)}</td>
+                        <td class="pay-highlight ${colVisibility.startingPay === false ? 'col-hidden' : ''}">HK$ ${escapeHtml(row.startingPay)}</td>
+                        <td class="pay-max ${colVisibility.maxPay === false ? 'col-hidden' : ''}">HK$ ${escapeHtml(row.maxPay)}</td>
+                        <td class="${colVisibility.careerCeiling === false ? 'col-hidden' : ''}">${escapeHtml(row.careerCeiling)}</td>
+                        <td style="max-width: 280px; font-size: 0.8rem;" class="${colVisibility.req === false ? 'col-hidden' : ''}">${escapeHtml(row.req)}</td>
+                        <td class="${colVisibility.link === false ? 'col-hidden' : ''}">
+                            <a class="link-portal" href="${row.link}" target="_blank" rel="noopener noreferrer">
+                                官網招聘 ↗
+                            </a>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            }
+
+            cardsView.innerHTML = "";
+            if (slice.length === 0) {
+                cardsView.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-muted);">未找到符合條件的職位資訊</div>`;
+            } else {
+                slice.forEach(row => {
+                    const isExpanded = expandedCards.has(row.id);
+                    const card = document.createElement("div");
+                    card.className = `job-card ${isExpanded ? 'expanded' : ''}`;
+                    card.dataset.id = row.id;
+
+                    const catClass = row.category === "紀律部隊" ? "cat-badge cat-force" : "cat-badge cat-civil";
+
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <div style="flex: 1; min-width: 0;">
+                                <div class="card-meta-line">
+                                    <span class="card-id-pill">#${row.id}</span>
+                                    <span class="${catClass}">${row.category}</span>
+                                    <span class="scale-badge">${escapeHtml(row.payScale)}</span>
+                                </div>
+                                <h3 class="card-title">${escapeHtml(row.title)}</h3>
+                                <div class="card-dept">🏛️ ${escapeHtml(row.dept)}</div>
+                            </div>
+                            <button type="button" class="card-expand-trigger" aria-label="展開詳細資訊">▼</button>
+                        </div>
+
+                        <div class="card-metrics-strip">
+                            <div class="metric-item">
+                                <span class="metric-label">起薪</span>
+                                <span class="metric-val" style="color: #047857;">HK$ ${escapeHtml(row.startingPay)}</span>
+                            </div>
+                            <div class="metric-sep"></div>
+                            <div class="metric-item">
+                                <span class="metric-label">頂薪</span>
+                                <span class="metric-val" style="color: #b45309;">HK$ ${escapeHtml(row.maxPay)}</span>
+                            </div>
+                        </div>
+
+                        <div class="card-details">
+                            <div class="detail-section">
+                                <div class="detail-section-title">職涯晉升上限</div>
+                                <div class="detail-section-content" style="font-weight:600; color:var(--primary-dark);">
+                                    🚀 ${escapeHtml(row.careerCeiling)}
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <div class="detail-section-title">入職基本資格要求</div>
+                                <div class="detail-section-content">
+                                    📋 ${escapeHtml(row.req)}
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <div class="detail-section-title">2016 - 2025 起薪演變歷史 (HKD)</div>
+                                <div class="history-grid">
+                                    <div class="history-node"><div class="year">2016</div><div class="salary">${escapeHtml(row.pay2016)}</div></div>
+                                    <div class="history-node"><div class="year">2017</div><div class="salary">${escapeHtml(row.pay2017)}</div></div>
+                                    <div class="history-node"><div class="year">2018</div><div class="salary">${escapeHtml(row.pay2018)}</div></div>
+                                    <div class="history-node"><div class="year">2019</div><div class="salary">${escapeHtml(row.pay2019)}</div></div>
+                                    <div class="history-node"><div class="year">2020</div><div class="salary">${escapeHtml(row.pay2020)}</div></div>
+                                    <div class="history-node"><div class="year">2021</div><div class="salary">${escapeHtml(row.pay2021)}</div></div>
+                                    <div class="history-node"><div class="year">2022</div><div class="salary">${escapeHtml(row.pay2022)}</div></div>
+                                    <div class="history-node"><div class="year">2023</div><div class="salary">${escapeHtml(row.pay2023)}</div></div>
+                                    <div class="history-node"><div class="year">2024</div><div class="salary">${escapeHtml(row.pay2024)}</div></div>
+                                    <div class="history-node" style="background:#eff6ff; border-color:#bfdbfe;"><div class="year" style="color:#1d4ed8;">2025</div><div class="salary" style="color:#1d4ed8;">${escapeHtml(row.pay2025)}</div></div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 0.75rem;">
+                                <a class="btn btn-secondary" style="width: 100%; text-decoration: none; padding: 0.45rem 0.6rem; font-size: 0.82rem;" href="${row.link}" target="_blank" rel="noopener noreferrer">
+                                    前往官方招聘頁面 ↗
+                                </a>
+                            </div>
+                        </div>
+                    `;
+
+                    const header = card.querySelector(".card-header");
+                    const trigger = card.querySelector(".card-expand-trigger");
+
+                    const toggle = () => {
+                        if (expandedCards.has(row.id)) {
+                            expandedCards.delete(row.id);
+                            card.classList.remove("expanded");
+                        } else {
+                            expandedCards.add(row.id);
+                            card.classList.add("expanded");
+                        }
+                        updateExpandAllBtnState(slice);
+                    };
+
+                    header.addEventListener("click", (e) => {
+                        if (e.target.closest(".card-expand-trigger")) return;
+                        toggle();
+                    });
+                    trigger.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        toggle();
+                    });
+
+                    cardsView.appendChild(card);
+                });
+            }
+
+            updateExpandAllBtnState(slice);
+            renderPagination(total, size);
+            updateSortIndicators();
+        }
+
+        function updateExpandAllBtnState(slice) {
+            if (!expandAllBtn) return;
+            if (!slice || slice.length === 0) {
+                expandAllBtn.disabled = true;
+                return;
+            }
+            expandAllBtn.disabled = false;
+
+            const allExpanded = slice.every(row => expandedCards.has(row.id));
+            if (allExpanded) {
+                expandAllBtn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+                    全部收合
+                `;
+            } else {
+                expandAllBtn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+                    全部展開
+                `;
+            }
+        }
+
+        function renderPagination(total, size) {
+            pageControls.innerHTML = "";
+            if (pageSize === "all" || total === 0) {
+                pageInfo.textContent = total === 0 ? "查無資料" : `全部 ${total} 筆`;
+                return;
+            }
+
+            const totalPages = Math.ceil(total / size);
+            pageInfo.textContent = `第 ${currentPage} / ${totalPages} 頁 (共 ${total} 筆)`;
+
+            const prev = document.createElement("button");
+            prev.className = "page-btn";
+            prev.textContent = "‹";
+            prev.disabled = currentPage === 1;
+            prev.addEventListener("click", () => { currentPage--; render(); });
+            pageControls.appendChild(prev);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const b = document.createElement("button");
+                b.className = "page-btn" + (i === currentPage ? " active" : "");
+                b.textContent = i;
+                b.addEventListener("click", () => { currentPage = i; render(); });
+                pageControls.appendChild(b);
+            }
+
+            const next = document.createElement("button");
+            next.className = "page-btn";
+            next.textContent = "›";
+            next.disabled = currentPage === totalPages;
+            next.addEventListener("click", () => { currentPage++; render(); });
+            pageControls.appendChild(next);
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll("th").forEach(th => {
+                th.classList.remove("sorted-asc", "sorted-desc");
+                if (th.dataset.key === sortKey) {
+                    th.classList.add(sortDir === "asc" ? "sorted-asc" : "sorted-desc");
+                }
+            });
+        }
+
+        function escapeHtml(str) {
+            if (str == null) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function isMobileScreen() {
+            return window.matchMedia("(max-width: 768px)").matches;
+        }
+
+        function applyViewMode(mode, savePreference = false) {
+            const selected = mode || "table";
+            tableCard.classList.remove("view-table", "view-cards");
+            tableCard.classList.add(selected === "cards" ? "view-cards" : "view-table");
+            viewModeSelect.value = selected;
+
+            if (savePreference) {
+                try {
+                    localStorage.setItem("hkSalaryViewMode", selected);
+                } catch (e) {}
+            }
+        }
+
+        function initResponsiveViewMode() {
+            let saved = null;
+            try {
+                saved = localStorage.getItem("hkSalaryViewMode");
+            } catch (e) {}
+
+            if (saved === "table" || saved === "cards") {
+                applyViewMode(saved, false);
+            } else {
+                applyViewMode(isMobileScreen() ? "cards" : "table", false);
+            }
+        }
+
+        window.addEventListener("resize", debounce(() => {
+            let saved = null;
+            try {
+                saved = localStorage.getItem("hkSalaryViewMode");
+            } catch (e) {}
+            if (!saved) {
+                applyViewMode(isMobileScreen() ? "cards" : "table", false);
+            }
+        }, 150));
+
+        function exportToExcel() {
+            if (filtered.length === 0) return;
+
+            const headers = [
+                "編號", "類別", "機構 / 部門", "職位名稱", "薪級編號",
+                "起薪 2016", "起薪 2017", "起薪 2018", "起薪 2019", "起薪 2020",
+                "起薪 2021", "起薪 2022", "起薪 2023", "起薪 2024", "起薪 2025",
+                "起薪", "職級頂薪 (HKD/月)", "職涯晉升上限", "入職基本資格要求", "官方來源連結"
+            ];
+
+            const escapeCsv = (val) => {
+                const s = (val == null || val === "") ? "" : String(val);
+                if (/[",\n\r]/.test(s)) {
+                    return `"${s.replace(/"/g, '""')}"`;
+                }
+                return s;
+            };
+
+            const rows = filtered.map(r => [
+                escapeCsv(r.id),
+                escapeCsv(r.category),
+                escapeCsv(r.dept),
+                escapeCsv(r.title),
+                escapeCsv(r.payScale),
+                escapeCsv(r.pay2016),
+                escapeCsv(r.pay2017),
+                escapeCsv(r.pay2018),
+                escapeCsv(r.pay2019),
+                escapeCsv(r.pay2020),
+                escapeCsv(r.pay2021),
+                escapeCsv(r.pay2022),
+                escapeCsv(r.pay2023),
+                escapeCsv(r.pay2024),
+                escapeCsv(r.pay2025),
+                escapeCsv(r.startingPay),
+                escapeCsv(r.maxPay),
+                escapeCsv(r.careerCeiling),
+                escapeCsv(r.req),
+                escapeCsv(r.link)
+            ].join(","));
+
+            const csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const timestamp = new Date().toISOString().slice(0, 10);
+            link.href = url;
+            link.download = `HK-Civil-Service-Salaries-${timestamp}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        searchInput.addEventListener("input", debounce(applyFilters, 200));
+        categoryFilter.addEventListener("change", applyFilters);
+        deptFilter.addEventListener("change", applyFilters);
+
+        pageSizeSelect.addEventListener("change", () => {
+            const val = pageSizeSelect.value;
+            pageSize = val === "all" ? "all" : parseInt(val, 10);
+            currentPage = 1;
+            render();
+        });
+
+        viewModeSelect.addEventListener("change", () => {
+            applyViewMode(viewModeSelect.value, true);
+        });
+
+        expandAllBtn.addEventListener("click", () => {
+            const slice = getPageSlice();
+            if (slice.length === 0) return;
+
+            const allExpanded = slice.every(r => expandedCards.has(r.id));
+            if (allExpanded) {
+                slice.forEach(r => expandedCards.delete(r.id));
+            } else {
+                slice.forEach(r => expandedCards.add(r.id));
+            }
+            render();
+        });
+
+        resetBtn.addEventListener("click", () => {
+            searchInput.value = "";
+            categoryFilter.value = "";
+            deptFilter.value = "";
+            pageSizeSelect.value = "15";
+            pageSize = 15;
+            sortKey = "id";
+            sortDir = "asc";
+            expandedCards.clear();
+
+            columnDefs.forEach(c => colVisibility[c.key] = c.default);
+            try {
+                localStorage.removeItem("hkSalaryColVis_v2");
+                localStorage.removeItem("hkSalaryViewMode");
+            } catch (e) {}
+
+            applyViewMode(isMobileScreen() ? "cards" : "table", false);
+            applyFilters();
+        });
+
+        exportBtn.addEventListener("click", exportToExcel);
+
+        document.querySelectorAll("th[data-key]").forEach(th => {
+            th.addEventListener("click", () => {
+                const key = th.dataset.key;
+                if (sortKey === key) {
+                    sortDir = sortDir === "asc" ? "desc" : "asc";
+                } else {
+                    sortKey = key;
+                    sortDir = "asc";
+                }
+                applyFilters();
+            });
+        });
+
+        function debounce(fn, ms) {
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn(...args), ms);
+            };
+        }
+
+        // Initialize display mode and render table
+        initResponsiveViewMode();
+        applyFilters();
+    </script>
+</body>
+</html>
