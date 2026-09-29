@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>香港巴士到站時間 ETA</title>
+  <style>
+:root {
+  --bg: #f5f7fb;
+  --card: rgba(255, 255, 255, .9);
+  --card-solid: #ffffff;
+  --text: #142033;
+  --muted: #65758b;
+  --line: rgba(20, 32, 51, .11);
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, .1);
+  --green: #16a34a;
+  --red: #dc2626;
+  --shadow: 0 18px 45px rgba(15, 23, 42, .09);
+}
+
+[data-theme="dark"] {
+  --bg: #08111f;
+  --card: rgba(17, 28, 47, .88);
+  --card-solid: #111c2f;
+  --text: #f3f7ff;
+  --muted: #97a6ba;
+  --line: rgba(255, 255, 255, .12);
+  --accent: #60a5fa;
+  --accent-soft: rgba(96, 165, 250, .14);
+  --green: #4ade80;
+  --red: #fb7185;
+  --shadow: 0 18px 45px rgba(0, 0, 0, .28);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(37, 99, 235, .12), transparent 34%),
+    radial-gradient(circle at 90% 4%, rgba(22, 163, 74, .10), transparent 30%),
+    var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+  padding: env(safe-area-inset-top) 8px env(safe-area-inset-bottom);
+}
+
+.app {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 6px 0 10px;
+}
+
+.topbar {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.gear-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  font-size: 19px;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  display: grid;
+  place-items: center;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.gear-btn:hover {
+  background: var(--card-solid);
+}
+
+.gear-btn:active {
+  transform: scale(0.96);
+}
+
+.clock-box {
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+  padding: 3px 8px;
+}
+
+.system-time {
+  font-size: clamp(20px, 6vw, 28px);
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -.03em;
+}
+
+.system-date {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.status-dot {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 800;
+  backdrop-filter: blur(16px);
+  transition: color 0.2s ease;
+}
+
+.weather-panel {
+  margin-bottom: 6px;
+}
+
+.weather-row { 
+  display: grid; 
+  grid-template-columns: minmax(52px, 1fr) minmax(0, 6fr); 
+  gap: 6px; 
+}
+
+.weather-today, .weather-days {
+  padding: 6px 4px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+.weather-today { border-color: var(--accent); }
+.weather-days { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 2px; }
+.weather-today[hidden], .weather-days[hidden] { display: none; }
+
+.weather-day { min-width: 0; padding: 4px 0; text-align: center; font-size: 10px; }
+.weather-week { font-weight: 850; }
+.weather-date { color: var(--muted); margin-top: 2px; }
+.weather-emoji { display: block; height: 30px; margin: 3px auto; font-size: 24px; line-height: 30px; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.weather-temp { color: var(--accent); font-weight: 900; white-space: nowrap; font-size: 11px; }
+.weather-status { color: var(--muted); font-size: 11px; margin-top: 6px; text-align: center; }
+.weather-retry { border: 0; background: transparent; color: var(--accent); font: inherit; font-weight: 800; cursor: pointer; padding: 4px 8px; text-decoration: underline; }
+
+.stations-wrap {
+  display: grid;
+  gap: 8px;
+}
+
+.station-section {
+  display: none;
+}
+
+.station-section.active {
+  display: block;
+}
+
+.stop-title {
+  margin-bottom: 6px;
+  padding: 7px 12px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+.stop-name {
+  font-size: clamp(16px, 4.4vw, 21px);
+  font-weight: 950;
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  text-align: center;
+}
+
+.stop-meta {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10.5px;
+  text-align: center;
+  overflow-wrap: anywhere;
+  line-height: 1.2;
+}
+
+.stations-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 4px 4px;
+  gap: 8px;
+}
+
+.stations-toolbar-info {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: -0.01em;
+}
+
+.toggle-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+  transition: all 0.15s ease;
+}
+
+.toggle-all-btn:hover {
+  background: var(--card-solid);
+  transform: translateY(-1px);
+}
+
+.toggle-all-btn:active {
+  transform: scale(0.97);
+}
+
+.stop-title-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: 8px;
+}
+
+.station-pill-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 3px 8px;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+  line-height: 1.2;
+  transition: all 0.15s ease;
+}
+
+.station-pill-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.station-expand-bar {
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
+}
+
+.station-toggle-btn {
+  width: 100%;
+  min-height: 38px;
+  padding: 6px 12px;
+  border-radius: 13px;
+  background: var(--card);
+  border: 1px dashed var(--line);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.station-toggle-btn:hover {
+  border-color: var(--accent);
+  background: var(--card-solid);
+  transform: translateY(-1px);
+}
+
+.station-toggle-btn:active {
+  transform: scale(0.98);
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.list.layout-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.route-row {
+  width: 100%;
+  min-height: 38px;
+  border-radius: 13px;
+  padding: 5px 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.route-row:hover {
+  transform: translateY(-1px);
+}
+
+.route-row-left {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.route-row-left .route-no {
+  color: var(--accent);
+  font-size: clamp(17px, 4.6vw, 22px);
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.route-row-dest {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.route-row-dest .dest-prefix {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.route-row-dest .dest-text {
+  color: var(--text);
+  font-size: clamp(12px, 3.4vw, 14px);
+  font-weight: 850;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.route-row-right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.first-eta-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  line-height: 1;
+}
+
+.route-dot .first-eta-box {
+  align-items: center;
+  margin-top: 2px;
+}
+
+.first-exact-time {
+  font-size: 10px;
+  font-weight: 750;
+  color: var(--muted);
+  letter-spacing: -0.01em;
+  margin-top: 1px;
+  line-height: 1;
+}
+
+.route-row-right .first-eta {
+  margin-top: 0;
+  font-size: clamp(17px, 4.6vw, 22px);
+  font-weight: 950;
+  line-height: 1;
+  color: var(--green);
+  display: flex;
+  align-items: baseline;
+  margin-right: 0;
+}
+
+.route-row-right .first-eta.now {
+  color: var(--red);
+}
+
+.route-row-right .next-times {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.route-dot {
+  width: calc(25% - 5px);
+  min-height: 76px;
+  border-radius: 15px;
+  padding: 6px 4px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+  text-align: center;
+  overflow: hidden;
+  transition: transform 0.15s ease;
+}
+
+.route-dot:hover {
+  transform: translateY(-2px);
+}
+
+.route-no {
+  color: var(--accent);
+  font-size: clamp(16px, 4.4vw, 24px);
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+}
+
+.route-dest {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 9.5px;
+  font-weight: 850;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.first-eta {
+  margin-top: 4px;
+  color: var(--green);
+  font-size: clamp(17px, 5vw, 24px);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.first-eta.now { color: var(--red); }
+
+.unit {
+  margin-left: 1px;
+  font-size: 11px;
+  font-weight: 850;
+  color: inherit;
+}
+
+.next-times {
+  margin-top: 3px;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.next-pill {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5px 5px;
+  border-radius: 7px;
+  background: var(--accent-soft);
+  line-height: 1.05;
+  text-decoration: none;
+}
+
+.next-pill .pill-mins {
+  font-size: 10px;
+  font-weight: 850;
+  color: var(--text);
+  line-height: 1;
+}
+
+.next-pill .pill-time {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.hint, .error, .empty {
+  width: 100%;
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+  backdrop-filter: blur(16px);
+}
+
+.error {
+  color: var(--red);
+  border-color: rgba(220, 38, 38, .25);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  align-items: flex-end;
+  background: rgba(2, 6, 23, .48);
+  padding: 14px;
+}
+
+.modal-backdrop.active { display: flex; }
+
+.settings-modal {
+  width: 100%;
+  max-width: 720px;
+  max-height: 88vh;
+  margin: 0 auto;
+  overflow-y: auto;
+  border-radius: 28px;
+  background: var(--card-solid);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 70px rgba(0,0,0,.28);
+  padding: 16px;
+  animation: slideUp .18s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(18px); opacity: .75; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: -.02em;
+}
+
+.close-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 22px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.station-box {
+  padding: 12px;
+  border-radius: 20px;
+  background: var(--accent-soft);
+  border: 1.5px solid var(--line);
+  margin-bottom: 10px;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.station-box.dragging {
+  opacity: 0.45;
+  border-style: dashed;
+  border-color: var(--accent);
+  transform: scale(0.98);
+}
+
+.station-box.drag-over {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  transform: translateY(-2px);
+}
+
+.station-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.station-head-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.station-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 19px;
+  font-weight: bold;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.drag-handle:hover, .drag-handle:active {
+  background: var(--card);
+  color: var(--accent);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.reorder-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.reorder-btn:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.reorder-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.station-label {
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.remove-station-btn {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 10px;
+  background: var(--card);
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.add-station-btn {
+  width: 100%;
+  min-height: 48px;
+  border: 1px dashed var(--accent);
+  border-radius: 17px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 16px;
+  font-weight: 950;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.import-export-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.mini-action-btn {
+  min-height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.mini-action-btn.export {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.mini-action-btn.import {
+  color: var(--green);
+}
+
+.hidden-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.form-grid {
+  display: grid;
+  gap: 10px;
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+input, select {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 0 13px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 750;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.settings-note {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+.settings-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+button.primary,
+button.secondary {
+  min-height: 52px;
+  border-radius: 17px;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+button.primary {
+  border: 0;
+  color: white;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, .23);
+}
+
+button.secondary {
+  border: 1px solid var(--line);
+  color: var(--text);
+  background: var(--card);
+}
+
+button:active { transform: scale(.985); }
+button:disabled, select:disabled { opacity: .5; cursor: not-allowed; }
+#routeFinder .form-grid > * { min-width: 0; }
+#routeFinder select { text-overflow: ellipsis; }
+
+.settings-controls-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.settings-controls-row label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.settings-controls-row select {
+  width: 100%;
+  min-height: 48px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 0 28px 0 12px;
+  background-color: var(--card);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 850;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2365758b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 11px center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  text-overflow: ellipsis;
+}
+
+.settings-controls-row select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3.5px var(--accent-soft);
+}
+
+@media (max-width: 480px) {
+  .settings-controls-row {
+    gap: 6px;
+  }
+  .settings-controls-row select {
+    padding: 0 20px 0 8px;
+    font-size: 12px;
+    min-height: 44px;
+    background-position: right 6px center;
+  }
+  .settings-controls-row label {
+    font-size: 11px;
+  }
+}
+
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  max-width: 90vw;
+  width: 400px;
+}
+
+.toast {
+  background: var(--card-solid);
+  color: var(--text);
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, .2);
+  padding: 12px 18px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 750;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: auto;
+  backdrop-filter: blur(16px);
+}
+
+.toast.toast-error {
+  border-color: rgba(220, 38, 38, .4);
+  color: var(--red);
+}
+
+.toast.toast-success {
+  border-color: rgba(22, 163, 74, .4);
+  color: var(--green);
+}
+
+@keyframes toastFadeIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.settings-credit {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 9px;
+  line-height: 1.2;
+}
+
+.settings-credit a {
+  color: var(--muted);
+  text-decoration: none;
+  opacity: .55;
+}
+
+.settings-credit a:active {
+  opacity: .85;
+}
+
+@media (min-width: 640px) {
+  .modal-backdrop { align-items: center; }
+  .form-grid { grid-template-columns: 1.1fr .9fr; }
+  .station-box .form-grid { grid-template-columns: .75fr 1fr 1fr; }
+  .route-dot { width: calc(20% - 7px); }
+}
+
+@media (max-width: 390px) {
+  body { padding-left: 6px; padding-right: 6px; }
+  .topbar {
+    grid-template-columns: 36px 1fr 36px;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .gear-btn, .status-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+  .clock-box {
+    min-height: 36px;
+    padding: 2px 6px;
+  }
+  .stop-title {
+    padding: 5px 8px;
+    border-radius: 11px;
+    margin-bottom: 4px;
+  }
+  .stop-name {
+    font-size: 15px;
+  }
+  .stop-meta {
+    font-size: 10px;
+  }
+  .route-row {
+    padding: 4px 8px;
+    min-height: 35px;
+    border-radius: 11px;
+  }
+  .list.layout-list {
+    gap: 3px;
+  }
+  .first-exact-time {
+    font-size: 9px;
+  }
+  .next-pill {
+    padding: 1px 3.5px;
+    border-radius: 5px;
+  }
+  .next-pill .pill-mins {
+    font-size: 9.5px;
+  }
+  .next-pill .pill-time {
+    font-size: 8.5px;
+  }
+  .route-dot {
+    width: calc(33.333% - 4px);
+    min-height: 68px;
+    border-radius: 12px;
+    padding: 4px 2px;
+  }
+  .settings-actions,
+  .import-export-actions { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="topbar">
+      <button class="gear-btn" id="openSettingsBtn" type="button" aria-label="開啟設定">⚙</button>
+      <div class="clock-box">
+        <div class="system-time" id="systemTime">--:--:--</div>
+        <div class="system-date" id="systemDate">系統時間</div>
+      </div>
+      <div class="status-dot" id="statusDot" title="狀態">○</div>
+    </section>
+
+    <section class="weather-panel" aria-label="香港今天及未來六天天氣">
+      <div class="weather-row">
+        <div class="weather-today" id="weatherToday" aria-label="今天即時天氣" hidden></div>
+        <div class="weather-days" id="weatherDays" role="list" aria-label="未來六天天氣預報" hidden></div>
+      </div>
+      <div class="weather-status" role="status"><span id="weatherStatus">正在讀取天氣預報…</span><button class="weather-retry" id="weatherRetry" type="button" hidden>重試</button></div>
+    </section>
+
+    <section class="stations-wrap" id="stationsWrap">
+      <div class="hint">
+        請按左上角 ⚙ 選擇巴士公司並輸入巴士站 ID。<br>
+        支援 KMB/LWB 及城巴 CTB，可自行新增多個車站。
+      </div>
+    </section>
+
+    <footer class="settings-credit">
+      <a href="https://hkbus.app/zh" target="_blank" rel="noopener noreferrer">All data from KMB Official API</a>
+    </footer>
+  </main>
+
+  <section class="modal-backdrop" id="settingsBackdrop" aria-hidden="true">
+    <div class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="modal-head">
+        <div class="modal-title" id="settingsTitle">設定</div>
+        <button class="close-btn" id="closeSettingsBtn" type="button" aria-label="關閉設定">×</button>
+      </div>
+
+      <div class="station-box" id="routeFinder">
+        <div class="station-label">按路線加入車站</div>
+        <div class="form-grid" style="margin-top:10px;">
+          <div><label for="lookupCompany">巴士公司</label><select id="lookupCompany"><option value="KMB">KMB / LWB</option><option value="CTB">城巴 CTB</option></select></div>
+          <div><label for="lookupRoute">路線號碼</label><input id="lookupRoute" placeholder="例如：42C、962X" autocomplete="off" /></div>
+          <button class="mini-action-btn" id="lookupSearch" type="button">搜尋路線</button>
+        </div>
+        <div style="margin-top:10px;"><label for="lookupDirection">去／回程及班次</label><select id="lookupDirection" disabled><option value="">請先搜尋路線</option></select></div>
+        <div style="margin-top:10px;"><label for="lookupStop">巴士站（按行車次序）</label><select id="lookupStop" disabled><option value="">請先選擇方向</option></select></div>
+        <button class="add-station-btn" id="lookupAdd" type="button" disabled style="margin-top:10px;">加入所選車站</button>
+        <div id="lookupStatus" role="status" aria-live="polite" class="settings-note">選擇路線、方向及車站，自動填入 ID 和顯示名稱，再按「儲存並更新」。</div>
+      </div>
+
+      <div id="stationList"></div>
+      <button class="add-station-btn" id="addStationBtn" type="button">＋ 新增車站</button>
+
+      <div class="import-export-actions">
+        <button class="mini-action-btn export" id="exportSettingsBtn" type="button">匯出設定</button>
+        <button class="mini-action-btn import" id="importSettingsBtn" type="button">匯入設定</button>
+      </div>
+      <input class="hidden-file-input" id="importSettingsFile" type="file" accept="application/json,.json" />
+
+      <div class="settings-controls-row">
+        <div>
+          <label for="refreshSeconds">更新時間</label>
+          <select id="refreshSeconds">
+            <option value="15">每 15 秒</option>
+            <option value="30" selected>每 30 秒</option>
+            <option value="60">每 60 秒</option>
+          </select>
+        </div>
+        <div>
+          <label for="layoutSelect">排列方式</label>
+          <select id="layoutSelect">
+            <option value="list" selected>單行顯示（每線一行）</option>
+            <option value="grid">卡片方格（每行多線）</option>
+          </select>
+        </div>
+        <div>
+          <label for="themeSelect">畫面模式</label>
+          <select id="themeSelect">
+            <option value="light">淺色模式</option>
+            <option value="dark">深色模式</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-note">系統會自動列出每個車站的所有巴士路線。可加入多個車站，亦可匯出設定備份，再於其他裝置匯入。KMB/LWB 使用 KMB API；城巴 CTB 使用 DATA.GOV.HK 指定車站 ETA API。</div>
+
+      <div class="settings-actions">
+        <button class="primary" id="saveSettingsBtn" type="button">儲存並更新</button>
+        <button class="secondary" id="cancelSettingsBtn" type="button">取消</button>
+      </div>
+
+      <div class="settings-credit">
+        <a href="https://hkbus.app/zh" target="_blank" rel="noopener noreferrer">All data from KMB Official API</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Container for non-blocking in-app toast notices -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script>
+const els = {
+  openSettingsBtn: document.getElementById("openSettingsBtn"),
+  settingsBackdrop: document.getElementById("settingsBackdrop"),
+  closeSettingsBtn: document.getElementById("closeSettingsBtn"),
+  cancelSettingsBtn: document.getElementById("cancelSettingsBtn"),
+  saveSettingsBtn: document.getElementById("saveSettingsBtn"),
+  addStationBtn: document.getElementById("addStationBtn"),
+  exportSettingsBtn: document.getElementById("exportSettingsBtn"),
+  importSettingsBtn: document.getElementById("importSettingsBtn"),
+  importSettingsFile: document.getElementById("importSettingsFile"),
+  stationList: document.getElementById("stationList"),
+  refreshSeconds: document.getElementById("refreshSeconds"),
+  themeSelect: document.getElementById("themeSelect"),
+  layoutSelect: document.getElementById("layoutSelect"),
+  systemTime: document.getElementById("systemTime"),
+  systemDate: document.getElementById("systemDate"),
+  statusDot: document.getElementById("statusDot"),
+  stationsWrap: document.getElementById("stationsWrap"),
+  toastContainer: document.getElementById("toastContainer")
+};
+
+let timer = null;
+let nextRefreshAt = 0;
+let lastUpdatedText = "";
+let stopData = {};
+let stationExpandedState = {};
+const DEFAULT_STATIONS = [
+  { company: "KMB", id: "376C4835851621D4", name: "屯門公路轉車站 (TM750)" },
+  { company: "KMB", id: "0E9F8B5A3734D9CE", name: "油麻地寧波街 (YT126)" },
+  { company: "KMB", id: "0269A1F9D98C737E", name: "屯門公路轉車站 (TM101)" },
+  { company: "KMB", id: "6BB5645D03BE78E7", name: "九龍灣站 (KT669)" },
+  { company: "KMB", id: "E45CFAB2E6E4C8FE", name: "香港理工大學 (YT230)" }
+];
+let stationSettings = DEFAULT_STATIONS.map(station => ({ ...station }));
+let activeSettings = { stations: stationSettings.map(station => ({ ...station })), refreshSeconds: "30", theme: "light", layout: "list" };
+let etaStatus = "idle";
+let etaRequestVersion = 0;
+let etaController = null;
+let stopErrors = {};
+
+function showToast(message, type = "info") {
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  els.toastContainer.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(8px)";
+    setTimeout(() => toast.remove(), 250);
+  }, 3200);
+}
+
+function safeText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[char]));
+}
+
+function normalizeStopId(value) {
+  return String(value || "").trim().replace(/\s+/g, "").toUpperCase();
+}
+
+function normalizeCompany(value) {
+  return String(value || "KMB").toUpperCase() === "CTB" ? "CTB" : "KMB";
+}
+
+function stationKey(stop) {
+  return `${stop.company}:${stop.id}`;
+}
+
+function companyLabel(company) {
+  return company === "CTB" ? "城巴 CTB" : "KMB/LWB";
+}
+
+function createEmptyStation() {
+  return { company: "KMB", id: "", name: "" };
+}
+
+function updateStationSettingsFromForm() {
+  const rows = Array.from(els.stationList.querySelectorAll(".station-box"));
+  stationSettings = rows.map(row => {
+    return {
+      company: normalizeCompany(row.querySelector(".company-input")?.value || "KMB"),
+      id: normalizeStopId(row.querySelector(".stop-id-input")?.value || ""),
+      name: String(row.querySelector(".stop-name-input")?.value || "").trim()
+    };
+  });
+
+  if (!stationSettings.length) stationSettings = [createEmptyStation()];
+}
+
+function renderStationSettings() {
+  if (!stationSettings.length) stationSettings = [createEmptyStation()];
+
+  els.stationList.innerHTML = stationSettings.map((station, index) => `
+    <div class="station-box" data-index="${index}" draggable="true">
+      <div class="station-head">
+        <div class="station-head-left">
+          ${stationSettings.length > 1 ? `<span class="drag-handle" title="按住拖曳排序" aria-label="按住拖曳排序">⠿</span>` : ""}
+          <div class="station-label">車站 ${index + 1}</div>
+        </div>
+        <div class="station-head-actions">
+          ${stationSettings.length > 1 ? `
+            <button class="reorder-btn" type="button" data-move-up="${index}" ${index === 0 ? "disabled" : ""} title="上移">↑</button>
+            <button class="reorder-btn" type="button" data-move-down="${index}" ${index === stationSettings.length - 1 ? "disabled" : ""} title="下移">↓</button>
+            <button class="remove-station-btn" type="button" data-remove-index="${index}">刪除</button>
+          ` : ""}
+        </div>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label for="company-${index}">巴士公司</label>
+          <select id="company-${index}" class="company-input">
+            <option value="KMB" ${normalizeCompany(station.company) === "KMB" ? "selected" : ""}>KMB / LWB</option>
+            <option value="CTB" ${normalizeCompany(station.company) === "CTB" ? "selected" : ""}>城巴 CTB</option>
+          </select>
+        </div>
+        <div>
+          <label for="stop-${index}">巴士站 ID</label>
+          <input id="stop-${index}" class="stop-id-input" type="text" inputmode="latin" autocomplete="off" value="${safeText(station.id)}" placeholder="KMB：C78F66DF6FA871B6｜城巴：001001" />
+        </div>
+        <div>
+          <label for="name-${index}">顯示名稱</label>
+          <input id="name-${index}" class="stop-name-input" type="text" autocomplete="off" value="${safeText(station.name)}" placeholder="例如：青衣邨宜業樓 / 中環碼頭" />
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  els.stationList.querySelectorAll("input, select").forEach(input => {
+    input.addEventListener("input", updateStationSettingsFromForm);
+    input.addEventListener("change", updateStationSettingsFromForm);
+  });
+
+  els.stationList.querySelectorAll(".remove-station-btn").forEach(button => {
+    button.addEventListener("click", () => {
+      updateStationSettingsFromForm();
+      const index = Number(button.dataset.removeIndex);
+      stationSettings.splice(index, 1);
+      if (!stationSettings.length) stationSettings = [createEmptyStation()];
+      renderStationSettings();
+    });
+  });
+
+  els.stationList.querySelectorAll(".reorder-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      updateStationSettingsFromForm();
+      if (btn.dataset.moveUp !== undefined) {
+        const idx = Number(btn.dataset.moveUp);
+        if (idx > 0) {
+          const item = stationSettings.splice(idx, 1)[0];
+          stationSettings.splice(idx - 1, 0, item);
+          renderStationSettings();
+        }
+      } else if (btn.dataset.moveDown !== undefined) {
+        const idx = Number(btn.dataset.moveDown);
+        if (idx < stationSettings.length - 1) {
+          const item = stationSettings.splice(idx, 1)[0];
+          stationSettings.splice(idx + 1, 0, item);
+          renderStationSettings();
+        }
+      }
+    });
+  });
+
+  let draggedIndex = null;
+  const stationBoxes = els.stationList.querySelectorAll(".station-box");
+
+  stationBoxes.forEach(box => {
+    box.addEventListener("dragstart", event => {
+      if (event.target.tagName === "INPUT" || event.target.tagName === "SELECT") {
+        event.preventDefault();
+        return;
+      }
+      updateStationSettingsFromForm();
+      draggedIndex = Number(box.dataset.index);
+      box.classList.add("dragging");
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", String(draggedIndex));
+    });
+
+    box.addEventListener("dragover", event => {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      box.classList.add("drag-over");
+    });
+
+    box.addEventListener("dragleave", () => {
+      box.classList.remove("drag-over");
+    });
+
+    box.addEventListener("drop", event => {
+      event.preventDefault();
+      box.classList.remove("drag-over");
+      const targetIndex = Number(box.dataset.index);
+      if (draggedIndex !== null && targetIndex !== draggedIndex) {
+        const [item] = stationSettings.splice(draggedIndex, 1);
+        stationSettings.splice(targetIndex, 0, item);
+        renderStationSettings();
+      }
+    });
+
+    box.addEventListener("dragend", () => {
+      stationBoxes.forEach(b => b.classList.remove("dragging", "drag-over"));
+      draggedIndex = null;
+    });
+
+    // Touch support for mobile devices
+    const handle = box.querySelector(".drag-handle");
+    if (handle) {
+      let touchStartIndex = null;
+      let currentDropTarget = null;
+
+      handle.addEventListener("touchstart", () => {
+        updateStationSettingsFromForm();
+        touchStartIndex = Number(box.dataset.index);
+        box.classList.add("dragging");
+      }, { passive: true });
+
+      handle.addEventListener("touchmove", event => {
+        event.preventDefault();
+        const touch = event.touches[0];
+        const elem = document.elementFromPoint(touch.clientX, touch.clientY)?.closest(".station-box");
+        stationBoxes.forEach(b => b.classList.remove("drag-over"));
+        if (elem && elem !== box) {
+          elem.classList.add("drag-over");
+          currentDropTarget = elem;
+        } else {
+          currentDropTarget = null;
+        }
+      }, { passive: false });
+
+      handle.addEventListener("touchend", () => {
+        box.classList.remove("dragging");
+        stationBoxes.forEach(b => b.classList.remove("drag-over"));
+        if (currentDropTarget && touchStartIndex !== null) {
+          const targetIndex = Number(currentDropTarget.dataset.index);
+          if (!Number.isNaN(targetIndex) && targetIndex !== touchStartIndex) {
+            const [item] = stationSettings.splice(touchStartIndex, 1);
+            stationSettings.splice(targetIndex, 0, item);
+            renderStationSettings();
+          }
+        }
+        touchStartIndex = null;
+        currentDropTarget = null;
+      });
+    }
+  });
+}
+
+function getStops() {
+  return activeSettings.stations
+    .map((station, index) => ({
+      number: index + 1,
+      company: normalizeCompany(station.company),
+      id: normalizeStopId(station.id),
+      name: station.name.trim() || `車站 ${index + 1}`
+    }))
+    .filter(station => station.id);
+}
+
+function getSettingsData() {
+  updateStationSettingsFromForm();
+  return {
+    app: "HK_BUS_ETA",
+    version: 3,
+    exportedAt: new Date().toISOString(),
+    stations: stationSettings
+      .map(station => ({
+        company: normalizeCompany(station.company),
+        id: normalizeStopId(station.id),
+        name: String(station.name || "").trim()
+      }))
+      .filter((station, index, list) => station.id || station.name || list.length === 1),
+    refreshSeconds: els.refreshSeconds.value,
+    theme: els.themeSelect.value,
+    layout: els.layoutSelect ? els.layoutSelect.value : "list"
+  };
+}
+
+function applySettingsData(data) {
+  if (!data || !Array.isArray(data.stations) || data.stations.some(station => !station || typeof station !== "object" || Array.isArray(station))) {
+    throw new Error("設定檔格式不正確");
+  }
+
+  const importedStations = data.stations
+    .map(station => ({
+      company: normalizeCompany(station.company),
+      id: normalizeStopId(station.id),
+      name: String(station.name || "").trim()
+    }))
+    .filter(station => station.id || station.name);
+
+  stationSettings = importedStations.length ? importedStations : [createEmptyStation()];
+
+  if (["15", "30", "60"].includes(String(data.refreshSeconds))) {
+    els.refreshSeconds.value = String(data.refreshSeconds);
+  }
+
+  if (["light", "dark"].includes(String(data.theme))) {
+    els.themeSelect.value = String(data.theme);
+    document.documentElement.setAttribute("data-theme", els.themeSelect.value);
+  }
+
+  if (["list", "grid"].includes(String(data.layout))) {
+    if (els.layoutSelect) els.layoutSelect.value = String(data.layout);
+  }
+
+  renderStationSettings();
+  saveSettings();
+}
+
+function saveSettings() {
+  const data = getSettingsData();
+  try {
+    localStorage.setItem("hkBusEtaSettings", JSON.stringify(data));
+  } catch {
+    showToast("瀏覽器無法儲存設定，建議匯出設定備份。", "error");
+  }
+  activeSettings = data;
+}
+
+function exportSettings() {
+  const data = getSettingsData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const date = new Date().toISOString().slice(0, 10).replaceAll("-", "");
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = `HK_BUS_ETA_settings_${date}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  URL.revokeObjectURL(url);
+  showToast("設定檔已成功匯出", "success");
+}
+
+function importSettingsFile(file) {
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(String(reader.result || "{}"));
+      applySettingsData(data);
+      closeSettings();
+      fetchEta();
+      showToast("已成功匯入設定。", "success");
+    } catch (error) {
+      showToast(`匯入失敗：${error.message}`, "error");
+    } finally {
+      els.importSettingsFile.value = "";
+    }
+  };
+  reader.onerror = () => {
+    showToast("無法讀取設定檔。", "error");
+    els.importSettingsFile.value = "";
+  };
+  reader.readAsText(file, "utf-8");
+}
+
+function getUrlStations(params) {
+  const stations = [];
+  const firstStop = params.get("stop") || params.get("stop1") || "";
+  if (firstStop) {
+    stations.push({
+      company: normalizeCompany(params.get("co") || params.get("co1") || "KMB"),
+      id: normalizeStopId(firstStop),
+      name: params.get("name") || params.get("name1") || ""
+    });
+  }
+
+  for (let i = 2; i <= 20; i += 1) {
+    const stopId = params.get(`stop${i}`) || "";
+    if (!stopId) continue;
+    stations.push({
+      company: normalizeCompany(params.get(`co${i}`) || "KMB"),
+      id: normalizeStopId(stopId),
+      name: params.get(`name${i}`) || ""
+    });
+  }
+
+  const repeatedStops = params.getAll("stop");
+  if (repeatedStops.length > 1) {
+    return repeatedStops.map((stopId, index) => ({
+      company: normalizeCompany(params.getAll("co")[index] || params.get("co") || "KMB"),
+      id: normalizeStopId(stopId),
+      name: params.getAll("name")[index] || `車站 ${index + 1}`
+    })).filter(station => station.id);
+  }
+
+  return stations.filter(station => station.id);
+}
+
+function loadSettings() {
+  const params = new URLSearchParams(location.search);
+  const urlStations = getUrlStations(params);
+
+  let saved = {};
+  try {
+    saved = JSON.parse(localStorage.getItem("hkBusEtaSettings") || "{}") || {};
+  } catch {}
+
+  if (urlStations.length) {
+    stationSettings = urlStations;
+  } else if (Array.isArray(saved.stations) && saved.stations.length) {
+    stationSettings = saved.stations.filter(station => station && typeof station === "object").map(station => ({
+      company: normalizeCompany(station.company),
+      id: normalizeStopId(station.id),
+      name: String(station.name || "").trim()
+    }));
+  } else if (saved.stopId1 || saved.stopId2) {
+    stationSettings = [
+      { company: normalizeCompany(saved.company1), id: normalizeStopId(saved.stopId1), name: saved.stopName1 || "" },
+      { company: normalizeCompany(saved.company2), id: normalizeStopId(saved.stopId2), name: saved.stopName2 || "" }
+    ].filter(station => station.id || station.name);
+  } else {
+    stationSettings = DEFAULT_STATIONS.map(station => ({ ...station }));
+  }
+
+  if (!stationSettings.length) stationSettings = DEFAULT_STATIONS.map(station => ({ ...station }));
+  renderStationSettings();
+
+  const refresh = String(params.get("refresh") || saved.refreshSeconds || "30");
+  if (["15", "30", "60"].includes(refresh)) els.refreshSeconds.value = refresh;
+
+  const theme = saved.theme === "dark" ? "dark" : "light";
+  els.themeSelect.value = theme;
+  document.documentElement.setAttribute("data-theme", theme);
+
+  const layout = String(params.get("layout") || saved.layout || "list");
+  if (els.layoutSelect && ["list", "grid"].includes(layout)) {
+    els.layoutSelect.value = layout;
+  }
+
+  activeSettings = getSettingsData();
+
+  if (urlStations.length || stationSettings.some(station => station.id)) fetchEta();
+  else updateStatusDot("idle");
+}
+
+function openSettings() {
+  els.settingsBackdrop.classList.add("active");
+  els.settingsBackdrop.setAttribute("aria-hidden", "false");
+  setTimeout(() => els.stationList.querySelector(".stop-id-input")?.focus(), 80);
+}
+
+function closeSettings() {
+  stationSettings = activeSettings.stations.map(station => ({ ...station }));
+  els.refreshSeconds.value = activeSettings.refreshSeconds;
+  els.themeSelect.value = activeSettings.theme;
+  if (els.layoutSelect) els.layoutSelect.value = activeSettings.layout || "list";
+  document.documentElement.setAttribute("data-theme", activeSettings.theme);
+  renderStationSettings();
+  els.settingsBackdrop.classList.remove("active");
+  els.settingsBackdrop.setAttribute("aria-hidden", "true");
+}
+
+function buildApiUrl(stop) {
+  if (stop.company === "CTB") {
+    return `https://rt.data.gov.hk/v1/transport/batch/stop-eta/CTB/${encodeURIComponent(stop.id)}?lang=zh-hant`;
+  }
+  return `https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/${encodeURIComponent(stop.id)}`;
+}
+
+function parseEta(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function getMinutes(date) {
+  return Math.max(0, Math.ceil((date.getTime() - Date.now()) / 60000));
+}
+
+function formatClock(date) {
+  return new Intl.DateTimeFormat("zh-Hant-HK", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  }).format(date);
+}
+
+function routeSort(a, b) {
+  return String(a.route).localeCompare(String(b.route), "en", { numeric: true });
+}
+
+function updateSystemTime() {
+  const now = new Date();
+  els.systemTime.textContent = new Intl.DateTimeFormat("zh-Hant-HK", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  }).format(now);
+
+  els.systemDate.textContent = new Intl.DateTimeFormat("zh-Hant-HK", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short"
+  }).format(now);
+}
+
+function getDestination(item) {
+  return String(item.dest_tc || item.dest || item.dest_en || item.dest_sc || "").trim();
+}
+
+function groupByRoute(items) {
+  const groups = new Map();
+
+  for (const item of items) {
+    const route = String(item.route || "").toUpperCase();
+    if (!route) continue;
+
+    const etaDate = parseEta(item.eta);
+    if (!etaDate || etaDate.getTime() < Date.now() - 60000) continue;
+
+    const dest = getDestination(item);
+    const dir = String(item.dir || "").toUpperCase();
+    const key = `${route}|${dest || dir}`;
+
+    if (!groups.has(key)) {
+      groups.set(key, {
+        route,
+        dest,
+        dir,
+        rows: []
+      });
+    }
+
+    groups.get(key).rows.push({
+      eta: etaDate,
+      seq: Number(item.eta_seq || item.seq || 0)
+    });
+  }
+
+  return Array.from(groups.values())
+    .map(group => {
+      group.rows.sort((a, b) => a.eta - b.eta || a.seq - b.seq);
+
+      const unique = [];
+      const used = new Set();
+
+      for (const row of group.rows) {
+        const key = row.eta.getTime();
+        if (used.has(key)) continue;
+        used.add(key);
+        unique.push(row);
+        if (unique.length >= 3) break;
+      }
+
+      return { ...group, rows: unique };
+    })
+    .sort((a, b) => {
+      const routeCompare = String(a.route).localeCompare(String(b.route), "en", { numeric: true });
+      if (routeCompare !== 0) return routeCompare;
+      return String(a.dest || a.dir).localeCompare(String(b.dest || b.dir), "zh-Hant-HK");
+    });
+}
+
+function renderAllStops() {
+  const stops = getStops();
+
+  if (!stops.length) {
+    els.stationsWrap.innerHTML = `
+      <div class="hint">
+        請按左上角 ⚙ 選擇巴士公司並輸入巴士站 ID。<br>
+        支援 KMB/LWB 及城巴 CTB，可自行新增多個車站。
+      </div>`;
+    updateStatusDot("idle");
+    return;
+  }
+
+  const isList = (activeSettings.layout || "list") === "list";
+
+  const stopsWithMoreThan3 = stops.filter(stop => {
+    const groups = groupByRoute(stopData[stationKey(stop)] || []);
+    return groups.length > 3;
+  });
+
+  const hasExpandableStops = stopsWithMoreThan3.length > 0;
+  const areAllExpanded = hasExpandableStops && stopsWithMoreThan3.every(stop => stationExpandedState[stationKey(stop)]);
+
+  const toolbarHtml = hasExpandableStops ? `
+    <div class="stations-toolbar">
+      <div class="stations-toolbar-info">預設顯示首 3 條路線</div>
+      <button type="button" class="toggle-all-btn" id="toggleAllBtn">
+        ${areAllExpanded ? "一鍵全部收起 (顯示3條) ▴" : "一鍵全部展開路線 ▾"}
+      </button>
+    </div>
+  ` : "";
+
+  const stationsHtml = stops.map(stop => {
+    const key = stationKey(stop);
+    const groups = groupByRoute(stopData[key] || []);
+    const totalRoutes = groups.length;
+    const hasMore = totalRoutes > 3;
+    const isExpanded = !!stationExpandedState[key];
+    const visibleGroups = (isExpanded || !hasMore) ? groups : groups.slice(0, 3);
+    const hiddenCount = totalRoutes - 3;
+
+    return `
+      <section class="station-section active">
+        <div class="stop-title">
+          <div class="stop-title-main">
+            <div class="stop-name">${safeText(stop.name)}</div>
+            ${hasMore ? `
+              <button type="button" class="station-pill-btn" data-station-key="${safeText(key)}" title="${isExpanded ? "收起至 3 條路線" : "展開全部路線"}">
+                ${isExpanded ? "收起 ▴" : `展開 (+${hiddenCount}) ▾`}
+              </button>
+            ` : ""}
+          </div>
+          <div class="stop-meta">${safeText(companyLabel(stop.company))}｜更新：${safeText(lastUpdatedText || "--")}｜Stop ID：${safeText(stop.id)}${totalRoutes > 0 ? `｜共 ${totalRoutes} 線` : ""}</div>
+        </div>
+        <section class="list ${isList ? "layout-list" : "layout-grid"}">
+          ${stopErrors[key] ? `<div class="error">${safeText(stopErrors[key])}，稍後自動重試。</div>` : renderRoutes(visibleGroups)}
+        </section>
+        ${hasMore ? `
+          <div class="station-expand-bar">
+            <button type="button" class="station-toggle-btn" data-station-key="${safeText(key)}">
+              ${isExpanded 
+                ? "▲ 收起路線（只顯示前 3 條）" 
+                : `▼ 展開餘下 ${hiddenCount} 條路線（共 ${totalRoutes} 條）`}
+            </button>
+          </div>
+        ` : ""}
+      </section>`;
+  }).join("");
+
+  els.stationsWrap.innerHTML = toolbarHtml + stationsHtml;
+  document.title = `${stops[0].name}｜巴士 ETA`;
+}
+
+function renderRoutes(groups) {
+  if (!groups.length) {
+    return `
+      <div class="empty">
+        暫時未有到站資料。<br>
+        請檢查巴士站 ID 是否正確。
+      </div>`;
+  }
+
+  const isList = (activeSettings.layout || "list") === "list";
+
+  if (isList) {
+    return groups.map(group => {
+      const first = group.rows[0];
+      const mins = first ? getMinutes(first.eta) : null;
+      const isNow = mins !== null && mins <= 1;
+
+      const nextTimes = group.rows.slice(1).map(row => {
+        const nextMins = getMinutes(row.eta);
+        const timeStr = formatClock(row.eta);
+        return `
+          <span class="next-pill" title="預計到站：${timeStr}（約 ${nextMins} 分鐘後）">
+            <span class="pill-mins">${nextMins <= 1 ? "即到" : `${nextMins}分`}</span>
+            <span class="pill-time">${timeStr}</span>
+          </span>`;
+      }).join("");
+
+      return `
+        <article class="route-row">
+          <div class="route-row-left">
+            <div class="route-no">${safeText(group.route)}</div>
+            ${group.dest ? `
+              <div class="route-row-dest" title="${safeText(group.dest)}">
+                <span class="dest-prefix">往</span>
+                <span class="dest-text">${safeText(group.dest)}</span>
+              </div>
+            ` : ""}
+          </div>
+          <div class="route-row-right">
+            <div class="first-eta-box">
+              <div class="first-eta ${isNow ? "now" : ""}">
+                ${mins === null ? "--" : isNow ? "即到" : `${mins}<span class="unit">分</span>`}
+              </div>
+              ${first ? `<div class="first-exact-time">${formatClock(first.eta)}</div>` : ""}
+            </div>
+            ${nextTimes ? `<div class="next-times">${nextTimes}</div>` : ""}
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  return groups.map(group => {
+    const first = group.rows[0];
+    const mins = first ? getMinutes(first.eta) : null;
+    const isNow = mins !== null && mins <= 1;
+
+    const nextTimes = group.rows.slice(1).map(row => {
+      const nextMins = getMinutes(row.eta);
+      const timeStr = formatClock(row.eta);
+      return `
+        <span class="next-pill" title="預計到站：${timeStr}（約 ${nextMins} 分鐘後）">
+          <span class="pill-mins">${nextMins <= 1 ? "即到" : `${nextMins}分`}</span>
+          <span class="pill-time">${timeStr}</span>
+        </span>`;
+    }).join("");
+
+    return `
+      <article class="route-dot">
+        <div class="route-no">${safeText(group.route)}</div>
+        ${group.dest ? `<div class="route-dest" title="${safeText(group.dest)}">${safeText(group.dest)}</div>` : ""}
+        <div class="first-eta-box">
+          <div class="first-eta ${isNow ? "now" : ""}">
+            ${mins === null ? "--" : isNow ? "即到" : `${mins}<span class="unit">分</span>`}
+          </div>
+          ${first ? `<div class="first-exact-time">${formatClock(first.eta)}</div>` : ""}
+        </div>
+        ${nextTimes ? `<div class="next-times">${nextTimes}</div>` : ""}
+      </article>`;
+  }).join("");
+}
+
+function updateStatusDot(status) {
+  etaStatus = status;
+  if (status === "loading") {
+    els.statusDot.textContent = "↻";
+    els.statusDot.title = "讀取中";
+  } else if (status === "ok") {
+    const secondsLeft = nextRefreshAt ? Math.max(0, Math.ceil((nextRefreshAt - Date.now()) / 1000)) : "";
+    els.statusDot.textContent = secondsLeft || "✓";
+    els.statusDot.title = secondsLeft ? `${secondsLeft} 秒後更新` : "已更新";
+  } else if (status === "error") {
+    els.statusDot.textContent = "!";
+    els.statusDot.title = "讀取失敗";
+  } else {
+    els.statusDot.textContent = "○";
+    els.statusDot.title = "尚未設定";
+  }
+}
+
+async function fetchEta() {
+  const version = ++etaRequestVersion;
+  clearTimeout(timer);
+  etaController?.abort();
+  nextRefreshAt = 0;
+  const stops = getStops();
+  if (!stops.length) {
+    stopData = {};
+    stopErrors = {};
+    lastUpdatedText = "";
+    document.title = "香港巴士到站時間 ETA";
+    renderAllStops();
+    return;
+  }
+  const controller = new AbortController();
+  etaController = controller;
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  updateStatusDot("loading");
+  try {
+    const results = await Promise.allSettled(stops.map(async stop => {
+      const response = await fetch(buildApiUrl(stop), { cache: "no-store", signal: controller.signal });
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      const json = await response.json();
+      if (!Array.isArray(json.data)) throw new Error("資料格式不正確");
+      return json.data;
+    }));
+    if (version !== etaRequestVersion) return;
+    stopData = {};
+    stopErrors = {};
+    results.forEach((result, index) => {
+      const key = stationKey(stops[index]);
+      if (result.status === "fulfilled") stopData[key] = result.value;
+      else stopErrors[key] = "無法讀取到站資料，請檢查車站 ID 或網絡";
+    });
+    lastUpdatedText = new Intl.DateTimeFormat("zh-Hant-HK", {
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+    }).format(new Date());
+    renderAllStops();
+    updateStatusDot(Object.keys(stopErrors).length ? "error" : "ok");
+  } finally {
+    clearTimeout(timeout);
+    if (version === etaRequestVersion) {
+      const delay = Number(activeSettings.refreshSeconds) * 1000;
+      nextRefreshAt = Date.now() + delay;
+      if (etaStatus === "ok") updateStatusDot("ok");
+      timer = setTimeout(fetchEta, delay);
+    }
+  }
+}
+
+const lookup = Object.fromEntries(["Company", "Route", "Search", "Direction", "Stop", "Add", "Status"].map(key =>
+  [key.toLowerCase(), document.getElementById(`lookup${key}`)]));
+const lookupCache = new Map();
+let lookupVersion = 0;
+let lookupRoutes = [];
+let lookupStops = [];
+const kmbBase = "https://data.etabus.gov.hk/v1/transport/kmb";
+const ctbBase = "https://rt.data.gov.hk/v2/transport/citybus";
+
+async function lookupData(url) {
+  if (!lookupCache.has(url)) {
+    const request = (async () => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
+      try {
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const json = await response.json();
+        if (json.data == null) throw new Error("資料格式不正確");
+        return json.data;
+      } finally { clearTimeout(timeout); }
+    })();
+    lookupCache.set(url, request);
+    request.catch(() => lookupCache.delete(url));
+  }
+  return lookupCache.get(url);
+}
+
+function resetLookupStops() {
+  lookupStops = [];
+  lookup.stop.innerHTML = '<option value="">請先選擇方向</option>';
+  lookup.stop.disabled = true;
+  lookup.add.disabled = true;
+}
+
+function resetLookup() {
+  lookupVersion += 1;
+  lookupRoutes = [];
+  lookup.direction.innerHTML = '<option value="">請先搜尋路線</option>';
+  lookup.direction.disabled = true;
+  resetLookupStops();
+  lookup.status.textContent = "輸入路線號碼，再按搜尋路線。";
+}
+
+async function searchLookupRoute() {
+  resetLookup();
+  const version = lookupVersion;
+  const company = lookup.company.value;
+  const route = lookup.route.value.trim().toUpperCase();
+  lookup.route.value = route;
+  if (!/^[A-Z0-9]+$/.test(route)) {
+    lookup.status.textContent = "請輸入有效路線號碼，例如 42C 或 962X。";
+    return;
+  }
+  lookup.status.textContent = "正在搜尋路線…";
+  try {
+    let routes;
+    if (company === "KMB") {
+      const data = await lookupData(`${kmbBase}/route/`);
+      routes = data.filter(item => item.route.toUpperCase() === route)
+        .map(item => ({ ...item, company, direction: item.bound === "I" ? "inbound" : "outbound" }));
+    } else {
+      const data = await lookupData(`${ctbBase}/route/CTB/${encodeURIComponent(route)}`);
+      const item = Array.isArray(data) ? data[0] : data;
+      routes = item?.route ? [
+        { ...item, company, direction: "outbound" },
+        { ...item, company, direction: "inbound", orig_tc: item.dest_tc, dest_tc: item.orig_tc }
+      ] : [];
+    }
+    if (version !== lookupVersion) return;
+    lookupRoutes = routes;
+    if (!routes.length) throw new Error("找不到此路線，請檢查巴士公司及號碼");
+    lookup.direction.innerHTML = '<option value="">請選擇去／回程</option>' + routes.map((item, index) =>
+      `<option value="${index}">${safeText(`${item.direction === "outbound" ? "去程" : "回程"}：${item.orig_tc || "起點"} → ${item.dest_tc || "終點"}${company === "KMB" ? `（班次 ${item.service_type}）` : ""}`)}</option>`).join("");
+    lookup.direction.disabled = false;
+    lookup.status.textContent = "請按起點和終點選擇方向；循環線可能只有去程車站。";
+  } catch (error) {
+    if (version === lookupVersion) lookup.status.textContent = `搜尋失敗：${error.message}。可按搜尋重試。`;
+  }
+}
+
+async function loadLookupStops() {
+  const version = ++lookupVersion;
+  resetLookupStops();
+  const route = lookupRoutes[lookup.direction.value];
+  if (!route) return;
+  lookup.status.textContent = "正在讀取車站名稱…";
+  try {
+    const path = route.company === "KMB"
+      ? `${kmbBase}/route-stop/${encodeURIComponent(route.route)}/${route.direction}/${encodeURIComponent(route.service_type)}`
+      : `${ctbBase}/route-stop/CTB/${encodeURIComponent(route.route)}/${route.direction}`;
+    const rows = [...await lookupData(path)].sort((a, b) => Number(a.seq) - Number(b.seq));
+    if (version !== lookupVersion) return;
+    if (!rows.length) throw new Error("此方向沒有車站資料，請選擇另一方向");
+    let stops;
+    if (route.company === "KMB") {
+      const names = new Map((await lookupData(`${kmbBase}/stop`)).map(item => [item.stop, item.name_tc]));
+      stops = rows.map(item => ({ id: item.stop, name: names.get(item.stop), company: route.company, seq: item.seq }));
+    } else {
+      stops = new Array(rows.length);
+      let cursor = 0;
+      await Promise.all(Array.from({ length: Math.min(5, rows.length) }, async () => {
+        while (cursor < rows.length && version === lookupVersion) {
+          const index = cursor++;
+          const item = rows[index];
+          const data = await lookupData(`${ctbBase}/stop/${encodeURIComponent(item.stop)}`);
+          stops[index] = { id: item.stop, name: data.name_tc, company: route.company, seq: item.seq };
+        }
+      }));
+    }
+    if (version !== lookupVersion) return;
+    if (stops.some(stop => !stop.name)) throw new Error("未能取得完整站名，請重新選擇方向重試");
+    lookupStops = stops;
+    lookup.stop.innerHTML = '<option value="">請選擇車站</option>' + stops.map((stop, index) =>
+      `<option value="${index}">${safeText(`${stop.seq}. ${stop.name}（${stop.id}）`)}</option>`).join("");
+    lookup.stop.disabled = false;
+    lookup.status.textContent = `共 ${stops.length} 個車站，請選擇要加入的車站。`;
+  } catch (error) {
+    if (version === lookupVersion) lookup.status.textContent = `讀取失敗：${error.message}。請重新選擇方向重試。`;
+  }
+}
+
+lookup.company.addEventListener("change", resetLookup);
+lookup.route.addEventListener("input", resetLookup);
+lookup.route.addEventListener("keydown", event => {
+  if (event.key === "Enter") { event.preventDefault(); searchLookupRoute(); }
+});
+lookup.search.addEventListener("click", searchLookupRoute);
+lookup.direction.addEventListener("change", loadLookupStops);
+lookup.stop.addEventListener("change", () => { lookup.add.disabled = !lookupStops[lookup.stop.value]; });
+lookup.add.addEventListener("click", () => {
+  const stop = lookupStops[lookup.stop.value];
+  if (!stop) return;
+  updateStationSettingsFromForm();
+  if (stationSettings.some(item => item.company === stop.company && item.id === stop.id)) {
+    lookup.status.textContent = "此車站已在設定中，無需重複加入。";
+    return;
+  }
+  const station = { company: stop.company, id: stop.id, name: stop.name };
+  const emptyIndex = stationSettings.findIndex(item => !item.id && !item.name);
+  if (emptyIndex >= 0) stationSettings[emptyIndex] = station;
+  else stationSettings.push(station);
+  renderStationSettings();
+  lookup.status.textContent = `已加入「${stop.name}」，可繼續加入其他車站，完成後按「儲存並更新」。`;
+  showToast(`已加入「${stop.name}」`, "success");
+});
+
+let weatherTimer = null;
+let weatherLoading = false;
+const weatherEmojis = {
+  50: "☀️", 51: "🌤️", 52: "⛅", 53: "🌦️", 54: "🌦️",
+  60: "☁️", 61: "☁️", 62: "🌧️", 63: "🌧️", 64: "🌧️", 65: "⛈️",
+  70: "🌑", 71: "🌒", 72: "🌓", 73: "🌕", 74: "🌗", 75: "🌘", 76: "☁️", 77: "🌙",
+  80: "🌬️", 81: "🏜️", 82: "💧", 83: "🌫️", 84: "🌫️", 85: "🌫️",
+  90: "🥵", 91: "🌡️", 92: "🍃", 93: "🥶"
+};
+
+async function fetchWeather() {
+  if (weatherLoading) return;
+  weatherLoading = true;
+  clearTimeout(weatherTimer);
+  const daysEl = document.getElementById("weatherDays");
+  const todayEl = document.getElementById("weatherToday");
+  const statusEl = document.getElementById("weatherStatus");
+  const retryEl = document.getElementById("weatherRetry");
+  retryEl.hidden = true;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  let refreshDelay = 30 * 60 * 1000;
+  try {
+    const [data, current] = await Promise.all(["fnd", "rhrread"].map(async type => {
+      const response = await fetch(`https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=${type}&lang=tc`, { signal: controller.signal, cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    }));
+    const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Hong_Kong", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()).replaceAll("-", "");
+    const days = (Array.isArray(data.weatherForecast) ? data.weatherForecast : [])
+      .filter(day => /^\d{8}$/.test(day.forecastDate) && day.forecastDate > today)
+      .sort((a, b) => a.forecastDate.localeCompare(b.forecastDate)).slice(0, 6);
+    if (!days.length) throw new Error("沒有預報資料");
+    const currentTemp = current.temperature?.data?.find(item => item.place === "香港天文台")?.value;
+    if (!Number.isFinite(currentTemp) || !current.icon?.length) throw new Error("沒有即時天氣資料");
+    const currentDate = `${Number(today.slice(4, 6))}/${Number(today.slice(6, 8))}`;
+    todayEl.innerHTML = `<div class="weather-day">
+      <div class="weather-week">今天</div><div class="weather-date">${currentDate}</div>
+      <span class="weather-emoji" role="img" aria-label="今天即時天氣">${weatherEmojis[Number(current.icon[0])] || "🌡️"}</span>
+      <div class="weather-temp" aria-label="香港天文台現時氣溫 ${currentTemp} 度">${currentTemp}°C</div>
+    </div>`;
+    todayEl.title = `香港天文台即時氣溫 · 更新：${current.updateTime || "--"}`;
+    todayEl.hidden = false;
+    daysEl.innerHTML = days.map(day => {
+      const date = `${Number(day.forecastDate.slice(4, 6))}/${Number(day.forecastDate.slice(6, 8))}`;
+      const icon = Number(day.ForecastIcon);
+      const temp = value => typeof value === "number" && Number.isFinite(value) ? value : "--";
+      return `<article class="weather-day" role="listitem" title="${safeText(day.forecastWeather)}">
+        <div class="weather-week">${safeText(String(day.week || "").replace("星期", "週"))}</div><div class="weather-date">${date}</div>
+        <span class="weather-emoji" role="img" aria-label="${safeText(day.forecastWeather || "天氣預報")}">${weatherEmojis[icon] || "🌡️"}</span>
+        <div class="weather-temp">${temp(day.forecastMintemp?.value)}–${temp(day.forecastMaxtemp?.value)}°C</div>
+      </article>`;
+    }).join("");
+    daysEl.hidden = false;
+    const updated = new Date(data.updateTime);
+    const updatedText = Number.isNaN(updated.getTime()) ? "" : new Intl.DateTimeFormat("zh-Hant-HK", { timeZone: "Asia/Hong_Kong", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }).format(updated);
+    statusEl.textContent = days.length < 6 ? `暫有 ${days.length} 天預報` : "";
+    daysEl.title = updatedText ? `預報更新：${updatedText}` : "";
+  } catch (error) {
+    statusEl.textContent = daysEl.innerHTML ? "天氣更新失敗，現顯示上次預報；稍後自動重試。" : "暫時無法讀取天氣，稍後自動重試。";
+    retryEl.hidden = false;
+    refreshDelay = 60 * 1000;
+  } finally {
+    clearTimeout(timeout);
+    weatherLoading = false;
+    weatherTimer = setTimeout(fetchWeather, refreshDelay);
+  }
+}
+
+els.openSettingsBtn.addEventListener("click", openSettings);
+els.closeSettingsBtn.addEventListener("click", closeSettings);
+els.cancelSettingsBtn.addEventListener("click", closeSettings);
+
+els.addStationBtn.addEventListener("click", () => {
+  updateStationSettingsFromForm();
+  stationSettings.push(createEmptyStation());
+  renderStationSettings();
+  setTimeout(() => {
+    const inputs = els.stationList.querySelectorAll(".stop-id-input");
+    inputs[inputs.length - 1]?.focus();
+  }, 50);
+});
+
+els.exportSettingsBtn.addEventListener("click", exportSettings);
+
+els.importSettingsBtn.addEventListener("click", () => {
+  els.importSettingsFile.click();
+});
+
+els.importSettingsFile.addEventListener("change", event => {
+  importSettingsFile(event.target.files?.[0]);
+});
+
+els.settingsBackdrop.addEventListener("click", event => {
+  if (event.target === els.settingsBackdrop) closeSettings();
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeSettings();
+});
+
+els.themeSelect.addEventListener("change", () => {
+  document.documentElement.setAttribute("data-theme", els.themeSelect.value);
+});
+
+els.saveSettingsBtn.addEventListener("click", () => {
+  document.documentElement.setAttribute("data-theme", els.themeSelect.value);
+  saveSettings();
+  closeSettings();
+  renderAllStops();
+  fetchEta();
+  showToast("設定已儲存並更新到站時間", "success");
+});
+
+els.stationsWrap.addEventListener("click", event => {
+  const toggleBtn = event.target.closest("[data-station-key]");
+  if (toggleBtn) {
+    const key = toggleBtn.dataset.stationKey;
+    stationExpandedState[key] = !stationExpandedState[key];
+    renderAllStops();
+    return;
+  }
+
+  const toggleAllBtn = event.target.closest("#toggleAllBtn");
+  if (toggleAllBtn) {
+    const stops = getStops();
+    const stopsWithMoreThan3 = stops.filter(stop => {
+      const groups = groupByRoute(stopData[stationKey(stop)] || []);
+      return groups.length > 3;
+    });
+    const areAllExpanded = stopsWithMoreThan3.length > 0 && stopsWithMoreThan3.every(stop => stationExpandedState[stationKey(stop)]);
+    const targetState = !areAllExpanded;
+    stops.forEach(stop => {
+      stationExpandedState[stationKey(stop)] = targetState;
+    });
+    renderAllStops();
+  }
+});
+
+setInterval(() => {
+  updateSystemTime();
+  if (nextRefreshAt && etaStatus === "ok") updateStatusDot("ok");
+  if (Object.keys(stopData).length && etaStatus !== "loading") renderAllStops();
+}, 1000);
+
+updateSystemTime();
+loadSettings();
+document.getElementById("weatherRetry").addEventListener("click", fetchWeather);
+fetchWeather();
+  </script>
+</body>
+</html>
