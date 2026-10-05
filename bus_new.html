@@ -216,21 +216,28 @@ body {
   letter-spacing: -0.01em;
 }
 
+.stations-toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .toggle-all-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 12px;
+  gap: 4px;
+  padding: 5px 10px;
   border-radius: 12px;
   background: var(--card);
   border: 1px solid var(--line);
   color: var(--accent);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 850;
   cursor: pointer;
   box-shadow: var(--shadow);
   backdrop-filter: blur(16px);
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .toggle-all-btn:hover {
@@ -641,12 +648,129 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .station-head-actions {
   display: flex;
   align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.station-btn-pill {
+  min-height: 32px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.station-btn-pill:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--card-solid);
+}
+
+.station-btn-pill:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.station-btn-pill.top-btn {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: rgba(37, 99, 235, .25);
+}
+
+.station-btn-pill.top-btn:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+}
+
+.station-btn-pill.expand-btn {
+  color: var(--muted);
+}
+
+.station-btn-pill.expand-btn:hover {
+  color: var(--accent);
+}
+
+.station-btn-pill.eta-toggle-btn {
+  font-size: 11px;
+  padding: 0 7px;
+  border-color: rgba(22, 163, 74, .25);
+  color: var(--green);
+  background: rgba(22, 163, 74, .08);
+}
+
+.station-btn-pill.eta-toggle-btn.collapsed {
+  border-color: var(--line);
+  color: var(--muted);
+  background: var(--card);
+}
+
+.station-summary-preview {
+  font-size: 11.5px;
+  font-weight: 750;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+@media (max-width: 480px) {
+  .station-summary-preview {
+    max-width: 90px;
+    font-size: 10.5px;
+  }
+}
+
+.settings-station-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.settings-station-toolbar-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--muted);
+}
+
+.settings-station-toolbar-actions {
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
+}
+
+.mini-pill-btn {
+  padding: 4px 8px;
+  border-radius: 9px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mini-pill-btn:hover {
+  background: var(--card-solid);
 }
 
 .drag-handle {
@@ -1079,6 +1203,14 @@ button:disabled, select:disabled { opacity: .5; cursor: not-allowed; }
         <div id="lookupStatus" role="status" aria-live="polite" class="settings-note">選擇路線、方向及車站，自動填入 ID 和顯示名稱，再按「儲存並更新」。</div>
       </div>
 
+      <div class="settings-station-toolbar">
+        <div class="settings-station-toolbar-title">車站清單</div>
+        <div class="settings-station-toolbar-actions">
+          <button class="mini-pill-btn" id="settingsExpandAllBtn" type="button" title="展開所有車站編輯欄位">全部展開 ▾</button>
+          <button class="mini-pill-btn" id="settingsCollapseAllBtn" type="button" title="收起所有車站編輯欄位">全部收起 ▴</button>
+        </div>
+      </div>
+
       <div id="stationList"></div>
       <button class="add-station-btn" id="addStationBtn" type="button">＋ 新增車站</button>
 
@@ -1156,6 +1288,7 @@ let nextRefreshAt = 0;
 let lastUpdatedText = "";
 let stopData = {};
 let stationExpandedState = {};
+let settingsCardExpanded = {};
 const DEFAULT_STATIONS = [
   { company: "KMB", id: "376C4835851621D4", name: "屯門公路轉車站 (TM750)" },
   { company: "KMB", id: "0E9F8B5A3734D9CE", name: "油麻地寧波街 (YT126)" },
@@ -1228,14 +1361,29 @@ function updateStationSettingsFromForm() {
 function renderStationSettings() {
   if (!stationSettings.length) stationSettings = [createEmptyStation()];
 
-  els.stationList.innerHTML = stationSettings.map((station, index) => `
+  els.stationList.innerHTML = stationSettings.map((station, index) => {
+    const key = stationKey(station) || `idx_${index}`;
+    const isCardExpanded = settingsCardExpanded[key] !== false; // 預設展開
+    const isEtaExpanded = isStationExpanded(key, index);
+
+    return `
     <div class="station-box" data-index="${index}" draggable="true">
       <div class="station-head">
         <div class="station-head-left">
           ${stationSettings.length > 1 ? `<span class="drag-handle" title="按住拖曳排序" aria-label="按住拖曳排序">⠿</span>` : ""}
           <div class="station-label">車站 ${index + 1}</div>
+          ${station.name ? `<div class="station-summary-preview" title="${safeText(station.name)}">· ${safeText(station.name)}</div>` : ""}
         </div>
         <div class="station-head-actions">
+          ${stationSettings.length > 1 ? `
+            <button class="station-btn-pill top-btn" type="button" data-move-top="${index}" ${index === 0 ? "disabled" : ""} title="一鍵置頂至第 1 站">⤒ 置頂</button>
+          ` : ""}
+          <button class="station-btn-pill expand-btn" type="button" data-toggle-card="${index}" title="${isCardExpanded ? "收起編輯欄位" : "展開編輯欄位"}">
+            ${isCardExpanded ? "收起 ▴" : "展開 ▾"}
+          </button>
+          <button class="station-btn-pill eta-toggle-btn ${isEtaExpanded ? "" : "collapsed"}" type="button" data-toggle-eta="${index}" title="切換主畫面到站路線展開/收起狀態">
+            ${isEtaExpanded ? "到站全開 ▾" : "到站3條 ▴"}
+          </button>
           ${stationSettings.length > 1 ? `
             <button class="reorder-btn" type="button" data-move-up="${index}" ${index === 0 ? "disabled" : ""} title="上移">↑</button>
             <button class="reorder-btn" type="button" data-move-down="${index}" ${index === stationSettings.length - 1 ? "disabled" : ""} title="下移">↓</button>
@@ -1243,7 +1391,7 @@ function renderStationSettings() {
           ` : ""}
         </div>
       </div>
-      <div class="form-grid">
+      <div class="form-grid" style="${isCardExpanded ? "" : "display: none;"}">
         <div>
           <label for="company-${index}">巴士公司</label>
           <select id="company-${index}" class="company-input">
@@ -1261,11 +1409,57 @@ function renderStationSettings() {
         </div>
       </div>
     </div>
-  `).join("");
+  `;
+  }).join("");
 
   els.stationList.querySelectorAll("input, select").forEach(input => {
     input.addEventListener("input", updateStationSettingsFromForm);
     input.addEventListener("change", updateStationSettingsFromForm);
+  });
+
+  // 一鍵置頂事件
+  els.stationList.querySelectorAll(".top-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      updateStationSettingsFromForm();
+      const idx = Number(btn.dataset.moveTop);
+      if (idx > 0 && idx < stationSettings.length) {
+        const [item] = stationSettings.splice(idx, 1);
+        stationSettings.unshift(item);
+        stationExpandedState[stationKey(item)] = true;
+        renderStationSettings();
+        showToast(`已將「${item.name || item.id || `車站 ${idx + 1}`}」一鍵置頂（設為車站 1）`, "success");
+      }
+    });
+  });
+
+  // 展開 / 收起編輯欄位事件
+  els.stationList.querySelectorAll(".expand-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      updateStationSettingsFromForm();
+      const idx = Number(btn.dataset.toggleCard);
+      const station = stationSettings[idx];
+      if (station) {
+        const key = stationKey(station) || `idx_${idx}`;
+        settingsCardExpanded[key] = settingsCardExpanded[key] === false;
+        renderStationSettings();
+      }
+    });
+  });
+
+  // 切換該站主頁到站路線展開/收起狀態事件
+  els.stationList.querySelectorAll(".eta-toggle-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      updateStationSettingsFromForm();
+      const idx = Number(btn.dataset.toggleEta);
+      const station = stationSettings[idx];
+      if (station && station.id) {
+        const key = stationKey(station);
+        const currentState = isStationExpanded(key, idx);
+        stationExpandedState[key] = !currentState;
+        renderStationSettings();
+        showToast(`「${station.name || station.id}」到站路線已設為${!currentState ? "展開全部" : "收起（首 3 條）"}`);
+      }
+    });
   });
 
   els.stationList.querySelectorAll(".remove-station-btn").forEach(button => {
@@ -1697,6 +1891,14 @@ function groupByRoute(items) {
     });
 }
 
+function isStationExpanded(key, index) {
+  if (stationExpandedState[key] !== undefined) {
+    return !!stationExpandedState[key];
+  }
+  // 車站 1 預設展開（true），其他車站預設只顯示首 3 條（false）
+  return index === 0;
+}
+
 function renderAllStops() {
   const stops = getStops();
 
@@ -1718,23 +1920,27 @@ function renderAllStops() {
   });
 
   const hasExpandableStops = stopsWithMoreThan3.length > 0;
-  const areAllExpanded = hasExpandableStops && stopsWithMoreThan3.every(stop => stationExpandedState[stationKey(stop)]);
 
   const toolbarHtml = hasExpandableStops ? `
     <div class="stations-toolbar">
-      <div class="stations-toolbar-info">預設顯示首 3 條路線</div>
-      <button type="button" class="toggle-all-btn" id="toggleAllBtn">
-        ${areAllExpanded ? "一鍵全部收起 (顯示3條) ▴" : "一鍵全部展開路線 ▾"}
-      </button>
+      <div class="stations-toolbar-info">車站 1 預設展開 · 其他顯示首 3 條</div>
+      <div class="stations-toolbar-actions">
+        <button type="button" class="toggle-all-btn" id="collapseAllBtn" title="全部收起至首 3 條路線">
+          一鍵全部收起 ▴
+        </button>
+        <button type="button" class="toggle-all-btn" id="expandAllBtn" title="全部展開所有路線">
+          一鍵全部展開 ▾
+        </button>
+      </div>
     </div>
   ` : "";
 
-  const stationsHtml = stops.map(stop => {
+  const stationsHtml = stops.map((stop, index) => {
     const key = stationKey(stop);
     const groups = groupByRoute(stopData[key] || []);
     const totalRoutes = groups.length;
     const hasMore = totalRoutes > 3;
-    const isExpanded = !!stationExpandedState[key];
+    const isExpanded = isStationExpanded(key, index);
     const visibleGroups = (isExpanded || !hasMore) ? groups : groups.slice(0, 3);
     const hiddenCount = totalRoutes - 3;
 
@@ -2184,24 +2390,32 @@ els.stationsWrap.addEventListener("click", event => {
   const toggleBtn = event.target.closest("[data-station-key]");
   if (toggleBtn) {
     const key = toggleBtn.dataset.stationKey;
-    stationExpandedState[key] = !stationExpandedState[key];
+    const stops = getStops();
+    const stopIndex = stops.findIndex(s => stationKey(s) === key);
+    const currentState = isStationExpanded(key, stopIndex >= 0 ? stopIndex : 1);
+    stationExpandedState[key] = !currentState;
     renderAllStops();
     return;
   }
 
-  const toggleAllBtn = event.target.closest("#toggleAllBtn");
-  if (toggleAllBtn) {
+  const collapseAllBtn = event.target.closest("#collapseAllBtn");
+  if (collapseAllBtn) {
     const stops = getStops();
-    const stopsWithMoreThan3 = stops.filter(stop => {
-      const groups = groupByRoute(stopData[stationKey(stop)] || []);
-      return groups.length > 3;
-    });
-    const areAllExpanded = stopsWithMoreThan3.length > 0 && stopsWithMoreThan3.every(stop => stationExpandedState[stationKey(stop)]);
-    const targetState = !areAllExpanded;
     stops.forEach(stop => {
-      stationExpandedState[stationKey(stop)] = targetState;
+      stationExpandedState[stationKey(stop)] = false;
     });
     renderAllStops();
+    return;
+  }
+
+  const expandAllBtn = event.target.closest("#expandAllBtn");
+  if (expandAllBtn) {
+    const stops = getStops();
+    stops.forEach(stop => {
+      stationExpandedState[stationKey(stop)] = true;
+    });
+    renderAllStops();
+    return;
   }
 });
 
@@ -2213,6 +2427,29 @@ setInterval(() => {
 
 updateSystemTime();
 loadSettings();
+
+// 綁定設定頁頂部「全部展開」與「全部收起」按鈕
+const settingsExpandAllBtn = document.getElementById("settingsExpandAllBtn");
+const settingsCollapseAllBtn = document.getElementById("settingsCollapseAllBtn");
+if (settingsExpandAllBtn) {
+  settingsExpandAllBtn.addEventListener("click", () => {
+    updateStationSettingsFromForm();
+    stationSettings.forEach((st, idx) => {
+      settingsCardExpanded[stationKey(st) || `idx_${idx}`] = true;
+    });
+    renderStationSettings();
+  });
+}
+if (settingsCollapseAllBtn) {
+  settingsCollapseAllBtn.addEventListener("click", () => {
+    updateStationSettingsFromForm();
+    stationSettings.forEach((st, idx) => {
+      settingsCardExpanded[stationKey(st) || `idx_${idx}`] = false;
+    });
+    renderStationSettings();
+  });
+}
+
 document.getElementById("weatherRetry").addEventListener("click", fetchWeather);
 fetchWeather();
   </script>
