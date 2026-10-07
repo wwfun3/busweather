@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>100 個高頻學術英文核心詞彙庫 (Academic Vocabulary 100)</title>
+    <style>
+        :root {
+            --primary: #3730a3;
+            --primary-light: #4f46e5;
+            --primary-dark: #1e1b4b;
+            --primary-bg: #eef2ff;
+            --primary-bg-soft: #e0e7ff;
+            --accent: #0284c7;
+            --accent-green: #059669;
+            --accent-green-bg: #ecfdf5;
+            --accent-amber: #d97706;
+            --accent-amber-bg: #fffbeb;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(55 48 163 / 0.08), 0 2px 4px -2px rgb(55 48 163 / 0.05);
+            --shadow-lg: 0 10px 20px -3px rgb(55 48 163 / 0.12), 0 4px 6px -4px rgb(55 48 163 / 0.06);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang HK", "Microsoft JhengHei", sans-serif;
+            background: linear-gradient(165deg, #f1f5f9 0%, #e2e8f0 100%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1540px;
+            margin: 0 auto;
+            padding: 1.5rem 1.25rem 3rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #312e81 55%, #4f46e5 100%);
+            color: white;
+            padding: 1.75rem 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.14) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        header h1 {
+            font-size: clamp(1.35rem, 2.7vw, 1.85rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.35rem;
+            position: relative;
+        }
+
+        header p {
+            font-size: 0.92rem;
+            opacity: 0.92;
+            position: relative;
+            max-width: 960px;
+        }
+
+        .controls {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.25rem;
+            border: 1px solid rgba(55, 48 163, 0.1);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.9rem;
+        }
+
+        @media (min-width: 1200px) {
+            .controls-grid {
+                grid-template-columns: 1.5fr 1fr 1fr auto auto auto auto;
+                align-items: end;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1199px) {
+            .controls-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                align-items: end;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .form-group label {
+            font-size: 0.76rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+
+        input[type="search"],
+        select {
+            padding: 0.58rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            background: #fff;
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        input[type="search"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.58rem 1rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(30, 27, 75, 0.25);
+        }
+
+        .btn-secondary {
+            background: var(--primary-bg-soft);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: #c7d2fe;
+            color: var(--primary-dark);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-icon-sound {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--primary-light);
+            transition: all 0.15s;
+            vertical-align: middle;
+            margin-left: 0.35rem;
+        }
+
+        .btn-icon-sound:hover {
+            background: var(--primary-bg);
+            border-color: var(--primary-light);
+            transform: scale(1.08);
+        }
+
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 0.85rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .stats-bar strong {
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        .badge-legend {
+            display: flex;
+            gap: 0.4rem;
+            font-size: 0.76rem;
+            flex-wrap: wrap;
+        }
+
+        .pos-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.73rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .pos-adj { background: #e0e7ff; color: #3730a3; }
+        .pos-v { background: #ecfdf5; color: #047857; }
+        .pos-n { background: #fef3c7; color: #b45309; }
+        .pos-adv { background: #fae8ff; color: #86198f; }
+        .pos-hybrid { background: #f1f5f9; color: #334155; }
+
+        .ipa-badge {
+            display: inline-block;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.76rem;
+            color: #6366f1;
+            background: #eef2ff;
+            padding: 0.12rem 0.45rem;
+            border-radius: 4px;
+        }
+
+        .table-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(55, 48, 163, 0.1);
+            overflow: hidden;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.86rem;
+            min-width: 1250px;
+        }
+
+        thead {
+            background: linear-gradient(90deg, var(--primary-dark), #312e81);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 0.85rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.78rem;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+
+        th:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        th .sort-icon {
+            display: inline-block;
+            margin-left: 0.25rem;
+            opacity: 0.6;
+            font-size: 0.7rem;
+        }
+
+        th.sorted-asc .sort-icon::after { content: "▲"; opacity: 1; }
+        th.sorted-desc .sort-icon::after { content: "▼"; opacity: 1; }
+        th:not(.sorted-asc):not(.sorted-desc) .sort-icon::after { content: "↕"; }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background: var(--primary-bg-soft);
+        }
+
+        td {
+            padding: 0.75rem 0.8rem;
+            vertical-align: middle;
+        }
+
+        .word-cell {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .colloc-tag {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #1e293b;
+            font-weight: 600;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            border-left: 3px solid var(--accent);
+            font-size: 0.8rem;
+        }
+
+        .syn-tag {
+            color: #047857;
+            font-weight: 600;
+        }
+
+        .ant-tag {
+            color: #b91c1c;
+            font-weight: 600;
+        }
+
+        .example-cell {
+            font-style: italic;
+            color: #334155;
+            line-height: 1.4;
+            max-width: 320px;
+        }
+
+        .cards-view {
+            display: none;
+            flex-direction: column;
+            gap: 0.65rem;
+            padding: 0.75rem;
+        }
+
+        .table-card.view-table .table-scroll { display: block; }
+        .table-card.view-table .cards-view { display: none; }
+        .table-card.view-cards .table-scroll { display: none; }
+        .table-card.view-cards .cards-view { display: flex; }
+
+        .job-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 0.9rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: all 0.15s ease;
+        }
+
+        .job-card.expanded {
+            border-color: var(--primary-light);
+            box-shadow: 0 4px 12px rgba(55, 48, 163, 0.12);
+        }
+
+        .job-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card-meta-line {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        .card-id-pill {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: #f1f5f9;
+            padding: 0.08rem 0.35rem;
+            border-radius: 4px;
+            font-family: ui-monospace, monospace;
+        }
+
+        .job-card .card-title {
+            font-size: 1.15rem;
+            font-weight: 750;
+            color: var(--primary-dark);
+            line-height: 1.3;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .job-card .card-dept {
+            font-size: 0.85rem;
+            color: #334155;
+            margin-top: 0.25rem;
+            line-height: 1.4;
+        }
+
+        .card-expand-trigger {
+            background: var(--primary-bg-soft);
+            border: none;
+            color: var(--primary);
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: transform 0.2s ease, background-color 0.15s;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .job-card.expanded .card-expand-trigger {
+            transform: rotate(180deg);
+            background: var(--primary);
+            color: white;
+        }
+
+        .card-metrics-strip {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding: 0.45rem 0.65rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.8rem;
+        }
+
+        .card-details {
+            display: none;
+            margin-top: 0.65rem;
+            padding-top: 0.65rem;
+            border-top: 1px dashed var(--border);
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .job-card.expanded .card-details {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-3px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .detail-section {
+            margin-bottom: 0.55rem;
+        }
+
+        .detail-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.03em;
+        }
+
+        .detail-section-content {
+            font-size: 0.84rem;
+            color: var(--text);
+            line-height: 1.45;
+        }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: modalFade 0.2s ease;
+        }
+
+        .modal-backdrop.open { display: flex; }
+
+        @keyframes modalFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 480px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+        }
+
+        .modal-header h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .modal-done-btn {
+            color: var(--primary-light);
+            font-weight: 700;
+            font-size: 0.9rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.35rem 0.65rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .modal-done-btn:hover {
+            background: var(--primary-bg-soft);
+        }
+
+        .modal-body {
+            padding: 0.75rem 1.25rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .column-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .column-toggle-row:last-child {
+            border-bottom: none;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 42px;
+            height: 23px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .25s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 17px;
+            width: 17px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .25s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-light);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(19px);
+        }
+
+        .col-hidden {
+            display: none !important;
+        }
+
+        .pagination {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 1.25rem;
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+        }
+
+        .pagination-left { justify-self: start; }
+        .pagination-center { justify-self: center; }
+        .pagination-right { justify-self: end; }
+
+        .page-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .page-btn {
+            min-width: 2.1rem;
+            height: 2.1rem;
+            padding: 0 0.5rem;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--primary-light);
+            color: var(--primary);
+            background: var(--primary-bg);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 0.75rem 0.6rem 2rem; }
+            header { padding: 1rem 0.9rem; margin-bottom: 0.75rem; }
+            header h1 { font-size: 1.25rem; }
+            header p { font-size: 0.82rem; }
+            .controls { padding: 0.8rem 0.85rem; margin-bottom: 0.75rem; }
+            .controls-grid { gap: 0.5rem; }
+            .pagination {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.6rem;
+                padding: 0.65rem 0.85rem;
+            }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>100 個高頻學術英文核心詞彙庫 (Academic Vocabulary 100)</h1>
+            <p>收錄 100 組學術寫作與閱讀關鍵字，提供 IPA 音標、詞性分類、中英釋義、搭配詞、同反義詞及原比例句，支援即時英音朗讀與多維度檢索</p>
+        </header>
+
+        <div class="controls">
+            <div class="controls-grid">
+                <div class="form-group">
+                    <label for="search">搜尋詞彙 / 釋義 / 例句</label>
+                    <input type="search" id="search" placeholder="輸入單字、中文釋義、搭配詞、例句…" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label for="posFilter">詞性類別 (Part of Speech)</label>
+                    <select id="posFilter">
+                        <option value="">全部詞性 (All POS)</option>
+                        <option value="adj">形容詞 (Adjective, adj.)</option>
+                        <option value="v">動詞 (Verb, v.)</option>
+                        <option value="n">名詞 (Noun, n.)</option>
+                        <option value="adv">副詞 (Adverb, adv.)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="viewMode">顯示模式</label>
+                    <select id="viewMode">
+                        <option value="table">表格模式 (Table View)</option>
+                        <option value="cards">卡片學習模式 (Cards View)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-secondary" id="expandAllBtn" title="展開或收合所有詞彙詳細內容">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+                        全部展開
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-secondary" id="colToggleBtn" title="自訂表格欄位顯示">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line></svg>
+                        自訂欄位
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-secondary" id="resetBtn">重設</button>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-primary" id="exportBtn" title="將目前篩選資料匯出為 Excel CSV">匯出 Excel</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div>
+                顯示 <strong id="showingCount">0</strong> / 共 <strong id="totalCount">0</strong> 筆核心詞彙
+            </div>
+            <div class="badge-legend">
+                <span class="pos-badge pos-adj">adj. 形容詞</span>
+                <span class="pos-badge pos-v">v. 動詞</span>
+                <span class="pos-badge pos-n">n. 名詞</span>
+                <span class="pos-badge pos-adv">adv. 副詞</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); align-self: center;">🔊 點擊喇叭即可聆聽標準發音</span>
+            </div>
+        </div>
+
+        <div class="table-card" id="tableCard">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-key="id"># <span class="sort-icon"></span></th>
+                            <th data-key="word">Word (單字) <span class="sort-icon"></span></th>
+                            <th data-key="posIpa">詞性 / 音標 (POS / IPA) <span class="sort-icon"></span></th>
+                            <th data-key="definition">Definition (中英釋義) <span class="sort-icon"></span></th>
+                            <th data-key="collocations">Collocations (搭配詞) <span class="sort-icon"></span></th>
+                            <th data-key="synAnt">Synonyms / Antonyms (同義 / 反義) <span class="sort-icon"></span></th>
+                            <th data-key="sentence">Example Sentence (學術例句) <span class="sort-icon"></span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="cards-view" id="cardsView"></div>
+
+            <div class="pagination" id="pagination">
+                <div class="pagination-left">
+                    <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+                        <label for="pageSize" style="margin-bottom: 0;">每頁筆數：</label>
+                        <select id="pageSize" style="width: auto; padding: 0.35rem 0.6rem;">
+                            <option value="15" selected>15</option>
+                            <option value="30">30</option>
+                            <option value="50">50</option>
+                            <option value="all">全部 (100)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="pagination-center">
+                    <div class="page-controls" id="pageControls"></div>
+                </div>
+                <div class="pagination-right">
+                    <span id="pageInfo" style="font-size: 0.85rem; color: var(--text-muted);"></span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            詞彙來源：學術寫作與標準檢定常用核心字表。支援瀏覽器原生 SpeechSynthesis 發音功能。
+        </footer>
+    </div>
+
+    <div class="modal-backdrop" id="colModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>自訂表格欄位</h3>
+                <button type="button" class="modal-done-btn" id="modalDoneBtn">完成</button>
+            </div>
+            <div class="modal-body" id="colModalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const vocabularyData = [
+            { id: 1, word: "abundant", posIpa: "adj. /əˈbʌndənt/", definition: "Existing in large quantities / 豐富的", collocations: "abundant resources", synAnt: "plentiful / scarce", sentence: "The region has abundant natural resources." },
+            { id: 2, word: "acquire", posIpa: "v. /əˈkwaɪə/", definition: "To gain or obtain / 獲得", collocations: "acquire knowledge", synAnt: "obtain / lose", sentence: "Students acquire valuable skills through practice." },
+            { id: 3, word: "advocate", posIpa: "v./n. /ˈædvəkeɪt/", definition: "To publicly support / 提倡；支持者", collocations: "advocate equality", synAnt: "support / oppose", sentence: "Many experts advocate stricter environmental laws." },
+            { id: 4, word: "alleviate", posIpa: "v. /əˈliːvieɪt/", definition: "To reduce pain or difficulty / 減輕", collocations: "alleviate poverty", synAnt: "relieve / aggravate", sentence: "Public transport can alleviate traffic congestion." },
+            { id: 5, word: "ambiguous", posIpa: "adj. /æmˈbɪɡjuəs/", definition: "Having more than one meaning / 含糊不清的", collocations: "ambiguous statement", synAnt: "unclear / clear", sentence: "The instructions were ambiguous and confusing." },
+            { id: 6, word: "anticipate", posIpa: "v. /ænˈtɪsɪpeɪt/", definition: "To expect something / 預期", collocations: "anticipate problems", synAnt: "expect / doubt", sentence: "Authorities should anticipate future housing needs." },
+            { id: 7, word: "apparent", posIpa: "adj. /əˈpærənt/", definition: "Easy to notice or understand / 明顯的", collocations: "apparent difference", synAnt: "obvious / hidden", sentence: "The benefits of exercise are apparent." },
+            { id: 8, word: "arbitrary", posIpa: "adj. /ˈɑːrbɪtreri/", definition: "Based on personal choice rather than reason / 武斷的", collocations: "arbitrary decision", synAnt: "random / reasoned", sentence: "The rule appears arbitrary and unfair." },
+            { id: 9, word: "assess", posIpa: "v. /əˈses/", definition: "To evaluate or judge / 評估", collocations: "assess the impact", synAnt: "evaluate / ignore", sentence: "Researchers assessed the policy’s effectiveness." },
+            { id: 10, word: "attain", posIpa: "v. /əˈteɪn/", definition: "To achieve something / 達到", collocations: "attain a goal", synAnt: "achieve / fail", sentence: "Hard work is necessary to attain academic success." },
+            { id: 11, word: "authentic", posIpa: "adj. /ɔːˈθentɪk/", definition: "Genuine or real / 真實的", collocations: "authentic experience", synAnt: "genuine / fake", sentence: "Travellers increasingly seek authentic cultural experiences." },
+            { id: 12, word: "beneficial", posIpa: "adj. /ˌbenɪˈfɪʃəl/", definition: "Producing a positive result / 有益的", collocations: "beneficial effect", synAnt: "advantageous / harmful", sentence: "Reading regularly has a beneficial effect on vocabulary." },
+            { id: 13, word: "coherent", posIpa: "adj. /koʊˈhɪrənt/", definition: "Logical and well organised / 連貫的", collocations: "coherent argument", synAnt: "logical / incoherent", sentence: "The essay presents a coherent argument." },
+            { id: 14, word: "coincide", posIpa: "v. /ˌkoʊɪnˈsaɪd/", definition: "To happen at the same time / 同時發生", collocations: "coincide with events", synAnt: "correspond / differ", sentence: "The festival coincides with the school holidays." },
+            { id: 15, word: "compelling", posIpa: "adj. /kəmˈpelɪŋ/", definition: "Very persuasive or convincing / 具說服力的", collocations: "compelling evidence", synAnt: "convincing / unconvincing", sentence: "The report provides compelling evidence." },
+            { id: 16, word: "compensate", posIpa: "v. /ˈkɑːmpenseɪt/", definition: "To make up for a disadvantage / 補償", collocations: "compensate for losses", synAnt: "offset / worsen", sentence: "Higher wages may compensate for increased living costs." },
+            { id: 17, word: "comprehend", posIpa: "v. /ˌkɑːmprɪˈhend/", definition: "To understand fully / 理解", collocations: "comprehend information", synAnt: "understand / misunderstand", sentence: "Some learners struggle to comprehend academic texts." },
+            { id: 18, word: "comprehensive", posIpa: "adj. /ˌkɑːmprɪˈhensɪv/", definition: "Including all important details / 全面的", collocations: "comprehensive plan", synAnt: "thorough / limited", sentence: "The government needs a comprehensive housing policy." },
+            { id: 19, word: "comprise", posIpa: "v. /kəmˈpraɪz/", definition: "To consist of / 由……組成", collocations: "comprise several parts", synAnt: "consist of / exclude", sentence: "The course comprises lectures and practical sessions." },
+            { id: 20, word: "concurrent", posIpa: "adj. /kənˈkɜːrənt/", definition: "Happening at the same time / 同時的", collocations: "concurrent events", synAnt: "simultaneous / separate", sentence: "The city faces concurrent economic and social challenges." },
+            { id: 21, word: "conducive", posIpa: "adj. /kənˈduːsɪv/", definition: "Helping something to happen / 有助於", collocations: "conducive to learning", synAnt: "favourable / obstructive", sentence: "A quiet room is conducive to concentration." },
+            { id: 22, word: "controversial", posIpa: "adj. /ˌkɑːntrəˈvɜːrʃəl/", definition: "Causing disagreement / 具爭議的", collocations: "controversial issue", synAnt: "disputed / uncontroversial", sentence: "The proposal remains highly controversial." },
+            { id: 23, word: "conventional", posIpa: "adj. /kənˈvenʃənəl/", definition: "Traditional or usual / 傳統的", collocations: "conventional methods", synAnt: "traditional / innovative", sentence: "Conventional teaching methods may not suit every learner." },
+            { id: 24, word: "crucial", posIpa: "adj. /ˈkruːʃəl/", definition: "Extremely important / 關鍵的", collocations: "crucial role", synAnt: "vital / unimportant", sentence: "Early education plays a crucial role in development." },
+            { id: 25, word: "cumulative", posIpa: "adj. /ˈkjuːmjələtɪv/", definition: "Increasing through successive additions / 累積的", collocations: "cumulative effect", synAnt: "accumulated / isolated", sentence: "Small improvements can have a cumulative effect." },
+            { id: 26, word: "deteriorate", posIpa: "v. /dɪˈtɪəriəreɪt/", definition: "To become worse / 惡化", collocations: "deteriorate rapidly", synAnt: "worsen / improve", sentence: "Air quality may deteriorate during the summer." },
+            { id: 27, word: "detrimental", posIpa: "adj. /ˌdetrɪˈmentəl/", definition: "Causing harm or damage / 有害的", collocations: "detrimental effect", synAnt: "harmful / beneficial", sentence: "Excessive screen time can be detrimental to sleep." },
+            { id: 28, word: "diverse", posIpa: "adj. /daɪˈvɜːrs/", definition: "Including many different types / 多元的", collocations: "diverse population", synAnt: "varied / uniform", sentence: "Hong Kong has a culturally diverse population." },
+            { id: 29, word: "elaborate", posIpa: "adj./v. /ɪˈlæbərət/", definition: "Detailed; to explain further / 詳細的；闡述", collocations: "elaborate explanation", synAnt: "detailed / simple", sentence: "The report offers an elaborate explanation of the issue." },
+            { id: 30, word: "eliminate", posIpa: "v. /ɪˈlɪməneɪt/", definition: "To remove completely / 消除", collocations: "eliminate waste", synAnt: "eradicate / create", sentence: "Recycling alone cannot eliminate all pollution." },
+            { id: 31, word: "empirical", posIpa: "adj. /ɪmˈpɪrɪkəl/", definition: "Based on observation or evidence / 實證的", collocations: "empirical evidence", synAnt: "evidence-based / theoretical", sentence: "The conclusion is supported by empirical research." },
+            { id: 32, word: "enhance", posIpa: "v. /ɪnˈhæns/", definition: "To improve quality or value / 提升", collocations: "enhance productivity", synAnt: "improve / diminish", sentence: "Technology can enhance communication." },
+            { id: 33, word: "enormous", posIpa: "adj. /ɪˈnɔːrməs/", definition: "Extremely large / 巨大的", collocations: "enormous pressure", synAnt: "huge / tiny", sentence: "Population growth places enormous pressure on cities." },
+            { id: 34, word: "ensure", posIpa: "v. /ɪnˈʃʊr/", definition: "To make certain / 確保", collocations: "ensure safety", synAnt: "guarantee / endanger", sentence: "Regulations are needed to ensure public safety." },
+            { id: 35, word: "establish", posIpa: "v. /ɪˈstæblɪʃ/", definition: "To create or prove firmly / 建立；證實", collocations: "establish a system", synAnt: "create / abolish", sentence: "The organisation was established to support young people." },
+            { id: 36, word: "ethical", posIpa: "adj. /ˈeθɪkəl/", definition: "Morally right or acceptable / 道德的", collocations: "ethical standards", synAnt: "moral / unethical", sentence: "Companies should follow strict ethical standards." },
+            { id: 37, word: "feasible", posIpa: "adj. /ˈfiːzəbəl/", definition: "Possible and practical / 可行的", collocations: "feasible solution", synAnt: "practical / impractical", sentence: "Solar power is a feasible alternative in many regions." },
+            { id: 38, word: "fluctuate", posIpa: "v. /ˈflʌktʃueɪt/", definition: "To change repeatedly / 波動", collocations: "fluctuate considerably", synAnt: "vary / stabilise", sentence: "Food prices fluctuate according to supply and demand." },
+            { id: 39, word: "fundamental", posIpa: "adj. /ˌfʌndəˈmentəl/", definition: "Basic and essential / 根本的", collocations: "fundamental principle", synAnt: "basic / secondary", sentence: "Trust is fundamental to a healthy relationship." },
+            { id: 40, word: "generate", posIpa: "v. /ˈdʒenəreɪt/", definition: "To produce or create / 產生", collocations: "generate income", synAnt: "produce / consume", sentence: "Tourism can generate employment opportunities." },
+            { id: 41, word: "inherent", posIpa: "adj. /ɪnˈhɪrənt/", definition: "Naturally existing in something / 固有的", collocations: "inherent risk", synAnt: "intrinsic / acquired", sentence: "Every investment carries an inherent risk." },
+            { id: 42, word: "inevitable", posIpa: "adj. /ɪnˈevɪtəbəl/", definition: "Certain to happen / 不可避免的", collocations: "inevitable consequence", synAnt: "unavoidable / avoidable", sentence: "Some degree of change is inevitable." },
+            { id: 43, word: "innovative", posIpa: "adj. /ˈɪnəveɪtɪv/", definition: "Introducing new ideas or methods / 創新的", collocations: "innovative approach", synAnt: "creative / conventional", sentence: "Innovative solutions are needed to reduce waste." },
+            { id: 44, word: "integrate", posIpa: "v. /ˈɪntɪɡreɪt/", definition: "To combine into a whole / 融合", collocations: "integrate technology", synAnt: "combine / separate", sentence: "Schools should integrate technology into lessons." },
+            { id: 45, word: "intensive", posIpa: "adj. /ɪnˈtensɪv/", definition: "Involving a lot of effort or activity / 密集的", collocations: "intensive training", synAnt: "concentrated / relaxed", sentence: "The course provides intensive language training." },
+            { id: 46, word: "justify", posIpa: "v. /ˈdʒʌstɪfaɪ/", definition: "To give a good reason for / 證明合理", collocations: "justify a decision", synAnt: "defend / condemn", sentence: "The benefits do not justify the high cost." },
+            { id: 47, word: "legitimate", posIpa: "adj. /lɪˈdʒɪtəmət/", definition: "Reasonable, lawful, or genuine / 合理；合法的", collocations: "legitimate concern", synAnt: "valid / illegitimate", sentence: "Residents have legitimate concerns about noise pollution." },
+            { id: 48, word: "marginal", posIpa: "adj. /ˈmɑːrdʒɪnəl/", definition: "Very small or limited / 輕微的", collocations: "marginal improvement", synAnt: "slight / substantial", sentence: "The new system produced only marginal improvements." },
+            { id: 49, word: "mitigate", posIpa: "v. /ˈmɪtɪɡeɪt/", definition: "To reduce harmful effects / 緩解", collocations: "mitigate the impact", synAnt: "lessen / intensify", sentence: "Planting trees can mitigate the effects of climate change." },
+            { id: 50, word: "nonetheless", posIpa: "adv. /ˌnʌnðəˈles/", definition: "Despite that / 儘管如此", collocations: "remain important nonetheless", synAnt: "nevertheless / therefore", sentence: "The plan is expensive; nonetheless, it is necessary." },
+            { id: 51, word: "objective", posIpa: "adj./n. /əbˈdʒektɪv/", definition: "Based on facts; a goal / 客觀的；目標", collocations: "objective assessment", synAnt: "impartial / subjective", sentence: "The research aims to provide an objective assessment." },
+            { id: 52, word: "offset", posIpa: "v./n. /ˈɔːfset/", definition: "To counterbalance an effect / 抵銷", collocations: "offset emissions", synAnt: "counterbalance / increase", sentence: "Renewable energy can offset carbon emissions." },
+            { id: 53, word: "persistent", posIpa: "adj. /pərˈsɪstənt/", definition: "Continuing for a long time / 持續的", collocations: "persistent problem", synAnt: "enduring / temporary", sentence: "Traffic congestion is a persistent problem." },
+            { id: 54, word: "plausible", posIpa: "adj. /ˈplɔːzəbəl/", definition: "Seeming reasonable or likely / 貌似合理的", collocations: "plausible explanation", synAnt: "credible / implausible", sentence: "The study offers a plausible explanation." },
+            { id: 55, word: "prevalent", posIpa: "adj. /ˈprevələnt/", definition: "Common or widespread / 普遍的", collocations: "prevalent problem", synAnt: "widespread / rare", sentence: "Obesity is increasingly prevalent among children." },
+            { id: 56, word: "priority", posIpa: "n. /praɪˈɔːrəti/", definition: "Something considered most important / 優先事項", collocations: "top priority", synAnt: "preference / neglect", sentence: "Improving public safety should be a top priority." },
+            { id: 57, word: "profound", posIpa: "adj. /prəˈfaʊnd/", definition: "Very great or significant / 深遠的", collocations: "profound impact", synAnt: "deep / superficial", sentence: "The invention had a profound impact on society." },
+            { id: 58, word: "promote", posIpa: "v. /prəˈmoʊt/", definition: "To encourage or support / 促進", collocations: "promote equality", synAnt: "encourage / hinder", sentence: "Schools should promote independent thinking." },
+            { id: 59, word: "proportion", posIpa: "n. /prəˈpɔːrʃən/", definition: "A part compared with the whole / 比例", collocations: "large proportion", synAnt: "percentage / entirety", sentence: "A large proportion of residents use public transport." },
+            { id: 60, word: "prospective", posIpa: "adj. /prəˈspektɪv/", definition: "Expected or potential in the future / 預期的", collocations: "prospective students", synAnt: "potential / current", sentence: "The university held a briefing for prospective students." },
+            { id: 61, word: "radical", posIpa: "adj. /ˈrædɪkəl/", definition: "Very fundamental or extreme / 徹底的；激進的", collocations: "radical reform", synAnt: "revolutionary / moderate", sentence: "Radical reform may be required to solve the crisis." },
+            { id: 62, word: "rational", posIpa: "adj. /ˈræʃənəl/", definition: "Based on reason and logic / 理性的", collocations: "rational decision", synAnt: "logical / irrational", sentence: "Consumers should make rational purchasing decisions." },
+            { id: 63, word: "recover", posIpa: "v. /rɪˈkʌvər/", definition: "To return to a normal state / 復原", collocations: "recover from a crisis", synAnt: "recuperate / decline", sentence: "The economy may take years to recover." },
+            { id: 64, word: "refine", posIpa: "v. /rɪˈfaɪn/", definition: "To improve by making small changes / 改進", collocations: "refine a strategy", synAnt: "improve / damage", sentence: "Researchers continue to refine the proposed method." },
+            { id: 65, word: "reinforce", posIpa: "v. /ˌriːɪnˈfɔːrs/", definition: "To strengthen or support / 加強", collocations: "reinforce an idea", synAnt: "strengthen / weaken", sentence: "The results reinforce the importance of early intervention." },
+            { id: 66, word: "reluctant", posIpa: "adj. /rɪˈlʌktənt/", definition: "Unwilling or hesitant / 不情願的", collocations: "reluctant to change", synAnt: "unwilling / eager", sentence: "Some people are reluctant to adopt new technology." },
+            { id: 67, word: "resilient", posIpa: "adj. /rɪˈzɪliənt/", definition: "Able to recover quickly / 有韌性的", collocations: "resilient community", synAnt: "adaptable / fragile", sentence: "Small businesses can be remarkably resilient." },
+            { id: 68, word: "rigorous", posIpa: "adj. /ˈrɪɡərəs/", definition: "Very thorough and accurate / 嚴謹的", collocations: "rigorous analysis", synAnt: "thorough / careless", sentence: "The claim requires rigorous scientific testing." },
+            { id: 69, word: "scarce", posIpa: "adj. /skers/", definition: "Limited and difficult to obtain / 稀缺的", collocations: "scarce resources", synAnt: "limited / abundant", sentence: "Clean water is scarce in some regions." },
+            { id: 70, word: "significant", posIpa: "adj. /sɪɡˈnɪfɪkənt/", definition: "Important or meaningful / 重要的；顯著的", collocations: "significant increase", synAnt: "considerable / insignificant", sentence: "The policy led to a significant reduction in emissions." },
+            { id: 71, word: "sophisticated", posIpa: "adj. /səˈfɪstɪkeɪtɪd/", definition: "Advanced and complex / 先進的；複雜的", collocations: "sophisticated technology", synAnt: "advanced / basic", sentence: "Modern hospitals rely on sophisticated equipment." },
+            { id: 72, word: "stabilize", posIpa: "v. /ˈsteɪbəlaɪz/", definition: "To make or become steady / 穩定", collocations: "stabilize the economy", synAnt: "steady / destabilise", sentence: "The measures helped stabilize food prices." },
+            { id: 73, word: "substantial", posIpa: "adj. /səbˈstænʃəl/", definition: "Large in amount or importance / 大量的；重大的", collocations: "substantial investment", synAnt: "considerable / negligible", sentence: "The project requires substantial financial support." },
+            { id: 74, word: "sustainable", posIpa: "adj. /səˈsteɪnəbəl/", definition: "Able to continue without causing harm / 可持續的", collocations: "sustainable development", synAnt: "viable / unsustainable", sentence: "Cities must adopt more sustainable forms of transport." },
+            { id: 75, word: "tackle", posIpa: "v. /ˈtækəl/", definition: "To deal with a problem / 處理；解決", collocations: "tackle poverty", synAnt: "address / neglect", sentence: "Governments must tackle the causes of inequality." },
+            { id: 76, word: "tangible", posIpa: "adj. /ˈtændʒəbəl/", definition: "Real and measurable / 實質的；可衡量的", collocations: "tangible benefits", synAnt: "concrete / intangible", sentence: "The programme has produced tangible benefits for residents." },
+            { id: 77, word: "transform", posIpa: "v. /trænsˈfɔːrm/", definition: "To change completely / 徹底改變", collocations: "transform society", synAnt: "revolutionise / preserve", sentence: "Digital technology has transformed education." },
+            { id: 78, word: "transparent", posIpa: "adj. /trænsˈpærənt/", definition: "Open and easy to understand / 透明的", collocations: "transparent process", synAnt: "open / secretive", sentence: "A transparent system can increase public trust." },
+            { id: 79, word: "undermine", posIpa: "v. /ˌʌndərˈmaɪn/", definition: "To weaken gradually / 削弱", collocations: "undermine confidence", synAnt: "weaken / strengthen", sentence: "False information can undermine public confidence." },
+            { id: 80, word: "unprecedented", posIpa: "adj. /ʌnˈpresɪdentɪd/", definition: "Never having happened before / 前所未有的", collocations: "unprecedented growth", synAnt: "unparalleled / ordinary", sentence: "The city experienced unprecedented population growth." },
+            { id: 81, word: "universal", posIpa: "adj. /ˌjuːnɪˈvɜːrsəl/", definition: "Relating to everyone or everything / 普遍的", collocations: "universal access", synAnt: "worldwide / limited", sentence: "Education should be universally accessible." },
+            { id: 82, word: "valid", posIpa: "adj. /ˈvælɪd/", definition: "Well-founded or logically acceptable / 有效的；合理的", collocations: "valid argument", synAnt: "sound / invalid", sentence: "The concerns raised by residents are valid." },
+            { id: 83, word: "viable", posIpa: "adj. /ˈvaɪəbəl/", definition: "Able to work successfully / 可行的", collocations: "viable alternative", synAnt: "workable / unworkable", sentence: "Cycling is a viable alternative to driving." },
+            { id: 84, word: "vulnerable", posIpa: "adj. /ˈvʌlnərəbəl/", definition: "Easily harmed or affected / 脆弱的", collocations: "vulnerable groups", synAnt: "susceptible / protected", sentence: "Elderly people are particularly vulnerable to extreme heat." },
+            { id: 85, word: "widespread", posIpa: "adj. /ˈwaɪdspred/", definition: "Existing over a large area / 廣泛的", collocations: "widespread concern", synAnt: "prevalent / limited", sentence: "There is widespread concern about rising costs." },
+            { id: 86, word: "worthwhile", posIpa: "adj. /ˌwɜːrθˈwaɪl/", definition: "Worth the time, money, or effort / 值得的", collocations: "worthwhile investment", synAnt: "valuable / pointless", sentence: "Learning another language is a worthwhile investment." },
+            { id: 87, word: "allocate", posIpa: "v. /ˈæləkeɪt/", definition: "To distribute for a specific purpose / 分配", collocations: "allocate resources", synAnt: "distribute / withhold", sentence: "The government should allocate more funds to healthcare." },
+            { id: 88, word: "constrain", posIpa: "v. /kənˈstreɪn/", definition: "To limit or restrict / 限制", collocations: "constrain economic growth", synAnt: "restrict / liberate", sentence: "High rents constrain the development of small businesses." },
+            { id: 89, word: "differentiate", posIpa: "v. /ˌdɪfəˈrenʃieɪt/", definition: "To recognise or show differences / 區分", collocations: "differentiate between options", synAnt: "distinguish / confuse", sentence: "Clear criteria help differentiate reliable sources from unreliable ones." },
+            { id: 90, word: "diversify", posIpa: "v. /daɪˈvɜːrsɪfaɪ/", definition: "To make more varied / 使多元化", collocations: "diversify the economy", synAnt: "vary / concentrate", sentence: "The country should diversify its economy." },
+            { id: 91, word: "exacerbate", posIpa: "v. /ɪɡˈzæsərbeɪt/", definition: "To make a problem worse / 使惡化", collocations: "exacerbate inequality", synAnt: "worsen / relieve", sentence: "Poor planning can exacerbate traffic problems." },
+            { id: 92, word: "facilitate", posIpa: "v. /fəˈsɪlɪteɪt/", definition: "To make something easier / 促進；便利", collocations: "facilitate communication", synAnt: "assist / obstruct", sentence: "Online platforms facilitate international collaboration." },
+            { id: 93, word: "implement", posIpa: "v. /ˈɪmplɪment/", definition: "To put a plan into action / 實施", collocations: "implement a policy", synAnt: "execute / abandon", sentence: "Authorities must implement effective safety measures." },
+            { id: 94, word: "implicit", posIpa: "adj. /ɪmˈplɪsɪt/", definition: "Suggested without being directly stated / 含蓄的", collocations: "implicit assumption", synAnt: "implied / explicit", sentence: "The argument contains an implicit assumption." },
+            { id: 95, word: "impede", posIpa: "v. /ɪmˈpiːd/", definition: "To slow or prevent progress / 阻礙", collocations: "impede development", synAnt: "hinder / facilitate", sentence: "Bureaucracy can impede economic growth." },
+            { id: 96, word: "incentive", posIpa: "n. /ɪnˈsentɪv/", definition: "Something that encourages action / 誘因；獎勵", collocations: "financial incentive", synAnt: "motivation / deterrent", sentence: "Tax incentives can encourage companies to invest." },
+            { id: 97, word: "inevitable", posIpa: "adj. /ɪnˈevɪtəbəl/", definition: "Certain to happen / 必然的", collocations: "inevitable change", synAnt: "unavoidable / preventable", sentence: "Technological change is inevitable in modern workplaces." },
+            { id: 98, word: "prevalent", posIpa: "adj. /ˈprevələnt/", definition: "Common or widespread / 普遍的", collocations: "prevalent belief", synAnt: "common / uncommon", sentence: "This misconception is prevalent among young learners." },
+            { id: 99, word: "subsequent", posIpa: "adj. /ˈsʌbsɪkwənt/", definition: "Happening afterwards / 隨後的", collocations: "subsequent research", synAnt: "following / preceding", sentence: "Subsequent studies confirmed the original findings." },
+            { id: 100, word: "undermine", posIpa: "v. /ˌʌndərˈmaɪn/", definition: "To weaken gradually or secretly / 逐漸削弱", collocations: "undermine authority", synAnt: "weaken / reinforce", sentence: "Repeated delays may undermine public confidence." }
+        ];
+
+        const columnDefs = [
+            { key: "id", label: "編號 (#)", default: true },
+            { key: "word", label: "Word (單字)", default: true },
+            { key: "posIpa", label: "詞性 / 音標 (POS / IPA)", default: true },
+            { key: "definition", label: "Definition (中英釋義)", default: true },
+            { key: "collocations", label: "Collocations (搭配詞)", default: true },
+            { key: "synAnt", label: "Synonyms / Antonyms", default: true },
+            { key: "sentence", label: "Example Sentence (例句)", default: true }
+        ];
+
+        let colVisibility = {};
+        columnDefs.forEach(c => colVisibility[c.key] = c.default);
+
+        try {
+            const saved = localStorage.getItem("vocabColVis_v1");
+            if (saved) colVisibility = { ...colVisibility, ...JSON.parse(saved) };
+        } catch (e) {}
+
+        const expandedCards = new Set();
+        let filtered = [...vocabularyData];
+        let currentPage = 1;
+        let pageSize = 15;
+        let sortKey = "id";
+        let sortDir = "asc";
+
+        const searchInput = document.getElementById("search");
+        const posFilter = document.getElementById("posFilter");
+        const viewModeSelect = document.getElementById("viewMode");
+        const pageSizeSelect = document.getElementById("pageSize");
+        const expandAllBtn = document.getElementById("expandAllBtn");
+        const resetBtn = document.getElementById("resetBtn");
+        const exportBtn = document.getElementById("exportBtn");
+        const colToggleBtn = document.getElementById("colToggleBtn");
+        const colModal = document.getElementById("colModal");
+        const colModalBody = document.getElementById("colModalBody");
+        const modalDoneBtn = document.getElementById("modalDoneBtn");
+        const tableCard = document.getElementById("tableCard");
+        const tableBody = document.getElementById("tableBody");
+        const cardsView = document.getElementById("cardsView");
+        const showingCount = document.getElementById("showingCount");
+        const totalCount = document.getElementById("totalCount");
+        const pageInfo = document.getElementById("pageInfo");
+        const pageControls = document.getElementById("pageControls");
+
+        function speakWord(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function buildColModal() {
+            colModalBody.innerHTML = "";
+            columnDefs.forEach(col => {
+                const row = document.createElement("div");
+                row.className = "column-toggle-row";
+
+                const label = document.createElement("span");
+                label.style.fontSize = "0.88rem";
+                label.style.fontWeight = "500";
+                label.textContent = col.label;
+
+                const switchLabel = document.createElement("label");
+                switchLabel.className = "switch";
+
+                const input = document.createElement("input");
+                input.type = "checkbox";
+                input.checked = colVisibility[col.key] !== false;
+                input.addEventListener("change", (e) => {
+                    colVisibility[col.key] = e.target.checked;
+                    try {
+                        localStorage.setItem("vocabColVis_v1", JSON.stringify(colVisibility));
+                    } catch (err) {}
+                    render();
+                });
+
+                const slider = document.createElement("span");
+                slider.className = "slider";
+
+                switchLabel.appendChild(input);
+                switchLabel.appendChild(slider);
+                row.appendChild(label);
+                row.appendChild(switchLabel);
+                colModalBody.appendChild(row);
+            });
+        }
+
+        colToggleBtn.addEventListener("click", () => {
+            buildColModal();
+            colModal.classList.add("open");
+        });
+
+        modalDoneBtn.addEventListener("click", () => colModal.classList.remove("open"));
+        colModal.addEventListener("click", (e) => {
+            if (e.target === colModal) colModal.classList.remove("open");
+        });
+
+        function getPosBadgeHtml(posIpa) {
+            const lower = posIpa.toLowerCase();
+            let cls = "pos-badge pos-hybrid";
+            let label = posIpa.split("/")[0].trim();
+            if (lower.startsWith("adj")) cls = "pos-badge pos-adj";
+            else if (lower.startsWith("adv")) cls = "pos-badge pos-adv";
+            else if (lower.startsWith("v.")) cls = "pos-badge pos-v";
+            else if (lower.startsWith("n.")) cls = "pos-badge pos-n";
+            else if (lower.includes("v.") || lower.includes("n.")) cls = "pos-badge pos-hybrid";
+
+            const ipaMatch = posIpa.match(/\/.*?\//);
+            const ipaText = ipaMatch ? ipaMatch[0] : "";
+
+            return `<span class="${cls}">${label}</span> ${ipaText ? `<span class="ipa-badge">${ipaText}</span>` : ''}`;
+        }
+
+        function applyFilters() {
+            const query = searchInput.value.trim().toLowerCase();
+            const pos = posFilter.value;
+
+            filtered = vocabularyData.filter(row => {
+                if (pos) {
+                    const rowPos = row.posIpa.toLowerCase();
+                    if (!rowPos.includes(pos)) return false;
+                }
+                if (query) {
+                    const haystack = [
+                        row.id, row.word, row.posIpa, row.definition,
+                        row.collocations, row.synAnt, row.sentence
+                    ].join(" ").toLowerCase();
+                    if (!haystack.includes(query)) return false;
+                }
+                return true;
+            });
+
+            filtered.sort((a, b) => {
+                let va = a[sortKey];
+                let vb = b[sortKey];
+
+                if (sortKey === "id") {
+                    return sortDir === "asc" ? a.id - b.id : b.id - a.id;
+                }
+
+                va = (va || "").toString().toLowerCase();
+                vb = (vb || "").toString().toLowerCase();
+                if (va < vb) return sortDir === "asc" ? -1 : 1;
+                if (va > vb) return sortDir === "asc" ? 1 : -1;
+                return 0;
+            });
+
+            currentPage = 1;
+            render();
+        }
+
+        function getPageSlice() {
+            if (pageSize === "all") return filtered;
+            const start = (currentPage - 1) * pageSize;
+            return filtered.slice(start, start + pageSize);
+        }
+
+        function render() {
+            const slice = getPageSlice();
+            const total = filtered.length;
+            const size = pageSize === "all" ? total : pageSize;
+            const startIdx = total === 0 ? 0 : (currentPage - 1) * size + 1;
+            const endIdx = pageSize === "all" ? total : Math.min(currentPage * size, total);
+
+            showingCount.textContent = total === 0 ? "0" : `${startIdx}–${endIdx}`;
+            totalCount.textContent = total;
+
+            document.querySelectorAll("th[data-key]").forEach(th => {
+                const k = th.dataset.key;
+                if (colVisibility[k] === false) {
+                    th.classList.add("col-hidden");
+                } else {
+                    th.classList.remove("col-hidden");
+                }
+            });
+
+            // Table rendering
+            tableBody.innerHTML = "";
+            if (slice.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2.5rem; color: var(--text-muted);">未找到符合條件的詞彙，請嘗試其他關鍵字</td></tr>`;
+            } else {
+                slice.forEach(row => {
+                    const tr = document.createElement("tr");
+
+                    // Parse definition: EN and ZH
+                    const defParts = row.definition.split("/");
+                    const defEn = defParts[0] ? defParts[0].trim() : "";
+                    const defZh = defParts[1] ? defParts[1].trim() : "";
+
+                    // Parse syn/ant
+                    const synAntParts = row.synAnt.split("/");
+                    const synText = synAntParts[0] ? synAntParts[0].trim() : "";
+                    const antText = synAntParts[1] ? synAntParts[1].trim() : "";
+
+                    tr.innerHTML = `
+                        <td class="${colVisibility.id === false ? 'col-hidden' : ''}"><strong>${row.id}</strong></td>
+                        <td class="${colVisibility.word === false ? 'col-hidden' : ''}">
+                            <div class="word-cell">
+                                <span>${escapeHtml(row.word)}</span>
+                                <button type="button" class="btn-icon-sound" title="發音" onclick="speakWord('${escapeJsString(row.word)}')">🔊</button>
+                            </div>
+                        </td>
+                        <td class="${colVisibility.posIpa === false ? 'col-hidden' : ''}">${getPosBadgeHtml(row.posIpa)}</td>
+                        <td class="${colVisibility.definition === false ? 'col-hidden' : ''}">
+                            <div><strong>${escapeHtml(defEn)}</strong></div>
+                            <div style="color: #4b5563; font-size: 0.82rem; margin-top: 2px;">${escapeHtml(defZh)}</div>
+                        </td>
+                        <td class="${colVisibility.collocations === false ? 'col-hidden' : ''}">
+                            <span class="colloc-tag">${escapeHtml(row.collocations)}</span>
+                        </td>
+                        <td class="${colVisibility.synAnt === false ? 'col-hidden' : ''}">
+                            <div><span style="font-size:0.75rem; color:var(--text-muted)">同義:</span> <span class="syn-tag">${escapeHtml(synText)}</span></div>
+                            <div><span style="font-size:0.75rem; color:var(--text-muted)">反義:</span> <span class="ant-tag">${escapeHtml(antText)}</span></div>
+                        </td>
+                        <td class="example-cell ${colVisibility.sentence === false ? 'col-hidden' : ''}">“${escapeHtml(row.sentence)}”</td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            }
+
+            cardsView.innerHTML = "";
+            if (slice.length === 0) {
+                cardsView.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-muted);">未找到符合條件的詞彙</div>`;
+            } else {
+                slice.forEach(row => {
+                    const isExpanded = expandedCards.has(row.id);
+                    const card = document.createElement("div");
+                    card.className = `job-card ${isExpanded ? 'expanded' : ''}`;
+                    card.dataset.id = row.id;
+
+                    const synAntParts = row.synAnt.split("/");
+                    const synText = synAntParts[0] ? synAntParts[0].trim() : "";
+                    const antText = synAntParts[1] ? synAntParts[1].trim() : "";
+
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <div style="flex: 1; min-width: 0;">
+                                <div class="card-meta-line">
+                                    <span class="card-id-pill">#${row.id}</span>
+                                    ${getPosBadgeHtml(row.posIpa)}
+                                </div>
+                                <h3 class="card-title">
+                                    <span>${escapeHtml(row.word)}</span>
+                                    <button type="button" class="btn-icon-sound" title="發音" onclick="event.stopPropagation(); speakWord('${escapeJsString(row.word)}')">🔊</button>
+                                </h3>
+                                <div class="card-dept">📖 ${escapeHtml(row.definition)}</div>
+                            </div>
+                            <button type="button" class="card-expand-trigger" aria-label="展開詳細資訊">▼</button>
+                        </div>
+
+                        <div class="card-metrics-strip">
+                            <div>
+                                <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">搭配詞 (Collocation)</span>
+                                <strong style="color: var(--primary); font-size: 0.82rem;">${escapeHtml(row.collocations)}</strong>
+                            </div>
+                            <div>
+                                <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">同義 / 反義 (Syn / Ant)</span>
+                                <span style="font-size: 0.8rem;"><span class="syn-tag">${escapeHtml(synText)}</span> / <span class="ant-tag">${escapeHtml(antText)}</span></span>
+                            </div>
+                        </div>
+
+                        <div class="card-details">
+                            <div class="detail-section">
+                                <div class="detail-section-title">學術情境例句 (Example Sentence)</div>
+                                <div class="detail-section-content" style="font-style: italic; color: #1e293b; background: #f8fafc; padding: 0.5rem 0.65rem; border-radius: 6px; border-left: 3px solid var(--primary-light);">
+                                    “${escapeHtml(row.sentence)}”
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:0.5rem; margin-top:0.6rem;">
+                                <button type="button" class="btn btn-secondary" style="flex:1; padding:0.4rem 0.6rem; font-size:0.8rem;" onclick="speakWord('${escapeJsString(row.sentence)}')">
+                                    🔊 朗讀整句
+                                </button>
+                                <button type="button" class="btn btn-secondary" style="flex:1; padding:0.4rem 0.6rem; font-size:0.8rem;" onclick="copySentence('${escapeJsString(row.sentence)}')">
+                                    📋 複製例句
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    const header = card.querySelector(".card-header");
+                    const trigger = card.querySelector(".card-expand-trigger");
+
+                    const toggle = () => {
+                        if (expandedCards.has(row.id)) {
+                            expandedCards.delete(row.id);
+                            card.classList.remove("expanded");
+                        } else {
+                            expandedCards.add(row.id);
+                            card.classList.add("expanded");
+                        }
+                        updateExpandAllBtnState(slice);
+                    };
+
+                    header.addEventListener("click", (e) => {
+                        if (e.target.closest(".btn-icon-sound") || e.target.closest(".card-expand-trigger")) return;
+                        toggle();
+                    });
+                    trigger.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        toggle();
+                    });
+
+                    cardsView.appendChild(card);
+                });
+            }
+
+            updateExpandAllBtnState(slice);
+            renderPagination(total, size);
+            updateSortIndicators();
+        }
+
+        function copySentence(text) {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+            alertToast("已複製例句至剪貼簿！");
+        }
+
+        function alertToast(msg) {
+            let toast = document.getElementById("toastMsg");
+            if (!toast) {
+                toast = document.createElement("div");
+                toast.id = "toastMsg";
+                toast.style.position = "fixed";
+                toast.style.bottom = "20px";
+                toast.style.right = "20px";
+                toast.style.background = "#1e1b4b";
+                toast.style.color = "white";
+                toast.style.padding = "0.6rem 1.1rem";
+                toast.style.borderRadius = "8px";
+                toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                toast.style.zIndex = "9999";
+                toast.style.fontSize = "0.85rem";
+                toast.style.transition = "opacity 0.3s ease";
+                document.body.appendChild(toast);
+            }
+            toast.textContent = msg;
+            toast.style.opacity = "1";
+            setTimeout(() => { toast.style.opacity = "0"; }, 2000);
+        }
+
+        function updateExpandAllBtnState(slice) {
+            if (!expandAllBtn) return;
+            if (!slice || slice.length === 0) {
+                expandAllBtn.disabled = true;
+                return;
+            }
+            expandAllBtn.disabled = false;
+
+            const allExpanded = slice.every(row => expandedCards.has(row.id));
+            if (allExpanded) {
+                expandAllBtn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+                    全部收合
+                `;
+            } else {
+                expandAllBtn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+                    全部展開
+                `;
+            }
+        }
+
+        function renderPagination(total, size) {
+            pageControls.innerHTML = "";
+            if (pageSize === "all" || total === 0) {
+                pageInfo.textContent = total === 0 ? "查無資料" : `全部 ${total} 筆`;
+                return;
+            }
+
+            const totalPages = Math.ceil(total / size);
+            pageInfo.textContent = `第 ${currentPage} / ${totalPages} 頁 (共 ${total} 筆)`;
+
+            const prev = document.createElement("button");
+            prev.className = "page-btn";
+            prev.textContent = "‹";
+            prev.disabled = currentPage === 1;
+            prev.addEventListener("click", () => { currentPage--; render(); });
+            pageControls.appendChild(prev);
+
+            let startP = Math.max(1, currentPage - 2);
+            let endP = Math.min(totalPages, currentPage + 2);
+
+            for (let i = startP; i <= endP; i++) {
+                const b = document.createElement("button");
+                b.className = "page-btn" + (i === currentPage ? " active" : "");
+                b.textContent = i;
+                b.addEventListener("click", () => { currentPage = i; render(); });
+                pageControls.appendChild(b);
+            }
+
+            const next = document.createElement("button");
+            next.className = "page-btn";
+            next.textContent = "›";
+            next.disabled = currentPage === totalPages;
+            next.addEventListener("click", () => { currentPage++; render(); });
+            pageControls.appendChild(next);
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll("th").forEach(th => {
+                th.classList.remove("sorted-asc", "sorted-desc");
+                if (th.dataset.key === sortKey) {
+                    th.classList.add(sortDir === "asc" ? "sorted-asc" : "sorted-desc");
+                }
+            });
+        }
+
+        function escapeHtml(str) {
+            if (str == null) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function escapeJsString(str) {
+            if (str == null) return "";
+            return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+
+        function isMobileScreen() {
+            return window.matchMedia("(max-width: 768px)").matches;
+        }
+
+        function applyViewMode(mode, savePreference = false) {
+            const selected = mode || "table";
+            tableCard.classList.remove("view-table", "view-cards");
+            tableCard.classList.add(selected === "cards" ? "view-cards" : "view-table");
+            viewModeSelect.value = selected;
+
+            if (savePreference) {
+                try {
+                    localStorage.setItem("vocabViewMode", selected);
+                } catch (e) {}
+            }
+        }
+
+        function initResponsiveViewMode() {
+            let saved = null;
+            try {
+                saved = localStorage.getItem("vocabViewMode");
+            } catch (e) {}
+
+            if (saved === "table" || saved === "cards") {
+                applyViewMode(saved, false);
+            } else {
+                applyViewMode(isMobileScreen() ? "cards" : "table", false);
+            }
+        }
+
+        window.addEventListener("resize", debounce(() => {
+            let saved = null;
+            try {
+                saved = localStorage.getItem("vocabViewMode");
+            } catch (e) {}
+            if (!saved) {
+                applyViewMode(isMobileScreen() ? "cards" : "table", false);
+            }
+        }, 150));
+
+        function exportToExcel() {
+            if (filtered.length === 0) return;
+
+            const headers = [
+                "#", "Word", "Part of Speech / IPA", "Definition (EN / ZH)",
+                "Collocations", "Synonyms / Antonyms", "Example Sentence"
+            ];
+
+            const escapeCsv = (val) => {
+                const s = (val == null || val === "") ? "" : String(val);
+                if (/[",\n\r]/.test(s)) {
+                    return `"${s.replace(/"/g, '""')}"`;
+                }
+                return s;
+            };
+
+            const rows = filtered.map(r => [
+                escapeCsv(r.id),
+                escapeCsv(r.word),
+                escapeCsv(r.posIpa),
+                escapeCsv(r.definition),
+                escapeCsv(r.collocations),
+                escapeCsv(r.synAnt),
+                escapeCsv(r.sentence)
+            ].join(","));
+
+            const csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const timestamp = new Date().toISOString().slice(0, 10);
+            link.href = url;
+            link.download = `Academic-Vocabulary-100-${timestamp}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        searchInput.addEventListener("input", debounce(applyFilters, 200));
+        posFilter.addEventListener("change", applyFilters);
+
+        pageSizeSelect.addEventListener("change", () => {
+            const val = pageSizeSelect.value;
+            pageSize = val === "all" ? "all" : parseInt(val, 10);
+            currentPage = 1;
+            render();
+        });
+
+        viewModeSelect.addEventListener("change", () => {
+            applyViewMode(viewModeSelect.value, true);
+        });
+
+        expandAllBtn.addEventListener("click", () => {
+            const slice = getPageSlice();
+            if (slice.length === 0) return;
+
+            const allExpanded = slice.every(r => expandedCards.has(r.id));
+            if (allExpanded) {
+                slice.forEach(r => expandedCards.delete(r.id));
+            } else {
+                slice.forEach(r => expandedCards.add(r.id));
+            }
+            render();
+        });
+
+        resetBtn.addEventListener("click", () => {
+            searchInput.value = "";
+            posFilter.value = "";
+            pageSizeSelect.value = "15";
+            pageSize = 15;
+            sortKey = "id";
+            sortDir = "asc";
+            expandedCards.clear();
+
+            columnDefs.forEach(c => colVisibility[c.key] = c.default);
+            try {
+                localStorage.removeItem("vocabColVis_v1");
+                localStorage.removeItem("vocabViewMode");
+            } catch (e) {}
+
+            applyViewMode(isMobileScreen() ? "cards" : "table", false);
+            applyFilters();
+        });
+
+        exportBtn.addEventListener("click", exportToExcel);
+
+        document.querySelectorAll("th[data-key]").forEach(th => {
+            th.addEventListener("click", () => {
+                const key = th.dataset.key;
+                if (sortKey === key) {
+                    sortDir = sortDir === "asc" ? "desc" : "asc";
+                } else {
+                    sortKey = key;
+                    sortDir = "asc";
+                }
+                applyFilters();
+            });
+        });
+
+        function debounce(fn, ms) {
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn(...args), ms);
+            };
+        }
+
+        initResponsiveViewMode();
+        applyFilters();
+    </script>
+</body>
+</html>
