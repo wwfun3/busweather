@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear Regression 線性回歸：零基礎互動指南</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- KaTeX for crisp LaTeX Math Rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInPage()"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Noto Sans TC"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            },
+            accent: {
+              500: '#06b6d4',
+              600: '#0891b2',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Bilingual zero-flicker display control */
+    body.lang-zh .en-only { display: none !important; }
+    body.lang-en .zh-only { display: none !important; }
+    
+    body.lang-zh span.en-only, body.lang-zh a.en-only { display: none !important; }
+    body.lang-en span.zh-only, body.lang-en a.zh-only { display: none !important; }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .touch-none-canvas {
+      touch-action: none;
+    }
+    .gradient-mesh {
+      background: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+                  radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
+                  #f8fafc;
+    }
+  </style>
+</head>
+<body class="lang-zh bg-slate-50 text-slate-800 antialiased font-sans selection:bg-brand-500 selection:text-white">
+
+  <!-- Top Navigation & Progress Bar -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <div id="scrollProgressBar" class="h-1 bg-gradient-to-r from-brand-600 via-indigo-500 to-accent-500 w-0 transition-all duration-150"></div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-brand-500/20">
+          LR
+        </span>
+        <div>
+          <span class="font-bold text-slate-900 tracking-tight text-base sm:text-lg block leading-none">
+            <span class="zh-only">線性回歸講義</span>
+            <span class="en-only">Linear Regression</span>
+          </span>
+          <span class="text-[11px] text-slate-500 hidden sm:inline">
+            <span class="zh-only">零基礎互動圖解指南</span>
+            <span class="en-only">Interactive Visual Guide</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 sm:space-x-4">
+        <!-- 1-Click Bilingual Switcher Button -->
+        <button id="btnLangToggle" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-brand-50 hover:bg-brand-100 text-brand-700 transition border border-brand-200 shadow-sm active:scale-95" title="切換語言 / Switch Language">
+          <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+          <span id="btnLangLabel">English</span>
+        </button>
+
+        <a href="#interactive-playground" class="hidden md:inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 hover:bg-brand-100 transition">
+          <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse mr-1.5"></span>
+          <span class="zh-only">互動模擬器</span>
+          <span class="en-only">Interactive Simulator</span>
+        </a>
+        <a href="#ml-workflow" class="hidden sm:inline-flex text-xs font-medium text-slate-600 hover:text-brand-600 transition">
+          <span class="zh-only">6步訓練流程</span>
+          <span class="en-only">6-Step Loop</span>
+        </a>
+        <a href="#core-terms" class="text-xs font-medium text-slate-600 hover:text-brand-600 transition">
+          <span class="zh-only">核心術語</span>
+          <span class="en-only">Key Terms</span>
+        </a>
+        <button id="mobileNavToggle" aria-label="打開章節目錄" class="p-2 rounded-lg text-slate-600 hover:bg-slate-100 md:hidden">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobileMenu" class="hidden md:hidden border-t border-slate-200 bg-white/95 px-4 py-3 space-y-2 shadow-lg">
+      <div class="pb-2.5 mb-2 border-b border-slate-200 flex justify-between items-center">
+        <span class="text-xs text-slate-500 font-medium">
+          <span class="zh-only">語言切換 / Language:</span>
+          <span class="en-only">Current Language:</span>
+        </span>
+        <button id="btnMobileLangToggle" class="text-xs font-bold text-brand-700 bg-brand-50 px-3 py-1 rounded-full border border-brand-200 hover:bg-brand-100">
+          <span id="btnMobileLangLabel">English</span>
+        </button>
+      </div>
+      <a href="#sec-1" class="block text-sm py-1.5 text-slate-700 hover:text-brand-600 font-medium">
+        <span class="zh-only">1. 一句話理解</span>
+        <span class="en-only">1. Understand in One Sentence</span>
+      </a>
+      <a href="#sec-2" class="block text-sm py-1.5 text-slate-700 hover:text-brand-600 font-medium">
+        <span class="zh-only">2. 讀書時間與分數 + 互動畫布</span>
+        <span class="en-only">2. Study vs Score + Interactive Canvas</span>
+      </a>
+      <a href="#sec-3" class="block text-sm py-1.5 text-slate-700 hover:text-brand-600 font-medium">
+        <span class="zh-only">3. 到底在學什麼 (參數 \(b_0, b_1\))</span>
+        <span class="en-only">3. What is it Learning? (Parameters)</span>
+      </a>
+      <a href="#sec-4" class="block text-sm py-1.5 text-slate-700 hover:text-brand-600 font-medium">
+        <span class="zh-only">4. 香港樓價實例與即時推論</span>
+        <span class="en-only">4. House Price Example & Prediction</span>
+      </a>
+      <a href="#sec-5" class="block text-sm py-1.5 text-slate-700 hover:text-brand-600 font-medium">
+        <span class="zh-only">5-8. 最小平方法 (Least Squares)</span>
+        <span class="en-only">5-8. Least Squares & Residuals</span>
+      </a>
+      <a href="#ml-workflow" class="block text-sm py-1.5 text-slate-700 hover:text-brand-600 font-medium">
+        <span class="zh-only">9-10. ML 6步訓練閉環</span>
+        <span class="en-only">9-10. ML 6-Step Closed Loop</span>
+      </a>
+      <a href="#sec-quiz" class="block text-sm py-1.5 text-slate-700 hover:text-brand-600 font-medium">
+        <span class="zh-only">14. 回歸 vs 分類互動測驗</span>
+        <span class="en-only">14. Regression vs Classification Quiz</span>
+      </a>
+      <a href="#core-terms" class="block text-sm py-1.5 text-slate-700 hover:text-brand-600 font-medium">
+        <span class="zh-only">15. 核心 7 個詞總結</span>
+        <span class="en-only">15. Top 7 Key Terms</span>
+      </a>
+    </div>
+  </header>
+
+  <section class="gradient-mesh pt-12 pb-16 border-b border-slate-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs font-semibold mb-6 shadow-sm">
+        <span class="flex h-2 w-2 rounded-full bg-emerald-500"></span>
+        <span class="zh-only">繁體中文 ‧ 零基礎入門 ‧ 視覺互動版</span>
+        <span class="en-only">Zero Prerequisites ‧ Visual & Interactive Guide</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight mb-6">
+        <span class="zh-only">由零看懂 <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-cyan-600">Linear Regression</span><br class="hidden sm:inline" />模型是怎樣學出「最佳直線」的？</span>
+        <span class="en-only">Mastering <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-cyan-600">Linear Regression</span><br class="hidden sm:inline" />How Does a Model Learn the "Best-Fit Line"?</span>
+      </h1>
+      <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mb-8 leading-relaxed">
+        <span class="zh-only">不需要複雜的高等數學先驗知識。我們將透過直觀的比喻、生動的圖表，以及可直接手動拖曳的實驗畫布，一步步拆解機器學習的核心基石。</span>
+        <span class="en-only">No advanced math required. Through intuitive analogies, dynamic visualizations, and an interactive draggable canvas, we break down the foundational pillar of Machine Learning step by step.</span>
+      </p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto text-left">
+        <div class="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 shadow-sm backdrop-blur">
+          <div class="text-xs text-slate-400 font-medium">
+            <span class="zh-only">核心任務</span>
+            <span class="en-only">Core Task</span>
+          </div>
+          <div class="text-sm font-bold text-slate-800 mt-0.5">
+            <span class="zh-only">尋找最佳擬合直線</span>
+            <span class="en-only">Find Best-Fit Line</span>
+          </div>
+        </div>
+        <div class="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 shadow-sm backdrop-blur">
+          <div class="text-xs text-slate-400 font-medium">
+            <span class="zh-only">學習目標</span>
+            <span class="en-only">Parameters</span>
+          </div>
+          <div class="text-sm font-bold text-slate-800 mt-0.5">
+            <span class="zh-only">截距 \(b_0\) 與斜率 \(b_1\)</span>
+            <span class="en-only">Intercept \(b_0\) & Slope \(b_1\)</span>
+          </div>
+        </div>
+        <div class="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 shadow-sm backdrop-blur">
+          <div class="text-xs text-slate-400 font-medium">
+            <span class="zh-only">評判標準</span>
+            <span class="en-only">Criterion</span>
+          </div>
+          <div class="text-sm font-bold text-slate-800 mt-0.5">
+            <span class="zh-only">最小平方法 (SSE)</span>
+            <span class="en-only">Least Squares (SSE)</span>
+          </div>
+        </div>
+        <div class="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 shadow-sm backdrop-blur">
+          <div class="text-xs text-slate-400 font-medium">
+            <span class="zh-only">主要用途</span>
+            <span class="en-only">Primary Goal</span>
+          </div>
+          <div class="text-sm font-bold text-slate-800 mt-0.5">
+            <span class="zh-only">預測連續數值</span>
+            <span class="en-only">Continuous Forecast</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-16">
+
+    <!-- Section 1 -->
+    <section id="sec-1" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">1</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">先用一句話理解</span>
+          <span class="en-only">1. Understand in One Sentence</span>
+        </h2>
+      </div>
+
+      <div class="bg-gradient-to-r from-brand-500/10 via-indigo-500/5 to-cyan-500/10 border-l-4 border-brand-600 p-5 rounded-r-2xl my-4">
+        <p class="text-lg font-bold text-slate-900 leading-snug">
+          <span class="zh-only">「Linear Regression（線性回歸）就是：根據已知資料，找出一條『最能描述資料趨勢的直線』，再用這條直線預測新的數值。」</span>
+          <span class="en-only">"Linear Regression means: finding a straight line that 'best captures the trend of historical data', and using this line to predict new numerical values."</span>
+        </p>
+      </div>
+
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mt-5">
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-brand-600 mb-2">
+          <span class="zh-only">生活實例：</span>
+          <span class="en-only">REAL-WORLD EXAMPLE:</span>
+        </h3>
+        <p class="text-slate-700 leading-relaxed">
+          <span class="zh-only">我知道一些<strong>「樓價」</strong>和<strong>「實用面積」</strong>的成交資料，能不能讓電腦學習出一條規律，然後預測一個從未在資料庫出現過的 <strong>500 呎單位大概值多少錢</strong>？</span>
+          <span class="en-only">Given historical records of <strong>"Property Prices"</strong> and <strong>"Floor Areas"</strong>, can we train a computer to discover the underlying mathematical pattern, and forecast what an unseen <strong>500 sq ft apartment is worth</strong>?</span>
+        </p>
+        <div class="mt-4 flex items-center space-x-2 text-sm text-emerald-700 bg-emerald-50 px-3.5 py-2 rounded-xl font-medium border border-emerald-200">
+          <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+          <span class="zh-only">答案就是：交給 Linear Regression（線性回歸）！</span>
+          <span class="en-only">The answer is: Linear Regression!</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-2" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">2</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">最簡單的例子：讀書時間 → 考試分數</span>
+          <span class="en-only">2. The Simplest Example: Study Time → Exam Score</span>
+        </h2>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">假設我們收集了 7 位學生的真實學習數據：</span>
+        <span class="en-only">Suppose we collected empirical study records from 7 students:</span>
+      </p>
+
+      <!-- Data Table -->
+      <div class="overflow-x-auto my-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+        <table class="w-full text-sm text-left">
+          <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th scope="col" class="px-4 py-3">
+                <span class="zh-only">學習時間 (Hours, \(X\))</span>
+                <span class="en-only">Study Time (Hours, \(X\))</span>
+              </th>
+              <th scope="col" class="px-4 py-3">1</th>
+              <th scope="col" class="px-4 py-3">2</th>
+              <th scope="col" class="px-4 py-3">3</th>
+              <th scope="col" class="px-4 py-3">4</th>
+              <th scope="col" class="px-4 py-3">5</th>
+              <th scope="col" class="px-4 py-3">6</th>
+              <th scope="col" class="px-4 py-3">7</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bg-white">
+              <td class="px-4 py-3 font-semibold text-brand-600">
+                <span class="zh-only">考試分數 (Score, \(Y\))</span>
+                <span class="en-only">Exam Score (Score, \(Y\))</span>
+              </td>
+              <td class="px-4 py-3">45</td>
+              <td class="px-4 py-3">50</td>
+              <td class="px-4 py-3">58</td>
+              <td class="px-4 py-3">65</td>
+              <td class="px-4 py-3">72</td>
+              <td class="px-4 py-3">80</td>
+              <td class="px-4 py-3">86</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-6">
+        <span class="zh-only">
+          我們可以把每一筆資料畫成一個點：<br />
+          <span class="inline-block bg-slate-100 text-slate-800 font-mono text-xs px-2 py-0.5 rounded">X 軸 = 學習時間</span> ，
+          <span class="inline-block bg-slate-100 text-slate-800 font-mono text-xs px-2 py-0.5 rounded">Y 軸 = 考試分數</span>。<br />
+          你會看到一個極為清晰的趨勢：<strong>學習時間 ↑ → 分數通常 ↑</strong>。Linear Regression 的任務，正是找出一條最合理的直線穿過這群點。
+        </span>
+        <span class="en-only">
+          We can plot each observation on a 2D plane:<br />
+          <span class="inline-block bg-slate-100 text-slate-800 font-mono text-xs px-2 py-0.5 rounded">X-axis = Study Time</span>,
+          <span class="inline-block bg-slate-100 text-slate-800 font-mono text-xs px-2 py-0.5 rounded">Y-axis = Exam Score</span>.<br />
+          Notice the clear upward trend: <strong>Study Time ↑ → Exam Score usually ↑</strong>. Linear Regression’s mission is to identify the single most reasonable straight line that traverses this cloud of points.
+        </span>
+      </p>
+
+      <!-- INTERACTIVE VISUALIZER COMPONENT -->
+      <div id="interactive-playground" class="bg-white rounded-2xl border-2 border-brand-200 shadow-xl overflow-hidden my-8">
+        <div class="bg-slate-900 text-white p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+              <h3 class="font-bold text-base sm:text-lg tracking-tight">
+                <span class="zh-only">互動實驗室：動手玩轉最小平方法</span>
+                <span class="en-only">Interactive Lab: Real-Time Least Squares</span>
+              </h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">
+              <span class="zh-only">試著在圖中<strong>拖動任何資料點</strong>，或點擊空白處新增資料點！</span>
+              <span class="en-only">Try <strong>dragging any data point</strong> in the plot, or click empty space to add new points!</span>
+            </p>
+          </div>
+
+          <!-- Dataset Presets -->
+          <div class="flex items-center gap-1.5 bg-slate-800 p-1 rounded-xl text-xs">
+            <button id="btnPresetStudy" class="px-3 py-1.5 rounded-lg bg-brand-600 text-white font-medium transition hover:bg-brand-500">
+              <span class="zh-only">讀書與分數</span>
+              <span class="en-only">Study vs Score</span>
+            </button>
+            <button id="btnPresetHouse" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white font-medium transition hover:bg-slate-700">
+              <span class="zh-only">香港樓價</span>
+              <span class="en-only">HK House Prices</span>
+            </button>
+            <button id="btnResetData" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-red-400 font-medium transition hover:bg-slate-700" title="Reset">
+              <span class="zh-only">重設</span>
+              <span class="en-only">Reset</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="p-4 sm:p-6 bg-slate-50/50">
+          <!-- Canvas Display Area -->
+          <div class="relative w-full h-[320px] sm:h-[400px] bg-white rounded-xl border border-slate-200 shadow-inner overflow-hidden select-none">
+            <canvas id="regressionCanvas" class="w-full h-full touch-none-canvas cursor-crosshair"></canvas>
+            
+            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-lg p-2.5 shadow-sm text-xs space-y-1">
+              <div class="font-mono text-brand-700 font-semibold text-sm" id="calcEquation">
+                \(\hat{y} = b_0 + b_1 x\)
+              </div>
+              <div class="flex items-center gap-3 text-slate-500 text-[11px]">
+                <span><span class="zh-only">斜率</span><span class="en-only">Slope</span> \(b_1\): <b id="valSlope" class="text-slate-800 font-mono">0.00</b></span>
+                <span><span class="zh-only">截距</span><span class="en-only">Intercept</span> \(b_0\): <b id="valIntercept" class="text-slate-800 font-mono">0.00</b></span>
+              </div>
+            </div>
+
+            <div class="absolute bottom-3 right-3 bg-slate-900/85 backdrop-blur text-white rounded-lg px-3 py-2 text-xs shadow-md">
+              <div class="text-[11px] text-slate-300">
+                <span class="zh-only">總平方誤差 (SSE)</span>
+                <span class="en-only">Sum of Squared Errors (SSE)</span>
+              </div>
+              <div id="valSSE" class="text-sm font-bold text-amber-400 font-mono">0.00</div>
+            </div>
+          </div>
+
+          <!-- Interactive Controls & Toggles -->
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            <label class="flex items-center space-x-2.5 bg-white px-3.5 py-2.5 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition">
+              <input type="checkbox" id="chkShowResiduals" checked class="w-4 h-4 text-brand-600 rounded focus:ring-brand-500 border-slate-300" />
+              <span class="text-slate-700 font-medium">
+                <span class="zh-only">顯示殘差虛線 (Residuals, \(y - \hat{y}\))</span>
+                <span class="en-only">Show Residual Lines (Residuals, \(y - \hat{y}\))</span>
+              </span>
+            </label>
+            <label class="flex items-center space-x-2.5 bg-white px-3.5 py-2.5 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition">
+              <input type="checkbox" id="chkShowSquares" class="w-4 h-4 text-brand-600 rounded focus:ring-brand-500 border-slate-300" />
+              <span class="text-slate-700 font-medium">
+                <span class="zh-only">顯示誤差平方方格 (Squares of Errors)</span>
+                <span class="en-only">Show Error Squares (Squares of Errors)</span>
+              </span>
+            </label>
+          </div>
+
+          <!-- Observation callout -->
+          <div class="mt-4 p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs sm:text-sm text-amber-900 flex items-start space-x-2.5">
+            <span class="text-amber-500 text-lg leading-none">💡</span>
+            <div>
+              <strong class="zh-only">觀察重點：</strong>
+              <strong class="en-only">Key Insight:</strong>
+              <span class="zh-only">試著點擊拖動一個邊緣的點（離群值）。你會發現<strong>只要資料點改變，最佳回歸線立刻會跟隨擺動</strong>。這正是 Machine Learning 最核心的概念——<strong>模型是由數據所驅動塑造的</strong>。</span>
+              <span class="en-only">Try dragging an outlier point. You will observe that <strong>as data points move, the optimal regression line shifts dynamically</strong>. This is Machine Learning's fundamental law — <strong>models are learned and molded by data</strong>.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-3" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">3</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">Linear Regression 到底在「學」什麼？</span>
+          <span class="en-only">3. What is Linear Regression Actually "Learning"?</span>
+        </h2>
+      </div>
+
+      <div class="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-xl text-rose-900 text-sm mb-4">
+        <p class="font-medium">
+          <span class="zh-only">很多初學者會誤以為：「Machine Learning 就是把資料放進黑盒子，電腦自己變出答案。」</span>
+          <span class="en-only">Many beginners assume: "Machine Learning is a magical black box where the computer spontaneously invents answers."</span>
+        </p>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">其實更精確地說：<strong>模型正在學習 Parameters（參數）</strong>。</span>
+        <span class="en-only">More precisely: <strong>The model is learning Parameters</strong>.</span>
+      </p>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">Linear Regression 的數學公式可以寫成：</span>
+        <span class="en-only">The mathematical equation for Linear Regression is formulated as:</span>
+      </p>
+
+      <div class="text-center py-4 bg-white border border-slate-200 rounded-xl shadow-sm text-2xl font-bold text-brand-700 my-4">
+        $$\hat{y} = b_0 + b_1 x$$
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">公式拆解成白話文：</span>
+        <span class="en-only">Deconstructing the formula into plain English:</span>
+      </p>
+
+      <!-- Parameter Definition Table -->
+      <div class="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-slate-100 text-slate-700 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-3"><span class="zh-only">符號</span><span class="en-only">Symbol</span></th>
+              <th class="px-4 py-3"><span class="zh-only">專業名稱</span><span class="en-only">Technical Term</span></th>
+              <th class="px-4 py-3"><span class="zh-only">白話意思</span><span class="en-only">Intuitive Meaning</span></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr>
+              <td class="px-4 py-3 font-mono font-bold text-indigo-600">\(x\)</td>
+              <td class="px-4 py-3 font-medium">Feature</td>
+              <td class="px-4 py-3 text-slate-600">
+                <span class="zh-only">輸入資料（例如：讀書時間、單位面積）</span>
+                <span class="en-only">Input feature / explanatory variable (e.g. study hours, floor area)</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-mono font-bold text-indigo-600">\(y\)</td>
+              <td class="px-4 py-3 font-medium">Actual Value</td>
+              <td class="px-4 py-3 text-slate-600">
+                <span class="zh-only">真實答案（例如：真實考獲的分數、歷史成交價）</span>
+                <span class="en-only">Ground truth label (e.g. actual exam score, recorded transaction price)</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-mono font-bold text-indigo-600">\(\hat{y}\)</td>
+              <td class="px-4 py-3 font-medium">Prediction</td>
+              <td class="px-4 py-3 text-slate-600">
+                <span class="zh-only">模型根據直線公式計算出的預測結果（唸作 y-hat）</span>
+                <span class="en-only">Predicted value produced by the model (pronounced "y-hat")</span>
+              </td>
+            </tr>
+            <tr class="bg-amber-50/50">
+              <td class="px-4 py-3 font-mono font-bold text-amber-600">\(b_0\)</td>
+              <td class="px-4 py-3 font-semibold text-amber-900">Intercept</td>
+              <td class="px-4 py-3 text-amber-900">
+                <span class="zh-only">直線在 Y 軸的起點（當 \(x=0\) 時的預測值）</span>
+                <span class="en-only">The Y-axis baseline intercept (prediction when \(x=0\))</span>
+              </td>
+            </tr>
+            <tr class="bg-amber-50/50">
+              <td class="px-4 py-3 font-mono font-bold text-amber-600">\(b_1\)</td>
+              <td class="px-4 py-3 font-semibold text-amber-900">Slope / Coefficient</td>
+              <td class="px-4 py-3 text-amber-900">
+                <span class="zh-only">\(x\) 每增加 1 單位時，\(y\) 大約改變多少幅度</span>
+                <span class="en-only">Rate of change: expected change in \(y\) for every 1-unit increase in \(x\)</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-4 p-4 rounded-xl bg-slate-100 text-slate-800 text-sm font-medium">
+        <span class="zh-only">👉 所以電腦「學習」的實質目標，就是在海量可能中尋找一組最完美的 <strong>\(b_0\)</strong> 與 <strong>\(b_1\)</strong>！</span>
+        <span class="en-only">👉 Therefore, the computer's practical learning goal is to discover the optimal set of <strong>\(b_0\)</strong> and <strong>\(b_1\)</strong>!</span>
+      </div>
+    </section>
+
+    <section id="sec-4" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">4</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">用香港樓價實例深度理解</span>
+          <span class="en-only">4. Deep Dive with Hong Kong Real Estate Example</span>
+        </h2>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">假設我們研究香港某屋苑的住宅成交紀錄：</span>
+        <span class="en-only">Suppose we analyze property transactions in a Hong Kong residential community:</span>
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div class="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-slate-100 text-slate-700 text-xs">
+              <tr>
+                <th class="px-4 py-2.5">
+                  <span class="zh-only">實用面積 (\(x\))</span>
+                  <span class="en-only">Floor Area (\(x\))</span>
+                </th>
+                <th class="px-4 py-2.5">
+                  <span class="zh-only">真實樓價 (\(y\))</span>
+                  <span class="en-only">Actual Price (\(y\))</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="px-4 py-2"><span class="zh-only">300 呎</span><span class="en-only">300 sq ft</span></td><td class="px-4 py-2 font-mono font-medium">$4.5M</td></tr>
+              <tr><td class="px-4 py-2"><span class="zh-only">400 呎</span><span class="en-only">400 sq ft</span></td><td class="px-4 py-2 font-mono font-medium">$5.2M</td></tr>
+              <tr><td class="px-4 py-2"><span class="zh-only">500 呎</span><span class="en-only">500 sq ft</span></td><td class="px-4 py-2 font-mono font-medium">$6.0M</td></tr>
+              <tr><td class="px-4 py-2"><span class="zh-only">600 呎</span><span class="en-only">600 sq ft</span></td><td class="px-4 py-2 font-mono font-medium">$6.8M</td></tr>
+              <tr><td class="px-4 py-2"><span class="zh-only">700 呎</span><span class="en-only">700 sq ft</span></td><td class="px-4 py-2 font-mono font-medium">$7.5M</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-5 space-y-3">
+          <div class="text-xs uppercase tracking-wider text-brand-700 font-bold">
+            <span class="zh-only">模型訓練後的學得規律：</span>
+            <span class="en-only">LEARNED MODEL FORMULA AFTER TRAINING:</span>
+          </div>
+          <div class="text-lg font-mono font-bold text-slate-900 bg-white p-3 rounded-lg border border-indigo-200">
+            $$\hat{y} = 2.3 + 0.0074x$$
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            <span class="zh-only">
+              若代入 \(x = 500\) 呎：<br />
+              $$\hat{y} = 2.3 + (0.0074 \times 500) = 6.0\text{ 百萬}$$
+              模型預測正好約為 <strong>HK$ 6.0M</strong>。
+            </span>
+            <span class="en-only">
+              Plugging in \(x = 500\) sq ft:<br />
+              $$\hat{y} = 2.3 + (0.0074 \times 500) = 6.0\text{ Million}$$
+              The forecast matches historical transactions at approx <strong>HK$ 6.0M</strong>.
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Real-time Price Predictor Widget -->
+      <div class="mt-6 bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-5 sm:p-6 shadow-lg">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-semibold uppercase tracking-wider text-cyan-400">
+            <span class="zh-only">即時推論示範 (Inference / Prediction)</span>
+            <span class="en-only">Live Inference Demo (Inference / Prediction)</span>
+          </span>
+          <span class="text-xs text-slate-400">
+            <span class="zh-only">泛化能力測試</span>
+            <span class="en-only">Generalization Test</span>
+          </span>
+        </div>
+        <p class="text-sm text-slate-300 mb-5">
+          <span class="zh-only">Linear Regression 不是死記硬背「500 呎 = 6M」，它學到的是兩者之間的<strong>連續數學關係</strong>。即使給它一個從沒見過的新面積（例如 550 呎），它都能立刻推算！</span>
+          <span class="en-only">Linear Regression does not mechanically memorize "500 sq ft = 6M". It captures the <strong>continuous mathematical relation</strong>. Give it an unseen size (e.g. 550 sq ft), and it calculates the forecast instantly!</span>
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+          <div class="sm:col-span-2">
+            <div class="flex justify-between text-xs mb-1.5 font-medium">
+              <span>
+                <span class="zh-only">輸入單位面積：</span>
+                <span class="en-only">Enter Floor Area:</span>
+              </span>
+              <span class="font-mono text-cyan-300 font-bold">
+                <span id="lblHouseArea">550</span>
+                <span class="zh-only"> 呎 (sq ft)</span>
+                <span class="en-only"> sq ft</span>
+              </span>
+            </div>
+            <input type="range" id="rngHouseArea" min="200" max="900" step="10" value="550" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-400" />
+            <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-mono">
+              <span>200 sq ft</span>
+              <span>
+                <span class="zh-only">550 呎 (新輸入)</span>
+                <span class="en-only">550 sq ft (New)</span>
+              </span>
+              <span>900 sq ft</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-3.5 text-center">
+            <div class="text-[11px] text-slate-400">
+              <span class="zh-only">模型預測樓價 (\(\hat{y}\))</span>
+              <span class="en-only">Predicted Price (\(\hat{y}\))</span>
+            </div>
+            <div class="text-2xl font-bold text-cyan-300 font-mono mt-0.5">
+              HK$ <span id="lblPredictedPrice">6.37</span>M
+            </div>
+            <div class="text-[10px] text-slate-400 mt-1 font-mono" id="lblFormulaStep">
+              2.3 + (0.0074 × 550)
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-5" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">5</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">但問題來了：哪一條直線才是「最好」？</span>
+          <span class="en-only">5. But Which Line is the "Best"?</span>
+        </h2>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">假設我們在坐標系上有 100 個資料點。世界上有無窮無盡條穿梭其中的直線——有的向上偏，有的向下偏，有的斜率極陡，究竟憑什麼決定哪一條是<strong>唯一最佳</strong>？</span>
+        <span class="en-only">Suppose we have 100 data points plotted in space. Infinite lines could cut across them — tilted up, tilted down, steep or shallow. How do we objectively define which single line is the <strong>best</strong>?</span>
+      </p>
+
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm my-4">
+        <div class="flex items-center space-x-3 text-brand-700 mb-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <h3 class="text-lg font-bold text-slate-900">
+            <span class="zh-only">Least Squares Method（最小平方法）</span>
+            <span class="en-only">Least Squares Method</span>
+          </h3>
+        </div>
+        <p class="text-slate-700 leading-relaxed">
+          <span class="zh-only">最小平方法的核心哲學極度樸實無華：<br /><span class="text-base font-semibold text-brand-600">「讓所有資料點的『預測錯誤』加起來，盡可能達到全宇宙最小。」</span></span>
+          <span class="en-only">The philosophy of Least Squares is delightfully straightforward:<br /><span class="text-base font-semibold text-brand-600">"Minimize the total aggregate prediction error across all data points."</span></span>
+        </p>
+      </div>
+    </section>
+
+    <section id="sec-6" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">6</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">什麼叫 Prediction Error（預測誤差 / 殘差）？</span>
+          <span class="en-only">6. What is Prediction Error (Residual)?</span>
+        </h2>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">假設某位學生真實考了 \(y = 70\) 分，但直線模型預測他考 \(\hat{y} = 65\) 分，那麼：</span>
+        <span class="en-only">Suppose a student actually scored \(y = 70\), but the model estimated \(\hat{y} = 65\):</span>
+      </p>
+
+      <div class="text-center font-mono text-base sm:text-lg bg-slate-100 p-3 rounded-xl text-slate-800 my-2">
+        $$\text{Error} = y - \hat{y} = 70 - 65 = +5$$
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mt-4">
+        <span class="zh-only">這個誤差在統計學上有個標準名稱：<strong>Residual（殘差）</strong>。<br />在幾何圖形上，殘差就是<strong>真實資料點</strong>與<strong>回歸直線上預測點</strong>之間的<strong>垂直距離</strong>。</span>
+        <span class="en-only">In statistics and machine learning, this error is called the <strong>Residual</strong>.<br />Geometrically, the residual is the <strong>vertical distance</strong> between the <strong>actual data point</strong> and the <strong>prediction on the line</strong>.</span>
+      </p>
+
+      <!-- Bilingual ASCII Diagram -->
+      <div class="bg-slate-900 text-slate-200 p-4 rounded-xl font-mono text-xs sm:text-sm my-4 overflow-x-auto leading-relaxed">
+        <div class="zh-only">
+真實點 ● (y = 70)
+       │
+       │ ← Residual 垂直殘差距離 (y - ŷ = +5)
+       │
+       ○ 模型在該 X 的預測位置 (ŷ = 65)
+─────────────────────────────── Regression Line (回歸直線)
+        </div>
+        <div class="en-only">
+Actual Point ● (y = 70)
+             │
+             │ ← Residual (Vertical distance: y - ŷ = +5)
+             │
+             ○ Model prediction at this X (ŷ = 65)
+────────────────────────────────────────── Regression Line
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-7" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">7</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">為什麼不直接把 Error 加起來？</span>
+          <span class="en-only">7. Why Not Just Sum Up the Errors Directly?</span>
+        </h2>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">這是一個關鍵洞見。讓我們看一個極端案例：</span>
+        <span class="en-only">This is a crucial insight. Consider this extreme scenario:</span>
+      </p>
+
+      <!-- Cancel out example -->
+      <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5 my-4">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="text-xs text-rose-800 uppercase border-b border-rose-200">
+              <tr>
+                <th class="py-2"><span class="zh-only">資料點</span><span class="en-only">Data Point</span></th>
+                <th class="py-2"><span class="zh-only">真實誤差 (Error)</span><span class="en-only">Actual Error</span></th>
+                <th class="py-2"><span class="zh-only">直接相加</span><span class="en-only">Direct Sum</span></th>
+                <th class="py-2"><span class="zh-only">誤差平方 (\(\text{Error}^2\))</span><span class="en-only">Squared Error (\(\text{Error}^2\))</span></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-rose-100 text-slate-700">
+              <tr><td><span class="zh-only">點 A</span><span class="en-only">Point A</span></td><td class="font-mono text-rose-600">+10</td><td rowspan="4" class="align-middle font-mono font-bold text-center text-rose-700">\(10 - 10 + 5 - 5 = 0\) !<br /><span class="text-xs text-rose-600 font-normal"><span class="zh-only">正負相抵！</span><span class="en-only">Canceled out!</span></span></td><td class="font-mono text-emerald-700">\(10^2 = 100\)</td></tr>
+              <tr><td><span class="zh-only">點 B</span><span class="en-only">Point B</span></td><td class="font-mono text-rose-600">-10</td><td class="font-mono text-emerald-700">\((-10)^2 = 100\)</td></tr>
+              <tr><td><span class="zh-only">點 C</span><span class="en-only">Point C</span></td><td class="font-mono text-rose-600">+5</td><td class="font-mono text-emerald-700">\(5^2 = 25\)</td></tr>
+              <tr><td><span class="zh-only">點 D</span><span class="en-only">Point D</span></td><td class="font-mono text-rose-600">-5</td><td class="font-mono text-emerald-700">\((-5)^2 = 25\)</td></tr>
+            </tbody>
+            <tfoot>
+              <tr class="font-bold border-t border-rose-200">
+                <td colspan="2" class="py-2 text-rose-900"><span class="zh-only">總計：</span><span class="en-only">Total:</span></td>
+                <td class="text-center font-mono text-rose-700"><span class="zh-only">總和 = 0（荒謬假象！）</span><span class="en-only">Sum = 0 (Deceptive illusion!)</span></td>
+                <td class="font-mono text-emerald-700">SSE = 250</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <p class="text-xs sm:text-sm text-rose-900 mt-3 font-medium">
+          <span class="zh-only">⚠️ 如果直接相加，總和是 0！電腦會天真地以為「這條直線神準、完全沒有錯」，但事實上每一點都錯得離譜。所以我們要<strong>將 Error 平方</strong>，確保負數不與正數互相抵消！</span>
+          <span class="en-only">⚠️ If we sum them directly, the total is 0! The computer would falsely assume the line is flawlessly accurate, when in reality every prediction is completely off. By <strong>squaring each error</strong>, negative values cannot cancel out positive values!</span>
+        </p>
+      </div>
+    </section>
+
+    <section id="sec-8" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">8</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">Least Squares 的核心公式</span>
+          <span class="en-only">8. The Least Squares Core Formula</span>
+        </h2>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">因此，Linear Regression 的神聖使命，就是找出讓以下數值達到<strong>全域最小</strong>的直線：</span>
+        <span class="en-only">Therefore, Linear Regression's explicit objective is finding the line that reaches the <strong>global minimum</strong> for:</span>
+      </p>
+
+      <div class="bg-white border-2 border-brand-300 rounded-2xl p-6 text-center shadow-md my-4">
+        <div class="text-xs uppercase text-slate-400 font-bold tracking-widest mb-2">Sum of Squared Errors (SSE) / 殘差平方和</div>
+        <div class="text-2xl sm:text-3xl font-mono font-extrabold text-brand-600">
+          $$\sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$
+        </div>
+        <p class="text-xs sm:text-sm text-slate-500 mt-3">
+          <span class="zh-only">白話解釋：把每一筆點的「真實值與預測值的差距」平方後全部加起來，然後命令電腦找出使這個總和最小的 \(b_0\) 與 \(b_1\)。</span>
+          <span class="en-only">Plain explanation: Compute the error for each observation, square them, sum them all, and solve for parameters \(b_0, b_1\) that minimize this total.</span>
+        </p>
+      </div>
+    </section>
+
+    <section id="ml-workflow" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">9-10</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">Machine Learning 的「學習」全流程（6 步拆解）</span>
+          <span class="en-only">9-10. Machine Learning Training Workflow (6 Steps)</span>
+        </h2>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-6">
+        <span class="zh-only">無論是簡單的線性回歸，還是今天最頂尖的 ChatGPT 與深度神經網路，其底層遵循的訓練邏輯都是這個<strong>「預測 → 算誤差 → 調整參數 → 循環改進」</strong>的閉環體系：</span>
+        <span class="en-only">From simple linear regression to modern neural networks, training follows this universal loop: <strong>"Predict → Calculate Error → Adjust Parameters → Iterate"</strong>:</span>
+      </p>
+
+      <!-- 6-step interactive visual cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Step 1 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-3.5">
+          <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 font-bold flex items-center justify-center flex-shrink-0">1</div>
+          <div>
+            <h4 class="font-bold text-slate-900">
+              <span class="zh-only">收集資料 (Training Data)</span>
+              <span class="en-only">Collect Training Data</span>
+            </h4>
+            <p class="text-xs text-slate-600 mt-1">
+              <span class="zh-only">例如整理歷史樓價：300 呎 \(\to\) 4.5M、400 呎 \(\to\) 5.2M...</span>
+              <span class="en-only">Gather data: 300 sq ft \(\to\) 4.5M, 400 sq ft \(\to\) 5.2M...</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-3.5">
+          <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center flex-shrink-0">2</div>
+          <div>
+            <h4 class="font-bold text-slate-900">
+              <span class="zh-only">建立模型 (Define Model)</span>
+              <span class="en-only">Define Model Architecture</span>
+            </h4>
+            <p class="text-xs text-slate-600 mt-1">
+              <span class="zh-only">先給出假設結構：$$\hat{y} = b_0 + b_1 x$$</span>
+              <span class="en-only">Hypothesize linear equation: $$\hat{y} = b_0 + b_1 x$$</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-3.5">
+          <div class="w-8 h-8 rounded-xl bg-violet-100 text-violet-700 font-bold flex items-center justify-center flex-shrink-0">3</div>
+          <div>
+            <h4 class="font-bold text-slate-900">
+              <span class="zh-only">模型作出預測 (Prediction)</span>
+              <span class="en-only">Generate Predictions</span>
+            </h4>
+            <p class="text-xs text-slate-600 mt-1">
+              <span class="zh-only">在當前參數下計算，例如預測 500 呎估價為 \(\hat{y} = 5.8\text{M}\)。</span>
+              <span class="en-only">Compute with current weights: e.g. predict 500 sq ft as \(\hat{y} = 5.8\text{M}\).</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-3.5">
+          <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 font-bold flex items-center justify-center flex-shrink-0">4</div>
+          <div>
+            <h4 class="font-bold text-slate-900">
+              <span class="zh-only">與真實答案比較 (Calculate Error)</span>
+              <span class="en-only">Compare with Ground Truth</span>
+            </h4>
+            <p class="text-xs text-slate-600 mt-1">
+              <span class="zh-only">真實 \(y=6.0\text{M}\)，預測 \(5.8\text{M}\)，殘差 \(\text{Error} = 6.0 - 5.8 = 0.2\)。</span>
+              <span class="en-only">Ground truth \(y=6.0\text{M}\), predicted \(5.8\text{M}\), error \(= 6.0 - 5.8 = 0.2\).</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-3.5">
+          <div class="w-8 h-8 rounded-xl bg-rose-100 text-rose-700 font-bold flex items-center justify-center flex-shrink-0">5</div>
+          <div>
+            <h4 class="font-bold text-slate-900">
+              <span class="zh-only">計算損失 (Loss Function)</span>
+              <span class="en-only">Evaluate Loss Function</span>
+            </h4>
+            <p class="text-xs text-slate-600 mt-1">
+              <span class="zh-only">計算平方誤差：\(0.2^2 = 0.04\)，並將所有資料點加總得到總 Loss。</span>
+              <span class="en-only">Calculate square: \(0.2^2 = 0.04\), sum across all data points for overall Loss.</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="bg-white p-5 rounded-2xl border-2 border-brand-400 bg-brand-50/30 shadow-sm flex items-start space-x-3.5">
+          <div class="w-8 h-8 rounded-xl bg-brand-600 text-white font-bold flex items-center justify-center flex-shrink-0">6</div>
+          <div>
+            <h4 class="font-bold text-slate-900">
+              <span class="zh-only">調整參數 (Adjust Parameters)</span>
+              <span class="en-only">Adjust Parameters (Optimization)</span>
+            </h4>
+            <p class="text-xs text-slate-600 mt-1">
+              <span class="zh-only">電腦不斷修正 \(b_0, b_1\)，直到整體誤差最小化，宣告「收斂/學成」！</span>
+              <span class="en-only">Iteratively tune \(b_0, b_1\) until errors are minimized and weights converge!</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Closed-Loop Interactive Flowchart Diagram -->
+      <div class="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 mt-6">
+        <h4 class="text-xs font-bold text-cyan-400 uppercase tracking-widest text-center mb-6">
+          <span class="zh-only">機器學習閉環思維圖 (The Training Loop)</span>
+          <span class="en-only">Machine Learning Training Loop</span>
+        </h4>
+        
+        <div class="max-w-md mx-auto flex flex-col items-center space-y-3 font-mono text-xs sm:text-sm">
+          <div class="w-full bg-slate-800 border border-slate-700 p-2.5 rounded-lg text-center font-bold text-slate-300">
+            <span class="zh-only">📊 Training Data (訓練資料)</span>
+            <span class="en-only">📊 Training Data</span>
+          </div>
+          <div class="text-cyan-400 text-lg">↓</div>
+          <div class="w-full bg-brand-900/60 border border-brand-500/50 p-2.5 rounded-lg text-center font-bold text-white shadow-lg shadow-brand-500/10">
+            <span class="zh-only">🤖 Linear Regression Model (\(\hat{y} = b_0 + b_1 x\))</span>
+            <span class="en-only">🤖 Linear Regression Model (\(\hat{y} = b_0 + b_1 x\))</span>
+          </div>
+          <div class="text-cyan-400 text-lg">↓</div>
+          <div class="w-full bg-slate-800 border border-slate-700 p-2.5 rounded-lg text-center text-slate-300">
+            <span class="zh-only">🎯 Prediction (模型預測輸出)</span>
+            <span class="en-only">🎯 Prediction Output</span>
+          </div>
+          <div class="text-cyan-400 text-lg">↓</div>
+          <div class="w-full bg-slate-800 border border-slate-700 p-2.5 rounded-lg text-center text-slate-300">
+            <span class="zh-only">⚖️ Compare with Truth (計算殘差 Residual)</span>
+            <span class="en-only">⚖️ Compare with Ground Truth (Residual)</span>
+          </div>
+          <div class="text-cyan-400 text-lg">↓</div>
+          <div class="w-full bg-rose-950/60 border border-rose-600/40 p-2.5 rounded-lg text-center text-rose-300">
+            <span class="zh-only">📉 Loss Function (計算誤差平方總和)</span>
+            <span class="en-only">📉 Loss Function (Sum of Squared Errors)</span>
+          </div>
+          <div class="text-cyan-400 text-lg">↓</div>
+          <div class="w-full bg-emerald-950/60 border border-emerald-500/50 p-3 rounded-lg text-center font-bold text-emerald-300 flex items-center justify-center space-x-2">
+            <span>
+              <span class="zh-only">⚙️ 調整參數 \(b_0, b_1\) 逼近最佳解</span>
+              <span class="en-only">⚙️ Adjust Parameters \(b_0, b_1\)</span>
+            </span>
+            <span class="text-xl">↺</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-11" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">11</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">Training 和 Prediction 有什麼不同？</span>
+          <span class="en-only">11. Difference Between Training and Prediction</span>
+        </h2>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">這兩個概念初學者務必嚴格釐清：</span>
+        <span class="en-only">These two concepts must be clearly distinguished:</span>
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-white border-t-4 border-indigo-500 rounded-xl p-5 shadow-sm">
+          <div class="flex items-center space-x-2 text-indigo-600 font-bold mb-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            <h3 class="text-base text-slate-900">
+              <span class="zh-only">Training（訓練階段）</span>
+              <span class="en-only">Training Phase</span>
+            </h3>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            <span class="zh-only">模型：「我手上握有一大堆<strong>已知答案</strong>的歷史數據，我正在絞盡腦汁從中<strong>學習規律</strong>，計算出 \(b_0\) 與 \(b_1\)。」</span>
+            <span class="en-only">Model: "I have historical data with known ground truths. I am solving for parameters \(b_0\) and \(b_1\) to minimize error."</span>
+          </p>
+          <div class="mt-3 text-xs bg-slate-50 p-2.5 rounded font-mono text-slate-600">
+            300 sq ft → 4.5M, 400 sq ft → 5.2M ... <br />
+            \(\to\) Learn parameters \(b_0, b_1\)
+          </div>
+        </div>
+
+        <div class="bg-white border-t-4 border-emerald-500 rounded-xl p-5 shadow-sm">
+          <div class="flex items-center space-x-2 text-emerald-600 font-bold mb-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <h3 class="text-base text-slate-900">
+              <span class="zh-only">Prediction（預測 / 推論階段）</span>
+              <span class="en-only">Prediction / Inference Phase</span>
+            </h3>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            <span class="zh-only">模型：「我已經<strong>畢業學成</strong>了！現在給我一個新房子的呎數，我直接套用學好的直線公式，瞬間推算出預測價格。」</span>
+            <span class="en-only">Model: "I have graduated! Feed me an unseen floor area, and I immediately plug it into the learned formula to infer the price."</span>
+          </p>
+          <div class="mt-3 text-xs bg-slate-50 p-2.5 rounded font-mono text-slate-600">
+            Unseen: 550 sq ft <br />
+            \(\to\) Apply learned formula \(\to\) Forecast $6.37M
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-12" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">12</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">一個 Feature 與多個 Features</span>
+          <span class="en-only">12. Single Feature vs Multiple Features</span>
+        </h2>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">先前的例子只有一個 \(x = \text{面積}\)，這叫 <strong>Simple Linear Regression（簡單線性回歸）</strong>。</span>
+        <span class="en-only">Our earlier example had one variable \(x = \text{Area}\), known as <strong>Simple Linear Regression</strong>.</span>
+      </p>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">但真實世界中，一間住宅的價格往往同時受到<strong>面積、房間數、樓層、距地鐵站距離、樓齡、景觀</strong>等全方位影響：</span>
+        <span class="en-only">In the real world, housing prices depend simultaneously on <strong>area, bedroom count, floor level, transit distance, age, and view</strong>:</span>
+      </p>
+
+      <div class="bg-slate-900 text-slate-100 rounded-xl p-5 font-mono text-xs sm:text-sm overflow-x-auto my-4 shadow-sm">
+        $$\hat{y} = b_0 + b_1 x_1 + b_2 x_2 + b_3 x_3 + \dots + b_n x_n$$
+        <div class="text-slate-400 mt-2 text-xs">
+          <span class="zh-only">例如：\(\text{Price} = b_0 + b_1(\text{面積}) + b_2(\text{樓齡}) + b_3(\text{地鐵距離})\)</span>
+          <span class="en-only">e.g., \(\text{Price} = b_0 + b_1(\text{Area}) + b_2(\text{Age}) + b_3(\text{Transit})\)</span>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-xl bg-cyan-50 border border-cyan-200 text-cyan-900 text-sm">
+        <span class="zh-only">這就稱為 <strong>Multiple Linear Regression（多元線性回歸）</strong>。幾何上它不再只是一條 2D 直線，而是在高維度空間中尋找一張「最佳擬合超平面 (Hyperplane)」！</span>
+        <span class="en-only">This is termed <strong>Multiple Linear Regression</strong>. Geometrically, it extends from a 2D line into finding an optimal fitting "Hyperplane" in multidimensional space!</span>
+      </div>
+    </section>
+
+    <section id="sec-13" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">13</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">「Linear」究竟是什麼意思？</span>
+          <span class="en-only">13. What Does "Linear" Actually Mean?</span>
+        </h2>
+      </div>
+
+      <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl text-amber-900 text-sm mb-4">
+        <strong class="zh-only">常見誤解：</strong>
+        <strong class="en-only">Common Misconception:</strong>
+        <span class="zh-only">初學者常以為「Linear 代表真實資料必須乖乖、完美地排成一條筆直的線」。</span>
+        <span class="en-only">Beginners often believe "Linear means real-world data points must align in a perfectly straight line."</span>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed">
+        <span class="zh-only"><strong>真相是：</strong>「Linear」代表的是<strong>模型的結構假設</strong>——模型假設輸入變數與輸出變數之間的關係可以用<strong>固定變化率（恆定斜率）</strong>來逼近近似。<br />當 \(x\) 增加 1，\(y\) 的期望增長量始終是 \(b_1\)，這就是線性關係的本質。</span>
+        <span class="en-only"><strong>The Truth:</strong> "Linear" refers to the <strong>model's functional assumption</strong> — assuming variables relate with a <strong>constant rate of change (constant slope)</strong>.<br />When \(x\) increases by 1 unit, the expected increment in \(y\) is strictly \(b_1\).</span>
+      </p>
+    </section>
+
+    <section id="sec-quiz" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">14</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">Regression 與 Classification 的分別</span>
+          <span class="en-only">14. Difference Between Regression and Classification</span>
+        </h2>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <span class="zh-only">這是所有機器學習面試與入門的第一道大題：</span>
+        <span class="en-only">A fundamental distinction encountered in every machine learning interview:</span>
+      </p>
+
+      <div class="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm mb-6">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-slate-100 text-slate-700 text-xs">
+            <tr>
+              <th class="px-5 py-3 font-bold text-indigo-700">Regression</th>
+              <th class="px-5 py-3 font-bold text-emerald-700">Classification</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-700">
+            <tr class="bg-slate-50/50">
+              <td class="px-5 py-3 font-semibold text-brand-600">
+                <span class="zh-only">預測「連續數值」（多少？）</span>
+                <span class="en-only">Predicts Continuous Values (How much?)</span>
+              </td>
+              <td class="px-5 py-3 font-semibold text-emerald-600">
+                <span class="zh-only">預測「離散類別」（哪一類？）</span>
+                <span class="en-only">Predicts Discrete Classes (Which category?)</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5"><span class="zh-only">樓價預測（如 $6.25M）</span><span class="en-only">Property Price (e.g. $6.25M)</span></td>
+              <td class="px-5 py-2.5"><span class="zh-only">垃圾郵件判定（Spam / Not Spam）</span><span class="en-only">Spam Filter (Spam / Not Spam)</span></td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5"><span class="zh-only">明日氣溫（如 28.5°C）</span><span class="en-only">Tomorrow's Temperature (e.g. 28.5°C)</span></td>
+              <td class="px-5 py-2.5"><span class="zh-only">圖片辨識（貓 / 狗）</span><span class="en-only">Image Classification (Cat / Dog)</span></td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5"><span class="zh-only">年薪預估（如 $450,000）</span><span class="en-only">Annual Salary (e.g. $450,000)</span></td>
+              <td class="px-5 py-2.5"><span class="zh-only">考試結果（及格 / 不及格）</span><span class="en-only">Exam Outcome (Pass / Fail)</span></td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5"><span class="zh-only">病患住院天數（如 4.2 天）</span><span class="en-only">Hospital Stay Duration (e.g. 4.2 days)</span></td>
+              <td class="px-5 py-2.5"><span class="zh-only">疾病診斷（患病 / 健康）</span><span class="en-only">Medical Diagnosis (Disease / Healthy)</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Quick Interactive Quiz -->
+      <div class="bg-white rounded-2xl border-2 border-indigo-100 p-5 sm:p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span>
+              <span class="zh-only">🎯 5 秒隨堂測驗：這題是回歸還是分類？</span>
+              <span class="en-only">🎯 5-Second Quiz: Regression or Classification?</span>
+            </span>
+          </h3>
+          <span class="text-xs bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full font-semibold">
+            <span class="zh-only">隨機測驗</span>
+            <span class="en-only">Random Quiz</span>
+          </span>
+        </div>
+        <p id="quizQuestion" class="text-base font-medium text-slate-800 my-3">
+          Loading...
+        </p>
+
+        <div class="flex gap-3 mt-4">
+          <button id="btnChooseRegression" class="flex-1 py-2.5 px-4 bg-brand-50 hover:bg-brand-100 text-brand-700 font-semibold rounded-xl border border-brand-200 transition">
+            📈 Regression
+          </button>
+          <button id="btnChooseClassification" class="flex-1 py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold rounded-xl border border-emerald-200 transition">
+            🏷️ Classification
+          </button>
+        </div>
+
+        <div id="quizFeedback" class="hidden mt-3 p-3 rounded-xl text-xs sm:text-sm font-medium"></div>
+        <button id="btnNextQuiz" class="hidden mt-3 text-xs text-brand-600 hover:underline font-semibold">
+          <span class="zh-only">下一題 ➔</span>
+          <span class="en-only">Next Question ➔</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="core-terms" class="scroll-mt-24">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-sm">15</span>
+        <h2 class="text-2xl font-bold text-slate-900">
+          <span class="zh-only">總結串連：最關鍵的 7 個機器學習名詞</span>
+          <span class="en-only">15. Summary: Top 7 Essential Machine Learning Terms</span>
+        </h2>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed mb-6">
+        <span class="zh-only">如果你剛踏入機器學習大門，別被複雜符號嚇倒，先牢牢記住這 <strong>7 個黃金詞彙</strong>：</span>
+        <span class="en-only">If you are starting your journey in Machine Learning, anchor your understanding around these <strong>7 foundational terms</strong>:</span>
+      </p>
+
+      <!-- 7 Terms Interactive Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <!-- 1 Feature -->
+        <div class="term-card bg-white p-4 rounded-xl border border-slate-200 hover:border-brand-400 hover:shadow-md transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-brand-600">01 / FEATURE</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 group-hover:bg-brand-50 group-hover:text-brand-700 transition">
+              <span class="zh-only">特徵</span>
+              <span class="en-only">Input Signal</span>
+            </span>
+          </div>
+          <h4 class="text-base font-bold text-slate-900 mt-1">Feature</h4>
+          <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            <span class="zh-only"><strong>最簡單理解：</strong>輸入資料 (\(x\))。我們拿來當作線索的依據，例如住宅面積、讀書時長。</span>
+            <span class="en-only"><strong>Plain meaning:</strong> Input variable (\(x\)). Signals used as clues, such as floor area or study time.</span>
+          </p>
+        </div>
+
+        <!-- 2 Target -->
+        <div class="term-card bg-white p-4 rounded-xl border border-slate-200 hover:border-brand-400 hover:shadow-md transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-brand-600">02 / TARGET</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 group-hover:bg-brand-50 group-hover:text-brand-700 transition">
+              <span class="zh-only">目標值 / 真實標籤</span>
+              <span class="en-only">Ground Truth</span>
+            </span>
+          </div>
+          <h4 class="text-base font-bold text-slate-900 mt-1">Target</h4>
+          <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            <span class="zh-only"><strong>最簡單理解：</strong>真實答案 (\(y\))。歷史資料中已經發生的真實結果（例如真實成交價 6.0M）。</span>
+            <span class="en-only"><strong>Plain meaning:</strong> Ground truth label (\(y\)). The historical outcome we desire to predict (e.g. sales price $6.0M).</span>
+          </p>
+        </div>
+
+        <!-- 3 Prediction -->
+        <div class="term-card bg-white p-4 rounded-xl border border-slate-200 hover:border-brand-400 hover:shadow-md transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-brand-600">03 / PREDICTION</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 group-hover:bg-brand-50 group-hover:text-brand-700 transition">
+              <span class="zh-only">預測值</span>
+              <span class="en-only">Forecast</span>
+            </span>
+          </div>
+          <h4 class="text-base font-bold text-slate-900 mt-1">Prediction</h4>
+          <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            <span class="zh-only"><strong>最簡單理解：</strong>模型猜測的答案 (\(\hat{y}\))。把特徵代入公式後算出來的數值。</span>
+            <span class="en-only"><strong>Plain meaning:</strong> The model's estimated outcome (\(\hat{y}\)), computed by plugging features into the equation.</span>
+          </p>
+        </div>
+
+        <!-- 4 Parameter -->
+        <div class="term-card bg-white p-4 rounded-xl border border-slate-200 hover:border-brand-400 hover:shadow-md transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-brand-600">04 / PARAMETER</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 group-hover:bg-brand-50 group-hover:text-brand-700 transition">
+              <span class="zh-only">參數</span>
+              <span class="en-only">Weights</span>
+            </span>
+          </div>
+          <h4 class="text-base font-bold text-slate-900 mt-1">Parameter</h4>
+          <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            <span class="zh-only"><strong>最簡單理解：</strong>模型需要自行學習調整的數字（\(b_0, b_1\)）。決定了直線的高低與斜率。</span>
+            <span class="en-only"><strong>Plain meaning:</strong> Internal coefficients (\(b_0, b_1\)) learned by the model, setting intercept and slope.</span>
+          </p>
+        </div>
+
+        <!-- 5 Residual -->
+        <div class="term-card bg-white p-4 rounded-xl border border-slate-200 hover:border-brand-400 hover:shadow-md transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-brand-600">05 / RESIDUAL</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 group-hover:bg-brand-50 group-hover:text-brand-700 transition">
+              <span class="zh-only">殘差</span>
+              <span class="en-only">Single Error</span>
+            </span>
+          </div>
+          <h4 class="text-base font-bold text-slate-900 mt-1">Residual</h4>
+          <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            <span class="zh-only"><strong>最簡單理解：</strong>真實值與預測值的差 (\(y - \hat{y}\))。代表「單筆資料猜錯了多少」。</span>
+            <span class="en-only"><strong>Plain meaning:</strong> Gap between truth and prediction (\(y - \hat{y}\)). Represents error on one point.</span>
+          </p>
+        </div>
+
+        <!-- 6 Loss -->
+        <div class="term-card bg-white p-4 rounded-xl border border-slate-200 hover:border-brand-400 hover:shadow-md transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-brand-600">06 / LOSS</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 group-hover:bg-brand-50 group-hover:text-brand-700 transition">
+              <span class="zh-only">損失 / 誤差總量</span>
+              <span class="en-only">Total Error</span>
+            </span>
+          </div>
+          <h4 class="text-base font-bold text-slate-900 mt-1">Loss</h4>
+          <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            <span class="zh-only"><strong>最簡單理解：</strong>衡量模型整體「錯得有多嚴重」的綜合指標（例如平方誤差總和 SSE）。</span>
+            <span class="en-only"><strong>Plain meaning:</strong> Metric summarizing how inaccurate the model is overall across the entire dataset (e.g. SSE).</span>
+          </p>
+        </div>
+
+        <!-- 7 Training -->
+        <div class="term-card sm:col-span-2 bg-gradient-to-r from-brand-500/10 via-white to-cyan-500/10 p-4 rounded-xl border border-brand-200 hover:shadow-md transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-brand-700">07 / TRAINING</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-brand-100 text-brand-800 font-semibold">
+              <span class="zh-only">訓練優化</span>
+              <span class="en-only">Optimization</span>
+            </span>
+          </div>
+          <h4 class="text-base font-bold text-slate-900 mt-1">Training</h4>
+          <p class="text-xs text-slate-700 mt-1.5 leading-relaxed">
+            <span class="zh-only"><strong>最簡單理解：</strong>電腦透過演算法不斷調校參數，讓 Loss 達到最小的整個「修練優化過程」。</span>
+            <span class="en-only"><strong>Plain meaning:</strong> The iterative tuning process where optimization algorithms adjust parameters to minimize Loss.</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Final Master Takeaway Block -->
+      <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 mt-10 shadow-xl border border-indigo-800/40">
+        <div class="inline-block px-3 py-1 rounded-full bg-indigo-500/20 text-cyan-300 border border-indigo-400/30 text-xs font-semibold mb-3">
+          🎓 <span class="zh-only">一句話終極歸納</span><span class="en-only">Core Takeaway</span>
+        </div>
+        <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-white mb-4">
+          <span class="zh-only">Linear Regression = 找出一條最適合歷史資料的直線，使整體預測誤差平方和盡可能小，然後用這條線預測未來新資料。</span>
+          <span class="en-only">Linear Regression = Finding the straight line best fitting historical data by minimizing the sum of squared errors, then leveraging that line to forecast future data.</span>
+        </h3>
+        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+          <span class="zh-only">真正理解機器學習的關鍵，不是死記公式，而是參透這條貫穿始終的思維鏈：</span>
+          <span class="en-only">True comprehension is not about memorizing symbols, but mastering this interconnected cognitive pipeline:</span>
+        </p>
+
+        <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-semibold text-cyan-300 font-mono">
+          <span class="bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700">Data</span>
+          <span>➔</span>
+          <span class="bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700">Model</span>
+          <span>➔</span>
+          <span class="bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700">Prediction</span>
+          <span>➔</span>
+          <span class="bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700">Error</span>
+          <span>➔</span>
+          <span class="bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700">Loss</span>
+          <span>➔</span>
+          <span class="bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700">Adjust Parameters</span>
+          <span>➔</span>
+          <span class="bg-emerald-900/70 text-emerald-300 px-2.5 py-1.5 rounded-lg border border-emerald-500/50">Optimal Model 🚀</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 mt-20 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <span class="w-6 h-6 rounded bg-brand-600 text-white font-bold flex items-center justify-center text-[10px]">LR</span>
+        <span class="font-semibold text-slate-800">
+          <span class="zh-only">線性回歸圖解教學互動版</span>
+          <span class="en-only">Linear Regression Interactive Guide</span>
+        </span>
+      </div>
+      <div>
+        <span class="zh-only">中英雙語切換 ‧ 專為零基礎與初學者打造</span>
+        <span class="en-only">Bilingual Edition ‧ Built for Zero-Prerequisite Learners</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // KaTeX Helper
+    function renderMathInPage() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '\\(', right: '\\)', display: false}
+          ],
+          throwOnError : false
+        });
+      }
+    }
+
+    // Scroll Progress Indicator
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+      document.getElementById('scrollProgressBar').style.width = scrolled + '%';
+    });
+
+    // Mobile Navbar Toggle
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (mobileNavToggle && mobileMenu) {
+      mobileNavToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+      });
+    }
+
+    /* ----------------------------------------------------
+       ROBUST BILINGUAL CONTROLLER (ZERO DISPLAY ISSUES)
+       ---------------------------------------------------- */
+    let currentLang = 'zh'; // 'zh' or 'en'
+    const btnLangToggle = document.getElementById('btnLangToggle');
+    const btnLangLabel = document.getElementById('btnLangLabel');
+    const btnMobileLangToggle = document.getElementById('btnMobileLangToggle');
+    const btnMobileLangLabel = document.getElementById('btnMobileLangLabel');
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      if (currentLang === 'en') {
+        document.body.classList.remove('lang-zh');
+        document.body.classList.add('lang-en');
+        document.documentElement.lang = 'en';
+        if (btnLangLabel) btnLangLabel.textContent = '繁體中文';
+        if (btnMobileLangLabel) btnMobileLangLabel.textContent = '繁體中文';
+      } else {
+        document.body.classList.remove('lang-en');
+        document.body.classList.add('lang-zh');
+        document.documentElement.lang = 'zh-Hant';
+        if (btnLangLabel) btnLangLabel.textContent = 'English';
+        if (btnMobileLangLabel) btnMobileLangLabel.textContent = 'English';
+      }
+
+      // Redraw canvas with proper language labels
+      draw();
+
+      // Refresh quiz in selected language
+      loadQuiz();
+
+      // Refresh house price predictor
+      updatePredictor();
+
+      try {
+        localStorage.setItem('preferred_lr_lang', currentLang);
+      } catch (e) {}
+    }
+
+    if (btnLangToggle) {
+      btnLangToggle.addEventListener('click', () => {
+        setLanguage(currentLang === 'zh' ? 'en' : 'zh');
+      });
+    }
+
+    if (btnMobileLangToggle) {
+      btnMobileLangToggle.addEventListener('click', () => {
+        setLanguage(currentLang === 'zh' ? 'en' : 'zh');
+      });
+    }
+
+    /* ----------------------------------------------------
+       STREAMING_CHUNK:Configuring Interactive Regression Canvas
+       ---------------------------------------------------- */
+    const canvas = document.getElementById('regressionCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const valSlope = document.getElementById('valSlope');
+    const valIntercept = document.getElementById('valIntercept');
+    const valSSE = document.getElementById('valSSE');
+    const calcEquation = document.getElementById('calcEquation');
+    const chkShowResiduals = document.getElementById('chkShowResiduals');
+    const chkShowSquares = document.getElementById('chkShowSquares');
+
+    const btnPresetStudy = document.getElementById('btnPresetStudy');
+    const btnPresetHouse = document.getElementById('btnPresetHouse');
+    const btnResetData = document.getElementById('btnResetData');
+
+    // Presets
+    const presetStudy = [
+      { x: 1, y: 45 },
+      { x: 2, y: 50 },
+      { x: 3, y: 58 },
+      { x: 4, y: 65 },
+      { x: 5, y: 72 },
+      { x: 6, y: 80 },
+      { x: 7, y: 86 }
+    ];
+
+    const presetHouse = [
+      { x: 300, y: 4.5 },
+      { x: 400, y: 5.2 },
+      { x: 500, y: 6.0 },
+      { x: 600, y: 6.8 },
+      { x: 700, y: 7.5 }
+    ];
+
+    let currentMode = 'study'; // 'study' or 'house'
+    let dataPoints = JSON.parse(JSON.stringify(presetStudy));
+    let draggedPointIndex = null;
+    let hoveredPointIndex = null;
+
+    let domainX = [0, 8.5];
+    let domainY = [30, 100];
+    let padding = { top: 35, right: 35, bottom: 45, left: 55 };
+
+    function updateDomains() {
+      if (currentMode === 'study') {
+        domainX = [0, 8.5];
+        domainY = [30, 100];
+      } else {
+        domainX = [200, 800];
+        domainY = [3.0, 9.0];
+      }
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.resetTransform();
+      ctx.scale(dpr, dpr);
+      draw();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    function toCanvasX(xVal) {
+      const width = canvas.getBoundingClientRect().width;
+      const plotWidth = width - padding.left - padding.right;
+      return padding.left + ((xVal - domainX[0]) / (domainX[1] - domainX[0])) * plotWidth;
+    }
+
+    function toCanvasY(yVal) {
+      const height = canvas.getBoundingClientRect().height;
+      const plotHeight = height - padding.top - padding.bottom;
+      return height - padding.bottom - ((yVal - domainY[0]) / (domainY[1] - domainY[0])) * plotHeight;
+    }
+
+    function fromCanvasX(cx) {
+      const width = canvas.getBoundingClientRect().width;
+      const plotWidth = width - padding.left - padding.right;
+      return domainX[0] + ((cx - padding.left) / plotWidth) * (domainX[1] - domainX[0]);
+    }
+
+    function fromCanvasY(cy) {
+      const height = canvas.getBoundingClientRect().height;
+      const plotHeight = height - padding.top - padding.bottom;
+      return domainY[0] + ((height - padding.bottom - cy) / plotHeight) * (domainY[1] - domainY[0]);
+    }
+
+    function calculateOLS() {
+      const n = dataPoints.length;
+      if (n < 2) return { b0: 0, b1: 0, sse: 0 };
+
+      let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+      for (const p of dataPoints) {
+        sumX += p.x;
+        sumY += p.y;
+        sumXY += p.x * p.y;
+        sumXX += p.x * p.x;
+      }
+
+      const meanX = sumX / n;
+      const meanY = sumY / n;
+
+      let numerator = 0;
+      let denominator = 0;
+      for (const p of dataPoints) {
+        numerator += (p.x - meanX) * (p.y - meanY);
+        denominator += (p.x - meanX) * (p.x - meanX);
+      }
+
+      const b1 = denominator !== 0 ? numerator / denominator : 0;
+      const b0 = meanY - b1 * meanX;
+
+      let sse = 0;
+      for (const p of dataPoints) {
+        const yPred = b0 + b1 * p.x;
+        const err = p.y - yPred;
+        sse += err * err;
+      }
+
+      return { b0, b1, sse };
+    }
+
+    function draw() {
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      if (w === 0 || h === 0) return;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const { b0, b1, sse } = calculateOLS();
+
+      valSlope.textContent = b1.toFixed(currentMode === 'study' ? 2 : 4);
+      valIntercept.textContent = b0.toFixed(2);
+      valSSE.textContent = sse.toFixed(2);
+
+      const sign = b1 >= 0 ? '+' : '-';
+      const absB1 = Math.abs(b1).toFixed(currentMode === 'study' ? 2 : 4);
+      calcEquation.innerHTML = `\\(\\hat{y} = ${b0.toFixed(2)} ${sign} ${absB1}x\\)`;
+      renderMathInPage();
+
+      // Draw Grid Lines
+      ctx.strokeStyle = '#f1f5f9';
+      ctx.lineWidth = 1;
+
+      const numTicksX = currentMode === 'study' ? 8 : 6;
+      for (let i = 0; i <= numTicksX; i++) {
+        const xVal = domainX[0] + (i / numTicksX) * (domainX[1] - domainX[0]);
+        const cx = toCanvasX(xVal);
+        ctx.beginPath();
+        ctx.moveTo(cx, padding.top);
+        ctx.lineTo(cx, h - padding.bottom);
+        ctx.stroke();
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(xVal.toFixed(0), cx, h - padding.bottom + 16);
+      }
+
+      const numTicksY = 5;
+      for (let j = 0; j <= numTicksY; j++) {
+        const yVal = domainY[0] + (j / numTicksY) * (domainY[1] - domainY[0]);
+        const cy = toCanvasY(yVal);
+        ctx.beginPath();
+        ctx.moveTo(padding.left, cy);
+        ctx.lineTo(w - padding.right, cy);
+        ctx.stroke();
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText(currentMode === 'study' ? yVal.toFixed(0) : yVal.toFixed(1) + 'M', padding.left - 8, cy + 3);
+      }
+
+      // Bilingual Axis Titles
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+
+      let xTitle, yTitle;
+      if (currentLang === 'zh') {
+        xTitle = currentMode === 'study' ? '學習時間 (小時)' : '住宅面積 (平方呎)';
+        yTitle = currentMode === 'study' ? '考試成績 (Score)' : '物業成交價 (百萬HK$)';
+      } else {
+        xTitle = currentMode === 'study' ? 'Study Time (Hours)' : 'Floor Area (sq ft)';
+        yTitle = currentMode === 'study' ? 'Exam Score (Score)' : 'Property Price (Million HKD)';
+      }
+
+      ctx.fillText(xTitle, padding.left + (w - padding.left - padding.right) / 2, h - 8);
+
+      ctx.save();
+      ctx.translate(14, padding.top + (h - padding.top - padding.bottom) / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText(yTitle, 0, 0);
+      ctx.restore();
+
+      // Draw Squared Error Boxes
+      if (chkShowSquares.checked) {
+        for (const p of dataPoints) {
+          const cx = toCanvasX(p.x);
+          const cy = toCanvasY(p.y);
+          const yHat = b0 + b1 * p.x;
+          const cyHat = toCanvasY(yHat);
+          const side = Math.abs(cy - cyHat);
+
+          ctx.fillStyle = 'rgba(239, 68, 68, 0.12)';
+          ctx.strokeStyle = 'rgba(239, 68, 68, 0.35)';
+          ctx.lineWidth = 1;
+
+          const top = Math.min(cy, cyHat);
+          ctx.fillRect(cx, top, side, side);
+          ctx.strokeRect(cx, top, side, side);
+        }
+      }
+
+      // Draw Residual Lines
+      if (chkShowResiduals.checked) {
+        for (const p of dataPoints) {
+          const cx = toCanvasX(p.x);
+          const cy = toCanvasY(p.y);
+          const yHat = b0 + b1 * p.x;
+          const cyHat = toCanvasY(yHat);
+
+          ctx.setLineDash([4, 4]);
+          ctx.strokeStyle = '#ef4444';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx, cyHat);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = '#ef4444';
+          ctx.beginPath();
+          ctx.arc(cx, cyHat, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Draw Regression Line
+      const xLineStart = domainX[0];
+      const yLineStart = b0 + b1 * xLineStart;
+      const xLineEnd = domainX[1];
+      const yLineEnd = b0 + b1 * xLineEnd;
+
+      ctx.strokeStyle = '#4f46e5';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(toCanvasX(xLineStart), toCanvasY(yLineStart));
+      ctx.lineTo(toCanvasX(xLineEnd), toCanvasY(yLineEnd));
+      ctx.stroke();
+
+      // Draw Data Points
+      dataPoints.forEach((p, index) => {
+        const cx = toCanvasX(p.x);
+        const cy = toCanvasY(p.y);
+        const isHovered = hoveredPointIndex === index;
+        const isDragged = draggedPointIndex === index;
+
+        if (isHovered || isDragged) {
+          ctx.beginPath();
+          ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(99, 102, 241, 0.25)';
+          ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, isHovered || isDragged ? 7 : 5.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+    }
+
+    function getEventPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function findNearbyPoint(pos) {
+      const threshold = 18;
+      for (let i = 0; i < dataPoints.length; i++) {
+        const cx = toCanvasX(dataPoints[i].x);
+        const cy = toCanvasY(dataPoints[i].y);
+        const dist = Math.hypot(cx - pos.x, cy - pos.y);
+        if (dist <= threshold) return i;
+      }
+      return null;
+    }
+
+    function handlePointerDown(e) {
+      const pos = getEventPos(e);
+      const pointIdx = findNearbyPoint(pos);
+
+      if (pointIdx !== null) {
+        draggedPointIndex = pointIdx;
+        e.preventDefault();
+      } else {
+        const valX = fromCanvasX(pos.x);
+        const valY = fromCanvasY(pos.y);
+        if (valX >= domainX[0] && valX <= domainX[1] && valY >= domainY[0] && valY <= domainY[1]) {
+          dataPoints.push({ x: Number(valX.toFixed(1)), y: Number(valY.toFixed(1)) });
+          draggedPointIndex = dataPoints.length - 1;
+          draw();
+        }
+      }
+    }
+
+    function handlePointerMove(e) {
+      const pos = getEventPos(e);
+
+      if (draggedPointIndex !== null) {
+        let valX = fromCanvasX(pos.x);
+        let valY = fromCanvasY(pos.y);
+
+        valX = Math.max(domainX[0], Math.min(domainX[1], valX));
+        valY = Math.max(domainY[0], Math.min(domainY[1], valY));
+
+        dataPoints[draggedPointIndex].x = Number(valX.toFixed(currentMode === 'study' ? 1 : 0));
+        dataPoints[draggedPointIndex].y = Number(valY.toFixed(currentMode === 'study' ? 1 : 2));
+
+        draw();
+        e.preventDefault();
+      } else {
+        const nearby = findNearbyPoint(pos);
+        if (nearby !== hoveredPointIndex) {
+          hoveredPointIndex = nearby;
+          canvas.style.cursor = nearby !== null ? 'grab' : 'crosshair';
+          draw();
+        }
+      }
+    }
+
+    function handlePointerUp() {
+      draggedPointIndex = null;
+    }
+
+    canvas.addEventListener('mousedown', handlePointerDown);
+    window.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('mouseup', handlePointerUp);
+
+    canvas.addEventListener('touchstart', handlePointerDown, { passive: false });
+    window.addEventListener('touchmove', handlePointerMove, { passive: false });
+    window.addEventListener('touchend', handlePointerUp);
+
+    chkShowResiduals.addEventListener('change', draw);
+    chkShowSquares.addEventListener('change', draw);
+
+    // Preset Switching
+    btnPresetStudy.addEventListener('click', () => {
+      currentMode = 'study';
+      dataPoints = JSON.parse(JSON.stringify(presetStudy));
+      btnPresetStudy.className = 'px-3 py-1.5 rounded-lg bg-brand-600 text-white font-medium transition hover:bg-brand-500';
+      btnPresetHouse.className = 'px-3 py-1.5 rounded-lg text-slate-300 hover:text-white font-medium transition hover:bg-slate-700';
+      updateDomains();
+      draw();
+    });
+
+    btnPresetHouse.addEventListener('click', () => {
+      currentMode = 'house';
+      dataPoints = JSON.parse(JSON.stringify(presetHouse));
+      btnPresetHouse.className = 'px-3 py-1.5 rounded-lg bg-brand-600 text-white font-medium transition hover:bg-brand-500';
+      btnPresetStudy.className = 'px-3 py-1.5 rounded-lg text-slate-300 hover:text-white font-medium transition hover:bg-slate-700';
+      updateDomains();
+      draw();
+    });
+
+    btnResetData.addEventListener('click', () => {
+      dataPoints = JSON.parse(JSON.stringify(currentMode === 'study' ? presetStudy : presetHouse));
+      draw();
+    });
+
+    /* ----------------------------------------------------
+       STREAMING_CHUNK:Managing House Price Predictor Slider
+       ---------------------------------------------------- */
+    const rngHouseArea = document.getElementById('rngHouseArea');
+    const lblHouseArea = document.getElementById('lblHouseArea');
+    const lblPredictedPrice = document.getElementById('lblPredictedPrice');
+    const lblFormulaStep = document.getElementById('lblFormulaStep');
+
+    function updatePredictor() {
+      if (!rngHouseArea) return;
+      const area = Number(rngHouseArea.value);
+      lblHouseArea.textContent = area;
+      const price = 2.3 + (0.0074 * area);
+      lblPredictedPrice.textContent = price.toFixed(2);
+      lblFormulaStep.textContent = `2.3 + (0.0074 × ${area}) = HK$ ${price.toFixed(2)}M`;
+    }
+
+    if (rngHouseArea) {
+      rngHouseArea.addEventListener('input', updatePredictor);
+    }
+
+    /* ----------------------------------------------------
+       STREAMING_CHUNK:Implementing Interactive Bilingual Quiz
+       ---------------------------------------------------- */
+    const quizItems = [
+      {
+        questionZh: "1. 銀行需要根據客戶過往信用紀錄，預測給他發放貸款的「最大信用額度 ($)」？",
+        questionEn: "1. A bank needs to predict an applicant's maximum credit limit ($) based on credit history?",
+        type: "regression",
+        explanationZh: "這是連續數值預測（預測具體金額數字），所以屬於 Regression！",
+        explanationEn: "This forecasts a continuous numerical amount (dollars), so it belongs to Regression!"
+      },
+      {
+        questionZh: "2. 電郵過濾系統判斷這封新信件到底是「正常郵件」還是「垃圾郵件」？",
+        questionEn: "2. An email spam filter decides whether an incoming email is 'Legitimate' or 'Spam'?",
+        type: "classification",
+        explanationZh: "輸出是二選一的標籤類別 (Spam / Ham)，屬於典型的 Classification！",
+        explanationEn: "The output is a discrete category (Spam / Ham), which is a classic Classification task!"
+      },
+      {
+        questionZh: "3. 天氣預報系統估算明天下午香港天文台測得的「具體最高氣溫 (°C)」？",
+        questionEn: "3. A meteorological model estimates tomorrow afternoon's exact peak temperature (°C)?",
+        type: "regression",
+        explanationZh: "溫度是一個連續的數值（例如 31.4°C），所以是 Regression！",
+        explanationEn: "Temperature is a continuous real-valued metric (e.g. 31.4°C), so it is Regression!"
+      },
+      {
+        questionZh: "4. 醫療影像 AI 判斷這張肺部 X 光片是否有「腫瘤跡象」（陽性 / 陰性）？",
+        questionEn: "4. A diagnostic AI inspects a chest X-ray to identify whether a tumor is present (Positive / Negative)?",
+        type: "classification",
+        explanationZh: "這是類別判斷（有病 / 無病），屬於 Classification！",
+        explanationEn: "This predicts categorical states (Diseased / Healthy), which is Classification!"
+      }
+    ];
+
+    let currentQuizIndex = 0;
+    const quizQuestionEl = document.getElementById('quizQuestion');
+    const btnReg = document.getElementById('btnChooseRegression');
+    const btnCls = document.getElementById('btnChooseClassification');
+    const quizFeedback = document.getElementById('quizFeedback');
+    const btnNextQuiz = document.getElementById('btnNextQuiz');
+
+    function loadQuiz() {
+      const q = quizItems[currentQuizIndex];
+      quizQuestionEl.textContent = currentLang === 'zh' ? q.questionZh : q.questionEn;
+      quizFeedback.className = 'hidden';
+      btnNextQuiz.className = 'hidden';
+      btnReg.disabled = false;
+      btnCls.disabled = false;
+    }
+
+    function checkAnswer(chosenType) {
+      const q = quizItems[currentQuizIndex];
+      const isCorrect = chosenType === q.type;
+
+      const exp = currentLang === 'zh' ? q.explanationZh : q.explanationEn;
+      const correctPrefix = currentLang === 'zh' ? '🎉 <strong>答對了！</strong>' : '🎉 <strong>Correct!</strong>';
+      const wrongPrefix = currentLang === 'zh' ? '❌ <strong>再想想看！</strong>' : '❌ <strong>Think again!</strong>';
+
+      quizFeedback.classList.remove('hidden');
+      if (isCorrect) {
+        quizFeedback.className = 'mt-3 p-3 rounded-xl text-xs sm:text-sm font-medium bg-emerald-50 text-emerald-800 border border-emerald-200';
+        quizFeedback.innerHTML = `${correctPrefix} ${exp}`;
+      } else {
+        quizFeedback.className = 'mt-3 p-3 rounded-xl text-xs sm:text-sm font-medium bg-rose-50 text-rose-800 border border-rose-200';
+        quizFeedback.innerHTML = `${wrongPrefix} ${exp}`;
+      }
+
+      btnReg.disabled = true;
+      btnCls.disabled = true;
+      btnNextQuiz.classList.remove('hidden');
+    }
+
+    btnReg.addEventListener('click', () => checkAnswer('regression'));
+    btnCls.addEventListener('click', () => checkAnswer('classification'));
+    btnNextQuiz.addEventListener('click', () => {
+      currentQuizIndex = (currentQuizIndex + 1) % quizItems.length;
+      loadQuiz();
+    });
+
+    window.addEventListener('load', () => {
+      updateDomains();
+      resizeCanvas();
+      loadQuiz();
+      updatePredictor();
+      renderMathInPage();
+
+      try {
+        const savedLang = localStorage.getItem('preferred_lr_lang');
+        if (savedLang === 'en') {
+          setLanguage('en');
+        }
+      } catch (e) {}
+    });
+  </script>
+</body>
+</html>
