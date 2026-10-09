@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinguistAssist</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Diff Styles */
+        .diff-content del { background-color: rgba(239, 68, 68, 0.15); text-decoration: line-through; color: #ef4444; border-radius: 3px; padding: 1px 3px; margin: 0 1px; font-weight: 500; display: inline; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+        .diff-content ins { background-color: rgba(34, 197, 94, 0.15); text-decoration: none; color: #16a34a; border-radius: 3px; padding: 1px 3px; margin: 0 1px; font-weight: 500; display: inline; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+        .dark .diff-content del { background-color: rgba(248, 113, 113, 0.2); color: #fca5a5; }
+        .dark .diff-content ins { background-color: rgba(74, 222, 128, 0.2); color: #86efac; }
+
+        /* Shared Line-by-Line Typography */
+        .sync-text-rhythm {
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 0.9375rem; /* 15px */
+            line-height: 1.75rem; /* 28px */
+            letter-spacing: normal;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Animation utilities */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-300 min-h-screen flex flex-col">
+
+    <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-2 rounded-xl shadow-inner">
+                    <i data-lucide="book-open" class="w-6 h-6 stroke-[2.5px]"></i>
+                </div>
+                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 hidden sm:block">
+                    LinguistAssist
+                </h1>
+            </div>
+
+            <div class="flex items-center gap-1 sm:gap-2">
+                <nav class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mr-2 sm:mr-4">
+                    <button id="tab-btn-proofread" onclick="switchTab('proofread')" class="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all bg-white dark:bg-slate-900 shadow-sm text-blue-600 dark:text-blue-400">
+                        <i data-lucide="pen-tool" class="w-4 h-4"></i> <span class="hidden sm:inline">Proofread</span>
+                    </button>
+                    <button id="tab-btn-lexicon" onclick="switchTab('lexicon')" class="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200">
+                        <i data-lucide="book-open" class="w-4 h-4"></i> <span class="hidden sm:inline">Lexicon</span>
+                    </button>
+                </nav>
+
+                <button onclick="toggleTheme()" class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full transition-colors" title="Toggle Theme">
+                    <i id="theme-icon" data-lucide="moon" class="w-5 h-5"></i>
+                </button>
+                
+                <button onclick="openSettings()" class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full transition-colors relative" title="Settings">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span id="api-warning-badge" class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-slate-100 dark:border-slate-800 animate-pulse"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 h-[calc(100vh-4rem)] flex flex-col">
+        
+        <!-- API Warning Banner -->
+        <div id="api-warning-banner" class="hidden mb-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 flex items-center justify-between shadow-sm shrink-0">
+            <div class="flex items-center gap-3 text-blue-800 dark:text-blue-300">
+                <i data-lucide="info" class="w-5 h-5 shrink-0"></i>
+                <p class="text-sm font-medium">Welcome! Please configure your API key in settings to start using LinguistAssist.</p>
+            </div>
+            <button onclick="openSettings()" class="text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg font-medium transition-colors shrink-0">
+                Setup Now
+            </button>
+        </div>
+
+        <!-- Proofreader Tab -->
+        <div id="tab-proofread" class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 h-full overflow-hidden">
+            <!-- Input Section -->
+            <div class="flex flex-col gap-3 h-full overflow-hidden">
+                <!-- Source Text Card with matching header height -->
+                <div class="flex-1 flex flex-col bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+                    <div class="h-12 px-4 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 shrink-0">
+                        <h3 class="font-medium text-sm text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                            <i data-lucide="pen-tool" class="w-4 h-4 text-blue-500"></i> Source Text
+                        </h3>
+                        <div class="flex items-center gap-1.5">
+                            <button 
+                                id="sync-scroll-btn" 
+                                onclick="toggleSyncScroll()" 
+                                class="text-xs px-2 py-1 rounded-md text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors flex items-center gap-1 font-medium" 
+                                title="Toggle Synchronized Scrolling"
+                            >
+                                <i id="sync-scroll-icon" data-lucide="link-2" class="w-3.5 h-3.5"></i>
+                                <span class="hidden sm:inline">Sync Scroll</span>
+                            </button>
+                            <button onclick="handlePaste()" class="text-xs px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-1 shadow-xs">
+                                <i data-lucide="clipboard" class="w-3.5 h-3.5"></i> Paste
+                            </button>
+                            <button onclick="handleClearProofread()" class="text-xs px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-1 shadow-xs">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <textarea 
+                        id="proofread-input"
+                        oninput="updateProofreadBtnState()"
+                        placeholder="Enter text to proofread and translate... (Auto-detects English or Chinese)"
+                        class="sync-text-rhythm flex-1 w-full p-4 bg-transparent outline-none resize-none text-slate-800 dark:text-slate-100 placeholder-slate-400 m-0 border-0"
+                    ></textarea>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+                    <div class="flex-1 w-full flex items-center gap-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 shadow-sm">
+                        <span class="text-slate-500 whitespace-nowrap">Target Style:</span>
+                        <select id="proofread-style" class="w-full bg-transparent outline-none text-slate-800 dark:text-slate-100 font-medium cursor-pointer">
+                            <option value="Natural">Natural</option>
+                            <option value="Formal">Formal</option>
+                            <option value="Casual">Casual</option>
+                            <option value="Business">Business</option>
+                            <option value="Academic">Academic</option>
+                        </select>
+                    </div>
+                    <button 
+                        id="proofread-btn"
+                        onclick="handleProofreadSubmit()"
+                        disabled
+                        class="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:opacity-70 disabled:cursor-not-allowed text-white px-6 py-2.5 rounded-lg font-medium shadow-sm transition-all active:scale-95"
+                    >
+                        <span id="proofread-btn-content" class="flex items-center justify-center gap-2">
+                            <i data-lucide="check" class="w-[18px] h-[18px]"></i>
+                            <span>Proofread & Translate</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div id="proofread-output-container" class="flex flex-col gap-4 overflow-y-auto pr-2 pb-4 h-full relative">
+                <!-- Initial State -->
+                <div id="proofread-empty-state" class="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-8 text-center bg-slate-50/50 dark:bg-slate-900/20 absolute inset-0 mb-4">
+                    <i data-lucide="arrow-right-left" class="w-12 h-12 mb-4 opacity-20"></i>
+                    <p>Your proofread text and translation will appear here.</p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="proofread-loading-state" class="hidden flex-1 flex flex-col items-center justify-center text-blue-500 space-y-4 absolute inset-0 mb-4 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm z-10 rounded-xl">
+                    <i data-lucide="loader-2" class="w-10 h-10 animate-spin opacity-50"></i>
+                    <p class="animate-pulse font-medium">Processing linguistics...</p>
+                </div>
+
+                <!-- Results Content (Injected dynamically) -->
+                <div id="proofread-results" class="hidden space-y-6 fade-in h-max pb-6"></div>
+            </div>
+        </div>
+
+        <!-- Lexicon Tab -->
+        <div id="tab-lexicon" class="hidden flex-1 flex flex-col max-w-4xl mx-auto w-full gap-6 h-full overflow-hidden">
+            <!-- Search Bar -->
+            <form onsubmit="handleLexiconSearch(event)" class="relative shrink-0 pt-2">
+                <input 
+                    type="text"
+                    id="lexicon-input"
+                    oninput="updateLexiconBtnState()"
+                    placeholder="Lookup any English or Chinese word, phrase, or idiom..."
+                    class="w-full bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-500 rounded-2xl py-4 pl-6 pr-44 sm:pr-52 outline-none text-lg text-slate-800 dark:text-slate-100 shadow-sm transition-colors"
+                />
+                <div class="absolute right-2 top-4 bottom-2 flex items-center gap-1.5 h-auto py-0.5">
+                    <button 
+                        type="button"
+                        id="lexicon-clear-btn"
+                        onclick="clearLexicon()"
+                        class="hidden h-full px-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors items-center gap-1 text-sm font-medium"
+                        title="Clear search and results"
+                    >
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Clear</span>
+                    </button>
+                    <button 
+                        type="submit"
+                        id="lexicon-submit-btn"
+                        disabled
+                        class="h-[calc(100%-4px)] mt-[2px] mb-[2px] bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:opacity-70 text-white px-5 sm:px-6 rounded-xl font-medium transition-colors flex items-center justify-center min-w-[85px] sm:min-w-[100px]"
+                    >
+                        <span id="lexicon-btn-content" class="flex items-center justify-center">Lookup</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Results Area -->
+            <div class="flex-1 overflow-y-auto relative h-full">
+                <!-- Initial State -->
+                <div id="lexicon-empty-state" class="flex flex-col items-center justify-center text-slate-400 mt-20 space-y-4 absolute inset-0">
+                    <i data-lucide="book-open" class="w-16 h-16 opacity-20"></i>
+                    <p class="text-lg">Discover definitions, collocations, and nuances.</p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="lexicon-loading-state" class="hidden flex flex-col items-center justify-center text-blue-500 space-y-4 mt-20 absolute inset-0 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm z-10 rounded-2xl">
+                    <i data-lucide="loader-2" class="w-10 h-10 animate-spin opacity-50"></i>
+                    <p class="animate-pulse font-medium">Consulting lexicon...</p>
+                </div>
+
+                <!-- Results Content (Injected dynamically) -->
+                <div id="lexicon-results" class="hidden pb-10 h-max"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Drawer Backdrop -->
+    <div id="settings-backdrop" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="closeSettings()"></div>
+    
+    <!-- Settings Drawer -->
+    <div id="settings-drawer" class="fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200 dark:border-slate-800 transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+            <h2 class="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                <i data-lucide="settings" class="w-5 h-5"></i> Configuration
+            </h2>
+            <button onclick="closeSettings()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors text-slate-500">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-6 space-y-6 text-sm text-slate-700 dark:text-slate-300">
+            <!-- Provider -->
+            <div class="space-y-2">
+                <label class="font-medium flex items-center gap-1.5 text-slate-800 dark:text-slate-200">
+                    <span>AI Provider</span>
+                    <span class="text-xs font-normal text-slate-500 dark:text-slate-400">
+                        (e.g., <a href="https://openrouter.ai/collections/free-models" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">OpenRouter</a>)
+                    </span>
+                </label>
+                <div class="relative">
+                    <select id="setting-provider" onchange="handleProviderChange()" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg appearance-none outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-slate-100">
+                        <!-- Options populated via JS -->
+                    </select>
+                    <i data-lucide="chevron-down" class="w-4 h-4 absolute right-3 top-3 text-slate-400 pointer-events-none"></i>
+                </div>
+            </div>
+
+            <!-- Base URL -->
+            <div class="space-y-2">
+                <label class="font-medium">Base URL (API Endpoint)</label>
+                <input id="setting-base-url" type="text" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-mono text-xs text-slate-900 dark:text-slate-100" />
+            </div>
+
+            <!-- API Key -->
+            <div class="space-y-2">
+                <label class="font-medium">API Key</label>
+                <div class="relative">
+                    <input id="setting-api-key" type="password" placeholder="sk-..." class="w-full p-2.5 pr-10 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-mono text-xs text-slate-900 dark:text-slate-100" />
+                    <button type="button" onclick="togglePasswordVisibility('setting-api-key', 'setting-eye-icon')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer">
+                        <i id="setting-eye-icon" data-lucide="info" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <p class="text-xs text-slate-400">Keys are stored locally in your browser.</p>
+            </div>
+
+            <!-- Model -->
+            <div class="space-y-2">
+                <label class="font-medium">Model ID</label>
+                <input id="setting-model" type="text" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-mono text-xs text-slate-900 dark:text-slate-100" />
+            </div>
+
+            <!-- Temperature -->
+            <div class="space-y-2">
+                <div class="flex justify-between">
+                    <label class="font-medium">Temperature</label>
+                    <span id="setting-temp-display" class="text-xs bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-slate-600 dark:text-slate-300">0.3</span>
+                </div>
+                <input id="setting-temperature" type="range" min="0" max="1" step="0.1" oninput="document.getElementById('setting-temp-display').innerText = this.value" class="w-full accent-blue-500" />
+            </div>
+            
+             <!-- System Prompt (Hidden by default in UI, but needed for settings) -->
+             <div class="space-y-2">
+                <label class="font-medium">Base System Prompt</label>
+                <textarea id="setting-system-prompt" rows="3" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-xs text-slate-900 dark:text-slate-100 resize-none"></textarea>
+            </div>
+        </div>
+        
+        <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+            <button onclick="saveSettings()" class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white p-2.5 rounded-lg font-medium transition-colors">
+                <i data-lucide="save" class="w-[18px] h-[18px]"></i> Save Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-[60] flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        // --- Constants & Config ---
+        const PROVIDERS = [
+            { id: 'google', name: 'Google (Gemini)', defaultUrl: 'https://generativelanguage.googleapis.com/v1beta/models', defaultModel: 'gemini-3-flash-preview' },
+            { id: 'openai', name: 'OpenAI', defaultUrl: 'https://api.openai.com/v1', defaultModel: 'gpt-4o' },
+            { id: 'anthropic', name: 'Anthropic (Claude)', defaultUrl: 'https://api.anthropic.com/v1', defaultModel: 'claude-3-5-sonnet-20241022' },
+            { id: 'xai', name: 'xAI (Grok)', defaultUrl: 'https://api.x.ai/v1', defaultModel: 'grok-beta' },
+            { id: 'perplexity', name: 'Perplexity', defaultUrl: 'https://api.perplexity.ai', defaultModel: 'llama-3.1-sonar-large-128k-online' },
+            { id: 'openrouter', name: 'OpenRouter', defaultUrl: 'https://openrouter.ai/api/v1', defaultModel: 'nvidia/nemotron-3-ultra-550b-a55b:free' },
+            { id: 'deepseek', name: 'DeepSeek', defaultUrl: 'https://api.deepseek.com/v1', defaultModel: 'deepseek-chat' },
+            { id: 'moonshot', name: 'Moonshot (Kimi)', defaultUrl: 'https://api.moonshot.cn/v1', defaultModel: 'moonshot-v1-8k' },
+            { id: 'zhipu', name: 'Zhipu AI (GLM)', defaultUrl: 'https://open.bigmodel.cn/api/paas/v4', defaultModel: 'glm-4' },
+        ];
+
+        const DEFAULT_SETTINGS = {
+            provider: 'google',
+            baseUrl: 'https://generativelanguage.googleapis.com/v1beta/models',
+            apiKey: '',
+            model: 'gemini-3-flash-preview',
+            temperature: 0.3,
+            systemPrompt: 'You are an expert bilingual linguist, proofreader, and lexicographer.',
+            theme: 'system'
+        };
+
+        let appSettings = { ...DEFAULT_SETTINGS };
+        let activeTab = 'proofread';
+        let currentLexiconData = null; // Store for markdown generation
+        let currentProofreadData = null; // Store for toggle between diff and clean views
+        let activeRevisedView = 'diff'; // 'diff' | 'clean'
+        let syncScrollEnabled = true;
+        let isSyncingLeftScroll = false;
+        let isSyncingRightScroll = false;
+
+        // --- Core Utilities ---
+
+        // Initialize Icons (with optional root container to avoid re-mutating document elements)
+        function initIcons(root = null) {
+            if (root) {
+                lucide.createIcons({ root });
+            } else {
+                lucide.createIcons();
+            }
+        }
+
+        // Dedicated Button Loading State Managers to avoid icon mutation conflicts
+        function setProofreadLoading(isLoading) {
+            const btn = document.getElementById('proofread-btn');
+            const content = document.getElementById('proofread-btn-content');
+            if (!btn || !content) return;
+            
+            if (isLoading) {
+                btn.disabled = true;
+                content.innerHTML = `
+                    <svg class="w-[18px] h-[18px] animate-spin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                    </svg>
+                    <span>Analyzing...</span>
+                `;
+            } else {
+                const input = document.getElementById('proofread-input').value.trim();
+                btn.disabled = input.length === 0;
+                content.innerHTML = `
+                    <i data-lucide="check" class="w-[18px] h-[18px]"></i>
+                    <span>Proofread & Translate</span>
+                `;
+                initIcons(content);
+            }
+        }
+
+        function setLexiconLoading(isLoading) {
+            const btn = document.getElementById('lexicon-submit-btn');
+            const content = document.getElementById('lexicon-btn-content');
+            if (!btn || !content) return;
+
+            if (isLoading) {
+                btn.disabled = true;
+                content.innerHTML = `
+                    <svg class="w-5 h-5 animate-spin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                    </svg>
+                `;
+            } else {
+                const val = document.getElementById('lexicon-input').value.trim();
+                btn.disabled = val.length === 0;
+                content.innerHTML = `<span>Lookup</span>`;
+            }
+        }
+
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const isError = type === 'error';
+            const bgClass = isError ? 'bg-red-500 text-white' : 'bg-slate-800 dark:bg-white text-white dark:text-slate-900';
+            const iconName = isError ? 'alert-circle' : 'check';
+            
+            toast.className = `flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg text-sm font-medium transform transition-all duration-300 translate-y-4 opacity-0 ${bgClass} pointer-events-auto`;
+            toast.innerHTML = `<i data-lucide="${iconName}" class="w-4 h-4"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            lucide.createIcons({ root: toast }); // Initialize icon just for this element
+            
+            // Animate in
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            });
+
+            // Remove after 3s
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Copy to Clipboard
+        function copyToClipboard(text, label = "Text") {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(`${label} copied!`);
+                }).catch(() => fallbackCopy(text, label));
+            } else {
+                fallbackCopy(text, label);
+            }
+        }
+
+        function fallbackCopy(text, label) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast(`${label} copied!`);
+            } catch (err) {
+                showToast('Failed to copy', 'error');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Add copy event listener for dynamically generated buttons (e.g., in results)
+        function attachDynamicListeners(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            // Remove old listener if exists to prevent duplicates (using a named function would be better, but inline is fine for this scope if we clear innerHTML anyway)
+            container.onclick = (e) => {
+                let target = e.target.closest('button[data-action]');
+                if (!target) return;
+
+                const action = target.getAttribute('data-action');
+                const text = target.getAttribute('data-text');
+                const label = target.getAttribute('data-label') || 'Text';
+
+                if (action === 'copy') {
+                    copyToClipboard(text, label);
+                } else if (action === 'search-synonym') {
+                    document.getElementById('lexicon-input').value = text;
+                    updateLexiconBtnState();
+                    handleLexiconSearch();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else if (action === 'play-audio') {
+                    const type = target.getAttribute('data-audio-type');
+                    playAudio(text, type);
+                }
+            };
+        }
+
+        // --- STREAMING_CHUNK:Implementing API Integration... ---
+        // LLM API Call Wrapper
+        const extractJsonFromMarkdown = (text) => {
+            const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/);
+            if (jsonMatch) return JSON.parse(jsonMatch[1]);
+            return JSON.parse(text); 
+        };
+
+        async function callLLM(systemMessage, userMessage) {
+            if (!appSettings.apiKey && appSettings.provider !== 'google') {
+                throw new Error("API Key is missing. Please configure it in settings.");
+            }
+            
+            const isAnthropic = appSettings.provider === 'anthropic' && !appSettings.baseUrl.includes('openrouter');
+            const isGoogle = appSettings.provider === 'google';
+            
+            let endpoint = appSettings.baseUrl;
+            let headers = { 'Content-Type': 'application/json' };
+            let body = {};
+
+            if (isGoogle) {
+                endpoint = `${endpoint.replace(/\/$/, '')}/${appSettings.model}:generateContent?key=${appSettings.apiKey}`;
+                body = {
+                    systemInstruction: { parts: [{ text: systemMessage }] },
+                    contents: [{ parts: [{ text: userMessage }] }],
+                    generationConfig: {
+                        temperature: Number(appSettings.temperature),
+                        responseMimeType: "application/json"
+                    }
+                };
+            } else if (isAnthropic) {
+                endpoint = `${endpoint.replace(/\/$/, '')}/messages`;
+                headers['x-api-key'] = appSettings.apiKey;
+                headers['anthropic-version'] = '2023-06-01';
+                headers['anthropic-dangerously-allow-browser'] = 'true';
+                body = {
+                    model: appSettings.model,
+                    system: systemMessage,
+                    messages: [{ role: 'user', content: userMessage }],
+                    temperature: Number(appSettings.temperature),
+                    max_tokens: 4096,
+                };
+            } else {
+                endpoint = `${endpoint.replace(/\/$/, '')}/chat/completions`;
+                headers['Authorization'] = `Bearer ${appSettings.apiKey}`;
+                if (appSettings.provider === 'openrouter') {
+                    headers['HTTP-Referer'] = window.location.origin;
+                    headers['X-Title'] = 'LinguistAssist';
+                }
+                body = {
+                    model: appSettings.model,
+                    messages: [
+                        { role: 'system', content: systemMessage },
+                        { role: 'user', content: userMessage }
+                    ],
+                    temperature: Number(appSettings.temperature),
+                };
+            }
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`API Error (${response.status}): ${errText}`);
+            }
+
+            const data = await response.json();
+            let content = "";
+            
+            if (isGoogle) {
+                content = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            } else if (isAnthropic) {
+                content = data.content[0].text;
+            } else {
+                content = data.choices[0].message.content;
+            }
+
+            try {
+                return extractJsonFromMarkdown(content);
+            } catch (e) {
+                console.error("Failed to parse JSON:", content);
+                throw new Error("The model did not return valid JSON. Please try again.");
+            }
+        }
+
+        // --- STREAMING_CHUNK:Implementing Application State & UI logic... ---
+
+        // Theme Management
+        function applyTheme() {
+            const root = document.documentElement;
+            root.classList.remove('light', 'dark');
+            let themeToApply = appSettings.theme;
+            
+            if (themeToApply === 'system') {
+                themeToApply = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            root.classList.add(themeToApply);
+            
+            // Update icon
+            const iconEl = document.getElementById('theme-icon');
+            if (iconEl) {
+                const nextIcon = themeToApply === 'dark' ? 'sun' : 'moon';
+                iconEl.setAttribute('data-lucide', nextIcon);
+                lucide.createIcons({root: iconEl.parentElement});
+            }
+        }
+
+        function toggleTheme() {
+            appSettings.theme = appSettings.theme === 'light' ? 'dark' : 'light';
+            saveSettingsToStorage();
+            applyTheme();
+        }
+
+        // Local Storage
+        function loadSettings() {
+            try {
+                const stored = localStorage.getItem('linguist_settings');
+                if (stored) {
+                    appSettings = { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+                    // Migrate older saved default OpenRouter model if applicable
+                    if (appSettings.provider === 'openrouter' && appSettings.model === 'anthropic/claude-3.5-sonnet') {
+                        appSettings.model = 'nvidia/nemotron-3-ultra-550b-a55b:free';
+                    }
+                }
+            } catch (e) { console.warn("Failed to load settings", e); }
+            updateUIPostSettingsLoad();
+        }
+
+        function saveSettingsToStorage() {
+            localStorage.setItem('linguist_settings', JSON.stringify(appSettings));
+            updateUIPostSettingsLoad();
+        }
+
+        function updateUIPostSettingsLoad() {
+            applyTheme();
+            const warningBadge = document.getElementById('api-warning-badge');
+            const warningBanner = document.getElementById('api-warning-banner');
+            
+            const needsSetup = !appSettings.apiKey && appSettings.provider !== 'google';
+            
+            if (needsSetup) {
+                warningBadge.classList.remove('hidden');
+                warningBanner.classList.remove('hidden');
+            } else {
+                warningBadge.classList.add('hidden');
+                warningBanner.classList.add('hidden');
+            }
+        }
+
+        // Settings UI
+        function populateSettingsForm() {
+            const providerSelect = document.getElementById('setting-provider');
+            if (providerSelect.options.length === 0) {
+                PROVIDERS.forEach(p => {
+                    providerSelect.add(new Option(p.name, p.id));
+                });
+            }
+            
+            document.getElementById('setting-provider').value = appSettings.provider;
+            document.getElementById('setting-base-url').value = appSettings.baseUrl;
+            document.getElementById('setting-api-key').value = appSettings.apiKey;
+            document.getElementById('setting-model').value = appSettings.model;
+            document.getElementById('setting-temperature').value = appSettings.temperature;
+            document.getElementById('setting-temp-display').innerText = appSettings.temperature;
+            document.getElementById('setting-system-prompt').value = appSettings.systemPrompt;
+        }
+
+        function handleProviderChange() {
+            const providerId = document.getElementById('setting-provider').value;
+            const provider = PROVIDERS.find(p => p.id === providerId);
+            if (provider) {
+                document.getElementById('setting-base-url').value = provider.defaultUrl;
+                document.getElementById('setting-model').value = provider.defaultModel;
+            }
+        }
+
+        function openSettings() {
+            populateSettingsForm();
+            document.getElementById('settings-backdrop').classList.remove('hidden');
+            document.getElementById('settings-drawer').classList.remove('translate-x-full');
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-backdrop').classList.add('hidden');
+            document.getElementById('settings-drawer').classList.add('translate-x-full');
+            // reset password visibility
+            document.getElementById('setting-api-key').type = 'password';
+            document.getElementById('setting-eye-icon').setAttribute('data-lucide', 'info');
+            lucide.createIcons({root: document.getElementById('setting-eye-icon').parentElement});
+        }
+
+        function saveSettings() {
+            appSettings.provider = document.getElementById('setting-provider').value;
+            appSettings.baseUrl = document.getElementById('setting-base-url').value;
+            appSettings.apiKey = document.getElementById('setting-api-key').value;
+            appSettings.model = document.getElementById('setting-model').value;
+            appSettings.temperature = parseFloat(document.getElementById('setting-temperature').value);
+            appSettings.systemPrompt = document.getElementById('setting-system-prompt').value;
+            
+            saveSettingsToStorage();
+            closeSettings();
+            showToast("Settings saved!");
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.setAttribute('data-lucide', 'check');
+            } else {
+                input.type = "password";
+                icon.setAttribute('data-lucide', 'info');
+            }
+            lucide.createIcons({root: icon.parentElement});
+        }
+
+        // Tab Navigation
+        function switchTab(tabId) {
+            activeTab = tabId;
+            
+            // Hide all tabs
+            document.getElementById('tab-proofread').classList.add('hidden');
+            document.getElementById('tab-proofread').classList.remove('grid');
+            document.getElementById('tab-lexicon').classList.add('hidden');
+            document.getElementById('tab-lexicon').classList.remove('flex');
+
+            // Show active tab
+            if (tabId === 'proofread') {
+                document.getElementById('tab-proofread').classList.remove('hidden');
+                document.getElementById('tab-proofread').classList.add('grid');
+            } else {
+                document.getElementById('tab-lexicon').classList.remove('hidden');
+                document.getElementById('tab-lexicon').classList.add('flex');
+            }
+
+            // Update button styles
+            const btnP = document.getElementById('tab-btn-proofread');
+            const btnL = document.getElementById('tab-btn-lexicon');
+            
+            btnP.className = tabId === 'proofread' 
+                ? 'flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all bg-white dark:bg-slate-900 shadow-sm text-blue-600 dark:text-blue-400'
+                : 'flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200';
+                
+            btnL.className = tabId === 'lexicon'
+                ? 'flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all bg-white dark:bg-slate-900 shadow-sm text-indigo-600 dark:text-indigo-400'
+                : 'flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200';
+        }
+
+        // --- STREAMING_CHUNK:Implementing Proofreader Logic... ---
+        // Proofreader Tab Logic
+        async function handlePaste() {
+            try {
+                const text = await navigator.clipboard.readText();
+                const input = document.getElementById('proofread-input');
+                input.value = text;
+                updateProofreadBtnState();
+            } catch (err) {
+                showToast('Failed to read clipboard. Please paste manually.', 'error');
+            }
+        }
+
+        function handleClearProofread() {
+            document.getElementById('proofread-input').value = '';
+            currentProofreadData = null;
+            updateProofreadBtnState();
+        }
+
+        function updateProofreadBtnState() {
+            const input = document.getElementById('proofread-input').value.trim();
+            document.getElementById('proofread-btn').disabled = input.length === 0;
+            
+            if(input.length === 0) {
+                 document.getElementById('proofread-results').classList.add('hidden');
+                 document.getElementById('proofread-empty-state').classList.remove('hidden');
+            } else {
+                 document.getElementById('proofread-empty-state').classList.add('hidden');
+            }
+        }
+
+        function toggleSyncScroll() {
+            syncScrollEnabled = !syncScrollEnabled;
+            const btn = document.getElementById('sync-scroll-btn');
+            const icon = document.getElementById('sync-scroll-icon');
+            if (syncScrollEnabled) {
+                btn.className = "text-xs px-2 py-1 rounded-md text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors flex items-center gap-1 font-medium";
+                icon.setAttribute('data-lucide', 'link-2');
+                showToast('Synchronized scrolling enabled');
+            } else {
+                btn.className = "text-xs px-2 py-1 rounded-md text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center gap-1 font-medium";
+                icon.setAttribute('data-lucide', 'unlink-2');
+                showToast('Synchronized scrolling disabled');
+            }
+            initIcons(btn);
+        }
+
+        function setupSyncScrollListeners() {
+            const leftEl = document.getElementById('proofread-input');
+            const rightEl = document.getElementById('proofread-output-container');
+            if (!leftEl || !rightEl) return;
+
+            leftEl.addEventListener('scroll', () => {
+                if (!syncScrollEnabled || isSyncingLeftScroll) return;
+                isSyncingRightScroll = true;
+                const leftMax = leftEl.scrollHeight - leftEl.clientHeight;
+                const rightMax = rightEl.scrollHeight - rightEl.clientHeight;
+                if (leftMax > 0 && rightMax > 0) {
+                    const ratio = leftEl.scrollTop / leftMax;
+                    rightEl.scrollTop = ratio * rightMax;
+                }
+                setTimeout(() => { isSyncingRightScroll = false; }, 30);
+            });
+
+            rightEl.addEventListener('scroll', () => {
+                if (!syncScrollEnabled || isSyncingRightScroll) return;
+                isSyncingLeftScroll = true;
+                const leftMax = leftEl.scrollHeight - leftEl.clientHeight;
+                const rightMax = rightEl.scrollHeight - rightEl.clientHeight;
+                if (leftMax > 0 && rightMax > 0) {
+                    const ratio = rightEl.scrollTop / rightMax;
+                    leftEl.scrollTop = ratio * leftMax;
+                }
+                setTimeout(() => { isSyncingLeftScroll = false; }, 30);
+            });
+        }
+
+        function toggleRevisedView(mode) {
+            activeRevisedView = mode;
+            const diffBtn = document.getElementById('view-diff-btn');
+            const cleanBtn = document.getElementById('view-clean-btn');
+            const displayEl = document.getElementById('revised-display-text');
+            if (!displayEl || !currentProofreadData) return;
+
+            if (mode === 'diff') {
+                diffBtn.className = "px-2 py-0.5 rounded font-medium transition-all bg-white dark:bg-slate-900 shadow-xs text-blue-600 dark:text-blue-400";
+                cleanBtn.className = "px-2 py-0.5 rounded font-medium transition-all text-slate-500 hover:text-slate-800 dark:hover:text-slate-200";
+                displayEl.innerHTML = currentProofreadData.diffHTML;
+            } else {
+                cleanBtn.className = "px-2 py-0.5 rounded font-medium transition-all bg-white dark:bg-slate-900 shadow-xs text-blue-600 dark:text-blue-400";
+                diffBtn.className = "px-2 py-0.5 rounded font-medium transition-all text-slate-500 hover:text-slate-800 dark:hover:text-slate-200";
+                displayEl.textContent = currentProofreadData.revisedText;
+            }
+        }
+
+        function splitIntoBlocksAndSeparators(text) {
+            if (!text) return { blocks: [], separators: [] };
+            const normalized = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+            if (!normalized) return { blocks: [], separators: [] };
+
+            const blocks = [];
+            const separators = [];
+            const regex = /\n+/g;
+            let lastIndex = 0;
+            let match;
+
+            while ((match = regex.exec(normalized)) !== null) {
+                const block = normalized.substring(lastIndex, match.index).trim();
+                if (block.length > 0) {
+                    blocks.push(block);
+                    separators.push(match[0]);
+                }
+                lastIndex = regex.lastIndex;
+            }
+
+            const lastBlock = normalized.substring(lastIndex).trim();
+            if (lastBlock.length > 0) {
+                blocks.push(lastBlock);
+            }
+
+            while (separators.length >= blocks.length && separators.length > 0) {
+                separators.pop();
+            }
+
+            return { blocks, separators };
+        }
+
+        function harmonizeSpacingWithSource(targetText, sourceText) {
+            if (!targetText || !sourceText) return targetText || '';
+
+            const normSource = String(sourceText).replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+            let normTarget = String(targetText).replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+
+            if (!normSource || !normTarget) return normTarget;
+
+            const sourceParts = splitIntoBlocksAndSeparators(normSource);
+            const targetParts = splitIntoBlocksAndSeparators(normTarget);
+
+            if (sourceParts.blocks.length > 0 && targetParts.blocks.length > 0) {
+                // If text block counts match, replicate the exact separators from source
+                if (sourceParts.blocks.length === targetParts.blocks.length) {
+                    let result = '';
+                    for (let i = 0; i < targetParts.blocks.length; i++) {
+                        result += targetParts.blocks[i];
+                        if (i < targetParts.blocks.length - 1) {
+                            result += sourceParts.separators[i] || '\n';
+                        }
+                    }
+                    return result;
+                }
+
+                // If source text contains no double newlines (no blank lines), collapse all double newlines in target
+                if (!normSource.includes('\n\n')) {
+                    normTarget = normTarget.replace(/\n{2,}/g, '\n');
+                    return normTarget;
+                }
+
+                // Ensure the separator after the first block matches source (e.g., "Biography:\n")
+                if (sourceParts.separators.length > 0 && sourceParts.separators[0] === '\n') {
+                    if (targetParts.blocks.length >= 2 && targetParts.separators[0] && targetParts.separators[0].includes('\n\n')) {
+                        targetParts.separators[0] = '\n';
+                        let result = '';
+                        for (let i = 0; i < targetParts.blocks.length; i++) {
+                            result += targetParts.blocks[i];
+                            if (i < targetParts.separators.length) {
+                                result += targetParts.separators[i];
+                            }
+                        }
+                        return result;
+                    }
+                }
+            }
+
+            return normTarget;
+        }
+
+        function cleanParagraphWhitespace(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/\r\n/g, '\n')
+                .split('\n')
+                .map(line => line.trimStart())
+                .join('\n')
+                .trim();
+        }
+
+        function generateCopyButtonHtml(text, label, extraClasses = "") {
+            // Encode text for attribute safely
+            const safeText = String(text).replace(/"/g, '&quot;');
+            return `
+                <button 
+                    type="button"
+                    data-action="copy"
+                    data-text="${safeText}"
+                    data-label="${label}"
+                    class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors ${extraClasses}"
+                    title="Copy ${label}"
+                >
+                    <i data-lucide="copy" class="w-4 h-4 pointer-events-none"></i>
+                </button>
+            `;
+        }
+
+        async function handleProofreadSubmit() {
+            const inputText = document.getElementById('proofread-input').value.trim();
+            if (!inputText) return;
+            
+            if (!appSettings.apiKey && appSettings.provider !== 'google') {
+                showToast("Please configure your API Key first.", "error");
+                openSettings();
+                return;
+            }
+
+            const style = document.getElementById('proofread-style').value;
+            
+            // UI Loading state
+            const emptyState = document.getElementById('proofread-empty-state');
+            const loadingState = document.getElementById('proofread-loading-state');
+            const resultsContainer = document.getElementById('proofread-results');
+
+            setProofreadLoading(true);
+
+            emptyState.classList.add('hidden');
+            resultsContainer.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+            loadingState.classList.add('flex');
+
+            const systemPrompt = `
+                ${appSettings.systemPrompt}
+                You are an expert bilingual proofreader and translator (English & Traditional Chinese 繁體中文).
+                
+                Task:
+                1. Analyze the input text. Auto-detect if it's English or Chinese.
+                2. Proofread and refine the text in its ORIGINAL language for grammar, clarity, and style.
+                3. PARAGRAPHING & LINE-BREAK MANDATE (STRICT & CRITICAL):
+                   - You MUST replicate the EXACT line-break structure and vertical spacing of the source text 1:1.
+                   - If the source text has a single line break (\\n) between a title/label and body text (e.g., "Biography:\\nWei Liu..." with NO empty line), you MUST use a single line break (\\n) with NO empty line in between.
+                   - If and only if the source text has an empty blank line (\\n\\n) between paragraphs, preserve that exact empty blank line (\\n\\n).
+                   - NEVER insert blank lines (\\n\\n) where none existed in the source text, and NEVER remove blank lines where they did exist.
+                   - Do NOT add leading indentation or extra spaces at the beginning of lines.
+                4. Provide a visual diff HTML string. Use <del> for removed text and <ins> for added text. Keep it readable. Retain the exact original line and paragraph breaks in diffHTML without adding extra blank lines.
+                5. Provide categorized explanations for the changes (e.g., Grammar, Lexical Choice, Tone, Fluency).
+                6. Translate the REVISED text into the OTHER language (If EN -> ZH-TW, if ZH -> Natural EN). Apply the requested style: ${style}. Maintain the EXACT same line-break and paragraph spacing structure as the source text.
+                
+                Output MUST be STRICTLY valid JSON with the following structure:
+                {
+                    "proofread": {
+                        "revisedText": "The clean revised text with exact mirrored paragraph and line breaks",
+                        "diffHTML": "Text with <del>removed</del> and <ins>added</ins> tags with exact mirrored paragraph and line breaks",
+                        "explanations": [
+                            { "category": "Grammar", "detail": "explanation here" }
+                        ]
+                    },
+                    "translation": "The translated text with exact mirrored paragraph and line breaks"
+                }
+            `;
+
+            try {
+                const data = await callLLM(systemPrompt, inputText);
+                
+                const rawRevised = data.proofread?.revisedText || '';
+                const rawDiff = data.proofread?.diffHTML || '';
+                const rawTranslation = data.translation || '';
+
+                const harmonizedRevised = harmonizeSpacingWithSource(rawRevised, inputText);
+                const harmonizedDiff = harmonizeSpacingWithSource(rawDiff, inputText);
+                const harmonizedTranslation = harmonizeSpacingWithSource(rawTranslation, inputText);
+
+                const revisedText = cleanParagraphWhitespace(harmonizedRevised);
+                const diffHTML = cleanParagraphWhitespace(harmonizedDiff);
+                const translation = cleanParagraphWhitespace(harmonizedTranslation);
+                const explanations = data.proofread?.explanations || [];
+
+                currentProofreadData = { revisedText, diffHTML, translation };
+                activeRevisedView = 'diff';
+
+                // Build Explanations Markdown for copying
+                const expList = explanations.map(e => `- [${e.category}] ${e.detail}`).join('\n');
+
+                // Build HTML with matching header height h-12 and synchronized typography class
+                let html = `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm slide-in-right">
+                        <div class="h-12 px-4 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 shrink-0">
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-medium text-sm text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Revised Text
+                                </h4>
+                                <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 text-xs ml-2">
+                                    <button id="view-diff-btn" onclick="toggleRevisedView('diff')" class="px-2 py-0.5 rounded font-medium transition-all bg-white dark:bg-slate-900 shadow-xs text-blue-600 dark:text-blue-400">Diff</button>
+                                    <button id="view-clean-btn" onclick="toggleRevisedView('clean')" class="px-2 py-0.5 rounded font-medium transition-all text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">Clean</button>
+                                </div>
+                            </div>
+                            ${generateCopyButtonHtml(revisedText, 'Revised Text')}
+                        </div>
+                        
+                        <div class="p-4 space-y-4">
+                            <div id="revised-display-text" class="sync-text-rhythm diff-content text-slate-800 dark:text-slate-200 break-words whitespace-pre-wrap">${diffHTML}</div>
+                            
+                            ${explanations.length > 0 ? `
+                                <div class="pt-4 border-t border-slate-100 dark:border-slate-800/50 space-y-2 text-sm">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-medium text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">Analysis Breakdown</span>
+                                        ${generateCopyButtonHtml(expList, 'Explanations', 'scale-90')}
+                                    </div>
+                                    ${explanations.map(exp => `
+                                        <div class="flex items-start gap-2">
+                                            <span class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wide mt-0.5 whitespace-nowrap shrink-0">
+                                                ${exp.category}
+                                            </span>
+                                            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">${exp.detail}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm slide-in-right" style="animation-delay: 0.1s">
+                        <div class="h-12 px-4 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 shrink-0">
+                            <h4 class="font-medium text-sm text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                                <i data-lucide="arrow-right-left" class="w-4 h-4 text-indigo-500"></i> Contextual Translation
+                                <span class="text-[10px] font-normal px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full">${style}</span>
+                            </h4>
+                            ${generateCopyButtonHtml(translation, 'Translation')}
+                        </div>
+                        <div class="p-4 text-slate-800 dark:text-slate-200 sync-text-rhythm break-words whitespace-pre-wrap">${translation}</div>
+                    </div>
+                `;
+
+                resultsContainer.innerHTML = html;
+                attachDynamicListeners('proofread-results');
+                initIcons(resultsContainer);
+                
+                loadingState.classList.add('hidden');
+                loadingState.classList.remove('flex');
+                resultsContainer.classList.remove('hidden');
+                
+                showToast("Analysis complete!");
+
+            } catch (error) {
+                showToast(error.message, "error");
+                loadingState.classList.add('hidden');
+                loadingState.classList.remove('flex');
+                emptyState.classList.remove('hidden');
+            } finally {
+                setProofreadLoading(false);
+            }
+        }
+
+        // --- STREAMING_CHUNK:Implementing Lexicon Logic... ---
+        // Lexicon Tab Logic
+        function updateLexiconBtnState() {
+            const val = document.getElementById('lexicon-input').value.trim();
+            const submitBtn = document.getElementById('lexicon-submit-btn');
+            const clearBtn = document.getElementById('lexicon-clear-btn');
+            
+            submitBtn.disabled = val.length === 0;
+            
+            if (val.length > 0 || currentLexiconData) {
+                clearBtn.classList.remove('hidden');
+                clearBtn.classList.add('flex');
+            } else {
+                clearBtn.classList.add('hidden');
+                clearBtn.classList.remove('flex');
+            }
+        }
+
+        function clearLexicon() {
+            document.getElementById('lexicon-input').value = '';
+            currentLexiconData = null;
+            setLexiconLoading(false);
+            updateLexiconBtnState();
+            
+            document.getElementById('lexicon-results').classList.add('hidden');
+            document.getElementById('lexicon-results').innerHTML = '';
+            document.getElementById('lexicon-empty-state').classList.remove('hidden');
+            document.getElementById('lexicon-empty-state').classList.add('flex');
+        }
+
+        function playAudio(text, type = 'us') {
+            if (!window.speechSynthesis) {
+                showToast("Speech synthesis not supported in this browser.", "error");
+                return;
+            }
+            // Stop any ongoing speech
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            const isChinese = /[\u4e00-\u9fa5]/.test(text);
+            
+            // Wait for voices to load if they haven't yet (Safari quirk)
+            let voices = window.speechSynthesis.getVoices();
+            if (voices.length === 0) {
+                window.speechSynthesis.onvoiceschanged = () => {
+                    playVoice(utterance, text, type, isChinese, window.speechSynthesis.getVoices());
+                };
+            } else {
+                playVoice(utterance, text, type, isChinese, voices);
+            }
+        }
+
+        function playVoice(utterance, text, type, isChinese, voices) {
+            if (isChinese) {
+                utterance.lang = 'zh-TW';
+            } else {
+                utterance.lang = type === 'uk' ? 'en-GB' : 'en-US';
+                const preferredVoice = voices.find(v => v.lang.startsWith(utterance.lang));
+                if (preferredVoice) utterance.voice = preferredVoice;
+            }
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function generateMarkdown(data) {
+            if (!data) return "";
+            let md = `# ${data.headword} (${data.pos})\n\n`;
+            if (data.ipa) {
+                if(data.ipa.uk) md += `UK: ${data.ipa.uk} | `;
+                if(data.ipa.us) md += `US: ${data.ipa.us}`;
+                md += `\n\n`;
+            }
+            
+            md += `## Definitions\n`;
+            data.definitions?.forEach((def, i) => {
+                md += `${i + 1}. **${def.en}**\n   *${def.zh}*\n`;
+            });
+
+            md += `\n## Lexical Relationships\n`;
+            if (data.relationships?.synonyms?.length) md += `- **Synonyms:** ${data.relationships.synonyms.join(', ')}\n`;
+            if (data.relationships?.antonyms?.length) md += `- **Antonyms:** ${data.relationships.antonyms.join(', ')}\n`;
+            if (data.relationships?.family?.length) md += `- **Word Family:** ${data.relationships.family.join(', ')}\n`;
+
+            if (data.collocations && data.collocations.length > 0) {
+                md += `\n## Collocations\n`;
+                data.collocations.forEach(group => {
+                    md += `### ${group.category}\n`;
+                    group.phrases?.forEach(phrase => { md += `- ${phrase}\n`; });
+                });
+            }
+
+            if (data.examples && data.examples.length > 0) {
+                md += `\n## Examples\n`;
+                data.examples.forEach((ex, i) => {
+                    md += `${i + 1}. ${ex.en}\n   *${ex.zh}*\n`;
+                });
+            }
+
+            return md;
+        }
+
+        async function handleLexiconSearch(e) {
+            if (e) e.preventDefault();
+            const query = document.getElementById('lexicon-input').value.trim();
+            if (!query) return;
+
+            if (!appSettings.apiKey && appSettings.provider !== 'google') {
+                showToast("Please configure your API Key first.", "error");
+                openSettings();
+                return;
+            }
+
+            // UI Loading state
+            const emptyState = document.getElementById('lexicon-empty-state');
+            const loadingState = document.getElementById('lexicon-loading-state');
+            const resultsContainer = document.getElementById('lexicon-results');
+
+            setLexiconLoading(true);
+
+            emptyState.classList.add('hidden');
+            emptyState.classList.remove('flex');
+            resultsContainer.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+            loadingState.classList.add('flex');
+
+            const systemPrompt = `
+                ${appSettings.systemPrompt}
+                You are an exhaustive smart dictionary and collocations extractor for English and Chinese.
+                
+                Task: Look up the provided word or phrase.
+                Provide detailed information in STRICTLY valid JSON format matching this schema:
+                {
+                    "headword": "The exact word/phrase",
+                    "pos": "Part of speech (e.g., Noun, Verb, Phrase)",
+                    "ipa": { "uk": "UK transcription", "us": "US transcription" },
+                    "definitions": [
+                        { "en": "English definition", "zh": "Traditional Chinese definition" }
+                    ],
+                    "relationships": {
+                        "synonyms": ["word1", "word2"],
+                        "antonyms": ["word1"],
+                        "family": ["noun form", "adjective form"]
+                    },
+                    "collocations": [
+                        { "category": "e.g., Adjective + Noun", "phrases": ["phrase 1", "phrase 2"] }
+                    ],
+                    "examples": [
+                        { "en": "English sentence", "zh": "Chinese translation" }
+                    ]
+                }
+            `;
+
+            try {
+                const data = await callLLM(systemPrompt, query);
+                currentLexiconData = data;
+                
+                const mdString = generateMarkdown(data);
+
+                // Helper to generate relationship pills
+                const genRelHtml = (words, colorClass, typeLabel) => {
+                    if (!words || words.length === 0) return '';
+                    const baseColor = colorClass === 'green' ? 'text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800/50' : 'text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50';
+                    const hoverColor = colorClass === 'green' ? 'hover:bg-green-100/80 dark:hover:bg-green-900/30' : 'hover:bg-red-100/80 dark:hover:bg-red-900/30';
+                    const iconColor = colorClass === 'green' ? 'text-green-600/70 dark:text-green-400/70' : 'text-red-600/70 dark:text-red-400/70';
+                    const searchHover = colorClass === 'green' ? 'hover:bg-green-200/50 dark:hover:bg-green-800/50 hover:text-green-900 dark:hover:text-green-100' : 'hover:bg-red-200/50 dark:hover:bg-red-800/50 hover:text-red-900 dark:hover:text-red-100';
+                    
+                    return `
+                        <div class="mb-3">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="block text-slate-500 text-xs uppercase tracking-wider font-semibold">${typeLabel}s</span>
+                                <button type="button" data-action="copy" data-text="${words.join(', ')}" data-label="All ${typeLabel}s" class="text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex items-center gap-1 hover:underline cursor-pointer">
+                                    <i data-lucide="copy" class="w-3 h-3 pointer-events-none"></i> Copy all
+                                </button>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                ${words.map(w => `
+                                    <div class="group inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 ${baseColor} ${hoverColor} rounded-md border transition-colors text-sm">
+                                        <button type="button" data-action="copy" data-text="${w}" data-label="${typeLabel}" class="flex items-center gap-1.5 hover:opacity-80 transition-opacity font-medium cursor-pointer" title="Copy '${w}'">
+                                            <span class="pointer-events-none">${w}</span>
+                                            <i data-lucide="copy" class="w-3 h-3 ${iconColor} group-hover:scale-110 transition-transform pointer-events-none"></i>
+                                        </button>
+                                        <button type="button" data-action="search-synonym" data-text="${w}" class="p-0.5 rounded transition-colors cursor-pointer ${searchHover}" title="Lookup '${w}'">
+                                            <i data-lucide="search" class="w-3 h-3 pointer-events-none"></i>
+                                        </button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                };
+
+                let html = `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden fade-in relative">
+                        <!-- Header -->
+                        <div class="p-6 md:p-8 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 relative">
+                            <div class="absolute top-4 right-4">
+                                ${generateCopyButtonHtml(mdString, 'Markdown Card', 'bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700')}
+                            </div>
+                            
+                            <div class="flex flex-wrap items-baseline gap-4 mb-4 mt-2">
+                                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">${data.headword}</h2>
+                                <span class="text-base md:text-lg text-blue-600 dark:text-blue-400 italic font-medium">${data.pos || ''}</span>
+                            </div>
+                            
+                            <div class="flex flex-wrap gap-3 text-slate-600 dark:text-slate-400 font-mono text-xs md:text-sm items-center">
+                                ${data.ipa?.uk ? `
+                                    <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700/50">
+                                        <span class="font-semibold text-slate-500">UK</span> ${data.ipa.uk}
+                                        <button data-action="play-audio" data-text="${data.headword}" data-audio-type="uk" class="text-blue-500 hover:text-blue-600 p-1 bg-white dark:bg-slate-700 rounded shadow-sm hover:shadow transition-all pointer-events-auto">
+                                            <i data-lucide="volume-2" class="w-4 h-4 pointer-events-none"></i>
+                                        </button>
+                                    </div>
+                                ` : ''}
+                                ${data.ipa?.us ? `
+                                    <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700/50">
+                                        <span class="font-semibold text-slate-500">US</span> ${data.ipa.us}
+                                        <button data-action="play-audio" data-text="${data.headword}" data-audio-type="us" class="text-blue-500 hover:text-blue-600 p-1 bg-white dark:bg-slate-700 rounded shadow-sm hover:shadow transition-all pointer-events-auto">
+                                            <i data-lucide="volume-2" class="w-4 h-4 pointer-events-none"></i>
+                                        </button>
+                                    </div>
+                                ` : ''}
+                                ${!data.ipa?.uk && !data.ipa?.us && /[\u4e00-\u9fa5]/.test(data.headword) ? `
+                                    <button data-action="play-audio" data-text="${data.headword}" data-audio-type="zh" class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg text-blue-500 hover:text-blue-600 border border-slate-200 dark:border-slate-700/50 shadow-sm transition-all pointer-events-auto">
+                                        <i data-lucide="volume-2" class="w-4 h-4 pointer-events-none"></i> Pronounce
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="p-6 md:p-8 space-y-10">
+                            <!-- Definitions -->
+                            ${data.definitions && data.definitions.length > 0 ? `
+                                <section>
+                                    <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                                        <i data-lucide="book-open" class="w-5 h-5 text-indigo-500"></i> Definitions
+                                    </h3>
+                                    <div class="space-y-4 pl-4 border-l-2 border-indigo-100 dark:border-indigo-900/50">
+                                        ${data.definitions.map((def, i) => `
+                                            <div class="space-y-1">
+                                                <p class="text-slate-900 dark:text-slate-200 font-medium text-base md:text-lg">
+                                                    <span class="text-indigo-500 mr-2 text-sm">${i + 1}.</span>${def.en}
+                                                </p>
+                                                <p class="text-slate-600 dark:text-slate-400 pl-6 text-sm md:text-base">${def.zh}</p>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </section>
+                            ` : ''}
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <!-- Relationships -->
+                                ${(data.relationships && (data.relationships.synonyms?.length || data.relationships.antonyms?.length || data.relationships.family?.length)) ? `
+                                    <section>
+                                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                                            <i data-lucide="git-merge" class="w-5 h-5 text-emerald-500"></i> Relationships
+                                        </h3>
+                                        <div class="space-y-4 text-sm bg-slate-50/50 dark:bg-slate-800/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                                            ${genRelHtml(data.relationships.synonyms, 'green', 'Synonym')}
+                                            ${genRelHtml(data.relationships.antonyms, 'red', 'Antonym')}
+                                            ${data.relationships.family?.length > 0 ? `
+                                                <div class="pt-2 border-t border-slate-200 dark:border-slate-700/50">
+                                                    <span class="block text-slate-500 mb-1.5 text-xs uppercase tracking-wider font-semibold">Word Family</span>
+                                                    <p class="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">${data.relationships.family.join(', ')}</p>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    </section>
+                                ` : '<div></div>'}
+
+                                <!-- Collocations -->
+                                ${data.collocations && data.collocations.length > 0 ? `
+                                    <section>
+                                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                                            <i data-lucide="layers" class="w-5 h-5 text-amber-500"></i> Structured Collocations
+                                        </h3>
+                                        <div class="space-y-3">
+                                            ${data.collocations.map((group, i) => `
+                                                <div class="bg-slate-50 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800 transition-colors hover:border-slate-200 dark:hover:border-slate-700">
+                                                    <h4 class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                                        <span class="w-2 h-2 rounded-full bg-amber-400/50"></span> ${group.category}
+                                                    </h4>
+                                                    <ul class="flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-slate-700 dark:text-slate-300">
+                                                        ${group.phrases?.map(phrase => `
+                                                            <li class="flex items-center gap-1.5 whitespace-nowrap bg-white dark:bg-slate-800 px-2 py-0.5 rounded shadow-sm border border-slate-100 dark:border-slate-700/50">${phrase}</li>
+                                                        `).join('')}
+                                                    </ul>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </section>
+                                ` : '<div></div>'}
+                            </div>
+
+                            <!-- Examples -->
+                            ${data.examples && data.examples.length > 0 ? `
+                                <section>
+                                    <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                                        <i data-lucide="pen-tool" class="w-5 h-5 text-blue-500"></i> Contextual Examples
+                                    </h3>
+                                    <div class="space-y-4">
+                                        ${data.examples.map((ex, i) => `
+                                            <div class="bg-blue-50/50 dark:bg-blue-900/10 p-4 md:p-5 rounded-xl border border-blue-100 dark:border-blue-900/30 hover:border-blue-200 dark:hover:border-blue-800/50 transition-colors">
+                                                <div class="flex gap-3">
+                                                    <span class="text-blue-300 dark:text-blue-700 font-mono text-sm mt-0.5">${i+1}.</span>
+                                                    <div>
+                                                        <p class="text-slate-900 dark:text-slate-200 font-medium mb-1.5 text-base leading-relaxed">${ex.en}</p>
+                                                        <p class="text-slate-600 dark:text-slate-400 text-sm md:text-base leading-relaxed">${ex.zh}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </section>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+
+                resultsContainer.innerHTML = html;
+                attachDynamicListeners('lexicon-results');
+                initIcons(resultsContainer);
+                
+                loadingState.classList.add('hidden');
+                loadingState.classList.remove('flex');
+                resultsContainer.classList.remove('hidden');
+
+            } catch (error) {
+                showToast(error.message, "error");
+                loadingState.classList.add('hidden');
+                loadingState.classList.remove('flex');
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            } finally {
+                setLexiconLoading(false);
+                updateLexiconBtnState();
+            }
+        }
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+            initIcons();
+            setupSyncScrollListeners();
+            
+            // Update clear button visibility initially
+            updateLexiconBtnState();
+            
+            // Set initial state of proofread button
+            updateProofreadBtnState();
+        });
+
+    </script>
+</body>
+</html>
