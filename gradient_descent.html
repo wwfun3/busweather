@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>Gradient Descent｜梯度下降互動學習室</title>
+<style>
+:root{--bg:#0b1020;--panel:#111a2e;--panel2:#16213a;--line:#263553;--text:#edf3ff;--muted:#a4b3ce;--cyan:#65e5dc;--blue:#8caeff;--purple:#c4a7ff;--green:#77e0a3;--amber:#ffd27a;--red:#ff929f;--radius:20px;--shadow:0 18px 50px #0003}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#1b3561 0,transparent 40%),radial-gradient(ellipse at 0% 25%,#172747 0,transparent 36%),var(--bg);color:var(--text);font:16px/1.7 Inter,"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}button,input{font:inherit}button{cursor:pointer}a{color:var(--cyan)}.wrap{width:min(1180px,calc(100% - 32px));margin:auto}.top{padding:22px 0 12px;display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{display:flex;gap:10px;align-items:center;font-weight:800;letter-spacing:.03em}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#0b1020;font-size:22px;box-shadow:0 8px 25px #65e5dc33}.pill{border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--muted);font-size:12px}.hero{padding:42px 0 26px;display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}.eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}.hero h1{font-size:clamp(34px,5.5vw,64px);line-height:1.12;letter-spacing:-.04em;margin:12px 0 18px}.gradient{background:linear-gradient(100deg,#fff 10%,var(--cyan) 52%,var(--purple));color:transparent;background-clip:text}.hero p{color:var(--muted);max-width:660px;font-size:17px}.hero-art{background:linear-gradient(145deg,#172744,#10182b);border:1px solid #304361;border-radius:26px;padding:18px;box-shadow:var(--shadow);overflow:hidden}.hero-art svg{width:100%;height:auto;display:block}.hero-stat{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.stat{padding:10px 14px;background:#ffffff08;border:1px solid var(--line);border-radius:14px;font-size:13px;color:var(--muted)}.stat b{display:block;color:var(--text);font-size:18px}.tabs-wrap{position:sticky;top:0;z-index:20;background:#0b1020dd;backdrop-filter:blur(18px);border-top:1px solid #ffffff0b;border-bottom:1px solid var(--line)}.tabs{display:flex;gap:7px;overflow:auto;padding:12px 0;scrollbar-width:thin}.tab{white-space:nowrap;border:1px solid transparent;background:transparent;color:var(--muted);border-radius:12px;padding:9px 13px;font-weight:700;font-size:13px}.tab:hover{background:#ffffff0a;color:var(--text)}.tab.active{background:linear-gradient(120deg,#65e5dc20,#8caeff20);border-color:#65e5dc66;color:var(--cyan)}main{padding:26px 0 60px}.page{display:none;animation:fade .25s ease}.page.active{display:block}@keyframes fade{from{opacity:.35;transform:translateY(5px)}to{opacity:1;transform:none}}.section-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin:12px 0 22px}.section-head h2{font-size:clamp(25px,3vw,36px);line-height:1.2;margin:5px 0}.section-head p{margin:6px 0 0;color:var(--muted);max-width:720px}.kicker{color:var(--cyan);font-weight:800;font-size:12px;letter-spacing:.12em}.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.card{background:linear-gradient(145deg,#131e34,#10182a);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 8px 24px #0000000d;min-width:0}.card h3{margin:0 0 8px;font-size:18px}.card p{margin:7px 0;color:var(--muted)}.iconbox{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:#65e5dc16;color:var(--cyan);font-size:22px;margin-bottom:14px}.callout{border:1px solid #65e5dc44;background:#65e5dc0b;border-radius:16px;padding:16px 18px;margin:16px 0}.callout strong{color:var(--cyan)}.muted{color:var(--muted)}.small{font-size:13px}.formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:-.02em;background:#070d1a;border:1px solid #263553;border-radius:14px;padding:16px;text-align:center;font-size:clamp(16px,2.4vw,23px);overflow-wrap:anywhere;margin:12px 0;color:#e6f8ff}.formula .accent{color:var(--cyan)}.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:20px 0}.step{padding:14px 12px;border-radius:15px;background:#ffffff06;border:1px solid var(--line);text-align:center}.step b{display:block;color:var(--cyan);font-size:12px}.step span{font-size:13px}.step:not(:last-child){position:relative}.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.btn{border:1px solid #65e5dc55;background:#65e5dc18;color:var(--cyan);padding:10px 15px;border-radius:12px;font-weight:800}.btn:hover{background:#65e5dc2c}.btn.secondary{border-color:var(--line);background:#ffffff08;color:var(--text)}.btn:focus-visible,.tab:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}.field{display:grid;gap:6px;min-width:140px;flex:1}.field label{font-size:13px;color:var(--muted);font-weight:700}.field input[type=range]{width:100%;accent-color:var(--cyan)}.field input[type=number],.field input[type=text]{width:100%;padding:10px 12px;border-radius:11px;border:1px solid var(--line);background:#080f1e;color:var(--text)}.metric-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.metric{padding:13px;border-radius:14px;background:#ffffff07;border:1px solid var(--line)}.metric small{display:block;color:var(--muted)}.metric strong{font-size:clamp(17px,2.6vw,24px);font-variant-numeric:tabular-nums}.chartbox{background:#080f1e;border:1px solid var(--line);border-radius:16px;padding:10px;min-width:0}.chartbox svg{display:block;width:100%;height:auto}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:6px 4px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;margin-top:12px}table{border-collapse:collapse;width:100%;min-width:540px;font-size:14px}th,td{text-align:left;padding:11px 13px;border-bottom:1px solid var(--line)}th{background:#ffffff08;color:var(--muted);font-size:12px;letter-spacing:.04em}tr:last-child td{border-bottom:0}td code,code.inline{font-family:ui-monospace,Consolas,monospace;color:#b9caff;background:#ffffff0a;padding:2px 5px;border-radius:5px}.quiz-q{padding:16px 0;border-bottom:1px solid var(--line)}.quiz-q:last-child{border:0}.quiz-q h4{margin:0 0 10px}.option{display:flex;gap:9px;align-items:start;border:1px solid var(--line);border-radius:11px;padding:9px 11px;margin:7px 0;color:var(--muted);cursor:pointer}.option:has(input:checked){border-color:#65e5dc99;background:#65e5dc0c;color:var(--text)}.option input{accent-color:var(--cyan);margin-top:5px}.feedback{font-size:13px;margin-top:8px}.correct{color:var(--green)}.wrong{color:var(--red)}.code{white-space:pre;overflow:auto;padding:17px;border-radius:14px;background:#070c17;border:1px solid var(--line);font:13px/1.7 ui-monospace,Consolas,monospace;color:#dce8ff}.tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 9px;font-size:11px;color:var(--muted);margin:3px 4px 3px 0}.footer{border-top:1px solid var(--line);padding:25px 0 35px;color:var(--muted);font-size:12px}.progress{height:6px;border-radius:99px;background:#ffffff12;overflow:hidden}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .25s}.mobile-note{display:none}
+@media(max-width:850px){.hero{grid-template-columns:1fr;padding-top:25px}.hero-art{max-width:600px}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.steps .step:last-child{grid-column:1/-1}}
+@media(max-width:560px){.wrap{width:min(100% - 22px,1180px)}.top{align-items:flex-start}.top .pill{display:none}.hero h1{font-size:38px}.hero p{font-size:15px}.g2,.g3{grid-template-columns:1fr}.card{padding:16px;border-radius:16px}.section-head{display:block}.metric-row{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.step{padding:10px 8px}.step span{font-size:12px}.tabs{margin-right:-11px}.tab{padding:8px 11px}.mobile-note{display:block}.controls .btn{flex:1}.formula{font-size:15px;padding:12px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="brand"><div class="logo">∇</div><div>LEARNING LAB <span class="muted">/ ML FOUNDATIONS</span></div></div>
+  <span class="pill">互動教材 · 繁體中文 · Mobile responsive</span>
+</header>
+<section class="hero">
+  <div>
+    <div class="eyebrow">Machine Learning · Optimization</div>
+    <h1>Gradient Descent<br><span class="gradient">梯度下降法</span></h1>
+    <p>像沿著山坡尋找谷底一樣，讓模型反覆計算「往哪邊走會減少錯誤」，再逐步更新參數。由直覺、公式、互動實驗到 Python，完整掌握機器學習的重要基礎。</p>
+    <div class="hero-stat"><div class="stat"><b>01</b>建立直覺</div><div class="stat"><b>02</b>互動調參</div><div class="stat"><b>03</b>親手計算</div><div class="stat"><b>04</b>檢查理解</div></div>
+  </div>
+  <div class="hero-art">
+    <svg viewBox="0 0 500 310" role="img" aria-label="球沿著曲線向最低點下降的示意圖">
+      <defs><linearGradient id="hill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#65e5dc" stop-opacity=".35"/><stop offset="1" stop-color="#8caeff" stop-opacity=".04"/></linearGradient><linearGradient id="line" x1="0" x2="1"><stop stop-color="#65e5dc"/><stop offset="1" stop-color="#c4a7ff"/></linearGradient></defs>
+      <path d="M22 58 C105 58 120 225 245 242 S405 242 478 58 L478 272 L22 272Z" fill="url(#hill)"/>
+      <path d="M22 58 C105 58 120 225 245 242 S405 242 478 58" fill="none" stroke="url(#line)" stroke-width="4" stroke-linecap="round"/>
+      <path d="M83 86 L128 154 M122 145 L128 154 L136 146" stroke="#65e5dc" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M156 194 L199 226 M191 215 L199 226 L204 214" stroke="#65e5dc" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M271 243 L320 238 M310 232 L320 238 L311 245" stroke="#8caeff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="75" cy="63" r="12" fill="#65e5dc"/><circle cx="75" cy="63" r="22" fill="#65e5dc" opacity=".13"/>
+      <circle cx="135" cy="165" r="8" fill="#8caeff"/><circle cx="205" cy="231" r="7" fill="#c4a7ff"/><circle cx="247" cy="242" r="6" fill="#77e0a3"/>
+      <text x="47" y="35" fill="#edf3ff" font-size="13" font-weight="700">起點</text><text x="265" y="281" fill="#77e0a3" font-size="13" font-weight="700">較低損失</text>
+      <text x="25" y="298" fill="#a4b3ce" font-size="11">示意：每一步重新計算方向與步長</text>
+      <g transform="translate(350 110)"><rect width="115" height="67" rx="12" fill="#080f1e" stroke="#263553"/><text x="13" y="23" fill="#a4b3ce" font-size="10">UPDATE RULE</text><text x="13" y="45" fill="#65e5dc" font-size="14" font-weight="700">θ ← θ − α∇J</text><text x="13" y="58" fill="#a4b3ce" font-size="9">參數 − 步長 × 梯度</text></g>
+    </svg>
+  </div>
+</section>
+</div>
+<div class="tabs-wrap"><nav class="tabs wrap" aria-label="課程分頁">
+<button class="tab active" data-tab="overview">✦ 概覽</button><button class="tab" data-tab="intuition">山谷直覺</button><button class="tab" data-tab="concepts">核心概念</button><button class="tab" data-tab="formula">公式拆解</button><button class="tab" data-tab="lab">互動實驗室</button><button class="tab" data-tab="worked">逐步計算</button><button class="tab" data-tab="methods">三種方法</button><button class="tab" data-tab="pitfalls">陷阱與最佳化器</button><button class="tab" data-tab="python">Python 實作</button><button class="tab" data-tab="quiz">小測驗</button><button class="tab" data-tab="glossary">詞彙表</button>
+</nav></div>
+<main class="wrap">
+<section class="page active" id="overview">
+  <div class="section-head"><div><div class="kicker">START HERE</div><h2>先掌握整個流程</h2><p>梯度下降不是一次猜中答案，而是用梯度資訊逐步改善參數，令損失通常朝下降方向移動。</p></div></div>
+  <div class="steps"><div class="step"><b>STEP 01</b><span>輸入訓練資料</span></div><div class="step"><b>STEP 02</b><span>模型作出預測</span></div><div class="step"><b>STEP 03</b><span>計算損失 Loss</span></div><div class="step"><b>STEP 04</b><span>計算梯度 Gradient</span></div><div class="step"><b>STEP 05</b><span>更新參數並重複</span></div></div>
+  <div class="grid g3">
+    <article class="card"><div class="iconbox">⛰</div><h3>損失 = 山的高度</h3><p>Loss Function 量度模型預測與真實答案的差距。最佳化的目標通常是降低這個數值。</p></article>
+    <article class="card"><div class="iconbox">∇</div><h3>梯度 = 上坡方向</h3><p>梯度指向局部上升最快的方向。梯度下降使用它的反方向來更新參數。</p></article>
+    <article class="card"><div class="iconbox">👣</div><h3>學習率 = 步長</h3><p>學習率決定每次更新的幅度。太小可能很慢，太大可能震盪甚至發散。</p></article>
+  </div>
+  <div class="callout"><strong>一句話記憶：</strong> 新參數 = 舊參數 − 學習率 × 梯度。<br><span class="muted small">在合適條件下，這會令損失下降；對所有複雜模型則不保證每一步都下降，也不保證找到全域最低點。</span></div>
+  <div class="grid g2">
+    <article class="card"><h3>它用在哪裏？</h3><p>線性回歸、邏輯回歸、神經網絡和許多深度學習模型，都可以使用梯度資訊來最佳化可訓練參數。</p><span class="tag">Regression</span><span class="tag">Classification</span><span class="tag">Deep Learning</span></article>
+    <article class="card"><h3>與其他概念的分工</h3><p><b>損失函數：</b>衡量錯誤。</p><p><b>反向傳播：</b>高效率計算神經網絡各參數的梯度。</p><p><b>梯度下降／最佳化器：</b>利用梯度更新參數。</p></article>
+  </div>
+</section>
+<section class="page" id="intuition">
+  <div class="section-head"><div><div class="kicker">VISUAL INTUITION</div><h2>在濃霧中走下山谷</h2><p>你看不到整座山，只能觀察腳下附近的斜度。每次走一小步後，再重新判斷方向。</p></div></div>
+  <div class="grid g2">
+    <article class="card"><div class="iconbox">⌖</div><h3>① 確認目前位置</h3><p>對應模型目前的參數，例如線性模型中的權重 <code class="inline">w</code> 和偏置 <code class="inline">b</code>。</p></article>
+    <article class="card"><div class="iconbox">↘</div><h3>② 判斷下坡方向</h3><p>計算損失對參數的導數或梯度。梯度指出上升最快的局部方向。</p></article>
+    <article class="card"><div class="iconbox">👣</div><h3>③ 走一小步</h3><p>乘上學習率，決定參數更新幅度；不是每次都跳到遙遠的地方。</p></article>
+    <article class="card"><div class="iconbox">⟳</div><h3>④ 重複與檢查</h3><p>重新計算梯度和損失，持續更新，並觀察是否收斂及能否泛化至新資料。</p></article>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>山谷與機器學習的對照</h3><div class="table-wrap"><table><thead><tr><th>山谷比喻</th><th>機器學習術語</th><th>實際意義</th></tr></thead><tbody><tr><td>所在位置</td><td>Parameters</td><td>模型可調整的數值</td></tr><tr><td>山的高度</td><td>Loss</td><td>預測錯誤的量度</td></tr><tr><td>附近坡度</td><td>Gradient</td><td>損失對參數的變化率</td></tr><tr><td>步伐大小</td><td>Learning Rate</td><td>每次更新的尺度</td></tr><tr><td>谷底附近</td><td>Minimum / Convergence</td><td>損失較低或更新逐漸穩定的位置</td></tr></tbody></table></div></div>
+</section>
+<section class="page" id="concepts">
+  <div class="section-head"><div><div class="kicker">FOUNDATIONS</div><h2>五個核心概念</h2><p>了解每一項，就能讀懂梯度下降的更新公式。</p></div></div>
+  <div class="grid g2">
+    <article class="card"><h3>1. 參數 Parameters</h3><div class="formula">ŷ = <span class="accent">w</span>x + <span class="accent">b</span></div><p><b>w</b> 是權重，決定輸入特徵的影響；<b>b</b> 是偏置，調整預測基準。訓練會更新這些參數。</p></article>
+    <article class="card"><h3>2. 損失函數 Loss Function</h3><div class="formula">J(w,b) = <span class="accent">1/n</span> Σ(ŷᵢ − yᵢ)²</div><p>MSE（均方誤差）常用於回歸。<code class="inline">n</code> 是樣本數、<code class="inline">ŷᵢ</code> 是預測、<code class="inline">yᵢ</code> 是真實值。分類任務常用交叉熵。</p></article>
+    <article class="card"><h3>3. 導數與梯度</h3><p>單一參數的導數 <code class="inline">dJ/dw</code> 表示損失在該位置的瞬時變化率。多個參數的梯度是偏導數組成的向量。</p><div class="formula">∇J = [ ∂J/∂w, ∂J/∂b ]ᵀ</div><p>梯度是局部上升最快方向；負梯度提供局部下降方向。</p></article>
+    <article class="card"><h3>4. 學習率 Learning Rate</h3><p>常以 α 表示，是控制更新步長的超參數。過小會令訓練緩慢，過大可能越過谷底、震盪或發散。</p><p>實際合適值取決於損失曲率、梯度尺度、模型與資料。</p></article>
+    <article class="card"><h3>5. 迭代 Iteration</h3><p>一次參數更新稱為一次 iteration。訓練集完整使用一次通常稱為一個 epoch。每個 epoch 可包含多次更新。</p><p><b>收斂 Convergence：</b>參數或損失逐漸穩定，但不一定代表全域最佳解。</p></article>
+    <article class="card"><h3>一個簡單例子</h3><p>真實答案是 3，模型預測是 0，平方誤差為 9。模型調整權重後預測若變成 2.5，平方誤差就降為 0.25。</p><p>梯度下降利用梯度資訊，有系統地尋找能降低損失的參數。</p></article>
+  </div>
+</section>
+<section class="page" id="formula">
+  <div class="section-head"><div><div class="kicker">THE MATHEMATICS</div><h2>公式拆解</h2><p>不用害怕公式：把它看成「目前值減去一個由斜度和步長決定的修正量」。</p></div></div>
+  <div class="card"><div class="formula">θ<sub>t+1</sub> = θ<sub>t</sub> − α <span class="accent">∇J(θ<sub>t</sub>)</span></div><div class="table-wrap"><table><thead><tr><th>符號</th><th>意思</th><th>直覺</th></tr></thead><tbody><tr><td>θₜ</td><td>目前參數</td><td>你現在站的位置</td></tr><tr><td>J(θ)</td><td>損失函數</td><td>地勢高度</td></tr><tr><td>∇J</td><td>梯度</td><td>局部上坡最快方向</td></tr><tr><td>α</td><td>學習率</td><td>每一步的大小</td></tr><tr><td>−</td><td>反方向更新</td><td>沿局部下坡方向走</td></tr></tbody></table></div></div>
+  <div class="grid g2" style="margin-top:16px">
+    <article class="card"><h3>導數為正</h3><div class="formula">w<sub>new</sub> = w − α(+)</div><p>若學習率為正，更新會減少參數 <code class="inline">w</code>。對典型向右上升的曲線，這有助向左下坡。</p></article>
+    <article class="card"><h3>導數為負</h3><div class="formula">w<sub>new</sub> = w − α(−)</div><p>減去負數等於加上正數，更新會增加參數 <code class="inline">w</code>。在該位置向右可能降低損失。</p></article>
+  </div>
+  <div class="callout"><strong>注意：</strong> 正負號只告訴你局部更新方向。參數改變與損失改變的關係，仍取決於損失函數本身；步長太大時，損失未必每一步都下降。</div>
+</section>
+<section class="page" id="lab">
+  <div class="section-head"><div><div class="kicker">INTERACTIVE PLAYGROUND</div><h2>互動實驗室：自己調整學習率</h2><p>目標是最小化 J(w) = (w − 3)²。拖動滑桿，觀察權重如何走向 3，以及損失如何變化。</p></div></div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="field"><label for="lr">學習率 α：<strong id="lrLabel">0.10</strong></label><input id="lr" type="range" min="0.01" max="1.10" step="0.01" value="0.10"></div>
+      <div class="field" style="margin-top:17px"><label for="startW">初始權重 w₀</label><input id="startW" type="number" value="0" min="-20" max="20" step="0.5"></div>
+      <div class="field" style="margin-top:17px"><label for="steps">更新次數：<strong id="stepsLabel">10</strong></label><input id="steps" type="range" min="1" max="40" step="1" value="10"></div>
+      <div class="controls" style="margin-top:18px"><button class="btn" id="runLab">重新計算</button><button class="btn secondary" id="resetLab">重設</button></div>
+      <p class="small muted">此實驗為一維二次函數，最低點在 w = 3。這個簡化案例不代表真實模型的最佳學習率。</p>
+    </div>
+    <div class="card"><h3>即時結果</h3><div class="metric-row"><div class="metric"><small>最終權重</small><strong id="finalW">2.6779</strong></div><div class="metric"><small>最終損失</small><strong id="finalLoss">0.1038</strong></div><div class="metric"><small>梯度</small><strong id="finalGrad">−0.6442</strong></div></div><div class="callout" id="labInsight">權重正逐步接近 3。</div></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>權重更新路徑</h3><div class="chartbox"><svg id="weightChart" viewBox="0 0 520 270" role="img" aria-label="權重更新圖"></svg></div><div class="legend"><span><i class="dot" style="background:#65e5dc"></i>權重 w</span><span><i class="dot" style="background:#c4a7ff"></i>目標 w = 3</span></div></div>
+    <div class="card"><h3>損失下降路徑</h3><div class="chartbox"><svg id="lossChart" viewBox="0 0 520 270" role="img" aria-label="損失變化圖"></svg></div><div class="legend"><span><i class="dot" style="background:#ffd27a"></i>損失 J(w)</span></div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>每一步的計算紀錄</h3><p class="small muted">梯度為 dJ/dw = 2(w − 3)，更新公式為 w ← w − α × 梯度。</p><div class="table-wrap"><table><thead><tr><th>Step</th><th>更新前 w</th><th>梯度</th><th>更新後 w</th><th>更新後損失</th></tr></thead><tbody id="labRows"></tbody></table></div></div>
+</section>
+<section class="page" id="worked">
+  <div class="section-head"><div><div class="kicker">WORKED EXAMPLE</div><h2>逐步手算：從 0 接近 3</h2><p>一筆資料：x = 1、真實答案 y = 3，模型 ŷ = wx，初始權重 w = 0。</p></div></div>
+  <div class="card"><h3>第一步：定義損失</h3><div class="formula">J(w) = (w − 3)²</div><p>當 w = 0，預測值為 0，平方誤差為 (0 − 3)² = 9。</p><h3 style="margin-top:22px">第二步：求導</h3><div class="formula">dJ/dw = 2(w − 3)</div><p>代入 w = 0，得到梯度 −6。梯度為負，更新公式中的減號會令權重增加。</p><h3 style="margin-top:22px">第三步：更新</h3><div class="formula">w<sub>new</sub> = 0 − 0.1 × (−6) = <span class="accent">0.6</span></div><p>更新後損失為 (0.6 − 3)² = 5.76，比原本的 9 小。</p></div>
+  <div class="card" style="margin-top:16px"><h3>反覆更新的數值</h3><div class="table-wrap"><table><thead><tr><th>迭代</th><th>舊權重 w</th><th>梯度</th><th>新權重</th><th>新損失</th></tr></thead><tbody id="workedRows"></tbody></table></div><div class="callout"><strong>觀察：</strong> 權重逐漸接近 3，損失逐漸下降。通常不需要損失恰好等於零；會按收斂準則、驗證表現及計算成本決定何時停止。</div></div>
+</section>
+<section class="page" id="methods">
+  <div class="section-head"><div><div class="kicker">DATA STRATEGIES</div><h2>三種梯度下降方法</h2><p>主要差別在於：每次更新用多少筆訓練資料估算梯度。</p></div></div>
+  <div class="grid g3">
+    <article class="card"><div class="iconbox">▦</div><h3>Batch Gradient Descent</h3><p>每次更新使用整個訓練集計算梯度。</p><p><b>優點：</b>梯度通常較穩定。</p><p><b>限制：</b>資料集很大時，每次更新成本高。</p><span class="tag">全量資料</span><span class="tag">較穩定</span></article>
+    <article class="card"><div class="iconbox">⚡</div><h3>Stochastic Gradient Descent</h3><p>典型定義下，每次更新使用一個樣本估算梯度。</p><p><b>優點：</b>單次更新成本低。</p><p><b>限制：</b>梯度波動大，損失可能起伏。</p><span class="tag">單樣本</span><span class="tag">波動較大</span></article>
+    <article class="card"><div class="iconbox">▤</div><h3>Mini-batch Gradient Descent</h3><p>每次使用一小批樣本，例如 32、64 或 128 筆。</p><p><b>優點：</b>兼顧運算效率與梯度穩定性，深度學習中非常常見。</p><span class="tag">小批次</span><span class="tag">常見做法</span></article>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>例子：訓練集有 10,000 筆資料</h3><div class="table-wrap"><table><thead><tr><th>方法</th><th>每次更新的樣本數</th><th>每個 Epoch 典型更新次數</th></tr></thead><tbody><tr><td>Batch</td><td>10,000</td><td>1</td></tr><tr><td>SGD</td><td>1</td><td>10,000</td></tr><tr><td>Mini-batch（batch size 100）</td><td>100</td><td>100</td></tr></tbody></table></div><p class="small muted">假設每個 epoch 完整處理資料、沒有丟棄最後不足一批的樣本。SGD 一詞在不同語境也可能泛指隨機最佳化家族；深度學習軟件中的 SGD 通常是具體最佳化器名稱。</p><h3 style="margin-top:20px">相關訓練用語</h3><p><b>Iteration：</b>一次參數更新。 <b>Batch：</b>一批訓練樣本。 <b>Epoch：</b>整個訓練集被使用一次。 <b>Convergence：</b>損失或參數逐漸穩定。</p></div>
+</section>
+<section class="page" id="pitfalls">
+  <div class="section-head"><div><div class="kicker">PRACTICAL OPTIMIZATION</div><h2>常見陷阱與改良方法</h2><p>梯度下降是強大工具，但不是保證每次都找到全域最佳解的魔法。</p></div></div>
+  <div class="grid g2">
+    <article class="card"><h3>⚠ 學習率過小</h3><p>更新幅度有限，損失下降可能很慢。可以觀察曲線，嘗試合理的學習率或排程。</p></article>
+    <article class="card"><h3>⚠ 學習率過大</h3><p>可能越過最低點、反覆震盪，甚至令損失發散。應降低學習率或使用適當的排程。</p></article>
+    <article class="card"><h3>⚠ 特徵尺度差異太大</h3><p>例如面積以平方呎、距離以米、價格以百萬元表示。適當標準化或縮放特徵，通常有助改善最佳化條件。</p></article>
+    <article class="card"><h3>⚠ 局部最低點、鞍點、平坦區</h3><p>非凸損失可能包含多個局部低點、鞍點或梯度很小的區域。初始化與最佳化器設定會影響結果。</p></article>
+    <article class="card"><h3>⚠ 只看訓練損失</h3><p>訓練損失降低不保證新資料表現更好。應監察驗證集，留意過度擬合（Overfitting）。</p></article>
+    <article class="card"><h3>✓ 合理停止條件</h3><p>可依梯度門檻、損失改善幅度、最大迭代數，或驗證表現不再改善（Early Stopping）決定何時停止。</p></article>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>常見最佳化器比較</h3><div class="table-wrap"><table><thead><tr><th>方法</th><th>核心想法</th><th>常見作用</th></tr></thead><tbody><tr><td>Momentum</td><td>累積過去梯度的動量</td><td>在某些情況下減少震盪、加速一致方向的移動</td></tr><tr><td>RMSProp</td><td>利用梯度平方的移動平均調整有效步長</td><td>讓不同參數有不同的有效更新尺度</td></tr><tr><td>Adam</td><td>結合一階與二階動量估計，並作偏差修正</td><td>廣泛用於深度學習，通常有不錯的起始表現</td></tr></tbody></table></div><p class="small muted">沒有任何一種最佳化器在所有模型與資料集上都必定最佳。對可微凸函數，在合適條件下梯度下降可收斂至全域最低點；一般非凸問題則沒有此保證。</p></div>
+  <div class="card" style="margin-top:16px"><h3>梯度下降與反向傳播：不要混淆</h3><div class="grid g2"><div><b>反向傳播 Backpropagation</b><p>使用鏈式法則，高效率地計算神經網絡損失對各參數的梯度。</p></div><div><b>梯度下降／最佳化器</b><p>取得梯度後，依更新規則修改參數。它們是合作關係，不是同一件事。</p></div></div></div>
+</section>
+<section class="page" id="python">
+  <div class="section-head"><div><div class="kicker">CODE IT YOURSELF</div><h2>Python：親手執行梯度下降</h2><p>以下程式只使用 Python 內置功能。可複製到 Google Colab 執行。</p></div></div>
+  <div class="card"><div class="controls" style="justify-content:space-between"><span class="tag">零額外套件</span><button class="btn" id="copyCode">複製程式碼</button></div><pre class="code" id="pyCode"># Gradient Descent 梯度下降法
+# 目標：找出令 J(w) = (w - 3) ** 2 最小的 w
+
+w = 0.0
+learning_rate = 0.1
+max_iterations = 100
+
+for step in range(max_iterations):
+    # 1. 計算目前的損失
+    loss = (w - 3) ** 2
+
+    # 2. 計算目前的梯度
+    gradient = 2 * (w - 3)
+
+    # 3. 每隔 10 次顯示一次結果
+    if step % 10 == 0:
+        print(
+            f"Step: {step:3d} | "
+            f"w: {w:.6f} | "
+            f"Loss: {loss:.6f} | "
+            f"Gradient: {gradient:.6f}"
+        )
+
+    # 4. 梯度非常小時停止
+    if abs(gradient) < 1e-6:
+        print("梯度已接近零，停止更新。")
+        break
+
+    # 5. 更新權重
+    w = w - learning_rate * gradient
+
+print(f"\\n最終權重 w = {w:.6f}")
+print(f"最終損失 J(w) = {(w - 3) ** 2:.8f}")</pre><div class="callout" id="copyStatus" aria-live="polite">程式的核心只有一行：<code class="inline">w = w - learning_rate * gradient</code></div></div>
+  <div class="grid g2" style="margin-top:16px">
+    <article class="card"><h3>逐行解讀</h3><p><code class="inline">w = 0.0</code>：設定初始權重。</p><p><code class="inline">loss = (w - 3) ** 2</code>：計算錯誤。</p><p><code class="inline">gradient = 2 * (w - 3)</code>：計算導數。</p><p><code class="inline">abs(gradient) &lt; 1e-6</code>：檢查梯度是否足夠小。</p><p><code class="inline">w = w - learning_rate * gradient</code>：更新權重。</p></article>
+    <article class="card"><h3>把它連到真實模型</h3><p>真實模型會有多個參數和多筆樣本。以線性回歸為例：</p><div class="formula">ŷ = w₁x₁ + w₂x₂ + b</div><p>需要計算每個參數的偏導數，再分別更新。神經網絡則常用反向傳播或自動微分來求梯度。</p></article>
+  </div>
+</section>
+<section class="page" id="quiz">
+  <div class="section-head"><div><div class="kicker">CHECK YOUR UNDERSTANDING</div><h2>六題小測驗</h2><p>選擇答案並提交。答錯時會顯示解釋，幫助你找出需要重溫的概念。</p></div></div>
+  <div class="card"><div class="progress"><span id="quizProgress"></span></div><p class="small muted" id="quizCount">已作答 0 / 6</p><form id="quizForm">
+    <div class="quiz-q" data-correct="1" data-why="梯度指出損失上升最快的局部方向；梯度下降沿相反方向更新。"><h4>1. 梯度的方向代表甚麼？</h4><label class="option"><input type="radio" name="q0" value="0"> 損失下降最快的方向</label><label class="option"><input type="radio" name="q0" value="1"> 損失上升最快的方向</label><label class="option"><input type="radio" name="q0" value="2"> 模型預測的答案</label><div class="feedback"></div></div>
+    <div class="quiz-q" data-correct="1" data-why="負號令更新朝向局部損失下降的反梯度方向。"><h4>2. 更新公式為甚麼有負號？</h4><label class="option"><input type="radio" name="q1" value="0"> 令參數永遠為負數</label><label class="option"><input type="radio" name="q1" value="1"> 沿梯度反方向更新</label><label class="option"><input type="radio" name="q1" value="2"> 令損失永遠等於零</label><div class="feedback"></div></div>
+    <div class="quiz-q" data-correct="2" data-why="步長過大可能越過最低點，令參數震盪，甚至令損失發散。"><h4>3. 學習率太大可能造成甚麼問題？</h4><label class="option"><input type="radio" name="q2" value="0"> 永遠不會更新參數</label><label class="option"><input type="radio" name="q2" value="1"> 一定找到全域最低點</label><label class="option"><input type="radio" name="q2" value="2"> 越過最低點、震盪或發散</label><div class="feedback"></div></div>
+    <div class="quiz-q" data-correct="0" data-why="損失函數將預測與目標答案比較，提供最佳化所需的量度。"><h4>4. Loss Function 的主要用途是甚麼？</h4><label class="option"><input type="radio" name="q3" value="0"> 量度模型預測的錯誤</label><label class="option"><input type="radio" name="q3" value="1"> 決定資料有多少列</label><label class="option"><input type="radio" name="q3" value="2"> 自動增加訓練資料</label><div class="feedback"></div></div>
+    <div class="quiz-q" data-correct="1" data-why="每次使用一小批樣本（例如 100 筆）估算梯度，屬於 Mini-batch 方法。"><h4>5. 每次用 100 筆資料更新參數，屬於哪種方法？</h4><label class="option"><input type="radio" name="q4" value="0"> Batch（使用全部資料）</label><label class="option"><input type="radio" name="q4" value="1"> Mini-batch（小批次）</label><label class="option"><input type="radio" name="q4" value="2"> 必定是單樣本 SGD</label><div class="feedback"></div></div>
+    <div class="quiz-q" data-correct="1" data-why="訓練損失下降不保證新資料表現更好；應觀察驗證集以留意過度擬合。"><h4>6. 訓練損失降低，是否代表新資料預測一定更準？</h4><label class="option"><input type="radio" name="q5" value="0"> 是，一定更準</label><label class="option"><input type="radio" name="q5" value="1"> 不是，需要檢查驗證集</label><label class="option"><input type="radio" name="q5" value="2"> 只要梯度為正就會更準</label><div class="feedback"></div></div>
+    <div class="controls" style="margin-top:18px"><button class="btn" type="submit">提交答案</button><button class="btn secondary" type="button" id="resetQuiz">重新作答</button></div><div id="quizResult" class="callout" aria-live="polite" hidden></div>
+  </form></div>
+</section>
+<section class="page" id="glossary">
+  <div class="section-head"><div><div class="kicker">QUICK REFERENCE</div><h2>術語速查表</h2><p>學習機器學習文章或課程時，可以回到這一頁快速查閱。</p></div></div>
+  <div class="card"><div class="table-wrap"><table><thead><tr><th>English</th><th>繁體中文</th><th>簡明解釋</th></tr></thead><tbody>
+  <tr><td>Gradient Descent</td><td>梯度下降法</td><td>利用梯度反方向逐步更新參數的最佳化方法。</td></tr>
+  <tr><td>Gradient</td><td>梯度</td><td>多參數函數的偏導數向量，指向局部上升最快方向。</td></tr>
+  <tr><td>Derivative</td><td>導數</td><td>單一變數函數在某位置的瞬時變化率。</td></tr>
+  <tr><td>Loss Function</td><td>損失函數</td><td>量度預測與目標之間差距的函數。</td></tr>
+  <tr><td>Parameter</td><td>參數</td><td>模型透過訓練調整的值，例如權重與偏置。</td></tr>
+  <tr><td>Learning Rate</td><td>學習率</td><td>控制每次參數更新幅度的超參數。</td></tr>
+  <tr><td>Iteration</td><td>迭代</td><td>一次更新步驟。</td></tr>
+  <tr><td>Epoch</td><td>訓練週期</td><td>訓練集完整被使用一次。</td></tr>
+  <tr><td>Batch Size</td><td>批次大小</td><td>一次計算梯度所用的樣本數。</td></tr>
+  <tr><td>Convergence</td><td>收斂</td><td>參數或損失逐漸穩定。</td></tr>
+  <tr><td>Local Minimum</td><td>局部最低點</td><td>比附近點低，但未必是全域最低點的位置。</td></tr>
+  <tr><td>Saddle Point</td><td>鞍點</td><td>某些方向上升、另一些方向下降的臨界點。</td></tr>
+  <tr><td>Backpropagation</td><td>反向傳播</td><td>用鏈式法則計算神經網絡梯度的演算法。</td></tr>
+  <tr><td>Overfitting</td><td>過度擬合</td><td>模型過度貼合訓練資料，對新資料泛化不佳。</td></tr>
+  <tr><td>Optimizer</td><td>最佳化器</td><td>利用梯度等資訊更新模型參數的方法或演算法。</td></tr>
+  <tr><td>Adam</td><td>Adam 最佳化器</td><td>結合一階與二階動量估計的常用梯度型最佳化器。</td></tr>
+  </tbody></table></div></div>
+  <div class="callout"><strong>建議學習順序：</strong> 山谷直覺 → 核心概念 → 公式拆解 → 互動實驗室 → 逐步計算 → Python 實作 → 小測驗。</div>
+</section>
+</main>
+<footer class="footer"><div class="wrap"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><span>GRADIENT DESCENT · INTERACTIVE LEARNING LAB</span><span>繁體中文教材 · 單一 HTML 檔案 · 無外部依賴</span></div><p>教材說明為教育用途。梯度下降的收斂性取決於函數性質、學習率、初始化及其他設定；非凸問題不保證找到全域最低點。</p></div></footer>
+<script>
+(function(){
+const tabs=[...document.querySelectorAll('.tab')],pages=[...document.querySelectorAll('.page')];
+function activate(id){tabs.forEach(t=>t.classList.toggle('active',t.dataset.tab===id));pages.forEach(p=>p.classList.toggle('active',p.id===id));history.replaceState(null,'','#'+id);window.scrollTo({top:document.querySelector('.tabs-wrap').offsetTop,behavior:'smooth'});}
+tabs.forEach(t=>t.addEventListener('click',()=>activate(t.dataset.tab)));
+if(location.hash){const id=location.hash.slice(1);if(pages.some(p=>p.id===id)){tabs.forEach(t=>t.classList.toggle('active',t.dataset.tab===id));pages.forEach(p=>p.classList.toggle('active',p.id===id));}}
+function fmt(x,n=4){if(!Number.isFinite(x))return '發散';return x.toFixed(n)}
+function makeChart(svg,values,field,color,targetLine){
+const W=520,H=270,L=48,R=16,T=18,B=34,iw=W-L-R,ih=H-T-B;
+let vals=values.map(v=>v[field]).filter(Number.isFinite);if(targetLine!==null)vals.push(targetLine);if(!vals.length)vals=[0,1];
+let ymin=Math.min(...vals),ymax=Math.max(...vals);if(ymin===ymax){ymin-=1;ymax+=1}let pad=(ymax-ymin)*.12||1;ymin-=pad;ymax+=pad;
+const x=i=>L+(values.length<=1?0:i/(values.length-1))*iw;const y=v=>T+(ymax-v)/(ymax-ymin)*ih;
+let s='';for(let k=0;k<=4;k++){let yy=T+k*ih/4,v=ymax-k*(ymax-ymin)/4;s+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="#263553" stroke-width="1"/><text x="${L-8}" y="${yy+4}" fill="#a4b3ce" font-size="10" text-anchor="end">${v.toFixed(Math.abs(v)<10?1:0)}</text>`}
+s+=`<line x1="${L}" y1="${T}" x2="${L}" y2="${H-B}" stroke="#50617d"/><line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" stroke="#50617d"/>`;
+if(targetLine!==null){s+=`<line x1="${L}" y1="${y(targetLine)}" x2="${W-R}" y2="${y(targetLine)}" stroke="#c4a7ff" stroke-width="2" stroke-dasharray="6 5"/>`}
+let pts=values.map((v,i)=>`${x(i)},${y(v[field])}`).join(' ');s+=`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+values.forEach((v,i)=>{if(values.length<16||i===0||i===values.length-1||i%Math.ceil(values.length/10)===0)s+=`<circle cx="${x(i)}" cy="${y(v[field])}" r="3.5" fill="${color}"/>`});
+s+=`<text x="${L}" y="${H-8}" fill="#a4b3ce" font-size="10">0</text><text x="${W-R}" y="${H-8}" fill="#a4b3ce" font-size="10" text-anchor="end">${Math.max(0,values.length-1)} 次更新</text>`;
+svg.innerHTML=s;
+}
+function simulate(){
+const lr=+document.getElementById('lr').value,steps=+document.getElementById('steps').value;let w=+document.getElementById('startW').value;if(!Number.isFinite(w))w=0;w=Math.max(-20,Math.min(20,w));
+document.getElementById('lrLabel').textContent=lr.toFixed(2);document.getElementById('stepsLabel').textContent=steps;
+let records=[{step:0,w,loss:(w-3)**2,gradient:2*(w-3)}];
+for(let i=1;i<=steps;i++){let grad=2*(w-3);w=w-lr*grad;let loss=(w-3)**2;records.push({step:i,w,loss,gradient:2*(w-3)});if(!Number.isFinite(w)||Math.abs(w)>1e12){break}}
+const last=records[records.length-1];
+document.getElementById('finalW').textContent=fmt(last.w);document.getElementById('finalLoss').textContent=fmt(last.loss);document.getElementById('finalGrad').textContent=fmt(last.gradient);
+let insight;if(!Number.isFinite(last.w)||Math.abs(last.w)>1e8)insight='更新數值急速放大：學習率對這個初始值而言過大，出現發散。';else if(lr<.05)insight='學習率較小，每次只走一小步；可以增加更新次數觀察是否逐步接近 3。';else if(lr>=1)insight='更新會在最低點附近大幅震盪；本例 α > 1 時可能發散。';else if(last.loss<.001)insight='很好！目前權重已非常接近目標 3，損失也相當低。';else insight='觀察權重與損失的走勢：步長合適時，權重會逐步接近 3。';
+document.getElementById('labInsight').textContent=insight;
+makeChart(document.getElementById('weightChart'),records,'w','#65e5dc',3);makeChart(document.getElementById('lossChart'),records,'loss','#ffd27a',null);
+document.getElementById('labRows').innerHTML=records.slice(0,Math.min(records.length,14)).map((r,i)=>{let prev=records[i-1];return `<tr><td>${r.step}</td><td>${i?fmt(prev.w):'—'}</td><td>${i?fmt(prev.gradient):'—'}</td><td>${fmt(r.w)}</td><td>${fmt(r.loss)}</td></tr>`}).join('')+(records.length>14?'<tr><td colspan="5" class="muted">圖表顯示全部步驟；表格為保持易讀，只列出前 14 筆。</td></tr>':'');
+}
+['lr','steps','startW'].forEach(id=>document.getElementById(id).addEventListener('input',simulate));document.getElementById('runLab').addEventListener('click',simulate);document.getElementById('resetLab').addEventListener('click',()=>{document.getElementById('lr').value=.1;document.getElementById('steps').value=10;document.getElementById('startW').value=0;simulate()});
+simulate();
+const worked=[];let w=0;for(let i=0;i<=5;i++){let grad=2*(w-3),next=w-.1*grad;worked.push(`<tr><td>${i}</td><td>${fmt(w,5)}</td><td>${fmt(grad,5)}</td><td>${fmt(next,5)}</td><td>${fmt((next-3)**2,5)}</td></tr>`);w=next}document.getElementById('workedRows').innerHTML=worked.join('');
+const quizForm=document.getElementById('quizForm'),quizQs=[...document.querySelectorAll('.quiz-q')];
+function quizProgress(){let n=quizQs.filter(q=>q.querySelector('input:checked')).length;document.getElementById('quizCount').textContent=`已作答 ${n} / ${quizQs.length}`;document.getElementById('quizProgress').style.width=(n/quizQs.length*100)+'%'}
+quizQs.forEach(q=>q.querySelectorAll('input').forEach(inp=>inp.addEventListener('change',quizProgress)));
+quizForm.addEventListener('submit',e=>{e.preventDefault();let score=0,answered=0;quizQs.forEach(q=>{let picked=q.querySelector('input:checked'),fb=q.querySelector('.feedback');if(picked){answered++;if(+picked.value===+q.dataset.correct){score++;fb.innerHTML='<span class="correct">✓ 答對了！</span> '+q.dataset.why}else{fb.innerHTML='<span class="wrong">✕ 正確答案已標示。</span> '+q.dataset.why}}else{fb.innerHTML='<span class="wrong">尚未作答。</span> '+q.dataset.why}});let result=document.getElementById('quizResult');result.hidden=false;result.innerHTML=`<strong>得分：${score} / ${quizQs.length}</strong><br>${score===6?'太好了！你已掌握核心概念。':score>=4?'做得不錯！建議重溫答錯的部分，再試一次。':'建議先閱讀「核心概念」和「公式拆解」，再重新挑戰。'}（已作答 ${answered} 題）`;});
+document.getElementById('resetQuiz').addEventListener('click',()=>{quizForm.reset();quizQs.forEach(q=>q.querySelector('.feedback').textContent='');let result=document.getElementById('quizResult');result.hidden=true;quizProgress()});
+document.getElementById('copyCode').addEventListener('click',async()=>{const code=document.getElementById('pyCode').textContent;const status=document.getElementById('copyStatus');try{await navigator.clipboard.writeText(code);status.textContent='已複製程式碼，可以貼到 Google Colab 執行。'}catch(e){const range=document.createRange();range.selectNodeContents(document.getElementById('pyCode'));const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);status.textContent='瀏覽器未允許自動複製，程式碼已選取；請按 Ctrl+C 複製。'}});
+})();
+</script>
+</body>
+</html>
